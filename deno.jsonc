@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "@cutout/jsx"
+  },
+  "tasks": {
+    "build": "bash ./scripts/build.sh"
+  },
+  "imports": {
+    "@cutout/jsx": "jsr:@cutout/jsx",
+    "@cutout/store": "jsr:@cutout/store",
+    "roadroller": "npm:roadroller"
+  }
+}
