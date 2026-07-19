@@ -13,6 +13,7 @@
     "@cutout/store": "jsr:@cutout/store",
     "@std/fmt": "jsr:@std/fmt",
     "roadroller": "npm:roadroller",
-    "brotli": "npm:brotli"
+    "brotli": "npm:brotli",
+    "~projections/": "./libraries/projections/"
   }
 }

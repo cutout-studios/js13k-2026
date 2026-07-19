@@ -1,8 +1,9 @@
-const main = document.createElement("main");
-const hello = document.createElement("h1");
+import { dom } from "~projections/dom.ts";
 
-hello.innerText = "Hello, World!";
+const html = dom(
+  <h1>Hello, World!</h1>
+);
 
-main.appendChild(hello);
-
-document.body.appendChild(main);
+for(const element of html) {
+  document.body.appendChild(element);
+}
