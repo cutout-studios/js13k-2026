@@ -1,9 +1,21 @@
-import { dom } from "~projections/dom.ts";
+import { dom, pipeline } from "~projections";
+import { render } from "~webgpu";
 
-const html = dom(
-  <h1>Hello, World!</h1>
+import { frameLoop } from "./frameLoop.js";
+
+const canvas = dom(
+  <canvas></canvas>,
 );
 
-for(const element of html) {
+const html = dom(
+  <>
+    <h1>Hello, World!</h1>
+    {canvas}
+  </>,
+);
+
+for (const element of html) {
   document.body.appendChild(element);
 }
+
+frameLoop(() => render(canvas, pipeline(/* TODO */)));

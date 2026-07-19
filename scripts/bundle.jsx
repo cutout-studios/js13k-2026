@@ -14,13 +14,19 @@ const APP_OUTPUT_COMPRESSED = `${APP_OUTPUT}.br`;
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-const { outputFiles: [source] } = await Deno.bundle({
+const _result = await Deno.bundle({
   entrypoints: [APP_ENTRYPOINT],
   outputDir: OUTPUT_DIR,
   platform: "browser",
   minify: true,
   write: false,
 });
+
+if (_result.errors.length) {
+  console.error({ errors: _result.errors });
+}
+
+const { outputFiles: [source] } = _result;
 
 Deno.writeTextFileSync(APP_OUTPUT_JS, source.text());
 

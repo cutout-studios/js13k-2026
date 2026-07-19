@@ -14,6 +14,7 @@
     "@std/fmt": "jsr:@std/fmt",
     "roadroller": "npm:roadroller",
     "brotli": "npm:brotli",
-    "~projections/": "./libraries/projections/"
+    "~projections": "./libraries/projections/module.js",
+    "~webgpu": "./libraries/webgpu/module.js"
   }
 }
