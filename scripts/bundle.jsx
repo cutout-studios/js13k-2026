@@ -1,7 +1,8 @@
 import { format } from "@std/fmt/bytes";
 import { rawText } from "@cutout/jsx/projections";
 import { Packer } from "roadroller";
-import brotli from "brotli";
+
+const JS13K_LIMIT = 13_312;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
@@ -10,7 +11,7 @@ const APP_ENTRYPOINT = `./${APP_DIR}/module.jsx`;
 const APP_OUTPUT_JS = `./${OUTPUT_DIR}/module.js`;
 const APP_OUTPUT_RR = `./${OUTPUT_DIR}/module.rr.js`;
 const APP_OUTPUT = `./${OUTPUT_DIR}/index.html`;
-const APP_OUTPUT_COMPRESSED = `${APP_OUTPUT}.br`;
+const APP_OUTPUT_COMPRESSED = `${APP_OUTPUT}.zip`;
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -46,31 +47,41 @@ Deno.writeTextFileSync(APP_OUTPUT_RR, firstLine + "\n" + secondLine);
 
 logSize(APP_OUTPUT_RR);
 
+const appOutputText = rawText(
+  <body>
+    <script>
+      {firstLine}
+      {secondLine}
+    </script>
+  </body>,
+);
+
 Deno.writeTextFileSync(
   APP_OUTPUT,
-  rawText(
-    <body>
-      <script>
-        {firstLine}
-        {secondLine}
-      </script>
-    </body>,
-  ),
+  appOutputText,
 );
 
 logSize(APP_OUTPUT);
 
-Deno.writeFileSync(
-  APP_OUTPUT_COMPRESSED,
-  brotli.compress(Deno.readFileSync(APP_OUTPUT)),
-);
+const zip = await new Deno.Command("advzip", {
+  args: ["-a", "-4", APP_OUTPUT_COMPRESSED, APP_OUTPUT],
+}).output();
+
+if (!zip.success) {
+  console.error(new TextDecoder().decode(zip.stderr));
+}
 
 logSize(APP_OUTPUT_COMPRESSED);
 
 function logSize(filePath) {
+  const { size } = Deno.statSync(filePath);
+
   console.log(
-    `%c${filePath}: %c${format(Deno.statSync(filePath).size)}`,
+    `%c${filePath}: %c${format(size)} %c(${
+      ((size / JS13K_LIMIT) * 100).toFixed(2)
+    }%)`,
     "color: grey;",
     "color: cyan;",
+    "color: white;",
   );
 }

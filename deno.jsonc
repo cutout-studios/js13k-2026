@@ -4,7 +4,8 @@
     "jsxImportSource": "@cutout/jsx"
   },
   "tasks": {
-    "bundle": "deno run --unstable-bundle --allow-write --allow-read ./scripts/bundle.jsx",
+    "setup": "brew bundle",
+    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run ./scripts/bundle.jsx",
     "clean": "rm -rf .output",
     "open": "open .output/index.html"
   },
@@ -13,7 +14,6 @@
     "@cutout/store": "jsr:@cutout/store",
     "@std/fmt": "jsr:@std/fmt",
     "roadroller": "npm:roadroller",
-    "brotli": "npm:brotli",
     "~projections": "./libraries/projections/module.js",
     "~webgpu": "./libraries/webgpu/module.js"
   }

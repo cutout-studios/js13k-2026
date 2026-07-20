@@ -1,15 +1,9 @@
 # js13k 2026
 
-## Build
-
 ```
+deno task setup
 deno task bundle
-```
-
-## Run
-
-```
-open .output/index.html
+deno task open
 ```
 
 ---
@@ -21,4 +15,6 @@ open .output/index.html
 
 ### Maybe
 
+- [ ] Deno watch loop
 - [ ] Escape `wgsl` template literal
+- [ ] Switch to `ect` from `advzip` - a bit better, but have to manually compile
