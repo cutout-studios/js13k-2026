@@ -3,7 +3,7 @@
 // to be applied
 
 const BIN_TO_BYTES = 8;
-const FLOAT_32_BIN = 32
+const FLOAT_32_BIN = 32;
 const FLOAT_32_BYTES = FLOAT_32_BIN / BIN_TO_BYTES;
 
 const TRANSFORM_WIDTH = 4;
@@ -154,7 +154,10 @@ function _setColumn(transform, columnIndex, column) {
   return new Float32Array([
     ...transform.slice(0, columnIndex * TRANSFORM_WIDTH),
     ...column,
-    ...transform.slice(columnIndex * TRANSFORM_WIDTH + TRANSFORM_WIDTH, TRANSFORM_SIZE),
+    ...transform.slice(
+      columnIndex * TRANSFORM_WIDTH + TRANSFORM_WIDTH,
+      TRANSFORM_SIZE,
+    ),
   ]);
 }
 

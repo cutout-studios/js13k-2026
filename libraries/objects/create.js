@@ -9,4 +9,4 @@ export const create = () => {
   //   material: getDefaultMaterial(),
   //   transform: DEFAULT_TRANSFORM
   // }
-}
+};

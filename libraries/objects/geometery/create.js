@@ -10,6 +10,6 @@ export const create = (vertexArray) => {
 
   return {
     data,
-    count: 0
-  }
-}
+    count: 0,
+  };
+};

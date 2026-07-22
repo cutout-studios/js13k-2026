@@ -25,7 +25,7 @@ export const getRenderTargets = (canvas) => {
       depthStoreOp: "store",
     },
   };
-}
+};
 
 function _ensureContext(canvas) {
   if (context) return context;
