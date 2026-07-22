@@ -68,7 +68,6 @@ export const getDefault = () => {
       targets: [{ format }],
     },
     primitive: {
-      // TODO: depends on "winding" (normals?)
       cullMode: "back",
     },
     depthStencil: {

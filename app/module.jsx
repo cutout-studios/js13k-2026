@@ -1,21 +1,24 @@
-import { dom, scene } from "~projections";
 import { render } from "~webgpu";
+import { createObject, createRotationTransform } from "~objects";
 
 import { frameLoop } from "./frameLoop.js";
-
-const canvas = dom(
-  <canvas></canvas>,
-);
-
-const html = dom(
-  <>
-    <h1>Hello, World!</h1>
-    {canvas}
-  </>,
-);
+import { canvas, html } from "./html.jsx";
 
 for (const element of html) {
   document.body.appendChild(element);
 }
 
-frameLoop(() => render(canvas, scene(/* TODO */)));
+frameLoop(() => {
+  const [objects, now] = [[], Date.now()];
+
+  objects.push(
+    createObject({
+      transform: createRotationTransform(
+        [Math.sin(now), Math.cos(now), 0],
+        Math.PI / 2,
+      ),
+    }),
+  );
+
+  render(canvas, objects);
+});

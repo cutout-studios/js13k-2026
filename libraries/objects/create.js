@@ -1,12 +1,14 @@
-// import { create as createGeometery } from "./geometery/create.js";
-// import { getDefault as getDefaultMaterial } from "./materials/default.js";
-// import { DEFAULT_TRANSFORM } from "./transforms/all.js";
+import { DEFAULT_TRANSFORM, getDefaultMaterial } from "~objects";
+import { cube } from "./geometery/cube.js";
 
-export const create = () => {
-  // TODO
-  // return {
-  //   geometery: createGeometery(),
-  //   material: getDefaultMaterial(),
-  //   transform: DEFAULT_TRANSFORM
-  // }
-};
+export const create = (
+  {
+    geometery = cube(),
+    material = getDefaultMaterial(),
+    transform = DEFAULT_TRANSFORM,
+  },
+) => ({
+  geometery,
+  material,
+  transform,
+});
