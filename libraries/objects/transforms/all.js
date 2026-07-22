@@ -2,13 +2,13 @@
 // These transforms are then composed/combined to create the final effect
 // to be applied
 
-// TODO: Float32Array?
 const BIN_TO_BYTES = 8;
 const FLOAT_32_BIN = 32
 const FLOAT_32_BYTES = FLOAT_32_BIN / BIN_TO_BYTES;
 
 const TRANSFORM_WIDTH = 4;
-const TRANSFORM_SIZE = TRANSFORM_WIDTH * TRANSFORM_WIDTH;
+export const TRANSFORM_FORMAT = `float${FLOAT_32_BIN}x${TRANSFORM_WIDTH}`;
+export const TRANSFORM_SIZE = TRANSFORM_WIDTH * TRANSFORM_WIDTH;
 export const TRANSFORM_BYTES = TRANSFORM_SIZE * FLOAT_32_BYTES;
 
 // const X_AXIS_COLUMN_INDEX = 0;
@@ -23,12 +23,12 @@ const Z_AXIS_VECTOR = [0, 0, 1];
 const ORIGIN_COLUMN_INDEX = 3;
 const ORIGIN_COORDINATES = [0, 0, 0];
 
-const IDENTITY_TRANSFORM = [
+export const IDENTITY_TRANSFORM = new Float32Array([
   ..._createVectorColumn(X_AXIS_VECTOR),
   ..._createVectorColumn(Y_AXIS_VECTOR),
   ..._createVectorColumn(Z_AXIS_VECTOR),
   ..._createCoordinateColumn(ORIGIN_COORDINATES),
-];
+]);
 
 // transform factories
 export const createTranslationTransform = (coordinates) =>
@@ -151,11 +151,11 @@ function _getColumn(transform, columnIndex) {
 }
 
 function _setColumn(transform, columnIndex, column) {
-  return [
+  return new Float32Array([
     ...transform.slice(0, columnIndex * TRANSFORM_WIDTH),
     ...column,
     ...transform.slice(columnIndex * TRANSFORM_WIDTH + TRANSFORM_WIDTH, TRANSFORM_SIZE),
-  ];
+  ]);
 }
 
 function _getRow(transform, rowIndex) {

@@ -1,4 +1,4 @@
-import { device } from "./system.js";
+import webgpu from "~webgpu";
 
 export function wgsl(strings, ...values) {
   let code = "";
@@ -8,5 +8,5 @@ export function wgsl(strings, ...values) {
     if (values[index]) code += String(values[index]);
   }
 
-  return device.createShaderModule({ code });
+  return webgpu.createShaderModule({ code });
 }

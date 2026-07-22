@@ -11,8 +11,10 @@ deno task open
 ## TODOs
 
 - [x] Research the parts of the basic WebGPU API I don't remember.
-- [~] Render function.
+- [x] Render function.
 - [ ] Geometery builder.
+- [ ] Basic controls.
+- [ ] Camera.
 
 ### Maybe
 

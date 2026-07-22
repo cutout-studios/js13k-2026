@@ -1,5 +1,6 @@
-// object -> model, size, frame
+import { createObject } from "~objects";
 
-export function scene() {
-  // => list of "objects"
+export function scene(jsx) {
+  // TODO
+  return [createObject(jsx)];
 }
