@@ -1,6 +1,6 @@
 import system from "./system.js";
-import { TRANSFORM_BYTES, getDefaultMaterial } from "~objects";
 
+const TRANSFORM_BYTES = 64;
 const TRANSFORM_DATA_GROUP_INDEX = 0;
 const TRANSFORM_DATA_INSTANCE_INDEX = 0;
 
@@ -8,7 +8,7 @@ const VERTEX_DATA_INDEX = 0;
 
 export const loadObject = (
   loader,
-  { geometry, transform, material = getDefaultMaterial() },
+  { geometry, transform, material },
 ) => {
   loader.setPipeline(material);
   loader.setBindGroup(
