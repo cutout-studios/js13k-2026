@@ -1,6 +1,12 @@
-import { device } from "./device.js";
+import { device } from "./system.js";
 
-// TODO: escape? I probably don't care
-export function wgsl([code]) {
+export function wgsl(strings, ...values) {
+  let code = "";
+
+  for(const index in strings) {
+    code += strings[index];
+    if (values[index]) code += String(values[index]);
+  }
+
   return device.createShaderModule({ code });
 }

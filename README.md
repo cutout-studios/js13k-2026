@@ -10,8 +10,9 @@ deno task open
 
 ## TODOs
 
-- [ ] Research the parts of the basic WebGPU API I don't remember.
-- [ ] Design the pipeline projection.
+- [x] Research the parts of the basic WebGPU API I don't remember.
+- [~] Render function.
+- [ ] Geometery builder.
 
 ### Maybe
 

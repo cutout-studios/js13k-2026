@@ -1,73 +1,64 @@
-import { device } from "./device.js";
-import { format } from "./gpu.js";
+import system, { format } from "./system.js";
 
-const BIN_SPACE = 2;
-const FRAME_DATA_INDEX = 0;
-const STENCIL_FORMAT = "depth24plus-stencil8";
+const TRANSFORM_DATA_INDEX = 0;
+const VERTEX_DATA_INDEX = 0;
+const DEPTH_PIXELS_FORMAT = "depth24plus-stencil8"; // TODO: do I need stencil?
 const CLEAR_COLOR = [0, 0, 0, 0];
 
 let context;
-let previousCanvas;
 export function render(canvas, objects) {
-  if (canvas !== previousCanvas || !context) {
+  if (!context) {
     previousCanvas = canvas;
     context = canvas.getContext("webgpu");
-    context.configure({ device, format });
+    context.configure({ device: system, format });
   }
 
-  const pipeline = device.createRenderPipeline(_getPipelineDescriptor());
-  const commandEncoder = device.createCommandEncoder();
-  const renderPass = commandEncoder.beginRenderPass(
-    _getRenderPassDescriptor(
-      canvas.getCurrentTexture().createView(),
-      device.createTexture({
-        size: [canvas.width, canvas.height],
-        format: "depth24plus-stencil8",
-        usage: GPUTextureUsage.RENDER_ATTACHMENT,
-      }),
-    ),
-  );
+  const pipeline = system.createRenderPipeline(_getPipelineDescriptor());
+  const commandEncoder = system.createCommandEncoder();
+  const renderPass = commandEncoder.beginRenderPass(_getRenderTargets(canvas));
 
   renderPass.setPipeline(pipeline);
   renderPass.setBindGroup(
-    FRAME_DATA_INDEX,
-    _getFrameDataAllocation(pipeline, objects.length),
+    TRANSFORM_DATA_INDEX,
+    _getTransformAllocation(pipeline, objects.length),
   );
 
   for (const object of objects) {
-    renderPass.setBindGroup(FRAME_DATA_INDEX, object.frame); // ?
-    renderPass.draw(object.size);
+    _loadObject(renderPass, object);
+    renderPass.draw(object.geometry.verticies.count);
   }
 
   renderPass.end();
-  device.queue.submit([commandEncoder.finish()]);
+  system.queue.submit([commandEncoder.finish()]);
+}
+
+// TODO: fragment shader?
+function _loadObject(renderPass, { geometry, transform }) {
+  renderPass.setBindGroup(TRANSFORM_DATA_INDEX, transform);
+  renderPass.setVertexBuffer(VERTEX_DATA_INDEX, geometry.verticies.data);
 }
 
 function _getPipelineDescriptor() {
   return {
     layout: "auto",
     vertex: wgsl`
-        struct Uniforms {
-          modelViewProjectionMatrix: mat4x4f,
+        struct Transforms {
+          transform: mat4x4f,
         }
 
-        @binding(${FRAME_DATA_INDEX}) @group(0) var<uniform> uniforms: Uniforms;
         struct VertexOutput {
           @builtin(position) Position: vec4f,
-          @location(0) fragUV: vec2f,
-          @location(1) fragPosition: vec4f,
         }
 
+        @binding(${TRANSFORM_DATA_INDEX})
+        @group(0) 
+        var<uniform> object: Transforms;
+
         @vertex
-        fn main(
-          @location(0) position: vec4f,
-          @location(1) uv: vec2f
-        ) -> VertexOutput {
+        fn main(@location(0) position: vec4f) -> VertexOutput {
           var output: VertexOutput;
 
-          output.Position = uniforms.modelViewProjectionMatrix * position;
-          output.fragUV = uv;
-          output.fragPosition = 0.5 * (position + vec4(1.0, 1.0, 1.0, 1.0));
+          output.Position = object.transform * position;
 
           return output;
         }
@@ -75,11 +66,8 @@ function _getPipelineDescriptor() {
     fragment: {
       ...wgsl`
         @fragment
-        fn main(
-          @location(0) fragUV: vec2f,
-          @location(1) fragPosition: vec4f
-        ) -> @location(0) vec4f {
-          return fragPosition;
+        fn main(@builtin(position) Position: vec4f) -> @location(0) vec4f {
+          return 0.5 * (position + vec4(1.0, 1.0, 1.0, 1.0));
         }
       `,
       targets: [{ format }],
@@ -90,46 +78,58 @@ function _getPipelineDescriptor() {
     depthStencil: {
       depthWriteEnabled: true,
       depthCompare: "less",
-      format: STENCIL_FORMAT,
+      format: DEPTH_PIXELS_FORMAT,
     },
   };
 }
 
-let frameData;
-let frameCount = 0;
-function _getFrameDataAllocation(pipeline, objectCount = 1) {
-  if (frameCount >= objectCount && frameData) return frameData;
+let transformData;
+const PAGE_SIZE = 256;
+function _getTransformAllocation(pipeline) {
+  if (transformData) return transformData;
 
-  let nextPow2 = BIN_SPACE;
-  while (nextPow2 < objectCount) nextPow2 **= BIN_SPACE;
-
-  frameCount = nextPow2;
-  const buffer = device.createBuffer({
-    size: nextPow2 * FRAME_BYTES,
+  const buffer = system.createBuffer({
+    size: PAGE_SIZE,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
 
-  return (frameData = device.createBindGroup({
-    layout: pipeline.getBindGroupLayout(FRAME_DATA_INDEX),
-    entries: [{ binding: FRAME_DATA_INDEX, resource: { buffer } }],
+  return (transformData = system.createBindGroup({
+    layout: pipeline.getBindGroupLayout(TRANSFORM_DATA_INDEX),
+    entries: [{ binding: TRANSFORM_DATA_INDEX, resource: { buffer } }],
   }));
 }
 
-function _getRenderPassDescriptor(textureView, depthView) {
+function _getRenderTargets(canvas) {
   return {
-    colorAttachments: [ // TODO: ?
+    colorAttachments: [ // Main, user-facing pixels
       {
-        view: textureView,
+        view: canvas.getCurrentTexture().createView(),
         clearValue: CLEAR_COLOR,
         loadOp: "clear",
         storeOp: "store",
       },
     ],
-    depthStencilAttachment: {
-      view: depthView,
+    depthStencilAttachment: { // Depth computation pixels
+      view: _getDepthView(canvas),
       depthClearValue: 1,
       depthLoadOp: "clear",
       depthStoreOp: "store",
     },
   };
 }
+
+let depthView;
+let hasResized = false;
+function _getDepthView(canvas) {
+  if (depthView && !hasResized) return depthView;
+
+  hasResized = false;
+
+  return (depthView = system.createTexture({
+    size: [canvas.width, canvas.height],
+    format: DEPTH_PIXELS_FORMAT,
+    usage: GPUTextureUsage.RENDER_ATTACHMENT,
+  }));
+}
+
+globalThis.addEventListener("resize", () => hasResized = true);

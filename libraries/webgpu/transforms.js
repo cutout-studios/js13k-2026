@@ -1,13 +1,15 @@
-// A "frame" is a 4x4 matrix kernel meant to distort local space in some way
-// These frames are then composed/combined to create the final effect
+// A "transform" is a 4x4 matrix kernel meant to distort local space in some way
+// These transforms are then composed/combined to create the final effect
 // to be applied
 
-const FRAME_WIDTH = 4;
-const FRAME_SIZE = FRAME_WIDTH * FRAME_WIDTH;
+// TODO: Float32Array?
 const BIN_TO_BYTES = 8;
 const FLOAT_32_BIN = 32
 const FLOAT_32_BYTES = FLOAT_32_BIN / BIN_TO_BYTES;
-export const FRAME_BYTES = FRAME_SIZE * FLOAT_32_BYTES;
+
+const TRANSFORM_WIDTH = 4;
+const TRANSFORM_SIZE = TRANSFORM_WIDTH * TRANSFORM_WIDTH;
+export const TRANSFORM_BYTES = TRANSFORM_SIZE * FLOAT_32_BYTES;
 
 // const X_AXIS_COLUMN_INDEX = 0;
 const X_AXIS_VECTOR = [1, 0, 0];
@@ -21,23 +23,23 @@ const Z_AXIS_VECTOR = [0, 0, 1];
 const ORIGIN_COLUMN_INDEX = 3;
 const ORIGIN_COORDINATES = [0, 0, 0];
 
-const IDENTITY_FRAME = [
+const IDENTITY_TRANSFORM = [
   ..._createVectorColumn(X_AXIS_VECTOR),
   ..._createVectorColumn(Y_AXIS_VECTOR),
   ..._createVectorColumn(Z_AXIS_VECTOR),
   ..._createCoordinateColumn(ORIGIN_COORDINATES),
 ];
 
-// frame factories
-export const createTranslationFrame = (coordinates) =>
+// transform factories
+export const createTranslationTransform = (coordinates) =>
   _setColumn(
-    IDENTITY_FRAME,
+    IDENTITY_TRANSFORM,
     ORIGIN_COLUMN_INDEX,
     _createCoordinateColumn(coordinates),
   );
 
-export const createRotationFrame = (axisVector, amount) => {
-  let result = [...IDENTITY_FRAME];
+export const createRotationTransform = (axisVector, amount) => {
+  let result = [...IDENTITY_TRANSFORM];
   const normalizedAxis = _normalize(axisVector);
   const [sin, cos] = [Math.sin(amount), Math.cos(amount)];
 
@@ -65,7 +67,7 @@ export const createRotationFrame = (axisVector, amount) => {
   return result;
 };
 
-export function createOrientationFrame(pointFrom, pointTo) {
+export function createOrientationTransform(pointFrom, pointTo) {
   const z = _normalize(subtract(pointFrom, pointTo));
   const x = _normalize(_crossProduct(Y_AXIS_VECTOR, z));
   const y = _crossProduct(z, y);
@@ -79,7 +81,7 @@ export function createOrientationFrame(pointFrom, pointTo) {
 }
 
 const DEFAULT_SAFETY_CROP = 1;
-export function createPerspectiveFrame(
+export function createPerspectiveTransform(
   aspectRatio,
   viewingAngle,
   safetyCrop = DEFAULT_SAFETY_CROP,
@@ -96,23 +98,23 @@ export function createPerspectiveFrame(
   ];
 }
 
-// frame operations
-export const combine = (...frames) =>
-  frames.reduce((left, right) =>
+// transform operations
+export const combine = (...transforms) =>
+  transforms.reduce((left, right) =>
     left.map((value, index) => value + right[index])
   );
 
-export const subtract = (...frames) =>
-  frames.reduce((left, right) =>
+export const subtract = (...transforms) =>
+  transforms.reduce((left, right) =>
     left.map((value, index) => value - right[index])
   );
 
-export const compose = (...frames) =>
-  frames.reduce((left, right) => {
+export const compose = (...transforms) =>
+  transforms.reduce((left, right) => {
     const result = [];
 
-    _times(FRAME_WIDTH, (columnIndex) => {
-      _times(FRAME_WIDTH, (rowIndex) => {
+    _times(TRANSFORM_WIDTH, (columnIndex) => {
+      _times(TRANSFORM_WIDTH, (rowIndex) => {
         _setCell(
           result,
           columnIndex,
@@ -139,28 +141,28 @@ function _createCoordinateColumn(coordinates) {
   return [...coordinates, ARE_COORDINATES];
 }
 
-function _setCell(frame, column, row, value) {
-  frame[column * FRAME_WIDTH + row] = value;
+function _setCell(transform, column, row, value) {
+  transform[column * TRANSFORM_WIDTH + row] = value;
 }
 
-function _getColumn(frame, columnIndex) {
-  const start = columnIndex * FRAME_WIDTH;
-  return frame.slice(start, start + FRAME_WIDTH);
+function _getColumn(transform, columnIndex) {
+  const start = columnIndex * TRANSFORM_WIDTH;
+  return transform.slice(start, start + TRANSFORM_WIDTH);
 }
 
-function _setColumn(frame, columnIndex, column) {
+function _setColumn(transform, columnIndex, column) {
   return [
-    ...frame.slice(0, columnIndex * FRAME_WIDTH),
+    ...transform.slice(0, columnIndex * TRANSFORM_WIDTH),
     ...column,
-    ...frame.slice(columnIndex * FRAME_WIDTH + FRAME_WIDTH, FRAME_SIZE),
+    ...transform.slice(columnIndex * TRANSFORM_WIDTH + TRANSFORM_WIDTH, TRANSFORM_SIZE),
   ];
 }
 
-function _getRow(frame, rowIndex) {
+function _getRow(transform, rowIndex) {
   const result = [];
   _times(
-    FRAME_WIDTH,
-    (index) => result.push(frame[rowIndex + FRAME_WIDTH * index]),
+    TRANSFORM_WIDTH,
+    (index) => result.push(transform[rowIndex + TRANSFORM_WIDTH * index]),
   );
   return result;
 }
