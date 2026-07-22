@@ -1,18 +1,22 @@
 import { create } from "./create.js";
 import { quadrangle } from "./polygons.js";
 
-const CUBE_FACE_COUNT = 6;
-export const cube = () => {
-  const faces = [/* TODO: INIT FACE */];
-  let direction = "down";
-  while (faces.length < CUBE_FACE_COUNT) {
-    faces.push(
-      direction === "down"
-        ? [] // TODO
-        : [], // TODO
-    );
+const FACE_COUNT = 6;
+const FRONT_FACE = [
+  [-1, -1, 1],
+  [1, -1, 1],
+  [1, 1, 1],
+  [-1, 1, 1],
+];
 
-    direction = direction === "down" ? "right" : "down";
+export const cube = () => {
+  const faces = [FRONT_FACE];
+  let down = true; // true = roll right
+  while (faces.length < FACE_COUNT) {
+    faces.push(
+      faces.at(-1).map(([x, y, z]) => down ? [x, z, -y] : [z, y, -x]),
+    );
+    down = !down;
   }
 
   const triangles = [];
@@ -22,14 +26,3 @@ export const cube = () => {
 
   return create(triangles);
 };
-
-/*
-
-  *
-  _
-  * | *
-      _
-      * | *
-          _
-          *
-*/
