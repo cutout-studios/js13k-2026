@@ -1,4 +1,4 @@
-import { dom, pipeline } from "~projections";
+import { dom, scene } from "~projections";
 import { render } from "~webgpu";
 
 import { frameLoop } from "./frameLoop.js";
@@ -18,4 +18,4 @@ for (const element of html) {
   document.body.appendChild(element);
 }
 
-frameLoop(() => render(canvas, pipeline(/* TODO */)));
+frameLoop(() => render(canvas, scene(/* TODO */)));

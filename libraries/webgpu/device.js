@@ -4,9 +4,7 @@ if (!gpu) {
   throw new Error("WebGPU not supported.");
 }
 
-const adapter = await gpu.requestAdapter({
-  featureLevel: "compatibility", // TODO: ?
-});
+const adapter = await gpu.requestAdapter();
 
 if (!adapter) {
   throw new Error("Could not request adapter.");

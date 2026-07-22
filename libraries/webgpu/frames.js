@@ -4,6 +4,10 @@
 
 const FRAME_WIDTH = 4;
 const FRAME_SIZE = FRAME_WIDTH * FRAME_WIDTH;
+const BIN_TO_BYTES = 8;
+const FLOAT_32_BIN = 32
+const FLOAT_32_BYTES = FLOAT_32_BIN / BIN_TO_BYTES;
+export const FRAME_BYTES = FRAME_SIZE * FLOAT_32_BYTES;
 
 // const X_AXIS_COLUMN_INDEX = 0;
 const X_AXIS_VECTOR = [1, 0, 0];
@@ -74,7 +78,7 @@ export function createOrientationFrame(pointFrom, pointTo) {
   ];
 }
 
-const DEFAULT_SAFETY_CROP = 0.1;
+const DEFAULT_SAFETY_CROP = 1;
 export function createPerspectiveFrame(
   aspectRatio,
   viewingAngle,

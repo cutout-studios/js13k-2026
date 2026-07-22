@@ -1,2 +1,2 @@
 export * from "./dom.ts";
-export * from "./pipeline.js";
+export * from "./scene.js";
