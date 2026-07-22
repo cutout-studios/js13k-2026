@@ -1,11 +1,12 @@
-import { create as createGeometery } from "./geometery/create.js";
-import { IDENTITY_TRANSFORM } from "./transforms/all.js";
+// import { create as createGeometery } from "./geometery/create.js";
+// import { getDefault as getDefaultMaterial } from "./materials/default.js";
+// import { DEFAULT_TRANSFORM } from "./transforms/all.js";
 
-// TODO
 export const create = () => {
-  return {
-    geometery: createGeometery(/* TODO */),
-    material: null, // just default for now
-    transform: IDENTITY_TRANSFORM
-  }
+  // TODO
+  // return {
+  //   geometery: createGeometery(),
+  //   material: getDefaultMaterial(),
+  //   transform: DEFAULT_TRANSFORM
+  // }
 }

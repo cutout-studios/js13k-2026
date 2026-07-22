@@ -23,7 +23,7 @@ const Z_AXIS_VECTOR = [0, 0, 1];
 const ORIGIN_COLUMN_INDEX = 3;
 const ORIGIN_COORDINATES = [0, 0, 0];
 
-export const IDENTITY_TRANSFORM = new Float32Array([
+export const DEFAULT_TRANSFORM = new Float32Array([
   ..._createVectorColumn(X_AXIS_VECTOR),
   ..._createVectorColumn(Y_AXIS_VECTOR),
   ..._createVectorColumn(Z_AXIS_VECTOR),
@@ -33,13 +33,13 @@ export const IDENTITY_TRANSFORM = new Float32Array([
 // transform factories
 export const createTranslationTransform = (coordinates) =>
   _setColumn(
-    IDENTITY_TRANSFORM,
+    DEFAULT_TRANSFORM,
     ORIGIN_COLUMN_INDEX,
     _createCoordinateColumn(coordinates),
   );
 
 export const createRotationTransform = (axisVector, amount) => {
-  let result = [...IDENTITY_TRANSFORM];
+  let result = [...DEFAULT_TRANSFORM];
   const normalizedAxis = _normalize(axisVector);
   const [sin, cos] = [Math.sin(amount), Math.cos(amount)];
 
