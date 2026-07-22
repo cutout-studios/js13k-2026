@@ -1,14 +1,12 @@
 export const gpu = globalThis.navigator.gpu;
 export const format = gpu.getPreferredCanvasFormat();
 
-if (!gpu) {
-  throw new Error("WebGPU not supported.");
-}
+const no = () => alert("WEBGPU ONLY.");
+
+if (!gpu) no();
 
 const adapter = await gpu.requestAdapter();
 
-if (!adapter) {
-  throw new Error("Could not request adapter.");
-}
+if (!adapter) no();
 
 export default await adapter.requestDevice();
