@@ -17,7 +17,7 @@
     "~common": "./libraries/common.ts",
     "~projections": "./libraries/projections/module.js",
     "~graphics": "./libraries/graphics/module.js",
-    "~objects": "./libraries/objects/module.js",
+    "~objects": "./libraries/objects/module.ts",
     "~audio": "./libraries/audio/module.js"
   }
 }

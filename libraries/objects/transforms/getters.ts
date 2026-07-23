@@ -1,14 +1,12 @@
-import { doTimes, type XYZ } from "~common";
+import { doTimes, type Transform, TRANSFORM_WIDTH, type XYZ } from "~common";
 import {
   DEFAULT_ORIGIN,
   DEFAULT_X_AXIS,
   DEFAULT_Y_AXIS,
   DEFAULT_Z_AXIS,
-  TRANSFORM_WIDTH,
   XYZ_WIDTH,
 } from "./constants.ts";
 import { createTransform } from "./create.ts";
-import { Transform } from "./types.ts";
 
 export const getDefault = () =>
   createTransform(

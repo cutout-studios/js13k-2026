@@ -1,4 +1,4 @@
-import { doTimes, type XYZ } from "~common";
+import { doTimes, type Transform, type XYZ } from "~common";
 import {
   DEFAULT_ORIGIN,
   DEFAULT_Y_AXIS,
@@ -8,7 +8,6 @@ import {
 import { crossProduct } from "./crossProduct.ts";
 import { getDefault } from "./getters.ts";
 import { normalize } from "./normalize.ts";
-import { Transform } from "./types.ts";
 import { setColumn } from "./setters.ts";
 import {
   DEFAULT_PERSPECTIVE_SAFETY_CROP,

@@ -9,4 +9,4 @@ const adapter = await gpu.requestAdapter();
 
 if (!adapter) no();
 
-export default await adapter.requestDevice();
+export const system = await adapter!.requestDevice();

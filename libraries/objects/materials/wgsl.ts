@@ -1,4 +1,4 @@
-import graphics from "~graphics";
+import { system as graphics } from "~graphics";
 
 export function wgsl(
   strings: TemplateStringsArray,

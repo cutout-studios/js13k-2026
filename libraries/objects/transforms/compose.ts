@@ -1,7 +1,5 @@
-import { doTimes } from "~common";
-import { Transform } from "./types.ts";
+import { doTimes, type Transform, TRANSFORM_WIDTH } from "~common";
 import { dotProduct } from "./dotProduct.ts";
-import { TRANSFORM_WIDTH } from "./constants.ts";
 import { getColumn, getRow } from "./getters.ts";
 
 export const compose = (...transforms: Transform[]): Transform =>

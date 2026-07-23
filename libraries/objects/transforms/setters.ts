@@ -1,8 +1,13 @@
-import { TRANSFORM_WIDTH } from "./constants.ts";
+import { doTimes, type Transform, TRANSFORM_WIDTH, type XYZ } from "~common";
 import { createTransform } from "./create.ts";
 import { getColumn } from "./getters.ts";
-import { doTimes, type XYZ } from "~common";
-import { Transform, TransformCreationArguments } from "./types.ts";
+
+type TransformComponents = [
+  xAxis: XYZ,
+  yAxis: XYZ,
+  zAxis: XYZ,
+  origin: XYZ,
+];
 
 export const setColumn = (
   transform: Transform,
@@ -13,5 +18,5 @@ export const setColumn = (
     ...(doTimes(TRANSFORM_WIDTH, (index) =>
       index === setIndex
         ? getColumn(transform, index)
-        : column) as TransformCreationArguments),
+        : column) as TransformComponents),
   );

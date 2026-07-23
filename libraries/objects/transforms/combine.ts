@@ -1,4 +1,4 @@
-import { Transform } from "./types.ts";
+import { Transform } from "~common";
 
 export const combine = (...transforms: Transform[]) =>
   transforms.reduce((left, right) =>

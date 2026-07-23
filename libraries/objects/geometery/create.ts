@@ -1,7 +1,7 @@
-import system from "~graphics";
+import { XYZ } from "~common";
+import { system } from "~graphics";
 
 import { VERTICIES_PER_TRIANGLE } from "./polygons.ts";
-import { XYZ } from "~common";
 
 export const create = (verticies: XYZ[]) => ({
   data: _allocVertexData(new Float32Array(verticies.flat())),

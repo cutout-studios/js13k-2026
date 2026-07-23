@@ -1,14 +1,15 @@
-import graphics, { format } from "~graphics";
-import { TRANSFORM_FORMAT, TRANSFORM_SIZE } from "../transforms/constants.ts";
+import {
+  DEPTH_PIXELS_FORMAT,
+  TRANSFORM_DATA_GROUP_INDEX,
+  TRANSFORM_DATA_INSTANCE_INDEX,
+  TRANSFORM_FORMAT,
+  TRANSFORM_SIZE,
+} from "~common";
+import { format, system as graphics } from "~graphics";
 import { wgsl } from "./wgsl.ts";
 
-const TRANSFORM_DATA_GROUP_INDEX = 0;
-const TRANSFORM_DATA_INSTANCE_INDEX = 0;
-
-const DEPTH_PIXELS_FORMAT = "depth24plus";
-
 let defaultMaterial: GPURenderPipeline | undefined;
-export const getDefault = () => {
+export const getDefault = (): GPURenderPipeline => {
   if (defaultMaterial) return defaultMaterial;
 
   const transformLayout = graphics.createBindGroupLayout({
