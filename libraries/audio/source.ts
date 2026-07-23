@@ -10,8 +10,8 @@ export const create = (type: OscillatorType, envelope = [[0, 0], [0, 1]]) => {
   oscillator.type = type;
   oscillator.connect(ampKnob).connect(panKnob).connect(system.destination);
 
-  const _play = (frequency: number, durationS: number, direction: number) => {
-    const startTimeS = system.currentTime;
+  const _play = (frequency: number, durationS: number, delayS: number, direction: number) => {
+    const startTimeS = system.currentTime + delayS;
 
     oscillator.frequency.value = frequency;
 
@@ -30,6 +30,6 @@ export const create = (type: OscillatorType, envelope = [[0, 0], [0, 1]]) => {
     oscillator.stop(startTimeS + durationS);
   };
 
-  return (frequencies = [], durationS: number, direction = 0) =>
-    frequencies.forEach((frequency) => _play(frequency, durationS, direction));
+  return (frequencies = [], durationS: number, delayS = 0, direction = 0) =>
+    frequencies.forEach((frequency) => _play(frequency, durationS, delayS, direction));
 };

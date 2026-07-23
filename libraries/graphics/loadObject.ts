@@ -5,20 +5,21 @@ import {
   TRANSFORM_DATA_GROUP_INDEX,
   TRANSFORM_DATA_INSTANCE_INDEX,
   VERTEX_DATA_INDEX,
+  type XYZ,
 } from "~common";
 
 import { system } from "./system.ts";
 
 export const loadObject = (
   loader: GPURenderPassEncoder,
-  { geometry: geometery, transform, material }: Object,
+  { geometry, transform, material }: Object,
 ) => {
   loader.setPipeline(material);
   loader.setBindGroup(
     TRANSFORM_DATA_GROUP_INDEX,
     _getTransformDataLocation(transform, material),
   );
-  loader.setVertexBuffer(VERTEX_DATA_INDEX, geometery.data);
+  loader.setVertexBuffer(VERTEX_DATA_INDEX, _allocateVerticies(geometry));
 };
 
 const _transformDataLocations = new WeakMap();
@@ -45,4 +46,20 @@ function _getTransformDataLocation(
   _transformDataLocations.set(transform, dataAddress);
 
   return dataAddress;
+}
+
+function _allocateVerticies(verticies: XYZ[]) {
+  const vertexData = new Float32Array(verticies.flat());
+
+  const pointerBuffer = system.createBuffer({
+    size: vertexData.byteLength,
+    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_SRC,
+    mappedAtCreation: true,
+  });
+
+  // NOTE: best for one-time writes vs. "system.queue.writeBuffer"
+  new Float32Array(pointerBuffer.getMappedRange()).set(vertexData);
+  pointerBuffer.unmap();
+
+  return pointerBuffer;
 }

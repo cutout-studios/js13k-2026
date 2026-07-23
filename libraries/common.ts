@@ -3,10 +3,7 @@ export type XYZ = [x: number, y: number, z: number];
 export type Transform = Float32Array;
 
 export type Object = {
-  geometry: {
-    data: GPUBuffer;
-    count: number;
-  };
+  geometry: XYZ[];
   material: GPURenderPipeline;
   transform: Transform;
 };
