@@ -30,7 +30,10 @@ const TUNING_HZ = 440;
 const DURATION_INDEX = 1;
 
 export const musicLoop = (
-  sources: Record<string, (notes: number[], duration: number, offset: number) => void>,
+  sources: Record<
+    string,
+    (notes: number[], duration: number, offset: number) => void
+  >,
   getNextLoop: () => [instructions: string, tempo: number],
 ) => {
   const [instructions, tempo] = getNextLoop();

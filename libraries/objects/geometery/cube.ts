@@ -19,7 +19,7 @@ export const cube = () => {
       down = !down;
       const previous = localOrientation;
       const roll = down
-        ? ([x, y, z]: XYZ): XYZ => [x, z, -y]  // hinge about local X
+        ? ([x, y, z]: XYZ): XYZ => [x, z, -y] // hinge about local X
         : ([x, y, z]: XYZ): XYZ => [z, y, -x]; // hinge about local Y
       localOrientation = (xyz: XYZ) => previous(roll(xyz));
     }
