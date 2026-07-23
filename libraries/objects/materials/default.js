@@ -1,4 +1,4 @@
-import webgpu, { format } from "~webgpu";
+import graphics, { format } from "~graphics";
 import { TRANSFORM_FORMAT, TRANSFORM_SIZE } from "../transforms/all.js";
 
 const TRANSFORM_DATA_GROUP_INDEX = 0;
@@ -10,7 +10,7 @@ let defaultMaterial;
 export const getDefault = () => {
   if (defaultMaterial) return defaultMaterial;
 
-  const transformLayout = webgpu.createBindGroupLayout({
+  const transformLayout = graphics.createBindGroupLayout({
     entries: [{
       binding: TRANSFORM_BINDING,
       visibility: GPUShaderStage.VERTEX,
@@ -18,11 +18,11 @@ export const getDefault = () => {
     }],
   });
 
-  const layout = webgpu.createPipelineLayout({
+  const layout = graphics.createPipelineLayout({
     bindGroupLayouts: [transformLayout],
   });
 
-  return (defaultMaterial = webgpu.createRenderPipeline({
+  return (defaultMaterial = graphics.createRenderPipeline({
     layout,
     vertex: {
       module: wgsl`

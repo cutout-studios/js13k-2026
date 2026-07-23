@@ -1,7 +1,7 @@
 import system from "./system.js";
 
 export * from "./system.js";
-export * from "./render.js";
+export * from "./renderLoop.js";
 export * from "./loadObject.js";
 
 export default system;

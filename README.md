@@ -15,17 +15,15 @@ deno task open
 - [x] Research the parts of the basic WebGPU API I don't remember.
 - [x] Render function.
 - [x] Basic Geometery builder.
-- [ ] Basic controls.
-- [ ] Camera.
-- [~] UI layer
-- [ ] Audio
-  - [ ] Music
-  - [ ] Directional
+- [x] UI layer
+- [x] Audio
+  - [x] Music
+  - [x] Directional
+- [ ] Camera + controls.
 
 ### As-needed
 
-- [ ] "Scene" JSX Projection.
-- [ ] Store.
+- [ ] "Scene" JSX Projection + Store.
 - [ ] Physics.
 
 ### Maybe

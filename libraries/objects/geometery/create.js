@@ -1,4 +1,4 @@
-import device from "~webgpu";
+import device from "~graphics";
 
 import { VERTICIES_PER_TRIANGLE } from "./polygons.js";
 

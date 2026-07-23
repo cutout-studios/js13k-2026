@@ -1,4 +1,4 @@
-import webgpu from "~webgpu";
+import graphics from "~graphics";
 
 export function wgsl(strings, ...values) {
   let code = "";
@@ -8,5 +8,5 @@ export function wgsl(strings, ...values) {
     if (values[index]) code += String(values[index]);
   }
 
-  return webgpu.createShaderModule({ code });
+  return graphics.createShaderModule({ code });
 }

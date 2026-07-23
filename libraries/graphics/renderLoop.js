@@ -2,14 +2,21 @@ import system from "./system.js";
 import { loadObject } from "./loadObject.js";
 import { getRenderTargets } from "./canvas.js";
 
-export const render = (canvas, objects) => {
-  _doRenderPass(canvas, (renderProcess) => {
-    for (const object of objects) {
-      loadObject(renderProcess, object);
+let renderLoopId;
+export const renderLoop = (canvas, work) => {
+  renderLoopId = requestAnimationFrame(() =>
+    _doRenderPass(canvas, (renderProcess) => {
+      for (const object of work()) {
+        loadObject(renderProcess, object);
 
-      renderProcess.draw(object.geometry.size);
-    }
-  });
+        renderProcess.draw(object.geometry.size);
+      }
+
+      renderLoop(canvas, work);
+    })
+  );
+
+  return () => clearAnimationFrame(renderLoopId);
 };
 
 function _doRenderPass(canvas, pass) {
