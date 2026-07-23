@@ -37,7 +37,7 @@ export const musicLoop = (sources, getNextLoop) => {
   );
 };
 
-function _parseLoop(loopString, tempo) {
+function _parseLoop(loopString, beatLengthS) {
   let length = 0;
   for (const track of loopString.split("\n")) {
     const { groups: { source, part } } = track.match(

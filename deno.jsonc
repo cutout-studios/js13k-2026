@@ -13,7 +13,9 @@
     "@cutout/jsx": "jsr:@cutout/jsx",
     "@cutout/store": "jsr:@cutout/store",
     "@std/fmt": "jsr:@std/fmt",
+    "@test"
     "roadroller": "npm:roadroller",
+    "~common": "./libraries/common.ts",
     "~projections": "./libraries/projections/module.js",
     "~graphics": "./libraries/graphics/module.js",
     "~objects": "./libraries/objects/module.js",

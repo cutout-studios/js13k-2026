@@ -1,18 +1,19 @@
 import graphics, { format } from "~graphics";
-import { TRANSFORM_FORMAT, TRANSFORM_SIZE } from "../transforms/all.js";
+import { TRANSFORM_FORMAT, TRANSFORM_SIZE } from "../transforms/constants.ts";
+import { wgsl } from "./wgsl.ts";
 
 const TRANSFORM_DATA_GROUP_INDEX = 0;
 const TRANSFORM_DATA_INSTANCE_INDEX = 0;
 
 const DEPTH_PIXELS_FORMAT = "depth24plus";
 
-let defaultMaterial;
+let defaultMaterial: GPURenderPipeline | undefined;
 export const getDefault = () => {
   if (defaultMaterial) return defaultMaterial;
 
   const transformLayout = graphics.createBindGroupLayout({
     entries: [{
-      binding: TRANSFORM_BINDING,
+      binding: TRANSFORM_DATA_GROUP_INDEX,
       visibility: GPUShaderStage.VERTEX,
       buffer: { type: "uniform" },
     }],
@@ -51,11 +52,11 @@ export const getDefault = () => {
       `,
       buffers: [{
         arrayStride: TRANSFORM_SIZE,
-        attributes: {
+        attributes: [{
           shaderLocation: 0,
           offset: 0,
           format: TRANSFORM_FORMAT,
-        },
+        }],
       }],
     },
     fragment: {

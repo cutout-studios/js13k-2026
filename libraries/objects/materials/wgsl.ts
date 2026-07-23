@@ -1,6 +1,9 @@
 import graphics from "~graphics";
 
-export function wgsl(strings, ...values) {
+export function wgsl(
+  strings: TemplateStringsArray,
+  ...values: unknown[]
+): GPUShaderModule {
   let code = "";
 
   for (const index in strings) {

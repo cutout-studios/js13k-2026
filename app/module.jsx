@@ -1,6 +1,6 @@
 import { renderLoop } from "~graphics";
 import { createAudioSource, musicLoop } from "~audio";
-import { createObject, createRotationTransform } from "~objects";
+import { createObject, createRotation } from "~objects";
 
 import { canvas, html } from "./html.jsx";
 
@@ -13,7 +13,7 @@ renderLoop(canvas, () => {
 
   objects.push(
     createObject({
-      transform: createRotationTransform(
+      transform: createRotation(
         [Math.sin(now), Math.cos(now), 0],
         Math.PI / 2,
       ),

@@ -1,3 +1,6 @@
-export { create as createObject } from "./create.js";
-export { getDefault as getDefaultMaterial } from "./materials/default.js";
-export * from "./transforms/all.js";
+export { create as createObject } from "./create.ts";
+export { getDefault as getDefaultMaterial } from "./materials/default.ts";
+
+export * from "./transforms/create.ts";
+export * from "./transforms/combine.ts";
+export * from "./transforms/compose.ts";
