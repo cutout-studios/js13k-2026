@@ -20,7 +20,10 @@ const TRIAD_HARMONICS = {
 const TUNING_HZ = 440;
 const DURATION_INDEX = 1;
 
-export const musicLoop = (sources, getNextLoop) => {
+export const musicLoop = (
+  sources: Record<string, (notes: number[], duration: number) => void>,
+  getNextLoop: () => [instructions: string, tempo: number],
+) => {
   const [instructions, tempo] = getNextLoop();
   const [parts, loopDurationS] = _parseLoop(
     instructions,
@@ -28,7 +31,7 @@ export const musicLoop = (sources, getNextLoop) => {
   );
 
   for (const sourceName in parts) {
-    parts[sourceName].map((event) => source[sourceName](...event));
+    parts[sourceName].map((event) => sources[sourceName](...event));
   }
 
   setTimeout(
@@ -37,39 +40,47 @@ export const musicLoop = (sources, getNextLoop) => {
   );
 };
 
-function _parseLoop(loopString, beatLengthS) {
+type SourceCall = [notes: number[], duration: number];
+export function _parseLoop(
+  loop: string,
+  beatLengthS: number,
+): [Record<string, SourceCall[]>, number] {
   let length = 0;
-  for (const track of loopString.split("\n")) {
-    const { groups: { source, part } } = track.match(
-      /(?<source>\w+):(?<part>).*/,
+  const parts: Record<string, [notes: number[], duration: number][]> = {};
+  for (const track of loop.split("\n")) {
+    const { groups } = track.match(/(?<source>\w+):(?<part>).*/)!;
+
+    const sourceCalls = _parsePart(
+      groups!.part.trim().replaceAll(/\s+/g, " "),
+      beatLengthS,
     );
 
-    const events = _parsePart(part.trim().replaceAll(/\s+/g, " "), beatLengthS);
+    if (!length) {
+      sourceCalls.forEach((event) => length += event[DURATION_INDEX]);
+    }
 
-    if (!length) events.forEach((event) => length += event[DURATION_INDEX]);
-
-    parts[source] = events;
+    parts[groups!.source] = sourceCalls;
   }
 
   return [parts, length];
 }
 
-function _parsePart(partString, beatLengthS) {
-  const events = [];
+function _parsePart(part: string, beatLengthS: number) {
+  const sourceCalls: SourceCall[] = [];
 
-  let root, harmonics, beatCount = 0;
+  let root: number | undefined, harmonics: number[] | undefined, beatCount = 0;
   const _flushEvent = () => {
-    events.push([
+    sourceCalls.push([
       [
         _getFrequency(root),
-        ...harmonics.map((offset) => _getFrequency(root + offset)),
+        ...harmonics!.map((offset) => _getFrequency(root! + offset)),
       ],
       beatCount * beatLengthS,
     ]);
     [root, harmonics, beatCount] = [undefined, undefined, 0];
   };
 
-  for (const character of partString.trim().replaceAll(/\s+/g, "")) {
+  for (const character of part.trim().replaceAll(/\s+/g, "")) {
     if (_between(character, "A", "G") || _between(character, "a", "g")) {
       _flushEvent();
 
@@ -82,21 +93,23 @@ function _parsePart(partString, beatLengthS) {
       root = (Number(character) - MIDDLE_OCTAVE_NUMBER) * OCTAVE_SIZE;
     }
 
-    if (character in TRIAD_HARMONICS) harmonics = TRIAD_HARMONICS[character];
-    if (character === "7") harmonics.push(harmonics.at(-1) + MINOR_THIRD);
-    if (character === "#") root++;
-    if (character === "♭") root--;
+    if (character in TRIAD_HARMONICS) {
+      harmonics = TRIAD_HARMONICS[character as keyof typeof TRIAD_HARMONICS];
+    }
+    if (character === "7") harmonics!.push(harmonics!.at(-1)! + MINOR_THIRD);
+    if (character === "#") root!++;
+    if (character === "♭") root!--;
     if (character === "*") beatCount++;
   }
 
-  return events;
+  return sourceCalls;
 }
 
-function _codeFor(char) {
-  return char.codeCharAt(0);
+function _codeFor(char: string) {
+  return char.charCodeAt(0);
 }
 
-function _between(char, minChar, maxChar) {
+function _between(char: string, minChar: string, maxChar: string) {
   return _codeFor(minChar) <= _codeFor(char) &&
     _codeFor(char) <= _codeFor(maxChar);
 }

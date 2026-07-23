@@ -1,23 +1,23 @@
-import { system } from "./system.js";
+import { system } from "./system.ts";
 
-export const create = (type, envelope = [0, 1]) => {
+export const create = (type: OscillatorType, envelope = [[0, 0], [0, 1]]) => {
   const [oscillator, ampKnob, panKnob] = [
     system.createOscillator(),
     system.createGain(),
-    system.createPanner(),
+    system.createStereoPanner(),
   ];
 
   oscillator.type = type;
   oscillator.connect(ampKnob).connect(panKnob).connect(system.destination);
 
-  const _play = (frequency, durationS, direction) => {
+  const _play = (frequency: number, durationS: number, direction: number) => {
     const startTimeS = system.currentTime;
 
     oscillator.frequency.value = frequency;
-    panKnob.pan = direction;
 
     let elapsedTimeS = startTimeS;
     ampKnob.gain.setValueAtTime(0, elapsedTimeS);
+    panKnob.pan.setValueAtTime(direction, elapsedTimeS);
     for (const [timeBreakpointS, velocityBreakpoint] of envelope) {
       elapsedTimeS += timeBreakpointS;
       ampKnob.gain.linearRampToValueAtTime(
@@ -30,6 +30,6 @@ export const create = (type, envelope = [0, 1]) => {
     oscillator.stop(startTimeS + durationS);
   };
 
-  return (frequencies = [], durationS, direction = 0) =>
+  return (frequencies = [], durationS: number, direction = 0) =>
     frequencies.forEach((frequency) => _play(frequency, durationS, direction));
 };

@@ -11,9 +11,6 @@ export type Object = {
   transform: Transform;
 };
 
-export const doTimes = <T>(count: number, action: (count: number) => T): T[] =>
-  Array(count).fill(null).map((_, index) => action(index));
-
 export const TRANSFORM_DATA_GROUP_INDEX = 0;
 export const TRANSFORM_DATA_INSTANCE_INDEX = 0;
 export const VERTEX_DATA_INDEX = 0;
@@ -27,3 +24,6 @@ export const TRANSFORM_WIDTH = 4;
 export const TRANSFORM_FORMAT = `float${FLOAT_32_BIN}x${TRANSFORM_WIDTH}`;
 export const TRANSFORM_SIZE = TRANSFORM_WIDTH * TRANSFORM_WIDTH;
 export const TRANSFORM_BYTES = TRANSFORM_SIZE * FLOAT_32_BYTES;
+
+export const doTimes = <T>(count: number, action: (count: number) => T): T[] =>
+  Array(count).fill(null).map((_, index) => action(index));

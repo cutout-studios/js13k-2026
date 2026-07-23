@@ -1,2 +1,2 @@
-export { musicLoop } from "./musicLoop.js";
-export { create as createAudioSource } from "./source.js";
+export { musicLoop } from "./musicLoop.ts";
+export { create as createAudioSource } from "./source.ts";
