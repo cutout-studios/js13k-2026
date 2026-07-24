@@ -2,25 +2,28 @@ import { renderLoop } from "~graphics";
 import { createAudioSource, musicLoop } from "~audio";
 import { createObject, createRotation } from "~objects";
 
+import { updateCamera } from "./camera.ts";
 import { canvas, html } from "./html.jsx";
 
 for (const element of html) {
   document.body.appendChild(element);
 }
 
-renderLoop(canvas, () => {
-  const [objects, now] = [[], Date.now()];
+const cube = createObject();
 
-  objects.push(
-    createObject({
-      transform: createRotation(
-        [Math.sin(now), Math.cos(now), 0],
-        Math.PI / 2,
-      ),
-    }),
+let totalTime = 0;
+renderLoop(canvas, (deltaTime) => {
+  totalTime += deltaTime;
+
+  cube.transform = createRotation(
+    [Math.sin(totalTime), Math.cos(totalTime), 0],
+    Math.PI / 2,
   );
 
-  return objects;
+  return {
+    objects: [cube],
+    camera: updateCamera(deltaTime),
+  };
 });
 
 musicLoop(

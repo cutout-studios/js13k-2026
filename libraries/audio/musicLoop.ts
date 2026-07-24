@@ -1,5 +1,4 @@
-const SECONDS_TO_MS = 1000;
-const MINUTES_TO_SECONDS = 60;
+import { MINUTES_TO_SECONDS, SECONDS_TO_MS } from "~common";
 
 const [
   MINOR_THIRD,
@@ -19,7 +18,7 @@ const SEMITONES_FROM_A: Record<string, number> = {
 };
 const OCTAVE_SIZE = 12;
 const MIDDLE_OCTAVE_NUMBER = 4;
-const TRIAD_HARMONICS = {
+const TRIAD_HARMONICS: Record<string, number[]> = {
   "°": [MINOR_THIRD, DIMINISHED_FIFTH],
   m: [MINOR_THIRD, PERFECT_FIFTH],
   M: [MAJOR_THIRD, PERFECT_FIFTH],
@@ -109,9 +108,7 @@ function _parsePart(part: string, beatLengthS: number) {
       root += (Number(character) - MIDDLE_OCTAVE_NUMBER) * OCTAVE_SIZE;
     }
 
-    if (character in TRIAD_HARMONICS) {
-      harmonics = TRIAD_HARMONICS[character as keyof typeof TRIAD_HARMONICS];
-    }
+    if (character in TRIAD_HARMONICS) harmonics = TRIAD_HARMONICS[character];
     if (character === "7") harmonics!.push(harmonics!.at(-1)! + MINOR_THIRD);
     if (character === "#") root!++;
     if (character === "♭") root!--;

@@ -19,7 +19,7 @@ deno task open
 - [x] Audio
   - [x] Music
   - [x] Directional
-- [ ] Camera + controls.
+- [x] Camera + controls.
 
 ### As-needed
 
@@ -28,7 +28,7 @@ deno task open
 
 ### Maybe
 
-- [ ] types + tests
+- [x] types + tests
 - [ ] Deno watch loop
 - [ ] Escape `wgsl` template literal
 - [ ] Switch to `ect` from `advzip` - a bit better, but have to manually compile

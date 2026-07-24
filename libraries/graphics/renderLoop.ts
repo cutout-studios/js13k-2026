@@ -1,4 +1,5 @@
-import type { Object } from "~common";
+import { type Object, SECONDS_TO_MS, type Camera } from "~common";
+import { compose, createPerspective, invert } from "~objects";
 
 import { system } from "./system.ts";
 import { loadObject } from "./loadObject.ts";
@@ -6,13 +7,28 @@ import { getRenderTargets } from "./canvas.ts";
 import { WebGPUCanvas } from "./types.ts";
 
 let renderLoopId: number;
-export const renderLoop = (canvas: WebGPUCanvas, work: () => Object[]) => {
+export const renderLoop = (
+  canvas: WebGPUCanvas,
+  work: (deltaTime: number) => { objects: Object[]; camera: Camera },
+) => {
+  let last = performance.now();
   renderLoopId = requestAnimationFrame(() =>
     _doRenderPass(canvas, (renderProcess) => {
-      for (const object of work()) {
-        loadObject(renderProcess, object);
+      const now = performance.now();
+      const deltaTime = (now - last) / SECONDS_TO_MS;
+      last = now;
+      const { objects, camera } = work(deltaTime);
+      for (const object of objects) {
+        loadObject(renderProcess, {
+          ...object,
+          transform: compose(
+            createPerspective(camera.fov, canvas.width / canvas.height),
+            invert(camera.transform),
+            object.transform,
+          ),
+        });
 
-        renderProcess.draw(object.geometry.count);
+        renderProcess.draw(object.geometry.length);
       }
 
       renderLoop(canvas, work);

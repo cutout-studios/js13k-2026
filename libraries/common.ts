@@ -8,6 +8,14 @@ export type Object = {
   transform: Transform;
 };
 
+export type Camera = {
+  fov: number;
+  transform: Transform;
+};
+
+export const SECONDS_TO_MS = 1000;
+export const MINUTES_TO_SECONDS = 60;
+
 export const TRANSFORM_DATA_GROUP_INDEX = 0;
 export const TRANSFORM_DATA_INSTANCE_INDEX = 0;
 export const VERTEX_DATA_INDEX = 0;
