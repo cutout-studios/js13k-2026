@@ -1,5 +1,7 @@
 # js13k 2026
 
+Latest size: 4.9 kB
+
 ```
 deno task setup
 deno task bundle
@@ -21,14 +23,25 @@ deno task open
   - [x] Directional
 - [x] Camera + controls.
 
-### As-needed
+### Important follow-up features
 
+- [ ] audio/musicLoop: rests
+- [ ] graphics: color-assigned verticies
+
+### Dependent on game type
+
+- [ ] Instanced rendering (for voxels)
 - [ ] "Scene" JSX Projection + Store.
 - [ ] Physics.
 
-### Maybe
+### DX
 
 - [x] types + tests
 - [ ] Deno watch loop
-- [ ] Escape `wgsl` template literal
-- [ ] Switch to `ect` from `advzip` - a bit better, but have to manually compile
+
+### Compression Tricks
+
+- [ ] Explore `ect` as final compressor - likely a bit better, but have to
+      manually compile the package
+- [ ] jsx-ify template strings: shaders, css, scores - should make them
+      minifiable and buy back kB at some threshold

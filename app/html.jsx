@@ -1,4 +1,4 @@
-import { dom } from "~projections";
+import { dom } from "~jsx";
 
 export const canvas = dom(
   <canvas></canvas>,

@@ -6,7 +6,7 @@ export enum Command {
   ROTATE_UP = "R_U",
   ROTATE_DOWN = "R_D",
   ROTATE_LEFT = "R_L",
-  ROTATE_RIGHT = "R_R"
+  ROTATE_RIGHT = "R_R",
 }
 
 const COMMAND_KEY_MAP: Record<string, Command> = {

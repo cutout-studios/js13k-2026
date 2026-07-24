@@ -1,4 +1,4 @@
-import { type Object, SECONDS_TO_MS, type Camera } from "~common";
+import { type Camera, type Object, SECONDS_TO_MS } from "~common";
 import { compose, createPerspective, invert } from "~objects";
 
 import { system } from "./system.ts";

@@ -6,10 +6,7 @@ import {
 } from "~objects";
 import type { Camera, XYZ } from "~common";
 
-import {
-  activeCommands,
-  Command,
-} from "./commands.ts";
+import { activeCommands, Command } from "./commands.ts";
 
 const DEFAULT_FOV = Math.PI / 2;
 const MOVE_SPEED = 5;
