@@ -25,6 +25,7 @@ deno task open
 
 ### Important follow-up features
 
+- [ ] audio/source: master bus
 - [ ] audio/musicLoop: rests
 - [ ] graphics: color-assigned verticies
 

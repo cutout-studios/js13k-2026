@@ -9,7 +9,7 @@ export const create = (
     geometry = cube(),
     material = getDefaultMaterial(),
     transform = getDefaultTransform(),
-  },
+  } = {},
 ): Object => ({
   geometry,
   material,

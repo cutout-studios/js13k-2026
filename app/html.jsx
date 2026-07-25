@@ -2,7 +2,7 @@ import { dom } from "~jsx";
 
 export const canvas = dom(
   <canvas></canvas>,
-);
+)[0]; // TODO: only return one node in this case?
 
 export const html = dom(
   <>

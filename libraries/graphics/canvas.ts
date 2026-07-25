@@ -3,21 +3,20 @@ import { DEPTH_PIXELS_FORMAT } from "~common";
 import { format, system } from "./system.ts";
 
 import { DEFAULT_CLEAR_COLOR } from "./constants.ts";
-import { WebGPUCanvas } from "./types.ts";
 
 let hasResized = false;
 
 globalThis.addEventListener("resize", () => hasResized = true);
 
 export const getRenderTargets = (
-  canvas: WebGPUCanvas,
+  canvas: HTMLCanvasElement,
 ): GPURenderPassDescriptor => {
-  _ensureContext(canvas);
+  const context = _ensureContext(canvas);
 
   return {
     colorAttachments: [ // Main, user-facing pixels
       {
-        view: canvas.getCurrentTexture().createView(),
+        view: context.getCurrentTexture().createView(),
         clearValue: DEFAULT_CLEAR_COLOR,
         loadOp: "clear",
         storeOp: "store",
@@ -33,7 +32,7 @@ export const getRenderTargets = (
 };
 
 let context: GPUCanvasContext;
-function _ensureContext(canvas: WebGPUCanvas) {
+function _ensureContext(canvas: HTMLCanvasElement) {
   if (context) return context;
 
   context = canvas.getContext("webgpu")! as GPUCanvasContext;
