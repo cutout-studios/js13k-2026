@@ -28,6 +28,12 @@ deno task open
 - [ ] audio/musicLoop: rests
 - [ ] graphics: color-assigned verticies
 
+### Nice-to-have features
+
+- [ ] audio/source: waveform builders; overtones, noise
+- [ ] envelope primitive - modulate a value (audio/input) over a series of timed
+      breakpoints
+
 ### Dependent on game type
 
 - [ ] Instanced rendering (for voxels)
@@ -45,3 +51,4 @@ deno task open
       manually compile the package
 - [ ] jsx-ify template strings: shaders, css, scores - should make them
       minifiable and buy back kB at some threshold
+- [ ] Make jsx/dom a bit more concise

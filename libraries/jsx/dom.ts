@@ -1,54 +1,51 @@
 /// <reference lib="dom" />
 
 import {
-  CUTOUT_CHILDREN_LABEL,
-  CUTOUT_FRAGMENT_LABEL,
-  CutoutTokenType,
+  CUTOUT_CHILDREN_LABEL as XO_CHILDREN_LABEL,
+  CUTOUT_FRAGMENT_LABEL as XO_FRAGMENT_LABEL,
+  CutoutTokenType as XOTokenType,
 } from "@cutout/jsx/tokens";
 import type { CutoutProjection as XOProjection } from "@cutout/jsx/projections";
 
 export const dom: XOProjection<HTMLCollection, {
   event?: AddEventListenerOptions;
-}> = (
-  [, generator],
-  options,
-): HTMLCollection => {
+}> = ([, jsxTokens], options): HTMLCollection => {
   const state: _FormatState = {
     root: globalThis.document.createDocumentFragment(),
     stack: [],
     pointers: {},
   };
 
-  for (const [type, value] of generator()) {
+  for (const [type, value] of jsxTokens()) {
     switch (type) {
-      case CutoutTokenType.ELEMENT_OPEN:
+      case XOTokenType.ELEMENT_OPEN:
         _openElement(state, value);
         break;
-      case CutoutTokenType.ELEMENT_CLOSE:
+      case XOTokenType.ELEMENT_CLOSE:
         _closeElement(state);
         break;
-      case CutoutTokenType.ATTRIBUTE:
+      case XOTokenType.ATTRIBUTE:
         _targetAttribute(state, value);
         break;
-      case CutoutTokenType.NUMBER:
-      case CutoutTokenType.STRING:
-      case CutoutTokenType.BOOLEAN:
+      case XOTokenType.NUMBER:
+      case XOTokenType.STRING:
+      case XOTokenType.BOOLEAN:
         _handlePrimitive(state, value);
         break;
-      case CutoutTokenType.OBJECT:
-      case CutoutTokenType.ARRAY:
+      case XOTokenType.OBJECT:
+      case XOTokenType.ARRAY:
         _handleObject(state, value);
         break;
-      case CutoutTokenType.FUNCTION:
+      case XOTokenType.FUNCTION:
         _addEventListener(
           state,
           (event: Event) => (value as EventListener)(event),
           options?.event,
         );
         break;
-      case CutoutTokenType.SYMBOL:
-      case CutoutTokenType.NULL:
-      case CutoutTokenType.UNDEFINED:
+      case XOTokenType.SYMBOL:
+      case XOTokenType.NULL:
+      case XOTokenType.UNDEFINED:
       default:
         break;
     }
@@ -71,7 +68,7 @@ function _openElement(
   state: _FormatState,
   value: string,
 ) {
-  if (value === CUTOUT_FRAGMENT_LABEL) return;
+  if (value === XO_FRAGMENT_LABEL) return;
 
   const previous = state.pointers.element ?? state.root;
 
@@ -89,7 +86,7 @@ function _closeElement(
 }
 
 function _targetAttribute(state: _FormatState, value: string) {
-  if (value === CUTOUT_CHILDREN_LABEL) {
+  if (value === XO_CHILDREN_LABEL) {
     return state.pointers.attribute = undefined;
   }
 
