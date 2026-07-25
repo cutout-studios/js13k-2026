@@ -44,7 +44,7 @@ export const musicLoop = (
   for (const sourceName in parts) {
     let offset = 0;
     for (const [notes, duration] of parts[sourceName]) {
-      sources[sourceName](notes, duration, offset);
+      sources[sourceName]?.(notes, duration, offset);
       offset += duration;
     }
   }
@@ -108,7 +108,9 @@ function _parsePart(part: string, beatLengthS: number) {
       root += (Number(character) - MIDDLE_OCTAVE_NUMBER) * OCTAVE_SIZE;
     }
 
-    if (character in TRIAD_HARMONICS) harmonics = TRIAD_HARMONICS[character];
+    if (character in TRIAD_HARMONICS) {
+      harmonics = [...TRIAD_HARMONICS[character]];
+    }
     if (character === "7") harmonics!.push(harmonics!.at(-1)! + MINOR_THIRD);
     if (character === "#") root!++;
     if (character === "♭") root!--;

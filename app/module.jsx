@@ -27,6 +27,17 @@ renderLoop(canvas, (deltaTime) => {
 });
 
 musicLoop(
-  { test: createAudioSource("square") },
-  () => ["test: a b c d e f g", 60],
+  {
+    chords: createAudioSource("triangle"),
+    bass: createAudioSource("sine"),
+    melody: createAudioSource("sawtooth"),
+  },
+  () => [
+    `
+    melody: A5 * C#5 * E5 * C#5 * | A5  * D5 * *     *  E5 B5
+    chords: AM * *   * *  * *   * | D3M * *  * E3M7  *  *  *  
+    bass:   A2 * *   * *  * *   * | D1  * *  * E1    *  *  * 
+  `,
+    200,
+  ],
 );
