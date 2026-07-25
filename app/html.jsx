@@ -8,7 +8,7 @@ export const html = dom(
   <>
     <style>
       {/* css */ `
-      * { 
+      html, body, main, main * { 
         all: initial;
         box-sizing: border-box;
         font-family: system-ui;

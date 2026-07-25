@@ -7,9 +7,9 @@ import {
 } from "@cutout/jsx/tokens";
 import type { CutoutProjection as XOProjection } from "@cutout/jsx/projections";
 
-export const dom: XOProjection<HTMLCollection, {
+export const dom: XOProjection<Element[], {
   event?: AddEventListenerOptions;
-}> = ([, jsxTokens], options): HTMLCollection => {
+}> = ([, jsxTokens], options): Element[] => {
   const state: _FormatState = {
     root: globalThis.document.createDocumentFragment(),
     stack: [],
@@ -51,7 +51,7 @@ export const dom: XOProjection<HTMLCollection, {
     }
   }
 
-  return state.root.children;
+  return [...state.root.children];
 };
 
 type _FormatState = {
@@ -68,7 +68,9 @@ function _openElement(
   state: _FormatState,
   value: string,
 ) {
-  if (value === XO_FRAGMENT_LABEL) return;
+  if (value === XO_FRAGMENT_LABEL) {
+    return state.stack.push(state.pointers.element!);
+  }
 
   const previous = state.pointers.element ?? state.root;
 
@@ -97,10 +99,12 @@ function _handlePrimitive(
   state: _FormatState,
   value: string | number | boolean,
 ) {
+  if (value === false) return;
+
   if (state.pointers.attribute) {
     return state.pointers.element?.setAttribute(
       state.pointers.attribute,
-      typeof value === "boolean" && value ? "" : String(value),
+      value === true ? "" : String(value),
     );
   }
 
@@ -109,6 +113,22 @@ function _handlePrimitive(
 
 function _handleObject(state: _FormatState, value: object) {
   if (!state.pointers.element) return;
+
+  if (!state.pointers.attribute) {
+    if (value instanceof globalThis.Node) {
+      state.pointers.element.appendChild(value);
+      return;
+    }
+
+    if (Array.isArray(value)) {
+      for (const node of [...value]) {
+        if (node instanceof globalThis.Node) {
+          state.pointers.element.appendChild(node);
+        } else _appendTextNode(state, node);
+      }
+      return;
+    }
+  }
 
   // "style", "dataset" and "classlist" are
   // the only (?) valid HTML object properties that are not
@@ -160,7 +180,7 @@ function _addEventListener(
   if (!state.pointers.element || !state.pointers.attribute) return;
 
   state.pointers.element.addEventListener(
-    state.pointers.attribute.replace(/^on/, ""),
+    state.pointers.attribute.replace(/^on/, "").toLowerCase(),
     value,
     options,
   );

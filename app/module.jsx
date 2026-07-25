@@ -3,7 +3,7 @@ import { createAudioSource, musicLoop } from "~audio";
 import { createObject, createRotation } from "~objects";
 
 import { updateCamera } from "./camera.ts";
-import { canvas, html } from "./html.jsx";
+import { html } from "./html.jsx";
 
 for (const element of html) {
   document.body.appendChild(element);
