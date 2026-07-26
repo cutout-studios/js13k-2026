@@ -51,7 +51,7 @@ function _getTransformDataLocation(
 function _allocateVerticies(verticies: XYZ[]) {
   const vertexData = new Float32Array(
     verticies.map((xyz) => [...xyz, 1]).flat(),
-  ); // TODO: do this in the geo
+  );
 
   const pointerBuffer = system.createBuffer({
     size: vertexData.byteLength,

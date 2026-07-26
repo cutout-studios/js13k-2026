@@ -3,7 +3,6 @@ import { getColumn, getRow } from "./getters.ts";
 import { dotProduct } from "./dotProduct.ts";
 import { ORIGIN_COLUMN_INDEX, XYZ_WIDTH } from "./constants.ts";
 
-// TODO: is there a better way to clamp this? actual inversion formula?
 // NOTE: translation/rotation only
 export const invert = (transform: Transform): Transform => {
   const origin = getColumn(transform, ORIGIN_COLUMN_INDEX);

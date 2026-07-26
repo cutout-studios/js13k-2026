@@ -15,7 +15,6 @@ import {
   XYZ_WIDTH,
 } from "./constants.ts";
 
-// TODO: this should probably take xyzw?
 export const createTransform = (
   xAxis: XYZ,
   yAxis: XYZ,
@@ -75,7 +74,6 @@ export const createPerspective = (
 ): Transform => {
   const viewportHeight = Math.tan(Math.PI / 2 - viewingAngle / 2);
 
-  // TODO: spell this out
   // deno-fmt-ignore
   return new Float32Array([
     viewportHeight / aspectRatio, 0, 0, 0,

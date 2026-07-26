@@ -12,8 +12,8 @@ export enum Command {
 const COMMAND_KEY_MAP: Record<string, Command> = {
   // NOTE: Browser key codes ignore keyboard layout.
   "KeyW": Command.ROTATE_UP,
-  "KeyA": Command.ROTATE_DOWN,
-  "KeyS": Command.ROTATE_LEFT,
+  "KeyA": Command.ROTATE_LEFT,
+  "KeyS": Command.ROTATE_DOWN,
   "KeyD": Command.ROTATE_RIGHT,
   "ArrowLeft": Command.MOVE_LEFT,
   "ArrowRight": Command.MOVE_RIGHT,

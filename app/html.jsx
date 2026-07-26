@@ -1,10 +1,8 @@
 import { dom } from "~jsx";
 
-export const canvas = dom(
-  <canvas></canvas>,
-)[0]; // TODO: only return one node in this case?
+export const canvas = dom(<canvas></canvas>)[0];
 
-canvas.width = globalThis.innerWidth; // TODO: apply dynamically
+canvas.width = globalThis.innerWidth;
 canvas.height = globalThis.innerHeight;
 
 export const html = dom(

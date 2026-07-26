@@ -15,26 +15,25 @@ const vectorMap: Record<Command, XYZ> = {
   [Command.MOVE_RIGHT]: [1, 0, 0],
   [Command.ROTATE_UP]: [1, 0, 0],
   [Command.ROTATE_DOWN]: [-1, 0, 0],
-  [Command.ROTATE_LEFT]: [0, 0, 1],
-  [Command.ROTATE_RIGHT]: [0, 0, -1],
+  [Command.ROTATE_LEFT]: [0, 1, 0],
+  [Command.ROTATE_RIGHT]: [0, -1, 0],
 };
 
-let transform = createTranslation(STARTING_POSITION);
+let position: XYZ = STARTING_POSITION;
+let rotation = createRotation([0, 1, 0], 0);
 export function updateCamera(deltaTime: number, fov = DEFAULT_FOV): Camera {
-  transform = compose(
-    transform,
-    ...([...activeCommands].map((command) => {
-      const vector = vectorMap[command];
-
-      if (command.startsWith("R")) {
-        return createRotation(vector, deltaTime * ROTATION_SPEED);
-      }
-
-      return createTranslation(
-        vector.map((value) => value * deltaTime * MOVE_SPEED) as XYZ,
+  for (const command of activeCommands) {
+    const vector = vectorMap[command];
+    if (command.startsWith("R")) {
+      rotation = compose(
+        rotation,
+        createRotation(vector, deltaTime * ROTATION_SPEED),
       );
-    })),
-  );
+    } else {
+      const step = vector.map((v) => v * deltaTime * MOVE_SPEED) as XYZ;
+      position = position.map((p, i) => p + step[i]) as XYZ;
+    }
+  }
 
-  return { transform, fov };
+  return { transform: compose(rotation, createTranslation(position)), fov };
 }
