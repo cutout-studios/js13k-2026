@@ -8,7 +8,7 @@ export function wgsl(
 
   for (const index in strings) {
     code += strings[index];
-    if (values[index]) code += String(values[index]);
+    if (values[index] !== undefined) code += String(values[index]);
   }
 
   return graphics.createShaderModule({ code });

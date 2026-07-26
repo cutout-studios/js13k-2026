@@ -10,3 +10,8 @@ const adapter = await gpu.requestAdapter();
 if (!adapter) no();
 
 export const system = await adapter!.requestDevice();
+
+system.addEventListener(
+  "uncapturederror",
+  ({ error }) => console.error(error.message),
+);

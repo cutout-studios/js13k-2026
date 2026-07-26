@@ -4,11 +4,10 @@ import { compose, createPerspective, invert } from "~objects";
 import { system } from "./system.ts";
 import { loadObject } from "./loadObject.ts";
 import { getRenderTargets } from "./canvas.ts";
-import { WebGPUCanvas } from "./types.ts";
 
 let renderLoopId: number;
 export const renderLoop = (
-  canvas: WebGPUCanvas,
+  canvas: HTMLCanvasElement,
   work: (deltaTime: number) => { objects: Object[]; camera: Camera },
 ) => {
   let last = performance.now();
@@ -39,7 +38,7 @@ export const renderLoop = (
 };
 
 function _doRenderPass(
-  canvas: WebGPUCanvas,
+  canvas: HTMLCanvasElement,
   pass: (process: GPURenderPassEncoder) => void,
 ) {
   const commander = system.createCommandEncoder();
