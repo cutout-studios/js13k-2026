@@ -47,12 +47,18 @@ Deno.writeTextFileSync(APP_OUTPUT_RR, firstLine + "\n" + secondLine);
 
 logSize(APP_OUTPUT_RR);
 
+// const appOutputText = rawText(
+//   <body>
+//     <script type="module">
+//       {firstLine}
+//       {secondLine}
+//     </script>
+//   </body>,
+// );
+
 const appOutputText = rawText(
   <body>
-    <script>
-      {firstLine}
-      {secondLine}
-    </script>
+    <script type="module">{source.text()}</script>
   </body>,
 );
 

@@ -17,6 +17,6 @@ export const setColumn = (
   createTransform(
     ...(doTimes(TRANSFORM_WIDTH, (index) =>
       index === setIndex
-        ? getColumn(transform, index)
-        : column) as TransformComponents),
+        ? column.slice(0, 3)
+        : getColumn(transform, index).slice(0, 3)) as TransformComponents),
   );

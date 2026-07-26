@@ -23,7 +23,7 @@ const vectorMap: Record<Command, XYZ> = {
   [Command.ROTATE_RIGHT]: [0, 0, -1],
 };
 
-let transform = getDefaultTransform();
+let transform = createTranslation([0, 0, 4]);
 export function updateCamera(deltaTime: number, fov = DEFAULT_FOV): Camera {
   transform = compose(
     transform,

@@ -1,10 +1,9 @@
-import { doTimes, type Transform, TRANSFORM_WIDTH, type XYZ } from "~common";
+import { doTimes, type Transform, TRANSFORM_WIDTH, type XYZW } from "~common";
 import {
   DEFAULT_ORIGIN,
   DEFAULT_X_AXIS,
   DEFAULT_Y_AXIS,
   DEFAULT_Z_AXIS,
-  XYZ_WIDTH,
 } from "./constants.ts";
 import { createTransform } from "./create.ts";
 
@@ -16,14 +15,17 @@ export const getDefault = () =>
     DEFAULT_ORIGIN,
   );
 
-export const getColumn = (transform: Transform, index: number): XYZ =>
-  [...transform.slice(index * XYZ_WIDTH, (index + 1) * XYZ_WIDTH)] as XYZ;
+export const getColumn = (transform: Transform, index: number): XYZW =>
+  [...transform.slice(
+    index * TRANSFORM_WIDTH,
+    (index + 1) * TRANSFORM_WIDTH,
+  )] as XYZW;
 
 export const getRow = (
   transform: Transform,
   index: number,
-): XYZ =>
+): XYZW =>
   doTimes(
-    XYZ_WIDTH,
+    TRANSFORM_WIDTH,
     (columnIndex) => transform[index + TRANSFORM_WIDTH * columnIndex],
-  ) as XYZ;
+  ) as XYZW;

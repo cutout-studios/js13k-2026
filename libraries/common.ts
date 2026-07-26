@@ -1,5 +1,5 @@
 export type XYZ = [x: number, y: number, z: number];
-
+export type XYZW = [x: number, y: number, z: number, w: number];
 export type Transform = Float32Array;
 
 export type Object = {

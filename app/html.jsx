@@ -4,6 +4,9 @@ export const canvas = dom(
   <canvas></canvas>,
 )[0]; // TODO: only return one node in this case?
 
+canvas.width = globalThis.innerWidth; // TODO: apply dynamically
+canvas.height = globalThis.innerHeight;
+
 export const html = dom(
   <>
     <style>

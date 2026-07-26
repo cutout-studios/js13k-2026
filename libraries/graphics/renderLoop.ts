@@ -21,9 +21,9 @@ export const renderLoop = (
         loadObject(renderProcess, {
           ...object,
           transform: compose(
-            createPerspective(camera.fov, canvas.width / canvas.height),
-            invert(camera.transform),
             object.transform,
+            invert(camera.transform),
+            createPerspective(canvas.width / canvas.height, camera.fov),
           ),
         });
 
