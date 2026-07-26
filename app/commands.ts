@@ -15,20 +15,24 @@ const COMMAND_KEY_MAP: Record<string, Command> = {
   "KeyA": Command.ROTATE_DOWN,
   "KeyS": Command.ROTATE_LEFT,
   "KeyD": Command.ROTATE_RIGHT,
-  "ArrowLeft": Command.MOVE_FORWARD,
-  "ArrowRight": Command.MOVE_BACKWARD,
-  "ArrowUp": Command.MOVE_RIGHT,
-  "ArrowDown": Command.MOVE_LEFT,
+  "ArrowLeft": Command.MOVE_LEFT,
+  "ArrowRight": Command.MOVE_RIGHT,
+  "ArrowUp": Command.MOVE_FORWARD,
+  "ArrowDown": Command.MOVE_BACKWARD,
 };
 
 export const activeCommands = new Set<Command>();
 
 globalThis.addEventListener(
   "keydown",
-  (event) => activeCommands.add(COMMAND_KEY_MAP[event.code]),
+  (event) =>
+    COMMAND_KEY_MAP[event.code] &&
+    activeCommands.add(COMMAND_KEY_MAP[event.code]),
 );
 
 globalThis.addEventListener(
   "keyup",
-  (event) => activeCommands.delete(COMMAND_KEY_MAP[event.code]),
+  (event) =>
+    COMMAND_KEY_MAP[event.code] &&
+    activeCommands.delete(COMMAND_KEY_MAP[event.code]),
 );

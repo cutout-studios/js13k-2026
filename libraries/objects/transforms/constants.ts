@@ -2,7 +2,7 @@ import type { XYZ } from "~common";
 
 export const XYZ_WIDTH = 3;
 
-export const DEFAULT_PERSPECTIVE_SAFETY_CROP = 1;
+export const DEFAULT_PERSPECTIVE_SAFETY_CROP = 0.1;
 
 export const DEFAULT_X_AXIS: XYZ = [1, 0, 0];
 export const DEFAULT_Y_AXIS: XYZ = [0, 1, 0];
