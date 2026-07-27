@@ -2,11 +2,11 @@ import { SECONDS_TO_MS } from "~common";
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
 
-import { Source } from "./types.ts";
+import { Envelope, Source } from "./types.ts";
 
 export const createSource = (
   type: OscillatorType,
-  envelope = [[0, 0], [0, 1]],
+  envelope: Envelope = [[0, 0], [0, 1]],
 ): Source => {
   return (
     frequencies,
@@ -21,9 +21,7 @@ export const createSource = (
         api.createStereoPanner(),
       ];
       oscillator.type = type;
-      oscillator.connect(ampKnob).connect(panKnob).connect(
-        masterBus.destination,
-      );
+      oscillator.connect(ampKnob).connect(panKnob).connect(masterBus);
 
       const startTimeMS = (api.currentTime * SECONDS_TO_MS) + delayMS;
       oscillator.frequency.setValueAtTime(

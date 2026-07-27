@@ -1,5 +1,14 @@
 import { ScaleDegree } from "./types.ts";
 
+export const MASTER_BUS_LOWPASS_FREQUENCY = 9000;
+export const MASTER_BUS_LOWPASS_SPREAD = 0.7;
+
+export const MASTER_BUS_COMPRESSION_THRESHOLD = -24;
+export const MASTER_BUS_COMPRESSION_KNEE = 30;
+export const MASTER_BUS_COMPRESSION_RATIO = 3;
+export const MASTER_BUS_COMPRESSION_ATTACK = 0.003;
+export const MASTER_BUS_COMPRESSION_RELEASE = 0.25;
+
 export const [
   MINOR_THIRD,
   MAJOR_THIRD,

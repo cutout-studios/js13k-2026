@@ -42,11 +42,11 @@ deno task open
         resize
   - [x] single-element dom projection, I think. remove spurious code there.
 
-- [ ] get roadroller working again (remove top-level await)
+- [ ] get roadroller working again
 
 ### Important follow-up features
 
-- [ ] audio/source: master bus - lowpass + compression
+- [x] audio/source: master bus - lowpass + compression
 - [ ] audio/musicLoop: rests
 - [ ] graphics: color-assignment (faces, probably)
 
