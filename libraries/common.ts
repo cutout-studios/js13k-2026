@@ -1,34 +1,19 @@
-export type XYZ = [x: number, y: number, z: number];
-export type XYZW = [x: number, y: number, z: number, w: number];
-export type Transform = Float32Array;
-
-export type Object = {
-  geometry: XYZ[];
-  material: GPURenderPipeline;
-  transform: Transform;
-};
-
-export type Camera = {
-  fov: number;
-  transform: Transform;
-};
+export type Radians = number;
 
 export const SECONDS_TO_MS = 1000;
 export const MINUTES_TO_SECONDS = 60;
-
-export const TRANSFORM_DATA_GROUP_INDEX = 0;
-export const TRANSFORM_DATA_INSTANCE_INDEX = 0;
-export const VERTEX_DATA_INDEX = 0;
-export const DEPTH_PIXELS_FORMAT = "depth24plus";
-
-const BIN_TO_BYTES = 8;
-const FLOAT_32_BIN = 32;
-const FLOAT_32_BYTES = FLOAT_32_BIN / BIN_TO_BYTES;
-
-export const TRANSFORM_WIDTH = 4;
-export const TRANSFORM_FORMAT = `float${FLOAT_32_BIN}x${TRANSFORM_WIDTH}`;
-export const TRANSFORM_SIZE = TRANSFORM_WIDTH * TRANSFORM_WIDTH;
-export const TRANSFORM_BYTES = TRANSFORM_SIZE * FLOAT_32_BYTES;
+export const DIMENSIONS = 3;
 
 export const doTimes = <T>(count: number, action: (count: number) => T): T[] =>
   Array(count).fill(null).map((_, index) => action(index));
+
+export const dotProduct = <T extends number[]>(left: T, right: T) =>
+  left.reduce(
+    (result, value, index) => result + value * right[index],
+    0,
+  );
+
+export const copy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
+
+export const between = <T>(target: T, min: T, max: T) =>
+  min <= target && target <= max;

@@ -1,15 +1,15 @@
 import { format } from "@std/fmt/bytes";
 import { rawText } from "@cutout/jsx/projections";
-import { Packer } from "roadroller";
+// import { Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
 
-const APP_ENTRYPOINT = `./${APP_DIR}/module.jsx`;
+const APP_ENTRYPOINT = `./${APP_DIR}/module.tsx`;
 const APP_OUTPUT_JS = `./${OUTPUT_DIR}/module.js`;
-const APP_OUTPUT_RR = `./${OUTPUT_DIR}/module.rr.js`;
+// const APP_OUTPUT_RR = `./${OUTPUT_DIR}/module.rr.js`;
 const APP_OUTPUT = `./${OUTPUT_DIR}/index.html`;
 const APP_OUTPUT_COMPRESSED = `${APP_OUTPUT}.zip`;
 
@@ -33,23 +33,23 @@ Deno.writeTextFileSync(APP_OUTPUT_JS, source.text());
 
 logSize(APP_OUTPUT_JS);
 
-const packer = new Packer([
-  {
-    data: source.text(),
-    type: "js",
-    action: "eval",
-  },
-]);
-await packer.optimize();
-const { firstLine, secondLine } = packer.makeDecoder();
+// const packer = new Packer([
+//   {
+//     data: source.text(),
+//     type: "js",
+//     action: "eval",
+//   },
+// ]);
+// await packer.optimize();
+// const { firstLine, secondLine } = packer.makeDecoder();
 
-Deno.writeTextFileSync(APP_OUTPUT_RR, firstLine + "\n" + secondLine);
+// Deno.writeTextFileSync(APP_OUTPUT_RR, firstLine + "\n" + secondLine);
 
-logSize(APP_OUTPUT_RR);
+// logSize(APP_OUTPUT_RR);
 
 // const appOutputText = rawText(
 //   <body>
-//     <script type="module">
+//     <script>
 //       {firstLine}
 //       {secondLine}
 //     </script>

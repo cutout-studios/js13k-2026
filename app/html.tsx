@@ -1,0 +1,38 @@
+import { documentFragment } from "~gui";
+
+const CANVAS_FRAGMENT = documentFragment(<canvas></canvas>);
+
+export const canvas = CANVAS_FRAGMENT.querySelector("canvas")!;
+
+export const html = documentFragment(
+  <>
+    <style>
+      {/* css */ `
+      html, body, main, main * { 
+        all: initial;
+        box-sizing: border-box;
+        font-family: system-ui;
+      }
+      main {
+        position: relative;
+      }
+      main, canvas, nav {
+        display: block;
+        width: 100vw;
+        height: 100svh;
+      }
+      nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    `}
+    </style>
+    <main>
+      {CANVAS_FRAGMENT}
+      <nav>
+        {/* TBD: gui here */}
+      </nav>
+    </main>
+  </>,
+);

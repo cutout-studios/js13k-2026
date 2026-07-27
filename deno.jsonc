@@ -3,21 +3,22 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@cutout/jsx"
   },
-  "tasks": {
-    "setup": "brew bundle",
-    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run ./scripts/bundle.jsx",
-    "clean": "rm -rf .output",
-    "open": "open .output/index.html"
-  },
   "imports": {
     "@cutout/jsx": "jsr:@cutout/jsx",
     "@cutout/store": "jsr:@cutout/store",
     "@std/fmt": "jsr:@std/fmt",
-    "roadroller": "npm:roadroller",
+    "~core": "./libraries/core/module.ts",
+    "~audio": "./libraries/audio/module.ts",
     "~common": "./libraries/common.ts",
-    "~jsx": "./libraries/jsx/module.js",
-    "~graphics": "./libraries/graphics/module.js",
-    "~objects": "./libraries/objects/module.ts",
-    "~audio": "./libraries/audio/module.js"
+    "~gui": "./libraries/gui/module.js",
+    "~scenes": "./libraries/scenes/module.ts",
+    "~viewport": "./libraries/viewport/module.ts",
+    "roadroller": "npm:roadroller"
+  },
+  "tasks": {
+    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run ./scripts/bundle.jsx",
+    "clean": "rm -rf .output",
+    "open": "open .output/index.html",
+    "setup": "brew bundle"
   }
 }

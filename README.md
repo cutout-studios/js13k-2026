@@ -25,23 +25,30 @@ deno task open
 
 ### Cleanup
 
-- [ ] canvas + dom:
-  - [ ] apply canvas resize dynamically, avoiding aspect ratio distortion
-  - [ ] single-element dom projection, I think. remove spurious code there.
-- [ ] camera update function
-- [ ] clean up xyz/xzyw distinction. which is when? xyzw is probably
-      transform-only
-- [ ] fix reversed `compose` order?
-- [ ] things I don't quite understand yet and should spell out better in code
-  - [ ] why 'invert' needs be 'clamped' to the inner 3x3
-  - [ ] how the perspective transform works
-- [ ] get roadroller working again
+#### Graphics
+
+- [x] things I don't quite understand yet and should spell out better in code
+  - [x] why 'invert' needs be 'clamped' to the inner 3x3
+  - [x] how the perspective transform works
+- [x] rigid transforms are 3x4; projections are 4x4. xyzw is
+      projection/rendertime-only.
+- [x] rename `compose` to something else? pipe, concat, sequence?
+- [x] clean up cameraUpdate function
+
+#### Misc.
+
+- [x] canvas + dom:
+  - [x] apply canvas resize dynamically, avoiding aspect ratio distortion on
+        resize
+  - [x] single-element dom projection, I think. remove spurious code there.
+
+- [ ] get roadroller working again (remove top-level await)
 
 ### Important follow-up features
 
-- [ ] audio/source: master bus
+- [ ] audio/source: master bus - lowpass + compression
 - [ ] audio/musicLoop: rests
-- [ ] graphics: color-assigment (faces, probably)
+- [ ] graphics: color-assignment (faces, probably)
 
 ### Nice-to-have features
 

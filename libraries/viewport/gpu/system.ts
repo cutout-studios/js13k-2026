@@ -1,0 +1,17 @@
+export const gpu = globalThis.navigator.gpu;
+export const format = gpu.getPreferredCanvasFormat();
+
+const no = () => alert("WEBGPU ONLY.");
+
+if (!gpu) no();
+
+const adapter = await gpu.requestAdapter();
+
+if (!adapter) no();
+
+export const api = await adapter!.requestDevice();
+
+api.addEventListener(
+  "uncapturederror",
+  ({ error }) => console.error(error.message),
+);
