@@ -12,7 +12,6 @@ export {
   createTranslation as createTranslationTransform,
 } from "./transforms/create.ts";
 export { invert as invertTransform } from "./transforms/invert.ts";
-export { scale as scaleTransform } from "./transforms/scale.ts";
 
 export type { Material as ObjectMaterial } from "./materials/types.ts";
 export { wgsl } from "./materials/wgsl.ts";

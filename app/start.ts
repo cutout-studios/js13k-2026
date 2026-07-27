@@ -3,7 +3,6 @@ import {
   createCubeGeometry,
   createRotationTransform,
   OBJECT_TRANSFORM_INDEX,
-  scaleTransform,
   Scene,
   SceneObject,
 } from "~scenes";
@@ -12,12 +11,13 @@ import { createAudioSource, MusicBox } from "../libraries/audio/module.ts";
 
 import { canvas, html } from "./html.tsx";
 import {
-  COMMAND_KEYMAP as COMMAND_KEYCODE_MAP,
+  COMMAND_KEYCODE_MAP,
   MUSICBOX_TEST_SCORE,
   MUSICBOX_TEST_TEMPO,
-  VIEWPORT_COMMAND_ADJUSTMENT_MAP as VIEWPORT_ADJUSTMENT_MAP,
-  VIEWPORT_STARTING_LOCATION,
+  VIEWPORT_ADJUSTMENT_MAP,
+  VIEWPORT_STARTING_ADJUSTMENT,
 } from "./constants.ts";
+import { SECONDS_TO_MS } from "~common";
 
 document.body.appendChild(html);
 
@@ -35,7 +35,8 @@ const musicbox = new MusicBox(
   MUSICBOX_TEST_TEMPO,
 );
 
-viewport.adjust(VIEWPORT_STARTING_LOCATION);
+// Adjust back from origin.
+viewport.adjust(VIEWPORT_STARTING_ADJUSTMENT);
 musicbox.play();
 
 startGameLoop((deltaMS, clockMS) => {
@@ -49,13 +50,13 @@ startGameLoop((deltaMS, clockMS) => {
 
     if (!viewportAdjustment) continue;
 
-    viewport.adjust(scaleTransform(viewportAdjustment, deltaMS));
+    viewport.adjust(viewportAdjustment(deltaMS));
   }
 
   // Update cube rotation.
   cube[OBJECT_TRANSFORM_INDEX] = createRotationTransform([
-    Math.sin(clockMS),
-    Math.cos(clockMS),
+    Math.sin(clockMS / SECONDS_TO_MS),
+    Math.cos(clockMS / SECONDS_TO_MS),
     0,
   ], Math.PI / 2);
 

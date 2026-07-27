@@ -12,6 +12,7 @@ export const html = documentFragment(
         all: initial;
         box-sizing: border-box;
         font-family: system-ui;
+        overflow: hidden;
       }
       main {
         position: relative;
@@ -22,6 +23,7 @@ export const html = documentFragment(
         height: 100svh;
       }
       nav {
+        pointer-events: none;
         position: absolute;
         top: 0;
         left: 0;

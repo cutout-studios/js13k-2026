@@ -11,6 +11,7 @@ export class Controller {
         "keyup",
         ({ code }) => this.inputs.delete(code),
       );
+      globalThis.addEventListener("blur", () => this.inputs.clear());
     }
   }
 }

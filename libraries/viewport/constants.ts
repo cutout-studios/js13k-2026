@@ -2,7 +2,6 @@ import { copy } from "~common";
 import { DEFAULT_TRANSFORM, wgsl } from "~scenes";
 
 import { ViewportOptions } from "./types.ts";
-import { fromTransform } from "./projections/fromTransform.ts";
 
 export const PROJECTION_DATA_GROUP_INDEX = 0;
 export const PROJECTION_DATA_INSTANCE_INDEX = 0;
@@ -12,7 +11,7 @@ export const VIEWPORT_DEFAULT_OPTIONS: ViewportOptions = {
   depthTextureFormat: "depth24plus",
   viewingAngle: Math.PI / 2,
   safetyCropDistance: 0.1,
-  startingProjection: fromTransform(DEFAULT_TRANSFORM),
+  startingTransform: copy(DEFAULT_TRANSFORM),
   missingMaterial: [
     wgsl`
     struct Projections {
@@ -29,10 +28,10 @@ export const VIEWPORT_DEFAULT_OPTIONS: ViewportOptions = {
     var<uniform> object: Projections;
 
     @vertex
-    fn main(@location(0) position: vec4f) -> VertexOutput {
+    fn main(@location(0) position: vec3f) -> VertexOutput {
       var output: VertexOutput;
 
-      output.Position = object.transform * position;
+      output.Position = object.transform * vec4f(position, 1.0);
       output.modelPosition = position;
 
       return output;

@@ -3,6 +3,7 @@ import {
   createTranslationTransform,
   type ObjectTransform,
 } from "~scenes";
+import { SECONDS_TO_MS } from "~common";
 
 export enum Command {
   MOVE_FORWARD,
@@ -15,7 +16,7 @@ export enum Command {
   LOOK_RIGHT,
 }
 
-export const COMMAND_KEYMAP: Record<string, Command> = {
+export const COMMAND_KEYCODE_MAP: Record<string, Command> = {
   // NOTE: Browser key codes ignore keyboard layout.
   "KeyW": Command.LOOK_UP,
   "KeyA": Command.LOOK_LEFT,
@@ -27,19 +28,35 @@ export const COMMAND_KEYMAP: Record<string, Command> = {
   "ArrowDown": Command.MOVE_BACKWARD,
 };
 
-export const VIEWPORT_STARTING_LOCATION = createTranslationTransform([0, 0, 5]);
+export const VIEWPORT_STARTING_ADJUSTMENT = createTranslationTransform([
+  0,
+  0,
+  5,
+]);
 
-export const VIEWPORT_COMMAND_ADJUSTMENT_MAP: Record<Command, ObjectTransform> =
-  {
-    [Command.MOVE_FORWARD]: createTranslationTransform([0, 0, -1]),
-    [Command.MOVE_BACKWARD]: createTranslationTransform([0, 0, 1]),
-    [Command.MOVE_LEFT]: createTranslationTransform([-1, 0, 0]),
-    [Command.MOVE_RIGHT]: createTranslationTransform([1, 0, 0]),
-    [Command.LOOK_UP]: createRotationTransform([1, 0, 0], Math.PI),
-    [Command.LOOK_DOWN]: createRotationTransform([1, 0, 0], -Math.PI),
-    [Command.LOOK_LEFT]: createRotationTransform([0, 0, 1], Math.PI),
-    [Command.LOOK_RIGHT]: createRotationTransform([0, 0, 1], -Math.PI),
-  };
+export const VIEWPORT_MOVE_SPEED = 2 / SECONDS_TO_MS;
+
+export const VIEWPORT_ADJUSTMENT_MAP: Record<
+  Command,
+  (deltaMS: number) => ObjectTransform
+> = {
+  [Command.MOVE_FORWARD]: (deltaMS) =>
+    createTranslationTransform([0, 0, -VIEWPORT_MOVE_SPEED * deltaMS]),
+  [Command.MOVE_BACKWARD]: (deltaMS) =>
+    createTranslationTransform([0, 0, VIEWPORT_MOVE_SPEED * deltaMS]),
+  [Command.MOVE_LEFT]: (deltaMS) =>
+    createTranslationTransform([-VIEWPORT_MOVE_SPEED * deltaMS, 0, 0]),
+  [Command.MOVE_RIGHT]: (deltaMS) =>
+    createTranslationTransform([VIEWPORT_MOVE_SPEED * deltaMS, 0, 0]),
+  [Command.LOOK_UP]: (deltaMS) =>
+    createRotationTransform([1, 0, 0], VIEWPORT_MOVE_SPEED * deltaMS),
+  [Command.LOOK_DOWN]: (deltaMS) =>
+    createRotationTransform([1, 0, 0], -VIEWPORT_MOVE_SPEED * deltaMS),
+  [Command.LOOK_LEFT]: (deltaMS) =>
+    createRotationTransform([0, 0, 1], VIEWPORT_MOVE_SPEED * deltaMS),
+  [Command.LOOK_RIGHT]: (deltaMS) =>
+    createRotationTransform([0, 0, 1], -VIEWPORT_MOVE_SPEED * deltaMS),
+};
 
 export const MUSICBOX_TEST_TEMPO = 200;
 export const MUSICBOX_TEST_SCORE = `

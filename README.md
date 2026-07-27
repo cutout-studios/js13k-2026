@@ -41,8 +41,7 @@ deno task open
   - [x] apply canvas resize dynamically, avoiding aspect ratio distortion on
         resize
   - [x] single-element dom projection, I think. remove spurious code there.
-
-- [ ] get roadroller working again
+- [x] get roadroller working again _(removed it for now, actually)_
 
 ### Important follow-up features
 
@@ -59,17 +58,33 @@ deno task open
 ### Dependent on game type
 
 - [ ] Instanced rendering (for voxels)
+  - [ ] Better handling of GPU buffers
 - [ ] "Scene" JSX Projection + Store.
 - [ ] Physics.
 
 ### DX
 
 - [x] types + tests
-- [ ] Deno watch loop
+- [x] Deno watch loop
 
 ### Later Compression Tricks
 
-- [ ] Explore `ect` as final compressor - likely a bit better, but have to
-      manually compile the package
 - [ ] jsx-ify template strings: shaders, css, scores - should make them
       minifiable and buy back kB at some threshold
+
+- Restore roadroller - doesn't support certain apis like private fields and
+  top-level await and isn't in active support, but a final swing if we need one.
+
+- Add `ect` to the build stack. Saves a few extra bytes.
+
+```
+git clone --recursive https://github.com/fhanau/Efficient-Compression-Tool.git .output/ect
+mkdir .output/ect/build && cd .output/etc/build
+brew install cmake
+cmake ../src
+make
+```
+
+```
+./.output/ect/build/ect -zip -9 ./.output/index.html.zip
+```

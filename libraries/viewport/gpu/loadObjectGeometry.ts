@@ -22,14 +22,14 @@ export const loadObjectGeometry = (
   loader.setPipeline(pipeline);
   loader.setBindGroup(
     PROJECTION_DATA_GROUP_INDEX,
-    _getProjectionDataLocation(projection, pipeline),
+    _allocateProjection(projection, pipeline),
   );
 
-  // NOTE: clobbers existing geometry buffer every time.
+  // NOTE: only supports one piece of geometry per frame.
   loader.setVertexBuffer(0, _allocateGeometry(geometry));
 };
 
-function _getProjectionDataLocation(
+function _allocateProjection(
   projection: Projection,
   pipeline: GPURenderPipeline,
 ): GPUBindGroup {
@@ -56,12 +56,12 @@ function _allocateGeometry(geometry: ObjectGeometry) {
   }
 
   const geometryData = new Float32Array(
-    geometry.map((point) => [...point, IS_PROJECTION_POINT]).flat(),
+    geometry.flat(),
   );
 
   const pointerBuffer = api.createBuffer({
     size: geometryData.byteLength,
-    usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_SRC,
+    usage: GPUBufferUsage.VERTEX,
     mappedAtCreation: true,
   });
 
