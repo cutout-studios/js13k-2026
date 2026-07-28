@@ -1,5 +1,9 @@
 export type { Geometry as ObjectGeometry } from "./geometry/types.ts";
 export { cube as createCubeGeometry } from "./geometry/cube.ts";
+export {
+  POINT_FORMAT as GEOMETRY_POINT_FORMAT,
+  POINT_SIZE as GEOMETRY_POINT_SIZE,
+} from "./geometry/constants.ts";
 
 export type {
   Direction as TransformDirection,

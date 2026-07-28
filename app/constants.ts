@@ -3,7 +3,6 @@ import {
   createTranslationTransform,
   type ObjectTransform,
 } from "~scenes";
-import { SECONDS_TO_MS } from "~common";
 
 export enum Command {
   MOVE_FORWARD,
@@ -34,7 +33,7 @@ export const VIEWPORT_STARTING_ADJUSTMENT = createTranslationTransform([
   5,
 ]);
 
-export const VIEWPORT_MOVE_SPEED = 2 / SECONDS_TO_MS;
+export const VIEWPORT_MOVE_SPEED = 2;
 
 export const VIEWPORT_ADJUSTMENT_MAP: Record<
   Command,

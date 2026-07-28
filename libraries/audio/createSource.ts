@@ -3,8 +3,6 @@ import { masterBus } from "./masterBus.ts";
 
 import { Envelope, Source } from "./types.ts";
 
-// TODO: manually trigger a source in MS
-
 export const createSource = (
   type: OscillatorType,
   envelope: Envelope = [[0, 0], [0, 1]],
@@ -33,8 +31,8 @@ export const createSource = (
 
       let elapsedTime = startTime;
       ampKnob.gain.setValueAtTime(0, elapsedTime);
-      for (const [timeBreakpointMS, velocityBreakpoint] of envelope) {
-        elapsedTime += timeBreakpointMS;
+      for (const [timeBreakpoint, velocityBreakpoint] of envelope) {
+        elapsedTime += timeBreakpoint;
         ampKnob.gain.linearRampToValueAtTime(
           velocityBreakpoint,
           elapsedTime,

@@ -1,11 +1,8 @@
-const BIN_TO_BYTES = 8;
-const FLOAT_32_BIN = 32;
-const FLOAT_32_BYTES = FLOAT_32_BIN / BIN_TO_BYTES;
+import { FLOAT_32_BYTES } from "~common";
 
 export const PROJECTION_WIDTH = 4;
 export const PROJECTION_SIZE = PROJECTION_WIDTH ** 2;
 export const PROJECTION_BYTES = PROJECTION_SIZE * FLOAT_32_BYTES;
-export const PROJECTION_FORMAT = `float${FLOAT_32_BIN}x${PROJECTION_WIDTH}`;
 
 export const IS_PROJECTION_DIRECTION = 0;
 export const IS_PROJECTION_POINT = 1;

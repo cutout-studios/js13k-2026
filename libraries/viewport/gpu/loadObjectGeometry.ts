@@ -1,9 +1,6 @@
 import type { ObjectGeometry } from "~scenes";
 
-import {
-  IS_PROJECTION_POINT,
-  PROJECTION_BYTES,
-} from "../projections/constants.ts";
+import { PROJECTION_BYTES } from "../projections/constants.ts";
 import type { Projection } from "../projections/types.ts";
 
 import { api } from "./system.ts";

@@ -1,9 +1,9 @@
-import type { ObjectMaterial } from "~scenes";
-
 import {
-  PROJECTION_FORMAT,
-  PROJECTION_SIZE,
-} from "../projections/constants.ts";
+  GEOMETRY_POINT_FORMAT,
+  GEOMETRY_POINT_SIZE,
+  type ObjectMaterial,
+} from "~scenes";
+
 import { PROJECTION_DATA_GROUP_INDEX as PROJECTION_DATA_INSTANCE_INDEX } from "../constants.ts";
 
 import { api, format } from "./system.ts";
@@ -39,12 +39,12 @@ export const getPipeline = (
     layout,
     vertex: {
       module: api.createShaderModule({ code: material[0] }),
-      buffers: [{ // TODO: make constants
-        arrayStride: 12,
+      buffers: [{
+        arrayStride: GEOMETRY_POINT_SIZE,
         attributes: [{
           shaderLocation: 0,
           offset: 0,
-          format: "float32x3",
+          format: GEOMETRY_POINT_FORMAT,
         }],
       }],
     },

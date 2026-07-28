@@ -42,6 +42,7 @@ deno task open
         resize
   - [x] single-element dom projection, I think. remove spurious code there.
 - [x] get roadroller working again _(removed it for now, actually)_
+- [ ] Constantize Geometry Buffer walk
 
 ### Important follow-up features
 

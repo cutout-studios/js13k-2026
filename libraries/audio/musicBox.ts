@@ -49,7 +49,7 @@ export class MusicBox {
     );
   }
 
-  async play() {
+  async start() {
     if (this.#isPlaying) return;
     this.#isPlaying = true;
 

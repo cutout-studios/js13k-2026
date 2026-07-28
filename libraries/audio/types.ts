@@ -1,13 +1,13 @@
-export type Frequency = number;
-export type Timing = number;
-export type Pan = number;
+export type Frequency = number; // Hz.
+export type Timing = number; // Seconds!
+export type Pan = number; // -1 to 1.
 export type ScaleDegree = number;
 export type Magnitude = number;
 
 export type Source = (
   frequencies: Frequency[],
-  durationMS: Timing,
-  delayMS: Timing,
+  duration: Timing,
+  delay: Timing,
   pan: Pan,
 ) => void;
 

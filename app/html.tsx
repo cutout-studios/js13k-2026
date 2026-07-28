@@ -1,10 +1,10 @@
-import { documentFragment } from "~gui";
+import { documentFragment as fragment } from "~gui";
 
-const CANVAS_FRAGMENT = documentFragment(<canvas></canvas>);
+const CANVAS_FRAGMENT = fragment(<canvas></canvas>);
 
 export const canvas = CANVAS_FRAGMENT.querySelector("canvas")!;
 
-export const html = documentFragment(
+document.body.appendChild(fragment(
   <>
     <style>
       {/* css */ `
@@ -37,4 +37,4 @@ export const html = documentFragment(
       </nav>
     </main>
   </>,
-);
+));

@@ -7,9 +7,9 @@ import {
   SceneObject,
 } from "~scenes";
 import { Viewport } from "~viewport";
-import { createAudioSource, MusicBox } from "../libraries/audio/module.ts";
+import { createAudioSource, MusicBox } from "~audio";
 
-import { canvas, html } from "./html.tsx";
+import { canvas } from "./html.tsx";
 import {
   COMMAND_KEYCODE_MAP,
   MUSICBOX_TEST_SCORE,
@@ -17,9 +17,6 @@ import {
   VIEWPORT_ADJUSTMENT_MAP,
   VIEWPORT_STARTING_ADJUSTMENT,
 } from "./constants.ts";
-import { SECONDS_TO_MS } from "~common";
-
-document.body.appendChild(html);
 
 const viewport = new Viewport(canvas);
 const cube: SceneObject = [createCubeGeometry()];
@@ -35,35 +32,36 @@ const musicbox = new MusicBox(
   MUSICBOX_TEST_TEMPO,
 );
 
-// Adjust back from origin.
+// Adjust back from center so we can view the cube.
 viewport.adjust(VIEWPORT_STARTING_ADJUSTMENT);
 
-// Generally not good practice to start audio until
-// first user input has been received.
-addEventListener("keydown", () => {
-  musicbox.play();
-}, { once: true });
-
-startGameLoop((deltaMS, clockMS) => {
-  // Delegate input.
+startGameLoop((elapsedTime, totalTime) => {
+  // Handle controller input.
   for (const inputKeyCode of controller.inputs) {
-    const command = COMMAND_KEYCODE_MAP[inputKeyCode];
+    const playerCommand = COMMAND_KEYCODE_MAP[inputKeyCode];
 
-    if (command === undefined) continue;
+    if (playerCommand === undefined) continue;
 
-    const viewportAdjustment = VIEWPORT_ADJUSTMENT_MAP[command];
+    const amountToAdjustBy = VIEWPORT_ADJUSTMENT_MAP[playerCommand];
 
-    if (viewportAdjustment === undefined) continue;
+    if (amountToAdjustBy === undefined) continue;
 
-    viewport.adjust(viewportAdjustment(deltaMS));
+    viewport.adjust(amountToAdjustBy(elapsedTime));
   }
 
-  // Update cube rotation.
+  // Update the cube's rotation.
   cube[OBJECT_TRANSFORM_INDEX] = createRotationTransform([
-    Math.sin(clockMS / SECONDS_TO_MS),
-    Math.cos(clockMS / SECONDS_TO_MS),
+    Math.sin(totalTime),
+    Math.cos(totalTime),
     0,
   ], Math.PI / 2);
 
+  // Snap the scene from the viewport.
   viewport.snapshot(scene);
 });
+
+// Best practice to start audio only once
+// first user input has been received.
+addEventListener("keydown", () => {
+  musicbox.start();
+}, { once: true });
