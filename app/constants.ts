@@ -1,60 +1,26 @@
+import { DIMENSIONS, doTimes } from "~common";
 import {
   createRotationTransform,
   createTranslationTransform,
+  TransformDirection,
   type ObjectTransform,
 } from "~scenes";
 
-export enum Command {
-  MOVE_FORWARD,
-  MOVE_BACKWARD,
-  MOVE_LEFT,
-  MOVE_RIGHT,
-  LOOK_UP,
-  LOOK_DOWN,
-  LOOK_LEFT,
-  LOOK_RIGHT,
-}
+const [X, Y, Z] = [0, 1, 2];
 
-export const COMMAND_KEYCODE_MAP: Record<string, Command> = {
+const VIEWPORT_SPEED = 2;
+
+export const VIEWPORT_STARTING_POINT = _move(Z, 1)(2);
+export const VIEWPORT_CONTROLLER_MAP: Record<string, (delta: number) => ObjectTransform> = {
   // NOTE: Browser key codes ignore keyboard layout.
-  "KeyW": Command.LOOK_UP,
-  "KeyA": Command.LOOK_LEFT,
-  "KeyS": Command.LOOK_DOWN,
-  "KeyD": Command.LOOK_RIGHT,
-  "ArrowLeft": Command.MOVE_LEFT,
-  "ArrowRight": Command.MOVE_RIGHT,
-  "ArrowUp": Command.MOVE_FORWARD,
-  "ArrowDown": Command.MOVE_BACKWARD,
-};
-
-export const VIEWPORT_STARTING_ADJUSTMENT = createTranslationTransform([
-  0,
-  0,
-  5,
-]);
-
-export const VIEWPORT_MOVE_SPEED = 2;
-
-export const VIEWPORT_ADJUSTMENT_MAP: Record<
-  Command,
-  (deltaMS: number) => ObjectTransform
-> = {
-  [Command.MOVE_FORWARD]: (deltaMS) =>
-    createTranslationTransform([0, 0, -VIEWPORT_MOVE_SPEED * deltaMS]),
-  [Command.MOVE_BACKWARD]: (deltaMS) =>
-    createTranslationTransform([0, 0, VIEWPORT_MOVE_SPEED * deltaMS]),
-  [Command.MOVE_LEFT]: (deltaMS) =>
-    createTranslationTransform([-VIEWPORT_MOVE_SPEED * deltaMS, 0, 0]),
-  [Command.MOVE_RIGHT]: (deltaMS) =>
-    createTranslationTransform([VIEWPORT_MOVE_SPEED * deltaMS, 0, 0]),
-  [Command.LOOK_UP]: (deltaMS) =>
-    createRotationTransform([1, 0, 0], VIEWPORT_MOVE_SPEED * deltaMS),
-  [Command.LOOK_DOWN]: (deltaMS) =>
-    createRotationTransform([1, 0, 0], -VIEWPORT_MOVE_SPEED * deltaMS),
-  [Command.LOOK_LEFT]: (deltaMS) =>
-    createRotationTransform([0, 1, 0], VIEWPORT_MOVE_SPEED * deltaMS),
-  [Command.LOOK_RIGHT]: (deltaMS) =>
-    createRotationTransform([0, 1, 0], -VIEWPORT_MOVE_SPEED * deltaMS),
+  KeyW: _look(X, 1),
+  KeyS: _look(X, -1),
+  KeyA: _look(Y, 1),
+  KeyD: _look(Y, -1),
+  ArrowUp: _move(Z, -1),
+  ArrowDown: _move(Z, 1),
+  ArrowLeft: _move(X, -1),
+  ArrowRight: _move(X, 1),
 };
 
 export const MUSICBOX_TEST_TEMPO = 200;
@@ -63,3 +29,15 @@ export const MUSICBOX_TEST_SCORE = `
   chords: AM * *   * *  * *   * | D3M * *  * E3M7  *  *  *  
   bass:   A2 * *   * *  * *   * | D1  * *  * E1    *  *  * 
 `;
+
+function _direction(axis: number, magnitude: number) {
+  return doTimes(DIMENSIONS, (index) => index === axis ? magnitude : 0) as TransformDirection;
+}
+
+function _move(axis: number, sign: number) {
+  return (delta: number) => createTranslationTransform(_direction(axis, sign * VIEWPORT_SPEED * delta));
+}
+
+function _look(axis: number, sign: number) {
+  return (delta: number) => createRotationTransform(_direction(axis, 1), sign * VIEWPORT_SPEED * delta);
+}

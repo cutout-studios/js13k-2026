@@ -11,11 +11,10 @@ import { createAudioSource, MusicBox } from "~audio";
 
 import { canvas } from "./html.tsx";
 import {
-  COMMAND_KEYCODE_MAP,
   MUSICBOX_TEST_SCORE,
   MUSICBOX_TEST_TEMPO,
-  VIEWPORT_ADJUSTMENT_MAP,
-  VIEWPORT_STARTING_ADJUSTMENT,
+  VIEWPORT_CONTROLLER_MAP,
+  VIEWPORT_STARTING_POINT,
 } from "./constants.ts";
 
 const viewport = new Viewport(canvas);
@@ -32,17 +31,14 @@ const musicbox = new MusicBox(
   MUSICBOX_TEST_TEMPO,
 );
 
-// Adjust back from center so we can view the cube.
-viewport.adjust(VIEWPORT_STARTING_ADJUSTMENT);
+// Adjust back to the starting point so we can view
+// the cube.
+viewport.adjust(VIEWPORT_STARTING_POINT);
 
 startGameLoop((elapsedTime, totalTime) => {
   // Handle controller input.
   for (const inputKeyCode of controller.inputs) {
-    const playerCommand = COMMAND_KEYCODE_MAP[inputKeyCode];
-
-    if (playerCommand === undefined) continue;
-
-    const amountToAdjustBy = VIEWPORT_ADJUSTMENT_MAP[playerCommand];
+    const amountToAdjustBy = VIEWPORT_CONTROLLER_MAP[inputKeyCode];
 
     if (amountToAdjustBy === undefined) continue;
 
