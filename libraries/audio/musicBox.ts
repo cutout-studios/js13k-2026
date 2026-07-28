@@ -103,18 +103,20 @@ export class MusicBox {
     const sourceCalls: SourceCall[] = [];
 
     let root: ScaleDegree | undefined,
-      harmonics: ScaleDegree[] | undefined,
-      beatCount = 1;
+      harmonics: ScaleDegree[] = [],
+      beatCount = 0;
     const _flushEvent = () => {
-      if (root === undefined) return;
+      if (beatCount === 0) return;
       sourceCalls.push([
-        [
-          getFrequency(root),
-          ...(harmonics ?? []).map((offset) => getFrequency(root! + offset)),
-        ],
+        root !== undefined
+          ? [
+            getFrequency(root),
+            ...harmonics.map((offset) => getFrequency(root! + offset)),
+          ]
+          : [/* rest */],
         beatCount * beatLength,
       ]);
-      [root, harmonics, beatCount] = [undefined, undefined, 1];
+      [root, harmonics, beatCount] = [undefined, [], 0];
     };
 
     for (const character of part.replaceAll(/\s+/g, "")) {
@@ -122,6 +124,7 @@ export class MusicBox {
         _flushEvent();
 
         root = SEMITONE_OFFSET[character.toUpperCase()];
+        beatCount++;
       }
 
       if (root !== undefined && between(character, "1", "6")) {
@@ -135,6 +138,10 @@ export class MusicBox {
       if (character === "#") root!++;
       if (character === "♭") root!--;
       if (character === "*") beatCount++;
+      if (character === "-") {
+        _flushEvent();
+        beatCount++;
+      }
     }
 
     _flushEvent();

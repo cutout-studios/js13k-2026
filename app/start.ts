@@ -35,20 +35,20 @@ const musicbox = new MusicBox(
 // the cube.
 viewport.adjust(VIEWPORT_STARTING_POINT);
 
-startGameLoop((elapsedTime, totalTime) => {
+startGameLoop((frameTime, gameTime) => {
   // Handle controller input.
   for (const inputKeyCode of controller.inputs) {
     const amountToAdjustBy = VIEWPORT_CONTROLLER_MAP[inputKeyCode];
 
     if (amountToAdjustBy === undefined) continue;
 
-    viewport.adjust(amountToAdjustBy(elapsedTime));
+    viewport.adjust(amountToAdjustBy(frameTime));
   }
 
   // Update the cube's rotation.
   cube[OBJECT_TRANSFORM_INDEX] = createRotationTransform([
-    Math.sin(totalTime),
-    Math.cos(totalTime),
+    Math.sin(gameTime),
+    Math.cos(gameTime),
     0,
   ], Math.PI / 2);
 
