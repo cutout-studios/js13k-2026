@@ -42,13 +42,13 @@ deno task open
         resize
   - [x] single-element dom projection, I think. remove spurious code there.
 - [x] get roadroller working again _(removed it for now, actually)_
-- [ ] Constantize Geometry Buffer walk
+- [x] Constantize Geometry Buffer walk
 
 ### Important follow-up features
 
 - [x] audio/source: master bus - lowpass + compression
+- [x] audio/musicLoop: rests
 - [ ] graphics: color-assignment (faces, probably)
-- [ ] audio/musicLoop: rests
 
 ### Nice-to-have features
 
