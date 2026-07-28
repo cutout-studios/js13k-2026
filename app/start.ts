@@ -37,18 +37,23 @@ const musicbox = new MusicBox(
 
 // Adjust back from origin.
 viewport.adjust(VIEWPORT_STARTING_ADJUSTMENT);
-musicbox.play();
+
+// Generally not good practice to start audio until
+// first user input has been received.
+addEventListener("keydown", () => {
+  musicbox.play();
+}, { once: true });
 
 startGameLoop((deltaMS, clockMS) => {
   // Delegate input.
   for (const inputKeyCode of controller.inputs) {
     const command = COMMAND_KEYCODE_MAP[inputKeyCode];
 
-    if (!command) continue;
+    if (command === undefined) continue;
 
     const viewportAdjustment = VIEWPORT_ADJUSTMENT_MAP[command];
 
-    if (!viewportAdjustment) continue;
+    if (viewportAdjustment === undefined) continue;
 
     viewport.adjust(viewportAdjustment(deltaMS));
   }

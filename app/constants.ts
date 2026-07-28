@@ -53,9 +53,9 @@ export const VIEWPORT_ADJUSTMENT_MAP: Record<
   [Command.LOOK_DOWN]: (deltaMS) =>
     createRotationTransform([1, 0, 0], -VIEWPORT_MOVE_SPEED * deltaMS),
   [Command.LOOK_LEFT]: (deltaMS) =>
-    createRotationTransform([0, 0, 1], VIEWPORT_MOVE_SPEED * deltaMS),
+    createRotationTransform([0, 1, 0], VIEWPORT_MOVE_SPEED * deltaMS),
   [Command.LOOK_RIGHT]: (deltaMS) =>
-    createRotationTransform([0, 0, 1], -VIEWPORT_MOVE_SPEED * deltaMS),
+    createRotationTransform([0, 1, 0], -VIEWPORT_MOVE_SPEED * deltaMS),
 };
 
 export const MUSICBOX_TEST_TEMPO = 200;

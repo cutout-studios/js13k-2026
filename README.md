@@ -46,8 +46,8 @@ deno task open
 ### Important follow-up features
 
 - [x] audio/source: master bus - lowpass + compression
-- [ ] audio/musicLoop: rests
 - [ ] graphics: color-assignment (faces, probably)
+- [ ] audio/musicLoop: rests
 
 ### Nice-to-have features
 

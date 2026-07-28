@@ -1,8 +1,9 @@
-import { SECONDS_TO_MS } from "~common";
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
 
 import { Envelope, Source } from "./types.ts";
+
+// TODO: manually trigger a source in MS
 
 export const createSource = (
   type: OscillatorType,
@@ -10,8 +11,8 @@ export const createSource = (
 ): Source => {
   return (
     frequencies,
-    durationMS,
-    delayMS = 0,
+    duration,
+    delay = 0,
     pan = 0,
   ) => {
     for (const frequency of frequencies) {
@@ -23,29 +24,29 @@ export const createSource = (
       oscillator.type = type;
       oscillator.connect(ampKnob).connect(panKnob).connect(masterBus);
 
-      const startTimeMS = (api.currentTime * SECONDS_TO_MS) + delayMS;
+      const startTime = api.currentTime + delay;
       oscillator.frequency.setValueAtTime(
         frequency,
-        startTimeMS / SECONDS_TO_MS,
+        startTime,
       );
-      panKnob.pan.setValueAtTime(pan, startTimeMS / SECONDS_TO_MS);
+      panKnob.pan.setValueAtTime(pan, startTime);
 
-      let elapsedTimeMS = startTimeMS;
-      ampKnob.gain.setValueAtTime(0, elapsedTimeMS / SECONDS_TO_MS);
+      let elapsedTime = startTime;
+      ampKnob.gain.setValueAtTime(0, elapsedTime);
       for (const [timeBreakpointMS, velocityBreakpoint] of envelope) {
-        elapsedTimeMS += timeBreakpointMS;
+        elapsedTime += timeBreakpointMS;
         ampKnob.gain.linearRampToValueAtTime(
           velocityBreakpoint,
-          elapsedTimeMS / SECONDS_TO_MS,
+          elapsedTime,
         );
       }
       ampKnob.gain.linearRampToValueAtTime(
         0,
-        (startTimeMS + durationMS) / SECONDS_TO_MS,
+        startTime + duration,
       );
 
-      oscillator.start(startTimeMS / SECONDS_TO_MS);
-      oscillator.stop((startTimeMS + durationMS) / SECONDS_TO_MS);
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration);
     }
   };
 };

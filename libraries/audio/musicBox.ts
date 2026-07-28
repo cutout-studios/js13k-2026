@@ -1,4 +1,5 @@
 import { between, copy, MINUTES_TO_SECONDS, SECONDS_TO_MS } from "~common";
+
 import {
   Frequency,
   ScaleDegree,
@@ -18,6 +19,7 @@ import {
   SEMITONE_OFFSET,
   TRIAD_HARMONICS,
 } from "./constants.ts";
+import { api } from "./api.ts";
 
 type SourceCall = [frequencies: Frequency[], duration: Timing];
 type SourceInstructions = Record<string, SourceCall[]>;
@@ -36,41 +38,46 @@ export class MusicBox {
     tempo: Tempo,
   ) {
     this.sources = sources;
-    this.score = score;
     this.tempo = tempo;
+    this.score = score;
   }
 
   set score(score: ScoreText) {
     [this.#currentInstructions, this.#currentScoreDuration] = this.#parseScore(
       score,
-      (MINUTES_TO_SECONDS * SECONDS_TO_MS) / this.tempo,
+      MINUTES_TO_SECONDS / this.tempo,
     );
-
-    this.score = score;
   }
 
-  play() {
+  async play() {
     if (this.#isPlaying) return;
-
     this.#isPlaying = true;
 
-    for (const sourceName in this.#currentInstructions) {
-      let offset = 0;
-      for (const [notes, duration] of this.#currentInstructions[sourceName]) {
-        this.sources[sourceName]?.(notes, duration, offset, 0);
-        offset += duration;
-      }
-    }
+    // Ensures the audio clock is actually running,
+    // otherwise we get stuttering while waiting for it to load.
+    await api.resume();
 
-    setTimeout(
-      this.play,
-      this.#currentScoreDuration!,
-    );
+    const _loop = () => {
+      for (const sourceName in this.#currentInstructions) {
+        let offset = 0;
+        for (const [notes, duration] of this.#currentInstructions[sourceName]) {
+          this.sources[sourceName]?.(notes, duration, offset, 0);
+          offset += duration;
+        }
+      }
+
+      setTimeout(
+        _loop,
+        this.#currentScoreDuration! * SECONDS_TO_MS,
+      );
+    };
+
+    _loop();
   }
 
   #parseScore(
     scoreText: ScoreText,
-    beatLengthMS: Timing,
+    beatLength: Timing,
   ): [Record<string, SourceCall[]>, Timing] {
     let length = 0;
     const instructions: SourceInstructions = {};
@@ -79,10 +86,10 @@ export class MusicBox {
 
       const sourceCalls = this.#parsePart(
         groups!.part.trim().replaceAll(/\s+/g, " "),
-        beatLengthMS,
+        beatLength,
       );
 
-      if (!length) {
+      if (!length) { // We assume all tracks are the same length.
         sourceCalls.forEach((event) => length += event[DURATION_INDEX]);
       }
 
@@ -92,7 +99,7 @@ export class MusicBox {
     return [instructions, length];
   }
 
-  #parsePart(part: ScoreText, beatLengthMS: Timing) {
+  #parsePart(part: ScoreText, beatLength: Timing) {
     const sourceCalls: SourceCall[] = [];
 
     let root: ScaleDegree | undefined,
@@ -105,7 +112,7 @@ export class MusicBox {
           getFrequency(root),
           ...(harmonics ?? []).map((offset) => getFrequency(root! + offset)),
         ],
-        beatCount * beatLengthMS,
+        beatCount * beatLength,
       ]);
       [root, harmonics, beatCount] = [undefined, undefined, 1];
     };

@@ -39,8 +39,8 @@ export class Viewport {
 
   adjust(transform: ObjectTransform) {
     const interimProjection = combine(
-      fromTransform(this.transform),
       fromTransform(transform),
+      fromTransform(this.transform),
     );
 
     this.transform = toTransform(interimProjection);

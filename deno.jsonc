@@ -16,7 +16,7 @@
     "roadroller": "npm:roadroller"
   },
   "tasks": {
-    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --watch=app,libraries ./scripts/bundle.jsx",
+    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --watch=app,libraries ./scripts/bundle.tsx",
     "clean": "rm -rf .output",
     "open": "open .output/index.html",
     "setup": "brew bundle"
