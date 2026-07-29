@@ -1,11 +1,6 @@
 import { startClock } from "~clock";
 import { Controller } from "~controller";
-import {
-  createCubeGeometry,
-  createObject,
-  paint,
-  setTransform,
-} from "~objects";
+import { setMaterial, setTransform } from "~objects";
 import { createRotation } from "~transforms";
 import { Viewport } from "~viewport";
 import { createAudioSource, MusicBox } from "~audio";
@@ -17,7 +12,7 @@ import {
   VIEWPORT_CONTROLLER_MAP,
   VIEWPORT_STARTING_POINT,
 } from "./constants.ts";
-import { repeat } from "~common";
+import { getCubeAdjustment, getCubePaint, theCubes } from "./theCubes.ts";
 
 const controller = new Controller();
 const viewport = new Viewport(canvas);
@@ -31,45 +26,29 @@ const musicbox = new MusicBox(
   MUSICBOX_TEST_TEMPO,
 );
 
-// The Cube™
-const POLYGONS_PER_CUBE_FACE = 2;
-const [RED, GREEN, BLUE] = [0xff0000, 0x00ff00, 0x0000ff];
-const cube = createObject({
-  geometry: createCubeGeometry(),
-  material: paint(
-    repeat(POLYGONS_PER_CUBE_FACE, RED),
-    repeat(POLYGONS_PER_CUBE_FACE, GREEN),
-    repeat(POLYGONS_PER_CUBE_FACE, BLUE),
-  ),
-});
-
-// TODO: additional cubes, for sanity
-
-// Adjust back to the starting point so we can view
-// The Cube™.
 viewport.adjust(VIEWPORT_STARTING_POINT);
 
 startClock((tickLength, totalClockTime) => {
   for (const inputKeyCode of controller.activeInputs) {
     const amountToAdjustBy = VIEWPORT_CONTROLLER_MAP[inputKeyCode];
-
     if (amountToAdjustBy === undefined) continue;
-
     viewport.adjust(amountToAdjustBy(tickLength));
   }
 
-  setTransform(
-    cube,
-    createRotation([
-      Math.sin(totalClockTime),
-      Math.cos(totalClockTime),
-      0,
-    ], Math.PI / 2),
+  const spin = createRotation(
+    [Math.sin(totalClockTime), Math.cos(totalClockTime), 0],
+    Math.PI / 2,
   );
 
-  // TODO: update material
+  theCubes.forEach((cube, index) => {
+    setTransform(
+      cube,
+      getCubeAdjustment(index, spin),
+    );
+    setMaterial(cube, getCubePaint(index + Math.floor(totalClockTime)));
+  });
 
-  viewport.render([cube]);
+  viewport.render(theCubes);
 });
 
 // Best practice to start audio only once
