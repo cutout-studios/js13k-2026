@@ -15,20 +15,23 @@ const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-await bundleApp({ minify: true });
+const LIBRARY_ENTRYPOINT = "./libraries/engine.ts";
+await bundle({ minify: true }, LIBRARY_ENTRYPOINT);
+logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH, LIBRARY_ENTRYPOINT);
 
+await bundle({ minify: true });
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
 
-await bundleApp({ minify: false });
+await bundle({ minify: false });
 
 await new Deno.Command("open", {
   args: [BUNDLE_OUTPUT_FILEPATH],
 }).output();
 
-async function bundleApp(options: Partial<Deno.bundle.Options> = {}) {
+async function bundle(options: Partial<Deno.bundle.Options> = {}, entrypoint = BUNDLE_ENTRYPOINT) {
   const _result = await Deno.bundle({
     ...options,
-    entrypoints: [BUNDLE_ENTRYPOINT],
+    entrypoints: [entrypoint],
     outputDir: OUTPUT_DIR,
     platform: "browser",
     write: false,
@@ -64,11 +67,11 @@ async function bundleApp(options: Partial<Deno.bundle.Options> = {}) {
   }
 }
 
-function logSize(filePath: string) {
+function logSize(filePath: string, customMessage?: string) {
   const { size } = Deno.statSync(filePath);
 
   console.log(
-    `%c${filePath}: %c${format(size)} %c(${
+    `%c${customMessage ?? filePath}: %c${format(size)} %c(${
       ((size / JS13K_LIMIT) * 100).toFixed(2)
     }%)`,
     "color: grey;",

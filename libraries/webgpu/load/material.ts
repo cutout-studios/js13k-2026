@@ -1,3 +1,4 @@
+import { FLOAT_32_BIN } from "~common";
 import { ObjectMaterial } from "~objects";
 import { getRenderPipeline, materialsLayout } from "../getRenderPipeline.ts";
 import { MATERIALS_GROUP_ID } from "../constants.ts";
@@ -23,10 +24,10 @@ export const loadMaterial = (
   loader.setBindGroup(MATERIALS_GROUP_ID, materialBindGroup);
 };
 
-function _makeBuffer(size: number = 0) {
+function _makeBuffer(size: number = FLOAT_32_BIN) {
   return api.createBuffer({
     size,
-    usage: GPUBufferUsage.STORAGE,
+    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
   });
 }
 

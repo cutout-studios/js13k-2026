@@ -1,6 +1,6 @@
 # js13k 2026
 
-Latest size: 4.9 kB
+Latest engine size: 4.24 kB
 
 ```
 deno task setup
@@ -48,12 +48,12 @@ deno task open
 
 - [x] audio/source: master bus - lowpass + compression
 - [x] audio/musicLoop: rests
-- [ ] graphics: color-assignment (faces, probably)
+- [x] graphics: color-assignment
 
 ### Dependent on game type
 
 - [ ] Instanced rendering (for voxels)
-  - [~] Better handling of GPU buffers
+  - [x] Better handling of GPU buffers
   - [ ] `drawIndexed` will break `vertex_index`
 - [ ] "Scene" JSX Projection + Store.
 - [ ] Physics.

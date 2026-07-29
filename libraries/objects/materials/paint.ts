@@ -27,13 +27,15 @@ export const paint = (...paints: Array<number | number[]>): Material => [
       return output;
     }`,
   wgsl`
-    @group(${MATERIALS_GROUP_ID}) @binding(0) palette: array<vec4f>;
+    @group(${MATERIALS_GROUP_ID})
+    @binding(0) var<storage, read>
+    palette: array<vec4f>;
 
     @fragment
     fn main(
       @location(0) @interpolate(flat) triangleIndex: u32
     ) -> @location(0) vec4f {
-      return palette[triangleIndex % arrayLength(&palette)]
+      return palette[triangleIndex % arrayLength(&palette)];
     }`,
   _buildPaintData(...paints),
 ];

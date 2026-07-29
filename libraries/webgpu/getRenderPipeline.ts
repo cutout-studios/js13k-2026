@@ -19,6 +19,7 @@ export const materialsLayout = api.createBindGroupLayout({
   entries: [{
     binding: 0,
     visibility: GPUShaderStage.FRAGMENT,
+    buffer: { type: "read-only-storage" }
   }],
 });
 
