@@ -1,5 +1,6 @@
 import { Radians } from "~common";
-import { ObjectMaterial, ObjectTransform } from "~scenes";
+import { ObjectMaterial } from "~objects";
+import { RigidTransform } from "~transforms";
 
 export type Color = [red: number, green: number, blue: number];
 export type ViewportOptions = {
@@ -7,7 +8,7 @@ export type ViewportOptions = {
   depthTextureFormat: GPUTextureFormat;
   viewingAngle: Radians;
   safetyCropDistance: number;
-  startingTransform?: ObjectTransform;
+  startingTransform?: RigidTransform;
   missingMaterial: ObjectMaterial;
-  missingTransform: ObjectTransform;
+  missingTransform: RigidTransform;
 };

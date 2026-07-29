@@ -1,4 +1,4 @@
-import { documentFragment as fragment } from "~gui";
+import { documentFragment as fragment } from "~web";
 
 const CANVAS_FRAGMENT = fragment(<canvas></canvas>);
 

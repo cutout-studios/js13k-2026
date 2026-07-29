@@ -7,12 +7,14 @@
     "@cutout/jsx": "jsr:@cutout/jsx",
     "@cutout/store": "jsr:@cutout/store",
     "@std/fmt": "jsr:@std/fmt",
-    "~core": "./libraries/core/module.ts",
     "~audio": "./libraries/audio/module.ts",
+    "~clock": "./libraries/clock.ts",
     "~common": "./libraries/common.ts",
-    "~gui": "./libraries/gui/module.js",
-    "~scenes": "./libraries/scenes/module.ts",
+    "~controller": "./libraries/controller.ts",
+    "~objects": "./libraries/objects/module.ts",
+    "~transforms": "./libraries/transforms/module.ts",
     "~viewport": "./libraries/viewport/module.ts",
+    "~web": "./libraries/web.ts",
     "roadroller": "npm:roadroller"
   },
   "tasks": {

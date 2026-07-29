@@ -2,9 +2,9 @@ import {
   GEOMETRY_POINT_FORMAT,
   GEOMETRY_POINT_SIZE,
   type ObjectMaterial,
-} from "~scenes";
+} from "~objects";
 
-import { PROJECTION_DATA_GROUP_INDEX as PROJECTION_DATA_INSTANCE_INDEX } from "../constants.ts";
+import { TRANSFORM_DATA_INSTANCE_INDEX } from "../constants.ts";
 
 import { api, format } from "./system.ts";
 
@@ -25,7 +25,7 @@ export const getPipeline = (
 
   const projectionLayout = api.createBindGroupLayout({
     entries: [{
-      binding: PROJECTION_DATA_INSTANCE_INDEX,
+      binding: TRANSFORM_DATA_INSTANCE_INDEX,
       visibility: GPUShaderStage.VERTEX,
       buffer: { type: "uniform" },
     }],

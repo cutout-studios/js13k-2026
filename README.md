@@ -55,6 +55,8 @@ deno task open
 - [ ] audio/source: waveform builders; overtones, noise
 - [ ] envelope primitive - modulate a value (audio/input) over a series of timed
       breakpoints
+- [ ] "Clock" concept, for handling different timescales (render vs. audio,
+      etc).
 
 ### Dependent on game type
 

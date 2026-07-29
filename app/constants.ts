@@ -1,10 +1,10 @@
 import { DIMENSIONS, doTimes } from "~common";
 import {
-  createRotationTransform,
-  createTranslationTransform,
-  type ObjectTransform,
-  TransformDirection,
-} from "~scenes";
+  createRotation,
+  createTranslation,
+  type RigidTransform,
+  type RigidTransformDirection,
+} from "~transforms";
 
 const [X, Y, Z] = [0, 1, 2];
 
@@ -13,7 +13,7 @@ const VIEWPORT_SPEED = 2;
 export const VIEWPORT_STARTING_POINT = _move(Z, 1)(2);
 export const VIEWPORT_CONTROLLER_MAP: Record<
   string,
-  (delta: number) => ObjectTransform
+  (delta: number) => RigidTransform
 > = {
   // NOTE: Browser key codes ignore keyboard layout.
   KeyW: _look(X, 1),
@@ -37,15 +37,15 @@ function _direction(axis: number, magnitude: number) {
   return doTimes(
     DIMENSIONS,
     (index) => index === axis ? magnitude : 0,
-  ) as TransformDirection;
+  ) as RigidTransformDirection;
 }
 
 function _move(axis: number, sign: number) {
   return (delta: number) =>
-    createTranslationTransform(_direction(axis, sign * VIEWPORT_SPEED * delta));
+    createTranslation(_direction(axis, sign * VIEWPORT_SPEED * delta));
 }
 
 function _look(axis: number, sign: number) {
   return (delta: number) =>
-    createRotationTransform(_direction(axis, 1), sign * VIEWPORT_SPEED * delta);
+    createRotation(_direction(axis, 1), sign * VIEWPORT_SPEED * delta);
 }

@@ -1,7 +1,7 @@
 import { SECONDS_TO_MS } from "~common";
 
-export const startGameLoop = (
-  onLoop: (elapsedTime: number, totalTime: number) => void,
+export const startClock = (
+  onLoop: (tickLength: number, totalClockTime: number) => void,
 ) => {
   const start = performance.now() / SECONDS_TO_MS;
   let last = start;

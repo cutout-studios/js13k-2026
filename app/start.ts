@@ -1,11 +1,7 @@
-import { GameController, startGameLoop } from "~core";
-import {
-  createCubeGeometry,
-  createRotationTransform,
-  OBJECT_TRANSFORM_INDEX,
-  Scene,
-  SceneObject,
-} from "~scenes";
+import { startClock } from "~clock";
+import { Controller } from "~controller";
+import { createCubeGeometry, createObject, setObjectTransform } from "~objects";
+import { createRotation } from "~transforms";
 import { Viewport } from "~viewport";
 import { createAudioSource, MusicBox } from "~audio";
 
@@ -17,10 +13,8 @@ import {
   VIEWPORT_STARTING_POINT,
 } from "./constants.ts";
 
+const controller = new Controller();
 const viewport = new Viewport(canvas);
-const cube: SceneObject = [createCubeGeometry()];
-const scene: Scene = [cube];
-const controller = new GameController();
 const musicbox = new MusicBox(
   {
     chords: createAudioSource("triangle"),
@@ -31,29 +25,34 @@ const musicbox = new MusicBox(
   MUSICBOX_TEST_TEMPO,
 );
 
+// The Cube™
+const cube = createObject({
+  geometry: createCubeGeometry(),
+});
+
 // Adjust back to the starting point so we can view
-// the cube.
+// The Cube™.
 viewport.adjust(VIEWPORT_STARTING_POINT);
 
-startGameLoop((frameTime, gameTime) => {
-  // Handle controller input.
-  for (const inputKeyCode of controller.inputs) {
+startClock((tickLength, totalClockTime) => {
+  for (const inputKeyCode of controller.activeInputs) {
     const amountToAdjustBy = VIEWPORT_CONTROLLER_MAP[inputKeyCode];
 
     if (amountToAdjustBy === undefined) continue;
 
-    viewport.adjust(amountToAdjustBy(frameTime));
+    viewport.adjust(amountToAdjustBy(tickLength));
   }
 
-  // Update the cube's rotation.
-  cube[OBJECT_TRANSFORM_INDEX] = createRotationTransform([
-    Math.sin(gameTime),
-    Math.cos(gameTime),
-    0,
-  ], Math.PI / 2);
+  setObjectTransform(
+    cube,
+    createRotation([
+      Math.sin(totalClockTime),
+      Math.cos(totalClockTime),
+      0,
+    ], Math.PI / 2),
+  );
 
-  // Snap the scene from the viewport.
-  viewport.snapshot(scene);
+  viewport.render([cube]);
 });
 
 // Best practice to start audio only once

@@ -1,46 +1,48 @@
-import type { ObjectGeometry } from "~scenes";
+import type { ObjectGeometry } from "~objects";
 
-import { PROJECTION_BYTES } from "../projections/constants.ts";
-import type { Projection } from "../projections/types.ts";
+import {
+  PROJECTIVE_TRANSFORM_BYTES,
+  type ProjectiveTransform,
+} from "~transforms";
 
 import { api } from "./system.ts";
 
 import {
-  PROJECTION_DATA_GROUP_INDEX,
-  PROJECTION_DATA_INSTANCE_INDEX,
+  TRANSFORM_DATA_GROUP_INDEX,
+  TRANSFORM_DATA_INSTANCE_INDEX,
 } from "../constants.ts";
 
 export const loadObjectGeometry = (
   loader: GPURenderPassEncoder,
   pipeline: GPURenderPipeline,
-  projection: Projection,
+  transform: ProjectiveTransform,
   geometry: ObjectGeometry,
 ) => {
   loader.setPipeline(pipeline);
   loader.setBindGroup(
-    PROJECTION_DATA_GROUP_INDEX,
-    _allocateProjection(projection, pipeline),
+    TRANSFORM_DATA_GROUP_INDEX,
+    _allocateTransform(transform, pipeline),
   );
 
   // NOTE: only supports one piece of geometry per frame.
   loader.setVertexBuffer(0, _allocateGeometry(geometry));
 };
 
-function _allocateProjection(
-  projection: Projection,
+function _allocateTransform(
+  transform: ProjectiveTransform,
   pipeline: GPURenderPipeline,
 ): GPUBindGroup {
   const buffer = api.createBuffer({
-    size: PROJECTION_BYTES,
+    size: PROJECTIVE_TRANSFORM_BYTES,
     usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
   });
 
-  api.queue.writeBuffer(buffer, 0, projection);
+  api.queue.writeBuffer(buffer, 0, transform);
 
   return api.createBindGroup({
-    layout: pipeline.getBindGroupLayout(PROJECTION_DATA_GROUP_INDEX),
+    layout: pipeline.getBindGroupLayout(TRANSFORM_DATA_GROUP_INDEX),
     entries: [{
-      binding: PROJECTION_DATA_INSTANCE_INDEX,
+      binding: TRANSFORM_DATA_INSTANCE_INDEX,
       resource: { buffer },
     }],
   });

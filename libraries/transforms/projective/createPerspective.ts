@@ -1,13 +1,13 @@
 import { type Radians } from "~common";
 
-import type { Projection } from "./types.ts";
+import type { ProjectiveTransform } from "./types.ts";
 import { DEFAULT_PERSPECTIVE_SAFETY_CROP } from "./constants.ts";
 
 export const createPerspective = (
   aspectRatio: number,
   viewingAngle: Radians,
   safetyCrop = DEFAULT_PERSPECTIVE_SAFETY_CROP,
-): Projection => {
+): ProjectiveTransform => {
   const viewportHeight = Math.tan(Math.PI / 2 - viewingAngle / 2);
 
   // deno-fmt-ignore

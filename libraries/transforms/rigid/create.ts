@@ -1,27 +1,25 @@
 import { copy, DIMENSIONS, doTimes, type Radians } from "~common";
 
-import type { Point } from "../geometry/types.ts";
-
+import type { Direction, Directions, Origin, RigidTransform } from "./types.ts";
 import {
   DEFAULT_ORIGIN,
   DEFAULT_X_DIRECTION,
   DEFAULT_Y_DIRECTION,
   DEFAULT_Z_DIRECTION,
 } from "./constants.ts";
-import type { Direction, Directions, Transform } from "./types.ts";
 
 // import { crossProduct } from "./direction/crossProduct.ts";
 import { normalize } from "./direction/normalize.ts";
 
 export const createTranslation = (
-  to: Point,
-): Transform =>
+  to: Origin,
+): RigidTransform =>
   copy([DEFAULT_X_DIRECTION, DEFAULT_Y_DIRECTION, DEFAULT_Z_DIRECTION, to]);
 
 export const createRotation = (
   around: Direction,
   amount: Radians,
-): Transform => {
+): RigidTransform => {
   const normalizedAxis = normalize(around);
   const [sin, cos] = [Math.sin(amount), Math.cos(amount)];
 

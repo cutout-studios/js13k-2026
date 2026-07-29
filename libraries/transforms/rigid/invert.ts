@@ -1,8 +1,10 @@
 import { DIMENSIONS, doTimes, dotProduct } from "~common";
 
-import type { Directions, Origin, Transform } from "./types.ts";
+import type { Directions, Origin, RigidTransform } from "./types.ts";
 
-export const invert = ([xAxis, yAxis, zAxis, origin]: Transform): Transform => [
+export const invert = (
+  [xAxis, yAxis, zAxis, origin]: RigidTransform,
+): RigidTransform => [
   ...(doTimes(
     DIMENSIONS,
     (index) => [xAxis[index], yAxis[index], zAxis[index]],
