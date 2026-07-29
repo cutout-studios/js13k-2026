@@ -9,7 +9,7 @@ import {
 export const POLYGONS_PER_CUBE_FACE = 2;
 const [RED, GREEN, BLUE] = [0xff0000, 0x00ff00, 0x0000ff];
 export const CUBE_FACE_COLORS = [RED, GREEN, BLUE];
-export const CUBE_OFFSETS = [-2.5, 0, 2.5];
+export const CUBE_OFFSETS = [-3.5, 0, 3.5];
 
 const [X, Y, Z] = [0, 1, 2];
 

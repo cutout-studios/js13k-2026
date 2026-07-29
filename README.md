@@ -79,7 +79,7 @@ deno task open
 - Restore roadroller - doesn't support certain apis like private fields and
   top-level await and isn't in active support, but a final swing if we need one.
 
-- Add `ect` to the build stack. Saves a few extra bytes.
+- Add `ect` to the build stack. Saves a few extra bytes:
 
 ```
 git clone --recursive https://github.com/fhanau/Efficient-Compression-Tool.git .output/ect

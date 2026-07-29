@@ -79,8 +79,9 @@ export class Viewport {
     );
 
     for (
-      const [geometry, transform, material] of scene
+      const object of scene
     ) {
+      const [geometry, transform, material] = object;
       loadMaterial(
         renderPass,
         material ?? this.options.missingMaterial,
@@ -88,6 +89,7 @@ export class Viewport {
       loadGeometry(renderPass, geometry);
       loadTransform(
         renderPass,
+        object,
         multiply(
           projective,
           fromRigid(transform ?? this.options.missingTransform),
