@@ -1,6 +1,6 @@
 # js13k 2026
 
-Latest engine size: 4.24 kB
+Latest engine size: 4.3 kB
 
 ```
 deno task setup
