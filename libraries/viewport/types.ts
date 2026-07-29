@@ -1,11 +1,9 @@
 import { Radians } from "~common";
-import { ObjectMaterial } from "~objects";
+import { ObjectMaterial, Paint } from "~objects";
 import { RigidTransform } from "~transforms";
 
-export type Color = [red: number, green: number, blue: number];
 export type ViewportOptions = {
-  backgroundColor: Color;
-  depthTextureFormat: GPUTextureFormat;
+  backgroundColor: Paint;
   viewingAngle: Radians;
   safetyCropDistance: number;
   startingTransform?: RigidTransform;

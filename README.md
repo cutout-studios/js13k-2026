@@ -50,6 +50,14 @@ deno task open
 - [x] audio/musicLoop: rests
 - [ ] graphics: color-assignment (faces, probably)
 
+### Dependent on game type
+
+- [ ] Instanced rendering (for voxels)
+  - [~] Better handling of GPU buffers
+  - [ ] `drawIndexed` will break `vertex_index`
+- [ ] "Scene" JSX Projection + Store.
+- [ ] Physics.
+
 ### Nice-to-have features
 
 - [ ] audio/source: waveform builders; overtones, noise
@@ -57,13 +65,6 @@ deno task open
       breakpoints
 - [ ] "Clock" concept, for handling different timescales (render vs. audio,
       etc).
-
-### Dependent on game type
-
-- [ ] Instanced rendering (for voxels)
-  - [ ] Better handling of GPU buffers
-- [ ] "Scene" JSX Projection + Store.
-- [ ] Physics.
 
 ### DX
 

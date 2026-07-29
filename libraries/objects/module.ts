@@ -5,9 +5,10 @@ export {
   POINT_SIZE as GEOMETRY_POINT_SIZE,
 } from "./geometry/constants.ts";
 
-export type { Material as ObjectMaterial } from "./materials/types.ts";
+export type { Material as ObjectMaterial, Paint } from "./materials/types.ts";
 export { wgsl } from "./materials/wgsl.ts";
+export { paint } from "./materials/paint.ts";
 
 export type { Object } from "./types.ts";
 export { create as createObject } from "./create.ts";
-export { setTransform as setObjectTransform } from "./setTransform.ts";
+export { setMaterial, setTransform } from "./set.ts";

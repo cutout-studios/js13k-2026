@@ -1,4 +1,12 @@
 import {
+  api,
+  canvasFormat,
+  DEPTH_TEXTURE_FORMAT,
+  loadGeometry,
+  loadMaterial,
+  loadTransform,
+} from "~webgpu";
+import {
   createPerspective,
   fromRigid,
   invert,
@@ -7,10 +15,6 @@ import {
   toRigid,
 } from "~transforms";
 import type { Object } from "~objects";
-
-import { api, format } from "./gpu/system.ts";
-import { getPipeline } from "./gpu/getPipeline.ts";
-import { loadObjectGeometry } from "./gpu/loadObjectGeometry.ts";
 
 import { ViewportOptions } from "./types.ts";
 import { VIEWPORT_DEFAULT_OPTIONS } from "./constants.ts";
@@ -25,7 +29,7 @@ export class Viewport {
     { startingTransform, ...options }: Partial<ViewportOptions> = {},
   ) {
     this.#canvas = canvas;
-    this.#context.configure({ device: api, format });
+    this.#context.configure({ device: api, format: canvasFormat });
 
     this.transform = startingTransform ??
       VIEWPORT_DEFAULT_OPTIONS.startingTransform!;
@@ -77,17 +81,17 @@ export class Viewport {
     for (
       const [geometry, transform, material] of scene
     ) {
-      loadObjectGeometry(
+      loadMaterial(
         renderPass,
-        getPipeline(
-          material ?? this.options.missingMaterial,
-          this.options.depthTextureFormat,
-        ),
+        material ?? this.options.missingMaterial,
+      );
+      loadGeometry(renderPass, geometry);
+      loadTransform(
+        renderPass,
         multiply(
           projective,
           fromRigid(transform ?? this.options.missingTransform),
         ),
-        geometry,
       );
 
       renderPass.draw(geometry.length);
@@ -133,7 +137,7 @@ export class Viewport {
       this.#depthCache?.destroy();
       this.#depthCache = api.createTexture({
         size: [this.#canvas.width, this.#canvas.height],
-        format: this.options.depthTextureFormat,
+        format: DEPTH_TEXTURE_FORMAT,
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
       });
       this.#depthKey = key;

@@ -1,6 +1,11 @@
 import { startClock } from "~clock";
 import { Controller } from "~controller";
-import { createCubeGeometry, createObject, setObjectTransform } from "~objects";
+import {
+  createCubeGeometry,
+  createObject,
+  paint,
+  setTransform,
+} from "~objects";
 import { createRotation } from "~transforms";
 import { Viewport } from "~viewport";
 import { createAudioSource, MusicBox } from "~audio";
@@ -12,6 +17,7 @@ import {
   VIEWPORT_CONTROLLER_MAP,
   VIEWPORT_STARTING_POINT,
 } from "./constants.ts";
+import { repeat } from "~common";
 
 const controller = new Controller();
 const viewport = new Viewport(canvas);
@@ -26,9 +32,18 @@ const musicbox = new MusicBox(
 );
 
 // The Cube™
+const POLYGONS_PER_CUBE_FACE = 2;
+const [RED, GREEN, BLUE] = [0xff0000, 0x00ff00, 0x0000ff];
 const cube = createObject({
   geometry: createCubeGeometry(),
+  material: paint(
+    repeat(POLYGONS_PER_CUBE_FACE, RED),
+    repeat(POLYGONS_PER_CUBE_FACE, GREEN),
+    repeat(POLYGONS_PER_CUBE_FACE, BLUE),
+  ),
 });
+
+// TODO: additional cubes, for sanity
 
 // Adjust back to the starting point so we can view
 // The Cube™.
@@ -43,7 +58,7 @@ startClock((tickLength, totalClockTime) => {
     viewport.adjust(amountToAdjustBy(tickLength));
   }
 
-  setObjectTransform(
+  setTransform(
     cube,
     createRotation([
       Math.sin(totalClockTime),
@@ -51,6 +66,8 @@ startClock((tickLength, totalClockTime) => {
       0,
     ], Math.PI / 2),
   );
+
+  // TODO: update material
 
   viewport.render([cube]);
 });

@@ -4,41 +4,39 @@ import {
   type ObjectMaterial,
 } from "~objects";
 
-import { TRANSFORM_DATA_INSTANCE_INDEX } from "../constants.ts";
-
 import { api, format } from "./system.ts";
+import { DEPTH_TEXTURE_FORMAT } from "./constants.ts";
+
+export const transformsLayout = api.createBindGroupLayout({
+  entries: [{
+    binding: 0,
+    visibility: GPUShaderStage.VERTEX,
+    buffer: { type: "uniform" },
+  }],
+});
+
+export const materialsLayout = api.createBindGroupLayout({
+  entries: [{
+    binding: 0,
+    visibility: GPUShaderStage.FRAGMENT,
+  }],
+});
+
+const pipelineLayout = api.createPipelineLayout({
+  bindGroupLayouts: [transformsLayout, materialsLayout],
+});
 
 const _pipelineCache = new WeakMap();
-let _lastTextureFormat;
-export const getPipeline = (
+export const getRenderPipeline = (
   material: ObjectMaterial,
-  depthTextureFormat: GPUTextureFormat,
 ): GPURenderPipeline => {
-  _lastTextureFormat ??= depthTextureFormat;
-
-  if (_lastTextureFormat !== depthTextureFormat) {
-    _pipelineCache.delete(material);
-    _lastTextureFormat = depthTextureFormat;
-  }
-
   if (_pipelineCache.has(material)) return _pipelineCache.get(material);
 
-  const projectionLayout = api.createBindGroupLayout({
-    entries: [{
-      binding: TRANSFORM_DATA_INSTANCE_INDEX,
-      visibility: GPUShaderStage.VERTEX,
-      buffer: { type: "uniform" },
-    }],
-  });
-
-  const layout = api.createPipelineLayout({
-    bindGroupLayouts: [projectionLayout],
-  });
-
+  const [vertex, fragment] = material;
   const pipeline = api.createRenderPipeline({
-    layout,
+    layout: pipelineLayout,
     vertex: {
-      module: api.createShaderModule({ code: material[0] }),
+      module: api.createShaderModule({ code: vertex }),
       buffers: [{
         arrayStride: GEOMETRY_POINT_SIZE,
         attributes: [{
@@ -49,7 +47,7 @@ export const getPipeline = (
       }],
     },
     fragment: {
-      module: api.createShaderModule({ code: material[1] }),
+      module: api.createShaderModule({ code: fragment }),
       targets: [{ format }],
     },
     primitive: {
@@ -58,7 +56,7 @@ export const getPipeline = (
     depthStencil: {
       depthWriteEnabled: true,
       depthCompare: "less",
-      format: depthTextureFormat,
+      format: DEPTH_TEXTURE_FORMAT,
     },
   });
 

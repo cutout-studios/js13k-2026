@@ -15,6 +15,7 @@
     "~transforms": "./libraries/transforms/module.ts",
     "~viewport": "./libraries/viewport/module.ts",
     "~web": "./libraries/web.ts",
+    "~webgpu": "./libraries/webgpu/module.ts",
     "roadroller": "npm:roadroller"
   },
   "tasks": {
