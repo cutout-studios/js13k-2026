@@ -1,13 +1,11 @@
 import { doTimes, dotProduct } from "~common";
-
 import type { ProjectiveTransform } from "./types.ts";
-
 import { PROJECTIVE_TRANSFORM_WIDTH } from "./constants.ts";
 
-export const combine = (
+export const multiply = (
   ...transforms: ProjectiveTransform[]
 ): ProjectiveTransform =>
-  transforms.reduce((right, left) =>
+  transforms.reduce((left, right) =>
     new Float32Array(
       doTimes(
         PROJECTIVE_TRANSFORM_WIDTH,

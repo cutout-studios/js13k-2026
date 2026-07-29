@@ -14,7 +14,7 @@ export {
 export { invert } from "./rigid/invert.ts";
 
 export type { ProjectiveTransform } from "./projective/types.ts";
-export { combine } from "./projective/combine.ts";
+export { multiply } from "./projective/multiply.ts";
 export { createPerspective } from "./projective/createPerspective.ts";
 export { fromRigid, toRigid } from "./projective/rigid.ts";
 export * from "./projective/constants.ts";

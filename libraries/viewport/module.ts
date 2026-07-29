@@ -1,8 +1,8 @@
 import {
-  combine,
   createPerspective,
   fromRigid,
   invert,
+  multiply,
   type RigidTransform,
   toRigid,
 } from "~transforms";
@@ -43,12 +43,12 @@ export class Viewport {
   }
 
   adjust(transform: RigidTransform) {
-    const interimProjection = combine(
-      fromRigid(transform),
+    const projective = multiply(
       fromRigid(this.transform),
+      fromRigid(transform),
     );
 
-    this.transform = toRigid(interimProjection);
+    this.transform = toRigid(projective);
   }
 
   render(scene: Object[]) {
@@ -65,13 +65,13 @@ export class Viewport {
     const commander = api.createCommandEncoder();
     const renderPass = commander.beginRenderPass(this.#renderTargets);
 
-    const viewportProjection = combine(
-      fromRigid(invert(this.transform)),
+    const projective = multiply(
       createPerspective(
         this.aspectRatio,
         this.options.viewingAngle,
         this.options.safetyCropDistance,
       ),
+      fromRigid(invert(this.transform)),
     );
 
     for (
@@ -83,9 +83,9 @@ export class Viewport {
           material ?? this.options.missingMaterial,
           this.options.depthTextureFormat,
         ),
-        combine(
+        multiply(
+          projective,
           fromRigid(transform ?? this.options.missingTransform),
-          viewportProjection,
         ),
         geometry,
       );
