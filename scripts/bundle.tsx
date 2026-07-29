@@ -28,7 +28,10 @@ await new Deno.Command("open", {
   args: [BUNDLE_OUTPUT_FILEPATH],
 }).output();
 
-async function bundle(options: Partial<Deno.bundle.Options> = {}, entrypoint = BUNDLE_ENTRYPOINT) {
+async function bundle(
+  options: Partial<Deno.bundle.Options> = {},
+  entrypoint = BUNDLE_ENTRYPOINT,
+) {
   const _result = await Deno.bundle({
     ...options,
     entrypoints: [entrypoint],
