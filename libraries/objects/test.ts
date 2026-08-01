@@ -1,6 +1,7 @@
 import { XYZ } from "~common";
 import {
   createPerspective,
+  createRotation,
   createTranslation,
   invert as _invert,
   multiply,
@@ -8,12 +9,15 @@ import {
 } from "../engine.ts";
 import { Geometry } from "./geometry/types.ts";
 import { Material } from "./materials/types.ts";
-import { api, loadGeometry, loadMaterial, loadTransform } from "~webgpu";
+import { api, loadGeometry, loadMaterial, TRANSFORM_GROUP_ID } from "~webgpu";
 import {
   DEFAULT_PERSPECTIVE_SAFETY_CROP,
   fromRigid,
+  PROJECTIVE_TRANSFORM_BYTES,
   toRigid,
 } from "~transforms";
+import { transformsLayout } from "../webgpu/getRenderPipeline.ts";
+import { getDataContainer, writeData } from "../webgpu/load/writeData.ts";
 
 type RenderTarget = GPURenderPassDescriptor & {
   aspectRatio: number;
@@ -47,9 +51,12 @@ export class XOObject {
 
   get transform(): Transform {
     return multiply(
-      /* TODO: create rotation transform from rotor components */ fromRigid(
+      fromRigid(
         createTranslation(this.position),
       ),
+      fromRigid(createRotation([1, 0, 0], this.rotation[0])),
+      fromRigid(createRotation([0, 1, 0], this.rotation[1])),
+      fromRigid(createRotation([0, 0, 1], this.rotation[2])),
     ); // TODO: inline
   }
 
@@ -73,7 +80,7 @@ export class XOCamera extends XOObject {
         this.viewingRadians,
         this.safetyCropDistance,
       ),
-      invert(this.transform)
+      invert(this.transform),
     );
 
     for (const object of objects) {
@@ -93,6 +100,23 @@ export class XOCamera extends XOObject {
 function invert(transform: Transform): Transform {
   return fromRigid(_invert(toRigid(transform)));
 }
+
+export const loadTransform = (
+  loader: GPURenderPassEncoder,
+  object: XOObject,
+  transform: Transform,
+) =>
+  writeData({
+    loader,
+    data: transform,
+    container: getDataContainer(
+      object,
+      transformsLayout,
+      PROJECTIVE_TRANSFORM_BYTES,
+      GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    ),
+    groupID: TRANSFORM_GROUP_ID,
+  });
 
 function loadObject(
   renderPass: GPURenderPassEncoder,

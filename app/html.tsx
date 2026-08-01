@@ -1,8 +1,40 @@
+import { api, canvasFormat } from "~webgpu";
 import { documentFragment as fragment } from "~web";
 
-const CANVAS_FRAGMENT = fragment(<canvas></canvas>);
+type RenderTarget = GPURenderPassDescriptor & {
+  aspectRatio: number;
+};
 
-export const canvas = CANVAS_FRAGMENT.querySelector("canvas")!;
+// TODO: hoist into webgpu
+const canvasNode = fragment(<canvas></canvas>);
+const canvasElement = canvasNode.querySelector("canvas")!;
+const canvasContext = canvasElement.getContext("webgpu")! as GPUCanvasContext;
+
+canvasContext.configure({ device: api, format: canvasFormat });
+
+const depthView = api.createTexture({
+  size: [canvasElement.width, canvasElement.height],
+  format: "depth24plus",
+  usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+
+export const canvasTarget = (): RenderTarget => ({
+  aspectRatio: canvasElement.width / canvasElement.height,
+  colorAttachments: [ // Main, user-facing pixels
+    {
+      view: canvasContext.getCurrentTexture().createView(),
+      clearValue: [0, 0, 0, 1],
+      loadOp: "clear",
+      storeOp: "store",
+    },
+  ],
+  depthStencilAttachment: { // Depth computation pixels
+    view: depthView,
+    depthClearValue: 1,
+    depthLoadOp: "clear",
+    depthStoreOp: "store",
+  },
+});
 
 document.body.appendChild(fragment(
   <>
@@ -31,7 +63,7 @@ document.body.appendChild(fragment(
     `}
     </style>
     <main>
-      {CANVAS_FRAGMENT}
+      {canvasNode}
       <nav>
         {/* TBD: gui here */}
       </nav>
