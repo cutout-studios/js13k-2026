@@ -1,4 +1,5 @@
 export type Radians = number;
+export type XYZ = [x: number, y: number, z: number];
 
 export const SECONDS_TO_MS = 1000;
 export const MINUTES_TO_SECONDS = 60;
