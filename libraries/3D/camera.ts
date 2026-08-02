@@ -1,5 +1,8 @@
-import { doTimes, dotProduct, XYZ, XYZ_LENGTH } from "~common";
+import { doTimes } from "~common";
 
+import type { XYZ } from "./types.ts";
+import { XYZ_LENGTH } from "./constants.ts";
+import { dotProduct } from "./dotProduct.ts";
 import type { GPURenderTarget } from "./webgpu/createRenderTarget.ts";
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";

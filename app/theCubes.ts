@@ -1,11 +1,14 @@
 import { doTimes, repeat } from "~common";
-import { makeFace, paintMaterial, XOGeometry, XOObject, XYZ } from "~3D";
-
 import {
-  CUBE_FACE_COLORS,
-  CUBE_OFFSETS,
-  POLYGONS_PER_CUBE_FACE,
-} from "./constants.ts";
+  makeSquare,
+  paintMaterial,
+  TRIANGLES_PER_SQUARE,
+  XOGeometry,
+  XOObject,
+  XYZ,
+} from "~3D";
+
+import { CUBE_FACE_COLORS, CUBE_OFFSETS } from "./constants.ts";
 
 type FaceGeometry = [
   topLeft: XYZ,
@@ -34,7 +37,7 @@ const makeCube = (): XOGeometry => {
       localOrientation = (xyz: XYZ) => previous(roll(xyz));
     }
 
-    return makeFace(...(DEFAULT_FACE.map(localOrientation) as FaceGeometry));
+    return makeSquare(...(DEFAULT_FACE.map(localOrientation) as FaceGeometry));
   }).flat();
 };
 
@@ -44,7 +47,7 @@ const placements = CUBE_OFFSETS.map((offset) => [offset, 0, 0] as XYZ);
 export const paintCube = (shift: number) =>
   paintMaterial(...CUBE_FACE_COLORS.map((_, index) =>
     repeat(
-      POLYGONS_PER_CUBE_FACE,
+      TRIANGLES_PER_SQUARE,
       CUBE_FACE_COLORS[(index + shift) % CUBE_FACE_COLORS.length],
     )
   ));

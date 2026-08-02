@@ -1,7 +1,23 @@
-export { type XYZ, XYZ_LENGTH } from "~common";
+export {
+  type RGBA,
+  type XOGeometry,
+  type XOMaterial,
+  type XYZ,
+} from "./types.ts";
+export {
+  BLUE,
+  GREEN,
+  RED,
+  TRIANGLES_PER_SQUARE,
+  X,
+  XYZ_LENGTH,
+  Y,
+  Z,
+} from "./constants.ts";
 
+export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
 export { XOObject } from "./objects.ts";
 export { XOCamera } from "./camera.ts";
-export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
-export { square as makeFace, type XOGeometry } from "./geometry.ts";
+
+export { square as makeSquare } from "./geometry.ts";
 export { paint as paintMaterial } from "./materials/paint.ts";

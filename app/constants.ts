@@ -1,13 +1,6 @@
 import { doTimes } from "~common";
+import { BLUE, GREEN, RED, X, XYZ, XYZ_LENGTH, Y, Z } from "~3D";
 
-import { XYZ, XYZ_LENGTH } from "~3D";
-
-// TODO: hoist these
-const [X, Y, Z] = [0, 1, 2];
-export const POLYGONS_PER_CUBE_FACE = 2;
-const [RED, GREEN, BLUE] = [0xff0000, 0x00ff00, 0x0000ff];
-
-// ---
 export const CUBE_FACE_COLORS = [RED, GREEN, BLUE];
 export const CUBE_OFFSETS = [-3.5, 0, 3.5];
 

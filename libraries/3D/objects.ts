@@ -1,7 +1,7 @@
-import { doTimes, XYZ, XYZ_LENGTH } from "~common";
+import { doTimes } from "~common";
 
-import type { XOGeometry } from "./geometry.ts";
-import type { XOMaterial } from "./materials/types.ts";
+import type { XYZ, XOGeometry, XOMaterial } from "./types.ts";
+import { XYZ_LENGTH } from "./constants.ts";
 import { XOCoordinates } from "./coordinates.ts";
 
 export class XOObject {

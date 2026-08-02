@@ -1,8 +1,11 @@
-import { XOMaterial } from "../materials/types.ts";
-import { POINT_FORMAT, POINT_SIZE } from "../geometry.ts";
+import { XOMaterial } from "../types.ts";
+import {
+  DEPTH_TEXTURE_FORMAT,
+  VERTEX_DATA_FORMAT,
+  VERTEX_DATA_SIZE,
+} from "../constants.ts";
 
 import { device, format } from "./device.ts";
-import { DEPTH_TEXTURE_FORMAT } from "./constants.ts";
 
 export const coordinatesLayout = device.createBindGroupLayout({
   entries: [{
@@ -36,11 +39,11 @@ export const getRenderPipeline = (
     vertex: {
       module: device.createShaderModule({ code: vertex }),
       buffers: [{
-        arrayStride: POINT_SIZE,
+        arrayStride: VERTEX_DATA_SIZE,
         attributes: [{
           shaderLocation: 0,
           offset: 0,
-          format: POINT_FORMAT,
+          format: VERTEX_DATA_FORMAT,
         }],
       }],
     },

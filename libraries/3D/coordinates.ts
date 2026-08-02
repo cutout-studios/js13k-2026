@@ -1,8 +1,9 @@
-import { doTimes, dotProduct, type XYZ } from "~common";
+import { doTimes } from "~common";
 
-export const COORDINATE_DATA_BYTES = 0; // TODO
+import type { XYZ } from "./types.ts";
+import { dotProduct } from "./dotProduct.ts";
 
-const COORDINATE_DATA_WIDTH = 4;
+const [COORDINATE_ROW_LENGTH, COORDINATE_COLUMN_LENGTH] = [4, 4];
 const IS_COORDINATE_AXIS = 0;
 const IS_COORDINATE_POINT = 1;
 export class XOCoordinates {
@@ -41,9 +42,9 @@ export class XOCoordinates {
     return XOCoordinates.fromData(
       new Float32Array(
         doTimes(
-          COORDINATE_DATA_WIDTH,
+          COORDINATE_COLUMN_LENGTH,
           (columnIndex) =>
-            doTimes(COORDINATE_DATA_WIDTH, (rowIndex) =>
+            doTimes(COORDINATE_ROW_LENGTH, (rowIndex) =>
               dotProduct(
                 toParent.#dataColumn(columnIndex),
                 fromChild.#dataRow(rowIndex),
@@ -72,15 +73,15 @@ export class XOCoordinates {
 
   #dataColumn(column: number) {
     return Array.from(this.data.slice(
-      column * COORDINATE_DATA_WIDTH,
-      (column + 1) * COORDINATE_DATA_WIDTH,
+      column * COORDINATE_COLUMN_LENGTH,
+      (column + 1) * COORDINATE_COLUMN_LENGTH,
     ));
   }
 
   #dataRow(row: number) {
     return doTimes(
-      COORDINATE_DATA_WIDTH,
-      (index) => this.data[row + COORDINATE_DATA_WIDTH * index],
+      COORDINATE_COLUMN_LENGTH,
+      (index) => this.data[row + COORDINATE_COLUMN_LENGTH * index],
     );
   }
 }

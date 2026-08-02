@@ -1,16 +1,17 @@
-import { XOGeometry } from "../geometry.ts";
-import { COORDINATE_DATA_BYTES, XOCoordinates } from "../coordinates.ts";
-import { XOMaterial } from "../materials/types.ts";
+import { XOCoordinates } from "../coordinates.ts";
+import type { XOGeometry, XOMaterial, GPUDataContainer } from "../types.ts";
+import {
+  COORDINATE_DATA_SIZE,
+  COORDINATES_DATA_GROUP_ID,
+  MATERIALS_DATA_GROUP_ID,
+} from "../constants.ts";
 
-import { COORDINATE_GROUP_ID, MATERIALS_GROUP_ID } from "./constants.ts";
 import { device } from "./device.ts";
 import {
   coordinatesLayout,
   getRenderPipeline,
   materialsLayout,
 } from "./getRenderPipeline.ts";
-
-const MATERIAL_DATA = 2;
 
 export function loadObject(
   renderPass: GPURenderPassEncoder,
@@ -21,28 +22,29 @@ export function loadObject(
   renderPass.setVertexBuffer(0, _allocateGeometryBuffer(geometry));
 
   renderPass.setPipeline(getRenderPipeline(material));
-  writeData(
+  const [, , materialData] = material;
+  _writeDataToContainer(
     renderPass,
-    material[MATERIAL_DATA],
-    getDataContainer(
+    materialData,
+    _getDataContainer(
       material,
       materialsLayout,
-      material[MATERIAL_DATA].byteLength,
+      materialData.byteLength,
       GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     ),
-    MATERIALS_GROUP_ID,
+    MATERIALS_DATA_GROUP_ID,
   );
 
-  writeData(
+  _writeDataToContainer(
     renderPass,
     coordinates.data,
-    getDataContainer(
+    _getDataContainer(
       coordinates,
       coordinatesLayout,
-      COORDINATE_DATA_BYTES,
+      COORDINATE_DATA_SIZE,
       GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     ),
-    COORDINATE_GROUP_ID,
+    COORDINATES_DATA_GROUP_ID,
   );
 }
 
@@ -69,29 +71,27 @@ function _allocateGeometryBuffer(geometry: XOGeometry) {
   return buffer;
 }
 
-type DataContainer = [buffer: GPUBuffer, bindGroup: GPUBindGroup];
+function _writeDataToContainer(
+  loader: GPURenderPassEncoder,
+  data: Float32Array,
+  [buffer, bindGroup]: GPUDataContainer,
+  groupID: number,
+) {
+  device.queue.writeBuffer(buffer, 0, data);
+  loader.setBindGroup(groupID, bindGroup);
+};
 
 const _containerCache = new WeakMap<
   object,
   [buffer: GPUBuffer, bindGroup: GPUBindGroup]
 >();
 
-export const writeData = (
-  loader: GPURenderPassEncoder,
-  data: Float32Array,
-  [buffer, bindGroup]: DataContainer,
-  groupID: number,
-) => {
-  device.queue.writeBuffer(buffer, 0, data);
-  loader.setBindGroup(groupID, bindGroup);
-};
-
-export const getDataContainer = (
+function _getDataContainer(
   objectKey: object,
   layout: GPUPipelineLayout,
   size: number,
   usage: number,
-): DataContainer => {
+): GPUDataContainer {
   let [buffer, bindGroup] = _containerCache.get(objectKey) ?? [];
 
   if (!buffer || buffer && buffer.size < size) {
@@ -103,7 +103,7 @@ export const getDataContainer = (
     entries: [{ binding: 0, resource: buffer }],
   });
 
-  const binding: DataContainer = [
+  const binding: GPUDataContainer = [
     buffer,
     bindGroup,
   ];
