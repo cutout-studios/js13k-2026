@@ -1,13 +1,10 @@
-import {
-  GEOMETRY_POINT_FORMAT,
-  GEOMETRY_POINT_SIZE,
-  type ObjectMaterial,
-} from "~objects";
+import { XOMaterial } from "../materials/types.ts";
+import { POINT_FORMAT, POINT_SIZE } from "../geometry.ts";
 
-import { api, format } from "./system.ts";
+import { device, format } from "./device.ts";
 import { DEPTH_TEXTURE_FORMAT } from "./constants.ts";
 
-export const transformsLayout = api.createBindGroupLayout({
+export const coordinatesLayout = device.createBindGroupLayout({
   entries: [{
     binding: 0,
     visibility: GPUShaderStage.VERTEX,
@@ -15,7 +12,7 @@ export const transformsLayout = api.createBindGroupLayout({
   }],
 });
 
-export const materialsLayout = api.createBindGroupLayout({
+export const materialsLayout = device.createBindGroupLayout({
   entries: [{
     binding: 0,
     visibility: GPUShaderStage.FRAGMENT,
@@ -23,32 +20,32 @@ export const materialsLayout = api.createBindGroupLayout({
   }],
 });
 
-const pipelineLayout = api.createPipelineLayout({
-  bindGroupLayouts: [transformsLayout, materialsLayout],
+const pipelineLayout = device.createPipelineLayout({
+  bindGroupLayouts: [coordinatesLayout, materialsLayout],
 });
 
 const _pipelineCache = new WeakMap();
 export const getRenderPipeline = (
-  material: ObjectMaterial,
+  material: XOMaterial,
 ): GPURenderPipeline => {
   if (_pipelineCache.has(material)) return _pipelineCache.get(material);
 
   const [vertex, fragment] = material;
-  const pipeline = api.createRenderPipeline({
+  const pipeline = device.createRenderPipeline({
     layout: pipelineLayout,
     vertex: {
-      module: api.createShaderModule({ code: vertex }),
+      module: device.createShaderModule({ code: vertex }),
       buffers: [{
-        arrayStride: GEOMETRY_POINT_SIZE,
+        arrayStride: POINT_SIZE,
         attributes: [{
           shaderLocation: 0,
           offset: 0,
-          format: GEOMETRY_POINT_FORMAT,
+          format: POINT_FORMAT,
         }],
       }],
     },
     fragment: {
-      module: api.createShaderModule({ code: fragment }),
+      module: device.createShaderModule({ code: fragment }),
       targets: [{ format }],
     },
     primitive: {

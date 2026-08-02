@@ -11,12 +11,9 @@
     "~clock": "./libraries/clock.ts",
     "~common": "./libraries/common.ts",
     "~controller": "./libraries/controller.ts",
-    "~objects": "./libraries/objects/module.ts",
-    "~transforms": "./libraries/transforms/module.ts",
-    "~viewport": "./libraries/viewport/module.ts",
-    "~web": "./libraries/web.ts",
-    "~webgpu": "./libraries/webgpu/module.ts",
-    "roadroller": "npm:roadroller"
+    "~3D": "./libraries/3D/module.ts",
+    "~web": "./libraries/web.ts"
+    // "roadroller": "npm:roadroller"
   },
   "tasks": {
     "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --watch=app,libraries ./scripts/bundle.tsx",

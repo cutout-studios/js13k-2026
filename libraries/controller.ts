@@ -1,4 +1,4 @@
-export class Controller {
+export class XOController {
   activeInputs = new Set<string>();
 
   constructor(type = "mouse+keyboard") {

@@ -15,9 +15,19 @@ const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-const LIBRARY_ENTRYPOINT = "./libraries/engine.ts";
-await bundle({ minify: true }, LIBRARY_ENTRYPOINT);
-logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH, LIBRARY_ENTRYPOINT);
+const LIBRARY_ENTRYPOINTS = [
+  "./libraries/common.ts",
+  "./libraries/controller.ts",
+  "./libraries/clock.ts",
+  "./libraries/3D/module.ts",
+  "./libraries/audio/module.ts",
+  "./libraries/web.ts",
+];
+
+for (const entrypoint of LIBRARY_ENTRYPOINTS) {
+  await bundle({ minify: true }, entrypoint);
+  logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH, entrypoint);
+}
 
 await bundle({ minify: true });
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);

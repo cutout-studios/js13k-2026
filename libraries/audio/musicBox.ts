@@ -24,7 +24,7 @@ import { api } from "./api.ts";
 type SourceCall = [frequencies: Frequency[], duration: Timing];
 type SourceInstructions = Record<string, SourceCall[]>;
 
-export class MusicBox {
+export class XOMusicBox {
   sources: Record<string, Source>;
   tempo: Tempo;
 

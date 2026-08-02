@@ -2,8 +2,7 @@
   "version": "5",
   "specifiers": {
     "jsr:@cutout/jsx@*": "0.0.4",
-    "jsr:@std/fmt@*": "1.0.10",
-    "npm:roadroller@*": "2.1.0"
+    "jsr:@std/fmt@*": "1.0.10"
   },
   "jsr": {
     "@cutout/jsx@0.0.4": {
@@ -13,24 +12,11 @@
       "integrity": "90dfba288802ac6de82fb31d0917eb9e4450b9925b954d5e51fc29ac07419db5"
     }
   },
-  "npm": {
-    "esm@3.2.25": {
-      "integrity": "sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA=="
-    },
-    "roadroller@2.1.0": {
-      "integrity": "sha512-4YfrQgMWC9w5SGvA6xfu9JGktOqEu2pwf4UrTu8ggf9wEv+hI7aTPMBRKWsTIvjhP4txX6eq954j3MONfOKAKQ==",
-      "dependencies": [
-        "esm"
-      ],
-      "bin": true
-    }
-  },
   "workspace": {
     "dependencies": [
       "jsr:@cutout/jsx@*",
       "jsr:@cutout/store@*",
-      "jsr:@std/fmt@*",
-      "npm:roadroller@*"
+      "jsr:@std/fmt@*"
     ]
   }
 }

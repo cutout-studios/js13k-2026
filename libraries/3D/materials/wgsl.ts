@@ -1,9 +1,7 @@
-import type { Shader } from "./types.ts";
-
 export function wgsl(
   strings: TemplateStringsArray,
   ...values: unknown[]
-): Shader {
+): string {
   let code = "";
 
   for (const index in strings) {

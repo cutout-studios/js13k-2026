@@ -1,13 +1,17 @@
-import { MATERIALS_GROUP_ID, TRANSFORM_GROUP_ID } from "~webgpu";
+import { RGBA } from "~common";
+import {
+  COORDINATE_GROUP_ID,
+  MATERIALS_GROUP_ID,
+} from "../webgpu/constants.ts";
 
-import { Material, Paint } from "./types.ts";
+import type { XOMaterial } from "./types.ts";
 import { wgsl } from "./wgsl.ts";
 
-export const paint = (...paints: Array<number | number[]>): Material => [
+export const paint = (...paints: Array<number | number[]>): XOMaterial => [
   wgsl`
-    @group(${TRANSFORM_GROUP_ID})
+    @group(${COORDINATE_GROUP_ID})
     @binding(0)
-    var<uniform> transform: mat4x4f;
+    var<uniform> coordinates: mat4x4f;
 
     struct VertexOutput {
       @builtin(position) Position: vec4f,
@@ -21,7 +25,7 @@ export const paint = (...paints: Array<number | number[]>): Material => [
     ) -> VertexOutput {
       var output: VertexOutput;
 
-      output.Position = transform * vec4f(position, 1.0); 
+      output.Position = coordinates * vec4f(position, 1.0); 
       output.triangleIndex = vertexIndex / 3u;
 
       return output;
@@ -41,7 +45,7 @@ export const paint = (...paints: Array<number | number[]>): Material => [
 ];
 
 function _buildPaintData(...paints: Array<number | number[]>) {
-  const _parseHex = (hex: number): Paint => [
+  const _parseHex = (hex: number): RGBA => [
     ((hex >> 16) & 255) / 255,
     ((hex >> 8) & 255) / 255,
     (hex & 255) / 255,
