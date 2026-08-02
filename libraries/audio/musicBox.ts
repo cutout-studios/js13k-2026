@@ -1,4 +1,4 @@
-import { between, copy, MINUTES_TO_SECONDS, SECONDS_TO_MS } from "~common";
+import { MINUTES_TO_SECONDS, SECONDS_TO_MS } from "~common";
 
 import {
   Frequency,
@@ -23,6 +23,10 @@ import { api } from "./api.ts";
 
 type SourceCall = [frequencies: Frequency[], duration: Timing];
 type SourceInstructions = Record<string, SourceCall[]>;
+
+const _copy = <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
+const _between = <T>(target: T, min: T, max: T) =>
+  min <= target && target <= max;
 
 export class XOMusicBox {
   sources: Record<string, Source>;
@@ -120,19 +124,19 @@ export class XOMusicBox {
     };
 
     for (const character of part.replaceAll(/\s+/g, "")) {
-      if (between(character, "A", "G") || between(character, "a", "g")) {
+      if (_between(character, "A", "G") || _between(character, "a", "g")) {
         _flushEvent();
 
         root = SEMITONE_OFFSET[character.toUpperCase()];
         beatCount++;
       }
 
-      if (root !== undefined && between(character, "1", "6")) {
+      if (root !== undefined && _between(character, "1", "6")) {
         root += (Number(character) - MIDDLE_OCTAVE_NUMBER) * OCTAVE_SIZE;
       }
 
       if (character in TRIAD_HARMONICS) {
-        harmonics = copy(TRIAD_HARMONICS[character]);
+        harmonics = _copy(TRIAD_HARMONICS[character]);
       }
       if (character === "7") harmonics!.push(harmonics!.at(-1)! + MINOR_THIRD);
       if (character === "#") root!++;
