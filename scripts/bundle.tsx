@@ -1,6 +1,9 @@
 import { format } from "@std/fmt/bytes";
 import { rawText } from "@cutout/jsx/projections";
 
+import * as esbuild from "esbuild";
+import { minify } from "esbuild-minify-templates";
+
 const JS13K_LIMIT = 13_312;
 
 const APP_DIR = "app";
@@ -13,7 +16,36 @@ const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}`;
 const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
   `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_COMPRESSED_FILE}`;
 
-Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
+const PROPS_TO_MANGLE = [
+  "root",
+  "stack",
+  "pointers",
+  "element",
+  "attribute",
+  "activeInputs",
+  "geometry",
+  "material",
+  "#parseScore",
+  "#parsePart",
+  "score",
+  "start",
+  "origin",
+  "orthonormalInverse",
+  "safetyCropDistance",
+  "viewingRadians",
+  "position",
+  "rotation",
+  "coordinates",
+  "adjust",
+  "render",
+  "#makePositionCoordinates",
+  "#makeRotationCoordinates",
+  "#readLine",
+  "localize",
+  "xAxis",
+  "yAxis",
+  "zAxis",
+];
 
 const LIBRARY_ENTRYPOINTS = [
   "./libraries/common.ts",
@@ -23,6 +55,8 @@ const LIBRARY_ENTRYPOINTS = [
   "./libraries/audio/module.ts",
   "./libraries/web.ts",
 ];
+
+Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 for (const entrypoint of LIBRARY_ENTRYPOINTS) {
   await bundle({ minify: true }, entrypoint);
@@ -57,10 +91,25 @@ async function bundle(
   const { outputFiles } = _result;
   const [sourceData] = outputFiles!;
 
+  let code = sourceData.text();
+  if (options.minify) {
+    code = minify(code).toString();
+
+    const result = await esbuild.transform(code, {
+      minify: true,
+      mangleProps: new RegExp(
+        `^(${PROPS_TO_MANGLE.join("|")})$`,
+      ),
+      legalComments: "none",
+    });
+
+    code = result.code;
+  }
+
   const appOutputText = rawText(
     <body>
       <script type="module">
-        {sourceData.text()}
+        {code}
       </script>
     </body>,
   );

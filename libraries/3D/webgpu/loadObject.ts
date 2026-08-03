@@ -1,5 +1,5 @@
 import { XOCoordinates } from "../coordinates.ts";
-import type { XOGeometry, XOMaterial, GPUDataContainer } from "../types.ts";
+import type { GPUDataContainer, XOGeometry, XOMaterial } from "../types.ts";
 import {
   COORDINATE_DATA_SIZE,
   COORDINATES_DATA_GROUP_ID,
@@ -79,7 +79,7 @@ function _writeDataToContainer(
 ) {
   device.queue.writeBuffer(buffer, 0, data);
   loader.setBindGroup(groupID, bindGroup);
-};
+}
 
 const _containerCache = new WeakMap<
   object,
@@ -111,4 +111,4 @@ function _getDataContainer(
   _containerCache.set(objectKey, binding);
 
   return binding;
-};
+}
