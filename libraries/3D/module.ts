@@ -19,5 +19,5 @@ export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
 export { XOObject } from "./objects.ts";
 export { XOCamera } from "./camera.ts";
 
-export { square as makeSquare } from "./geometry.ts";
+export { makeSquare } from "./geometry.ts";
 export { paint as paintMaterial } from "./materials/paint.ts";

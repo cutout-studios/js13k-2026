@@ -1,87 +1,116 @@
 import { doTimes } from "~common";
 
 import type { XYZ } from "./types.ts";
+import { COORDINATE_SIDE_LENGTH, XYZ_LENGTH } from "./constants.ts";
 import { dotProduct } from "./dotProduct.ts";
 
-const [COORDINATE_ROW_LENGTH, COORDINATE_COLUMN_LENGTH] = [4, 4];
 const IS_COORDINATE_AXIS = 0;
 const IS_COORDINATE_POINT = 1;
 export class XOCoordinates {
-  #xAxisType = IS_COORDINATE_AXIS;
-  #yAxisType = IS_COORDINATE_AXIS;
-  #zAxisType = IS_COORDINATE_AXIS;
-  #originType = IS_COORDINATE_POINT;
+  readonly data: Float32Array;
 
-  // deno-fmt-ignore
-  static fromData(
-    [ 
-      xAxisX, xAxisY, xAxisZ, xAxisType,
-      yAxisX, yAxisY, yAxisZ, yAxisType,
-      zAxisX, zAxisY, zAxisZ, zAxisType,
-      originX, originY, originZ, originType,
-    ]: Float32Array,
-  ): XOCoordinates {
-    const xAxis = [xAxisX, xAxisY, xAxisZ] as XYZ;
-    const zAxis = [yAxisX, yAxisY, yAxisZ] as XYZ;
-    const yAxis = [zAxisX, zAxisY, zAxisZ] as XYZ;
-    const origin = [originX, originY, originZ] as XYZ;
-
-    const result = new XOCoordinates(xAxis, yAxis, zAxis, origin);
-
-    result.#xAxisType = xAxisType;
-    result.#yAxisType = yAxisType;
-    result.#zAxisType = zAxisType;
-    result.#originType = originType;
-
-    return result;
-  }
   static localize(
     fromChild: XOCoordinates,
     toParent: XOCoordinates,
   ): XOCoordinates {
-    return XOCoordinates.fromData(
+    const [childColumns, parentRows] = [
+      doTimes(
+        COORDINATE_SIDE_LENGTH,
+        (index) =>
+          fromChild.#readLine(
+            index * COORDINATE_SIDE_LENGTH,
+            1,
+            COORDINATE_SIDE_LENGTH,
+          ),
+      ),
+      doTimes(
+        COORDINATE_SIDE_LENGTH,
+        (index) =>
+          toParent.#readLine(
+            index,
+            COORDINATE_SIDE_LENGTH,
+            COORDINATE_SIDE_LENGTH,
+          ),
+      ),
+    ];
+
+    return new XOCoordinates(
       new Float32Array(
         doTimes(
-          COORDINATE_COLUMN_LENGTH,
+          COORDINATE_SIDE_LENGTH,
           (columnIndex) =>
-            doTimes(COORDINATE_ROW_LENGTH, (rowIndex) =>
-              dotProduct(
-                toParent.#dataColumn(columnIndex),
-                fromChild.#dataRow(rowIndex),
-              )),
+            doTimes(
+              COORDINATE_SIDE_LENGTH,
+              (rowIndex) =>
+                dotProduct(childColumns[columnIndex], parentRows[rowIndex]),
+            ),
         ).flat(),
       ),
     );
   }
 
+  constructor(data: Float32Array);
+  constructor(xAxis?: XYZ, yAxis?: XYZ, zAxis?: XYZ, origin?: XYZ);
   constructor(
-    readonly xAxis: XYZ = [1, 0, 0],
-    readonly yAxis: XYZ = [0, 1, 0],
-    readonly zAxis: XYZ = [0, 0, 1],
-    readonly origin: XYZ = [0, 0, 0],
-  ) {}
-
-  get data(): Float32Array {
-    // deno-fmt-ignore
-    return new Float32Array([
-      ...this.xAxis, this.#xAxisType,
-      ...this.yAxis, this.#yAxisType,
-      ...this.zAxis, this.#zAxisType,
-      ...this.origin, this.#originType,
-    ]);
+    xAxisOrData: Float32Array | XYZ = [1, 0, 0],
+    yAxis: XYZ = [0, 1, 0],
+    zAxis: XYZ = [0, 0, 1],
+    origin: XYZ = [0, 0, 0],
+  ) {
+    this.data = xAxisOrData instanceof Float32Array
+      ? xAxisOrData
+      : new Float32Array([
+        ...xAxisOrData,
+        IS_COORDINATE_AXIS,
+        ...yAxis,
+        IS_COORDINATE_AXIS,
+        ...zAxis,
+        IS_COORDINATE_AXIS,
+        ...origin,
+        IS_COORDINATE_POINT,
+      ]);
   }
 
-  #dataColumn(column: number) {
-    return Array.from(this.data.slice(
-      column * COORDINATE_COLUMN_LENGTH,
-      (column + 1) * COORDINATE_COLUMN_LENGTH,
-    ));
+  get xAxis() {
+    return this.#readLine(0) as XYZ;
   }
 
-  #dataRow(row: number) {
+  get yAxis() {
+    return this.#readLine(4) as XYZ;
+  }
+
+  get zAxis() {
+    return this.#readLine(8) as XYZ;
+  }
+
+  get origin() {
+    return this.#readLine(12) as XYZ;
+  }
+
+  get orthonormalInverse(): XOCoordinates {
+    const { origin } = this;
+
+    return new XOCoordinates(
+      ...(doTimes(
+        XYZ_LENGTH,
+        (index) => this.#readLine(index, COORDINATE_SIDE_LENGTH),
+      ) as [XYZ, XYZ, XYZ]),
+      doTimes(
+        XYZ_LENGTH,
+        (index) =>
+          -dotProduct(this.#readLine(index * COORDINATE_SIDE_LENGTH), origin),
+      ) as XYZ,
+    );
+  }
+
+  #readLine(
+    start: number,
+    stride: number = 1,
+    length: number = XYZ_LENGTH,
+  ) {
     return doTimes(
-      COORDINATE_COLUMN_LENGTH,
-      (index) => this.data[row + COORDINATE_COLUMN_LENGTH * index],
+      length,
+      (index) => this.data[start + stride * index],
     );
   }
 }

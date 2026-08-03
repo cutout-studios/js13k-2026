@@ -7,9 +7,8 @@ export type RGBA = [r: number, b: number, g: number, a: number];
 export const [RED, GREEN, BLUE] = [0xff0000, 0x00ff00, 0x0000ff];
 
 export const COORDINATES_DATA_GROUP_ID = 0;
-export const [COORDINATE_ROW_LENGTH, COORDINATE_COLUMN_LENGTH] = [4, 4];
-export const COORDINATE_DATA_LENGTH = COORDINATE_ROW_LENGTH *
-  COORDINATE_COLUMN_LENGTH;
+export const COORDINATE_SIDE_LENGTH = 4;
+export const COORDINATE_DATA_LENGTH = COORDINATE_SIDE_LENGTH ** 2;
 export const COORDINATE_DATA_SIZE = COORDINATE_DATA_LENGTH * FLOAT_32_BYTES;
 
 export const VERTEX_DATA_SIZE = XYZ_LENGTH * FLOAT_32_BYTES;
@@ -20,3 +19,6 @@ export const TRIANGLES_PER_SQUARE = 2;
 export const DEPTH_TEXTURE_FORMAT = "depth24plus";
 
 export const MATERIALS_DATA_GROUP_ID = 1;
+
+export const DEFAULT_CAMERA_SAFETY_CROP = 0.1;
+export const DEFAULT_CAMERA_VIEWING_RADIANS = Math.PI / 2;

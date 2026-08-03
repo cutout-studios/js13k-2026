@@ -1,6 +1,6 @@
 import { doTimes } from "~common";
 
-import type { XYZ, XOGeometry, XOMaterial } from "./types.ts";
+import type { XOGeometry, XOMaterial, XYZ } from "./types.ts";
 import { XYZ_LENGTH } from "./constants.ts";
 import { XOCoordinates } from "./coordinates.ts";
 
@@ -39,8 +39,8 @@ export class XOObject {
 
   get coordinates(): XOCoordinates {
     return XOCoordinates.localize(
-      this.#positionCoordinates,
       this.#rotationCoordinates,
+      this.#positionCoordinates,
     );
   }
 
@@ -56,18 +56,16 @@ export class XOObject {
     );
   }
 
-  #makePositionCoordinates = (position?: XYZ): XOCoordinates =>
-    new XOCoordinates(undefined, undefined, undefined, position);
+  #makePositionCoordinates(position?: XYZ): XOCoordinates {
+    return new XOCoordinates(undefined, undefined, undefined, position);
+  }
 
   #makeRotationCoordinates(
     [axis, angle]: [XYZ, number] = [[1, 0, 0], 0],
   ): XOCoordinates {
-    const magnitude = Math.sqrt(
-      axis.reduce((sum, direction) => sum + direction ** 2, 0),
-    );
-
+    const magnitude = Math.hypot(...axis);
     const normalizedAxis = axis.map((value) => value / magnitude) as XYZ;
-    const [sin, cos] = [Math.sin(angle), Math.cos(angle)];
+    const sin = Math.sin(angle), cos = Math.cos(angle);
 
     return new XOCoordinates(
       ...(doTimes(

@@ -1,45 +1,26 @@
-import { doTimes } from "~common";
-
-import type { XYZ } from "./types.ts";
-import { XYZ_LENGTH } from "./constants.ts";
-import { dotProduct } from "./dotProduct.ts";
-import type { GPURenderTarget } from "./webgpu/createRenderTarget.ts";
+import type { GPURenderTarget } from "./types.ts";
+import {
+  DEFAULT_CAMERA_SAFETY_CROP,
+  DEFAULT_CAMERA_VIEWING_RADIANS,
+} from "./constants.ts";
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";
 import { XOCoordinates } from "./coordinates.ts";
 
-const DEFAULT_PERSPECTIVE_SAFETY_CROP = 0.1;
-const DEFAULT_VIEWING_RADIANS = Math.PI / 2;
 export class XOCamera extends XOObject {
-  viewingRadians: number = DEFAULT_VIEWING_RADIANS;
-  safetyCropDistance: number = DEFAULT_PERSPECTIVE_SAFETY_CROP;
-
-  get invertedCoordinates(): XOCoordinates {
-    return new XOCoordinates(
-      ...(doTimes(
-        XYZ_LENGTH,
-        (
-          index,
-        ) => [
-          this.coordinates.xAxis[index],
-          this.coordinates.yAxis[index],
-          this.coordinates.zAxis[index],
-        ],
-      ) as XYZ[]),
-      [this.coordinates.xAxis, this.coordinates.yAxis, this.coordinates.zAxis]
-        .map((axis) => -dotProduct(axis, this.coordinates.origin)) as XYZ,
-    );
-  }
+  viewingRadians: number = DEFAULT_CAMERA_VIEWING_RADIANS;
+  safetyCropDistance: number = DEFAULT_CAMERA_SAFETY_CROP;
 
   render(objects: XOObject[], target: GPURenderTarget) {
     target.render((process) => {
       const viewingCoordinates = XOCoordinates.localize(
-        XOCoordinates.fromData(this.#makePerspectiveData(target.aspectRatio)),
-        this.invertedCoordinates,
+        this.coordinates.orthonormalInverse,
+        this.#makePerspectiveCoordinates(target.aspectRatio),
       );
 
       for (const object of objects) {
-        if (!object.geometry || !object.material) continue; // skip nul1/invisible objects
+        // skip null/invisible objects
+        if (!object.geometry || !object.material) continue;
 
         loadObject(
           process,
@@ -53,15 +34,17 @@ export class XOCamera extends XOObject {
     });
   }
 
-  #makePerspectiveData(aspectRatio: number): Float32Array {
+  #makePerspectiveCoordinates(aspectRatio: number): XOCoordinates {
     const viewportHeight = Math.tan(Math.PI / 2 - this.viewingRadians / 2);
 
-    // deno-fmt-ignore
-    return new Float32Array([
-      viewportHeight / aspectRatio, 0, 0, 0,
-      0, viewportHeight, 0, 0,
-      0, 0, -1, -1,
-      0, 0, -2 * this.safetyCropDistance, 0
-    ]);
+    return new XOCoordinates(
+      // deno-fmt-ignore
+      new Float32Array([
+        viewportHeight / aspectRatio, 0, 0, 0,
+        0, viewportHeight, 0, 0,
+        0, 0, -1, -1,
+        0, 0, -2 * this.safetyCropDistance, 0
+      ]),
+    );
   }
 }

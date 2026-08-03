@@ -5,7 +5,7 @@ export const CUBE_FACE_COLORS = [RED, GREEN, BLUE];
 export const CUBE_OFFSETS = [-3.5, 0, 3.5];
 
 const CAMERA_SPEED = 2;
-export const CAMERA_STARTING_POINT = _move(Z, 1)(2);
+export const CAMERA_STARTING_POINT: XYZ = [0, 0, 5];
 export const CAMERA_CONTROLLER_MAP: Record<
   string,
   (delta: number) => [XYZ | undefined, [XYZ, number] | undefined]
