@@ -4,11 +4,13 @@ Theme TBD
 
 ## Running the Demo
 
+```bash
+deno task setup # requires homebrew
+deno task start
 ```
-deno task setup
-deno task bundle
-deno task open
-```
+
+> [!NOTE]
+> Demo will be deleted once the competition starts.
 
 ## Latest sizes
 

@@ -18,9 +18,8 @@
     // "roadroller": "npm:roadroller"
   },
   "tasks": {
-    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --watch=app,libraries ./scripts/bundle.tsx",
+    "start": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --watch=app,libraries ./scripts/bundle.tsx",
     "clean": "rm -rf .output",
-    "open": "open .output/index.html",
     "setup": "brew bundle"
   }
 }
