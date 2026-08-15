@@ -1,4 +1,3 @@
-// TODO: affix type: -%, +%, +
 export default [
   {
     type: "purple",
@@ -7,10 +6,10 @@ export default [
     density: 1,
     affix: {
       global: [
-        ["+% item quality", 2],
-        ["+% experience", 2],
-        ["+% critical chance", 1],
-        ["+% critical damage", 3],
+        ["itemQuality", 2],
+        ["experience", 2],
+        ["criticalChance", 1],
+        ["criticalDamage", 3],
       ],
     },
   },
@@ -21,15 +20,15 @@ export default [
     density: 1,
     affix: {
       global: [
-        ["-% fuel cost", 1],
-        ["+% strafe speed", 2],
-        ["+% range", 4],
+        ["fuelCost", 1, 1],
+        ["strafeSpeed", 2],
+        ["range", 4],
       ],
       body: [
-        ["+% damage from fuel", 1],
+        ["damageFromFuel", 1],
       ],
       engine: [
-        ["+% spin time", 1],
+        ["spinTime", 1],
       ],
     },
   },
@@ -39,9 +38,9 @@ export default [
     weapon: [1, 1, 2, 1, 1],
     density: 3,
     affix: {
-      global: [["+% shield", 2], ["-% damage taken", 1], ["+% mass", 2]],
-      body: [["+armor", 1, true]],
-      engine: [["+fuel eject delay", 1]],
+      global: [["shield", 2], ["damageTaken", 1, 1], ["mass", 2]],
+      body: [["armor", 1, 2]],
+      engine: [["fuelEjectDelay", 1, 2]],
     },
   },
   {
@@ -50,12 +49,12 @@ export default [
     weapon: [9, 1, 1, 1, 0],
     density: 1,
     affix: {
-      global: [["+% item mixing", 2], ["+ bullets", 1, true], [
-        "+% armor save chance",
+      global: [["itemMixing", 2], ["bullets", 1, 2], [
+        "armorSave",
         1,
       ]],
-      body: [["+% shield regen", 1]],
-      engine: [["+% fuel regen", 1]],
+      body: [["shieldRegen", 1]],
+      engine: [["fuelRegen", 1]],
     },
   },
   {
@@ -64,9 +63,9 @@ export default [
     weapon: [2, 2, 2, 2, 0],
     density: 2,
     affix: {
-      global: [["+% damage", 2], ["+% weapon speed", 2], ["+% fuel boost", 1]],
-      body: [["+% track speed", 2]],
-      engine: [["+% spin handling", 2]],
+      global: [["damage", 2], ["weaponSpeed", 2], ["fuelBoost", 1]],
+      body: [["trackSpeed", 2]],
+      engine: [["spinHandling", 2]],
     },
   },
   {
@@ -75,12 +74,12 @@ export default [
     weapon: [1, 2, 0, 1, 0],
     density: 2,
     affix: {
-      global: [["+% lowest stat", 2], ["+% damage/armor lost", 1], [
-        "+% spread",
+      global: [["lowestStat", 2], ["damagePerLostArmor", 1], [
+        "spread",
         2,
       ]],
-      body: [["+% reduction/armor lost", 1]],
-      engine: [["+% spin damage", 3]],
+      body: [["damageTakenPerLostArmor", 1, 1]],
+      engine: [["spinDamage", 3]],
     },
   },
 ];

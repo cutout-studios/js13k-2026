@@ -1,5 +1,6 @@
 import { doTimes } from "~common";
-import { waves, difficultyCurve, enemySets } from "../app/rng.ts";
+import { difficultyCurve, enemySets, waves } from "../app/rng.ts";
+import { logTable } from "./logTable.ts";
 
 const level = Number(Deno.args[0]);
 
@@ -11,6 +12,12 @@ console.log({ level, waveCount, difficulty });
 doTimes(waveCount, (wave) => {
   console.log({ wave });
 
-  // TODO: display better
-  console.table(enemySets(wave, level));
+  logTable(enemySets(wave, level), [
+    "color",
+    "count",
+    "health",
+    "speed",
+    "damage",
+    "drop%",
+  ]);
 });

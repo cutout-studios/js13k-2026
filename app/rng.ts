@@ -1,4 +1,4 @@
-import { doTimes } from "~common";
+import { doTimes, FLOAT_32_BIN } from "~common";
 import content from "./content.ts";
 
 const { random, round, floor, min, max, abs, atan, cos, PI } = Math;
@@ -49,9 +49,9 @@ const MAG_CEILING = [35, 100, 250, 800];
 const ENEMY_STAT = [
   // spread, floor, cap
   [1.5, 8, Infinity], // health
-  [1.2, 10, 100],     // speed
+  [1.2, 10, 100], // speed
   [1.5, 5, Infinity], // damage
-  [1, 10, 80],        // drop rate. TODO: fix
+  [1, 10, 80], // drop rate. TODO: fix
 ] as const;
 
 export const enemyStats = (typeIndex: number, level: number) => {
@@ -61,13 +61,18 @@ export const enemyStats = (typeIndex: number, level: number) => {
   return [
     typeIndex,
     count,
-    ...[health, speed, damage, drop].map((tier, i) =>
-      difficultyRange(level, MAG_CEILING[tier - 1], ...ENEMY_STAT[i])
-    ),
+    ...[health, speed, damage, drop].map((magnitude, i) => {
+      if (magnitude === 0) return 0;
+
+      return difficultyRange(
+        level,
+        MAG_CEILING[magnitude - 1],
+        ...ENEMY_STAT[i],
+      );
+    }),
   ];
 };
 
-// TODO: handle NaNs
 export const enemySets = (wave: number, level: number) =>
   doTimes(
     round(clamp(1, 6, abs(cos(wave)) * difficultyCurve(level) * 7.5)),
@@ -76,6 +81,7 @@ export const enemySets = (wave: number, level: number) =>
 
 /** [gearType][magnitude] */
 const MASS_FLOOR = [[3, 10, 20], [3, 10, 20], [8, 32, 80], [2, 7, 12]];
+
 /** [rank][magnitude] */
 const RANK_FLOOR = {
   affix: [[2, 10, 25, 50], [5, 15, 35, 85], [8, 20, 45, 100]],
@@ -99,16 +105,15 @@ const SLOT_AFFIX: Record<number, "body" | "engine"> = {
   3: "engine",
 };
 
-// TODO: fix 'any's
-export const gearDrop = (colorType: number, level: number) => {
-  const rank = level;
+export const rollItem = (colorType: number, level: number) => {
+  const rank = round(min(3, range(1, max(1, 3 * difficultyCurve(level)))));
 
   const gearType = draw(gearDeck);
   const color = content[colorType];
 
   const slot = SLOT_AFFIX[gearType];
   const extra = slot && color.affix[slot]?.[0];
-  const pool: any[] = [];
+  const pool: [name: string, magnitude: number, type: number][] = [];
   for (
     const option of extra ? [...color.affix.global, extra] : color.affix.global
   ) {
@@ -119,26 +124,39 @@ export const gearDrop = (colorType: number, level: number) => {
     (color.weapon[4] ? 1 : 0);
 
   const massFloor = MASS_FLOOR[gearType][color.density - 1];
-  const result: any[] = [
+  const result: [
+    color: number,
+    gear: number,
+    rank: number,
+    mass: number,
+    affixes: [name: string, value: number, type: number][],
+  ] = [
     colorType,
     gearType,
     rank,
     round(range(massFloor, massFloor * 2)),
     doTimes(min(affixCount, pool.length), () => {
-      const [type, magnitude, isRankCount] = pool.pop();
-      return isRankCount
-        ? [type, rank]
-        : [type, Number(rankRoll("affix", rank, magnitude, 2).toFixed(1))];
+      const [name, magnitude, type] = pool.pop()!;
+
+      if (type === 2) {
+        return [name, magnitude * rank, type];
+      }
+
+      return [
+        name,
+        Number(rankRoll("affix", rank, magnitude, 2).toFixed(1)),
+        type,
+      ];
     }),
   ];
 
   if (gearType <= 1) {
-    const [count, damage, _range, speed] = color.weapon;
+    const [count, damage, weaponRange, speed] = color.weapon;
     result.push(
       round(rankRoll("damage", rank, damage)),
       round(rankRoll("speed", rank, speed)),
       count,
-      round(min(100, rankRoll("range", rank, _range))),
+      round(min(100, rankRoll("range", rank, weaponRange))),
     );
   }
 
