@@ -18,20 +18,6 @@ import { Band } from "./types.ts";
 
 export const DIFFICULTY_FALLOFF = 0.135;
 
-export const BASE_SHIELD = 20;
-export const BASE_ARMOR = 20;
-export const BASE_FUEL = 30;
-
-export const BASE_SHIELD_REGEN = 10;
-export const BASE_FUEL_REGEN = 10;
-
-export const BASE_CRIT_CHANCE = 0.05;
-export const BASE_CRIT_AMOUNT = 1.00;
-
-export const BASE_SPIN_COST_OF_MASS = 0.10;
-
-export const BASE_LEVEL_UP_AMOUNT = 1.2;
-
 export const WAVE_CURVE = 7.5;
 export const WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
 export const WAVE_BAND = [2, 14] as Band;
@@ -55,11 +41,11 @@ export const ENEMY_STAT_KEYS = [
 ] as const;
 
 export const ENEMY_STAT_BANDS = {
-  health: [[2, 30], [2, 120], [2, 500], [2, 1600]],
-  speed: [[15, 35], [15, 55], [15, 75]],
-  mass: [[8, 20], [8, 60], [8, 200]],
-  damage: [[2, 12], [2, 30], [2, 80]],
-  drop: [[5, 12], [5, 18], [5, 25], [5, 40]],
+  health: [[1, 25], [7, 60], [20, 120], [80, 200]],
+  speed: [[10, 25], [30, 75], [60, 100]],
+  mass: [[4, 20], [12, 25], [40, 100]],
+  damage: [[1, 8], [8, 25], [50, 100]],
+  drop: [[2, 10], [10, 20], [15, 25], [20, 30]],
 } as const;
 
 export const ITEM_TYPES = ["leftWing", "rightWing", "body", "engine"];
@@ -78,14 +64,7 @@ export const ITEM_STAT_BANDS = {
 
 export const ITEM_RANK_UP_MIX_COUNT = 3;
 
-// NOTE: Every affix is simple math, except...
-
-// damageTakenFromFuel — couples two systems
-// fuelEjectDelay — a timer, not a stat
-// lowestStat — has to read the finished record, so it runs after the fold
-// armorSave — a roll against a stat rather than a stat
-
-export const ITEM_AFFIX_TYPES = [
+export const PLAYER_STAT_TYPES = [
   "armor",
   "armorSave",
   "bulletCount",
@@ -104,7 +83,7 @@ export const ITEM_AFFIX_TYPES = [
   "itemMixQuality",
   "itemQuality",
   "levelQuality",
-  "lowestStat",
+  "lowestPool",
   "mass",
   "resolve",
   "shield",
@@ -116,6 +95,19 @@ export const ITEM_AFFIX_TYPES = [
   "trackSpeed",
 ];
 
+// TODO: fill in remaining base stats
+export const PLAYER_BASE_STATS = {
+  [0]: 2, // armor
+  [3]: 0.05, // bulletCritChance
+  [4]: 1, // bulletCritDamage
+  [11]: 30, // fuel
+  [12]: 0.1, // fuelCost
+  [14]: 10, // fuelRegen
+  [17]: 1.2, // levelQuality
+  [21]: 20, // shield
+  [22]: 10, // sheildRegen
+};
+
 export default [
   {
     type: COLOR_TYPES[0],
@@ -126,10 +118,10 @@ export default [
     density: 1,
     affix: {
       global: [
-        [ITEM_AFFIX_TYPES[16], 2], // itemQuality
-        [ITEM_AFFIX_TYPES[17], 2], // levelQuality
-        [ITEM_AFFIX_TYPES[3], 1], // bulletCritChance
-        [ITEM_AFFIX_TYPES[4], 3], // bulletCritDamage
+        [16, 2], // itemQuality
+        [17, 2], // levelQuality
+        [3, 1], // bulletCritChance
+        [4, 3], // bulletCritDamage
       ],
     },
   },
@@ -140,15 +132,15 @@ export default [
     density: 1,
     affix: {
       global: [
-        [ITEM_AFFIX_TYPES[12], 1, 1], // fuelCost — name, magnitude, type (+percent, -percent, +count)
-        [ITEM_AFFIX_TYPES[26], 2], // strafeSpeed
-        [ITEM_AFFIX_TYPES[6], 4], // bulletLife
+        [12, 1, 1], // fuelCost — name, magnitude, type (+percent, -percent, +count)
+        [26, 2], // strafeSpeed
+        [6, 4], // bulletLife
       ],
       body: [
-        [ITEM_AFFIX_TYPES[10], 1], // damageTakenFromFuel
+        [10, 1], // damageTakenFromFuel
       ],
       engine: [
-        [ITEM_AFFIX_TYPES[25], 1], // spinTime
+        [25, 1], // spinTime
       ],
     },
   },
@@ -159,12 +151,12 @@ export default [
     density: 3,
     affix: {
       global: [
-        [ITEM_AFFIX_TYPES[21], 2], // shield
-        [ITEM_AFFIX_TYPES[9], 1, 1], // damageTaken
-        [ITEM_AFFIX_TYPES[19], 2], // mass
+        [21, 2], // shield
+        [9, 1, 1], // damageTaken
+        [19, 2], // mass
       ],
-      body: [[ITEM_AFFIX_TYPES[0], 1, 2]], // armor
-      engine: [[ITEM_AFFIX_TYPES[13], 1, 2]], // fuelEjectDelay
+      body: [[0, 1, 2]], // armor
+      engine: [[13, 1, 2]], // fuelEjectDelay
     },
   },
   {
@@ -174,12 +166,12 @@ export default [
     density: 1,
     affix: {
       global: [
-        [ITEM_AFFIX_TYPES[15], 2], // itemMixQuality
-        [ITEM_AFFIX_TYPES[2], 1, 2], // bulletCount
-        [ITEM_AFFIX_TYPES[1], 1], // armorSave
+        [15, 2], // itemMixQuality
+        [2, 1, 2], // bulletCount
+        [1, 1], // armorSave
       ],
-      body: [[ITEM_AFFIX_TYPES[22], 2]], // shieldRegen
-      engine: [[ITEM_AFFIX_TYPES[14], 2]], // fuelRegen
+      body: [[22, 2]], // shieldRegen
+      engine: [[14, 2]], // fuelRegen
     },
   },
   {
@@ -189,12 +181,12 @@ export default [
     density: 2,
     affix: {
       global: [
-        [ITEM_AFFIX_TYPES[5], 2], // bulletDamage
-        [ITEM_AFFIX_TYPES[7], 2], // bulletRate
-        [ITEM_AFFIX_TYPES[11], 2], // fuel
+        [5, 2], // bulletDamage
+        [7, 2], // bulletRate
+        [11, 2], // fuel
       ],
-      body: [[ITEM_AFFIX_TYPES[27], 2]], // trackSpeed
-      engine: [[ITEM_AFFIX_TYPES[24], 2]], // spinHandling
+      body: [[27, 2]], // trackSpeed
+      engine: [[24, 2]], // spinHandling
     },
   },
   {
@@ -204,12 +196,12 @@ export default [
     density: 2,
     affix: {
       global: [
-        [ITEM_AFFIX_TYPES[18], 2], // lowestStat
-        [ITEM_AFFIX_TYPES[20], 1], // resolve
-        [ITEM_AFFIX_TYPES[8], 2], // bulletSpread
+        [18, 2], // lowestPool
+        [20, 1], // resolve
+        [8, 2], // bulletSpread
       ],
-      body: [[ITEM_AFFIX_TYPES[25], 2]], // spinTime
-      engine: [[ITEM_AFFIX_TYPES[23], 2]], // spinDamage
+      body: [[25, 2]], // spinTime
+      engine: [[23, 2]], // spinDamage
     },
   },
 ];

@@ -15,7 +15,7 @@
  */
 
 export type Band = readonly [start: number, end: number];
-export type Affix = [name: string, value: number, type: number];
+export type Affix = [type: number, value: number, type: number];
 export type Item = [
   color: number,
   gear: number,

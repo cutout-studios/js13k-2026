@@ -60,7 +60,7 @@ export const difficultyCurve = (level: number, falloff = DIFFICULTY_FALLOFF) =>
 const _statRoll = (
   [start, end]: Band = [0, 0],
   curve: number,
-  spread = 1.5,
+  spread = 1.1,
 ) => {
   const base = start + (end - start) * curve;
   return range(base, base * spread);

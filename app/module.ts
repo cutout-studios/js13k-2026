@@ -15,3 +15,4 @@
  */
 
 export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
+export { getBaseStats } from "./stats.ts";
