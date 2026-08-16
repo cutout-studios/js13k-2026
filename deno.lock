@@ -248,7 +248,6 @@
   "workspace": {
     "dependencies": [
       "jsr:@cutout/jsx@*",
-      "jsr:@cutout/store@*",
       "jsr:@std/fmt@*",
       "npm:esbuild-minify-templates@*",
       "npm:esbuild@*",

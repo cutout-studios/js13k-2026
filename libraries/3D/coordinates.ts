@@ -33,7 +33,7 @@ export class XOCoordinates {
       doTimes(
         COORDINATE_SIDE_LENGTH,
         (index) =>
-          fromChild.#readLine(
+          fromChild.readLine(
             index * COORDINATE_SIDE_LENGTH,
             1,
             COORDINATE_SIDE_LENGTH,
@@ -42,7 +42,7 @@ export class XOCoordinates {
       doTimes(
         COORDINATE_SIDE_LENGTH,
         (index) =>
-          toParent.#readLine(
+          toParent.readLine(
             index,
             COORDINATE_SIDE_LENGTH,
             COORDINATE_SIDE_LENGTH,
@@ -88,19 +88,19 @@ export class XOCoordinates {
   }
 
   get xAxis() {
-    return this.#readLine(0) as XYZ;
+    return this.readLine(0) as XYZ;
   }
 
   get yAxis() {
-    return this.#readLine(4) as XYZ;
+    return this.readLine(4) as XYZ;
   }
 
   get zAxis() {
-    return this.#readLine(8) as XYZ;
+    return this.readLine(8) as XYZ;
   }
 
   get origin() {
-    return this.#readLine(12) as XYZ;
+    return this.readLine(12) as XYZ;
   }
 
   get orthonormalInverse(): XOCoordinates {
@@ -109,17 +109,17 @@ export class XOCoordinates {
     return new XOCoordinates(
       ...(doTimes(
         XYZ_LENGTH,
-        (index) => this.#readLine(index, COORDINATE_SIDE_LENGTH),
+        (index) => this.readLine(index, COORDINATE_SIDE_LENGTH),
       ) as [XYZ, XYZ, XYZ]),
       doTimes(
         XYZ_LENGTH,
         (index) =>
-          -dotProduct(this.#readLine(index * COORDINATE_SIDE_LENGTH), origin),
+          -dotProduct(this.readLine(index * COORDINATE_SIDE_LENGTH), origin),
       ) as XYZ,
     );
   }
 
-  #readLine(
+  readLine(
     start: number,
     stride: number = 1,
     length: number = XYZ_LENGTH,

@@ -33,30 +33,30 @@ export class XOObject {
     this.geometry = geometry;
     this.material = material;
 
-    this.#positionCoordinates = this.#makePositionCoordinates(position);
-    this.#rotationCoordinates = this.#makeRotationCoordinates(rotation);
+    this.positionCoordinates = this.makePositionCoordinates(position);
+    this.rotationCoordinates = this.makeRotationCoordinates(rotation);
   }
 
-  #positionCoordinates: XOCoordinates;
+  positionCoordinates: XOCoordinates;
   get position(): XYZ {
-    return this.#positionCoordinates.origin;
+    return this.positionCoordinates.origin;
   }
 
   set position(input: XYZ) {
-    this.#positionCoordinates = this.#makePositionCoordinates(input);
+    this.positionCoordinates = this.makePositionCoordinates(input);
   }
 
-  #rotationCoordinates: XOCoordinates;
+  rotationCoordinates: XOCoordinates;
   // get rotation() {}
 
   set rotation(input: [XYZ, number]) {
-    this.#rotationCoordinates = this.#makeRotationCoordinates(input);
+    this.rotationCoordinates = this.makeRotationCoordinates(input);
   }
 
   get coordinates(): XOCoordinates {
     return XOCoordinates.localize(
-      this.#rotationCoordinates,
-      this.#positionCoordinates,
+      this.rotationCoordinates,
+      this.positionCoordinates,
     );
   }
 
@@ -66,17 +66,17 @@ export class XOObject {
       (index) => this.position[index] + (position?.[index] ?? 0),
     ) as XYZ;
 
-    this.#rotationCoordinates = XOCoordinates.localize(
-      this.#makeRotationCoordinates(rotation),
-      this.#rotationCoordinates,
+    this.rotationCoordinates = XOCoordinates.localize(
+      this.makeRotationCoordinates(rotation),
+      this.rotationCoordinates,
     );
   }
 
-  #makePositionCoordinates(position?: XYZ): XOCoordinates {
+  makePositionCoordinates(position?: XYZ): XOCoordinates {
     return new XOCoordinates(undefined, undefined, undefined, position);
   }
 
-  #makeRotationCoordinates(
+  makeRotationCoordinates(
     [axis, angle]: [XYZ, number] = [[1, 0, 0], 0],
   ): XOCoordinates {
     const magnitude = Math.hypot(...axis);

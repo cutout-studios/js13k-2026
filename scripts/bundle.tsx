@@ -35,22 +35,50 @@ const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
   `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_COMPRESSED_FILE}`;
 
 const PROPS_TO_MANGLE = [
+  "activeInputs",
+  "adjust",
   "affix",
+  "attribute",
   "body",
+  "rotationCoordinates",
+  "coordinates",
   "cost",
   "damage",
   "density",
   "drop",
+  "element",
   "enemy",
   "engine",
+  "geometry",
   "global",
   "health",
   "life",
+  "localize",
+  "makePerspectiveCoordinates",
+  "makePositionCoordinates",
+  "makeRotationCoordinates",
   "mass",
+  "material",
+  "origin",
+  "orthonormalInverse",
+  "parsePart",
+  "parseScore",
+  "pointers",
+  "positionCoordinates",
   "rate",
+  "readLine",
+  "render",
+  "root",
+  "rotation",
+  "safetyCropDistance",
+  "score",
   "speed",
-  "type",
+  "stack",
+  "viewingRadians",
   "weapon",
+  "xAxis",
+  "yAxis",
+  "zAxis",
 ];
 
 // const LIBRARY_ENTRYPOINTS = [
@@ -114,33 +142,63 @@ async function bundle(
 
   console.log(`%cMinifed Source:\n%c${code}`, "color: blue;", "color: gray;");
 
-  // const packer = new Packer([
-  //   {
-  //     data: code,
-  //     type: "js" as InputType,
-  //     action: "eval" as InputAction
-  //   },
-  // ], {});
-  // await packer.optimize();
+  const packer = new Packer([
+    {
+      data: code,
+      type: "js" as InputType,
+      action: "eval" as InputAction,
+    },
+  ], {});
+  await packer.optimize();
 
-  // const { firstLine, secondLine } = packer.makeDecoder();
-
-  // const appOutputText = rawText(
-  //   <body>
-  //     <script>
-  //       {firstLine}
-  //       {secondLine}
-  //     </script>
-  //   </body>,
-  // );
+  const { firstLine, secondLine } = packer.makeDecoder();
 
   const appOutputText = rawText(
     <body>
-      <script type="module">
-        {code}
+      <style>
+        {/* css */ `
+           html, body, body * { 
+             all: initial;
+             box-sizing: border-box;
+             font-family: system-ui;
+             overflow: hidden;
+           }
+           body {
+             position: relative;
+             width: 100vw;
+             height: 100svh;
+           }
+         `}
+      </style>
+      <script>
+        {firstLine}
+        {secondLine}
       </script>
     </body>,
   );
+
+  // const appOutputText = rawText(
+  //   <body>
+  //     <style>
+  //       {/* css */`
+  //         html, body, body * {
+  //           all: initial;
+  //           box-sizing: border-box;
+  //           font-family: system-ui;
+  //           overflow: hidden;
+  //         }
+  //         body {
+  //           position: relative;
+  //           width: 100vw;
+  //           height: 100svh;
+  //         }
+  //       `}
+  //     </style>
+  //     <script type="module">
+  //       {code}
+  //     </script>
+  //   </body>,
+  // );
 
   Deno.writeTextFileSync(
     BUNDLE_OUTPUT_FILEPATH,

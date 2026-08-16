@@ -31,7 +31,7 @@ export class XOCamera extends XOObject {
     target.render((process) => {
       const viewingCoordinates = XOCoordinates.localize(
         this.coordinates.orthonormalInverse,
-        this.#makePerspectiveCoordinates(target.aspectRatio),
+        this.makePerspectiveCoordinates(target.aspectRatio),
       );
 
       for (const object of objects) {
@@ -50,7 +50,7 @@ export class XOCamera extends XOObject {
     });
   }
 
-  #makePerspectiveCoordinates(aspectRatio: number): XOCoordinates {
+  makePerspectiveCoordinates(aspectRatio: number): XOCoordinates {
     const viewportHeight = Math.tan(Math.PI / 2 - this.viewingRadians / 2);
 
     return new XOCoordinates(

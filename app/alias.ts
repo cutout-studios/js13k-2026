@@ -19,3 +19,10 @@ export const { random, round, floor, min, max, atan, PI } = Math;
 export const length = <T>(array: Array<T>) => array.length;
 // export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
 // export const map = <T, K>(array: T[], mapper: (item: T) => K) => array.map(mapper);
+
+const g = globalThis;
+const d = globalThis.document;
+
+export const addEventListener = (key: any, func: (this: Window, event: any) => void) => g.addEventListener(key, func);
+export const createElement = (tagName: string) => d.createElement(tagName);
+export const appendChild = (child: Element, parent = d) => parent.appendChild(child);

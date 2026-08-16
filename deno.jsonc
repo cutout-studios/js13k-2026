@@ -5,23 +5,20 @@
   },
   "imports": {
     "@cutout/jsx": "jsr:@cutout/jsx",
-    "@cutout/store": "jsr:@cutout/store",
     "@std/fmt": "jsr:@std/fmt",
-    "esbuild": "npm:esbuild",
-    "esbuild-minify-templates": "npm:esbuild-minify-templates",
-    "roadroller": "npm:roadroller",
+    "~3D": "./libraries/3D/module.ts",
     "~audio": "./libraries/audio/module.ts",
     "~clock": "./libraries/clock.ts",
     "~common": "./libraries/common.ts",
-    "~controller": "./libraries/controller.ts",
-    "~3D": "./libraries/3D/module.ts",
-    "~web": "./libraries/web.ts"
+    "esbuild": "npm:esbuild",
+    "esbuild-minify-templates": "npm:esbuild-minify-templates",
+    "roadroller": "npm:roadroller"
   },
   "tasks": {
-    "start": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --watch=app,libraries ./scripts/bundle.tsx",
+    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --watch=app,libraries ./scripts/bundle.tsx",
     "clean": "rm -rf .output",
     "setup": "bash ./scripts/setup.sh",
-    "test:level": "deno run scripts/drawLevel.js",
-    "test:item": "deno run scripts/drawItem.js"
+    "test:item": "deno run scripts/drawItem.js",
+    "test:level": "deno run scripts/drawLevel.js"
   }
 }
