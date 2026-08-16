@@ -16,7 +16,7 @@
 
 import { createSquare, createTriangle, XOGeometry, XYZ } from "~3D";
 
-import { cos, length, PI, sin } from "./alias.ts";
+import { cos, length, PI, sin } from "../libraries/alias.ts";
 
 export const createPyramid = ([x, y, z]: XYZ = [1, 1, 1]): XOGeometry => {
   const apex: XYZ = [0, 0, z];

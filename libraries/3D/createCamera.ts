@@ -22,17 +22,32 @@ import {
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";
 import { XOCoordinates } from "./coordinates.ts";
+import { PI, tan } from "../alias.ts";
 
-export class XOCamera extends XOObject {
-  viewingRadians: number = DEFAULT_CAMERA_VIEWING_RADIANS;
-  safetyCropDistance: number = DEFAULT_CAMERA_SAFETY_CROP;
+export const createCamera = (
+  viewingRadians = DEFAULT_CAMERA_VIEWING_RADIANS,
+  safetyCropDistance = DEFAULT_CAMERA_SAFETY_CROP,
+) => {
+  const viewportHeight = tan(PI / 2 - viewingRadians / 2);
 
-  render(objects: XOObject[], target: GPURenderTarget) {
+  let cachedAspectRatio = 0, viewingCoordinates: XOCoordinates;
+
+  return (objects: XOObject[], target: GPURenderTarget) =>
     target.render((process) => {
-      const viewingCoordinates = XOCoordinates.localize(
-        this.coordinates.orthonormalInverse,
-        this.makePerspectiveCoordinates(target.aspectRatio),
-      );
+      const { aspectRatio } = target;
+
+      if (aspectRatio !== cachedAspectRatio) {
+        cachedAspectRatio = aspectRatio;
+        viewingCoordinates = new XOCoordinates(
+          // deno-fmt-ignore
+          new Float32Array([
+            viewportHeight / aspectRatio, 0, 0, 0,
+            0, viewportHeight, 0, 0,
+            0, 0, -1, -1,
+            0, 0, -2 * safetyCropDistance, 0,
+          ]),
+        );
+      }
 
       for (const object of objects) {
         // skip null/invisible objects
@@ -48,19 +63,4 @@ export class XOCamera extends XOObject {
         process.draw(object.geometry.length);
       }
     });
-  }
-
-  makePerspectiveCoordinates(aspectRatio: number): XOCoordinates {
-    const viewportHeight = Math.tan(Math.PI / 2 - this.viewingRadians / 2);
-
-    return new XOCoordinates(
-      // deno-fmt-ignore
-      new Float32Array([
-        viewportHeight / aspectRatio, 0, 0, 0,
-        0, viewportHeight, 0, 0,
-        0, 0, -1, -1,
-        0, 0, -2 * this.safetyCropDistance, 0
-      ]),
-    );
-  }
-}
+};

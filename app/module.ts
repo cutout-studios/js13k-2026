@@ -22,15 +22,14 @@
 import {
   /* addEventListener, */ appendChild,
   createElement,
-  PI,
-} from "./alias.ts";
+} from "../libraries/alias.ts";
 
 import { startClock } from "~clock";
 import {
+  createCamera,
   createRenderTarget,
   paintMaterial,
   setupDevice,
-  XOCamera,
   XOObject,
 } from "~3D";
 import { createPyramid, createSphere } from "./shapes.ts";
@@ -66,27 +65,25 @@ const start = async () => {
 
   await setupDevice();
 
-  const camera = new XOCamera(),
+  const render = createCamera(),
     sphere = new XOObject(
       createSphere(1, 12),
-      [-2, 0, 0],
+      [-2, 0, -5],
       undefined,
       paintMaterial(0xEE3030),
     ),
     pyramid = new XOObject(
       createPyramid(),
-      [2, 0, 0],
+      [2, 0, -5],
       undefined,
       paintMaterial(0x29A9D4),
     );
-
-  camera.adjust([0, 0, 5]);
 
   startClock((tickLength) => {
     sphere.adjust(undefined, [[0, 1, 1], tickLength]);
     pyramid.adjust(undefined, [[0, 0, 1], tickLength]);
 
-    camera.render([
+    render([
       sphere,
       pyramid,
     ], createRenderTarget(canvas as HTMLCanvasElement));

@@ -103,22 +103,6 @@ export class XOCoordinates {
     return this.readLine(12) as XYZ;
   }
 
-  get orthonormalInverse(): XOCoordinates {
-    const { origin } = this;
-
-    return new XOCoordinates(
-      ...(doTimes(
-        XYZ_LENGTH,
-        (index) => this.readLine(index, COORDINATE_SIDE_LENGTH),
-      ) as [XYZ, XYZ, XYZ]),
-      doTimes(
-        XYZ_LENGTH,
-        (index) =>
-          -dotProduct(this.readLine(index * COORDINATE_SIDE_LENGTH), origin),
-      ) as XYZ,
-    );
-  }
-
   readLine(
     start: number,
     stride: number = 1,

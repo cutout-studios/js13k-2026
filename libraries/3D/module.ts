@@ -34,7 +34,7 @@ export {
 export { setupDevice } from "./webgpu/setupDevice.ts";
 export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
 export { XOObject } from "./objects.ts";
-export { XOCamera } from "./camera.ts";
+export { createCamera } from "./createCamera.ts";
 
 export { createSquare, createTriangle } from "./geometry.ts";
 export { paint as paintMaterial } from "./materials/paint.ts";

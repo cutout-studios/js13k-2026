@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-export const { random, round, floor, min, max, atan, PI, sin, cos } = Math;
+export const { random, round, floor, min, max, atan, PI, sin, cos, tan } = Math;
 
 export const length = <T>(array: Array<T>) => array.length;
 // export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
 // export const map = <T, K>(array: T[], mapper: (item: T) => K) => array.map(mapper);
 
 const g = globalThis;
-const d = globalThis.document;
+const d = g.document;
 
 export const addEventListener = (
   key: any,
