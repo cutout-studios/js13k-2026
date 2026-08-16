@@ -20,12 +20,14 @@ import { rawText } from "@cutout/jsx/projections";
 import * as esbuild from "esbuild";
 import { minify } from "esbuild-minify-templates";
 
+import { InputAction, InputType, Packer } from "roadroller";
+
 const JS13K_LIMIT = 13_312;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
 
-const BUNDLE_ENTRYPOINT = `./${APP_DIR}/start.ts`;
+const BUNDLE_ENTRYPOINT = `./${APP_DIR}/module.ts`;
 const BUNDLE_OUTPUT_FILE = "index.html";
 const BUNDLE_OUTPUT_COMPRESSED_FILE = `${BUNDLE_OUTPUT_FILE}.zip`;
 const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}`;
@@ -33,60 +35,48 @@ const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
   `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_COMPRESSED_FILE}`;
 
 const PROPS_TO_MANGLE = [
-  "root",
-  "stack",
-  "pointers",
-  "element",
-  "attribute",
-  "activeInputs",
-  "geometry",
-  "material",
-  "#parseScore",
-  "#parsePart",
-  "score",
-  "start",
-  "origin",
-  "orthonormalInverse",
-  "safetyCropDistance",
-  "viewingRadians",
-  "position",
-  "rotation",
-  "coordinates",
-  "adjust",
-  "render",
-  "#makePositionCoordinates",
-  "#makeRotationCoordinates",
-  "#readLine",
-  "localize",
-  "xAxis",
-  "yAxis",
-  "zAxis",
+  "affix",
+  "body",
+  "cost",
+  "damage",
+  "density",
+  "drop",
+  "enemy",
+  "engine",
+  "global",
+  "health",
+  "life",
+  "mass",
+  "rate",
+  "speed",
+  "type",
+  "weapon",
 ];
 
-const LIBRARY_ENTRYPOINTS = [
-  "./libraries/common.ts",
-  "./libraries/controller.ts",
-  "./libraries/clock.ts",
-  "./libraries/3D/module.ts",
-  "./libraries/audio/module.ts",
-  "./libraries/web.ts",
-];
+// const LIBRARY_ENTRYPOINTS = [
+//   "./libraries/common.ts",
+//   "./libraries/controller.ts",
+//   "./libraries/clock.ts",
+//   "./libraries/3D/module.ts",
+//   "./libraries/audio/module.ts",
+//   "./libraries/web.ts",
+// ];
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-for (const entrypoint of LIBRARY_ENTRYPOINTS) {
-  await bundle({ minify: true }, entrypoint);
-  logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH, entrypoint);
-}
+// for (const entrypoint of LIBRARY_ENTRYPOINTS) {
+//   await bundle({ minify: true }, entrypoint);
+//   logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH, entrypoint);
+// }
 
 await bundle({ minify: true });
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
 
-await bundle({ minify: false });
+// await bundle({ minify: false });
 
-await new Deno.Command("open", {
-  args: [BUNDLE_OUTPUT_FILEPATH],
-}).output();
+// await new Deno.Command("open", {
+//   args: [BUNDLE_OUTPUT_FILEPATH],
+// }).output();
 
 async function bundle(
   options: Partial<Deno.bundle.Options> = {},
@@ -122,6 +112,28 @@ async function bundle(
     code = result.code;
   }
 
+  console.log(`%cMinifed Source:\n%c${code}`, "color: blue;", "color: gray;");
+
+  // const packer = new Packer([
+  //   {
+  //     data: code,
+  //     type: "js" as InputType,
+  //     action: "eval" as InputAction
+  //   },
+  // ], {});
+  // await packer.optimize();
+
+  // const { firstLine, secondLine } = packer.makeDecoder();
+
+  // const appOutputText = rawText(
+  //   <body>
+  //     <script>
+  //       {firstLine}
+  //       {secondLine}
+  //     </script>
+  //   </body>,
+  // );
+
   const appOutputText = rawText(
     <body>
       <script type="module">
@@ -143,6 +155,11 @@ async function bundle(
   if (!zip.success) {
     console.error(new TextDecoder().decode(zip.stderr));
   }
+
+  await new Deno.Command("./ect/build/ect", {
+    args: ["-zip", "-9", BUNDLE_OUTPUT_COMPRESSED_FILE],
+    cwd: OUTPUT_DIR,
+  }).output();
 }
 
 function logSize(filePath: string, customMessage?: string) {

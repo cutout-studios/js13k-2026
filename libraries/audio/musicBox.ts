@@ -16,9 +16,7 @@
 
 import { MINUTES_TO_SECONDS, SECONDS_TO_MS } from "~common";
 
-import {
-  Source,
-} from "./types.ts";
+import { Source } from "./types.ts";
 
 import { getFrequency } from "./getFrequency.ts";
 
