@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-export const gpu = globalThis.navigator.gpu;
-export const format = gpu.getPreferredCanvasFormat();
+export class XOController {
+  activeInputs = new Set<string>();
 
-const no = () => alert("WEBGPU ONLY.");
-
-if (!gpu) no();
-
-const adapter = await gpu.requestAdapter();
-
-if (!adapter) no();
-
-export const device = await adapter!.requestDevice();
-
-device.addEventListener(
-  "uncapturederror",
-  ({ error }) => console.error(error.message),
-);
+  constructor(type = "mouse+keyboard") {
+    if (type === "mouse+keyboard") {
+      globalThis.addEventListener(
+        "keydown",
+        ({ code }) => this.activeInputs.add(code),
+      );
+      globalThis.addEventListener(
+        "keyup",
+        ({ code }) => this.activeInputs.delete(code),
+      );
+      globalThis.addEventListener("blur", () => this.activeInputs.clear());
+    }
+  }
+}

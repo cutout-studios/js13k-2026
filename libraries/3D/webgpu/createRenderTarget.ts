@@ -16,7 +16,7 @@
 
 import { DEPTH_TEXTURE_FORMAT } from "../constants.ts";
 import { GPURenderTarget } from "../types.ts";
-import { device, format } from "./device.ts";
+import { device, format } from "./setupDevice.ts";
 
 export const createRenderTarget = (
   canvas: HTMLCanvasElement,

@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import { format } from "@std/fmt/bytes";
 import { rawText } from "@cutout/jsx/projections";
 
 import * as esbuild from "esbuild";
-import { minify } from "esbuild-minify-templates";
 
 import { InputAction, InputType, Packer } from "roadroller";
 
@@ -39,7 +37,6 @@ const PROPS_TO_MANGLE = [
   "adjust",
   "affix",
   "attribute",
-  "body",
   "rotationCoordinates",
   "coordinates",
   "cost",
@@ -81,33 +78,17 @@ const PROPS_TO_MANGLE = [
   "zAxis",
 ];
 
-// const LIBRARY_ENTRYPOINTS = [
-//   "./libraries/common.ts",
-//   "./libraries/controller.ts",
-//   "./libraries/clock.ts",
-//   "./libraries/3D/module.ts",
-//   "./libraries/audio/module.ts",
-//   "./libraries/web.ts",
-// ];
-
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-// for (const entrypoint of LIBRARY_ENTRYPOINTS) {
-//   await bundle({ minify: true }, entrypoint);
-//   logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH, entrypoint);
-// }
-
-await bundle({ minify: true });
+await bundle();
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
 
-// await bundle({ minify: false });
-
-// await new Deno.Command("open", {
-//   args: [BUNDLE_OUTPUT_FILEPATH],
-// }).output();
+await new Deno.Command("open", {
+  args: [BUNDLE_OUTPUT_FILEPATH],
+}).output();
 
 async function bundle(
-  options: Partial<Deno.bundle.Options> = {},
+  options: Partial<Deno.bundle.Options> = { minify: true },
   entrypoint = BUNDLE_ENTRYPOINT,
 ) {
   const _result = await Deno.bundle({
@@ -127,8 +108,6 @@ async function bundle(
 
   let code = sourceData.text();
   if (options.minify) {
-    code = minify(code).toString();
-
     const result = await esbuild.transform(code, {
       minify: true,
       mangleProps: new RegExp(
@@ -154,51 +133,19 @@ async function bundle(
   const { firstLine, secondLine } = packer.makeDecoder();
 
   const appOutputText = rawText(
-    <body>
-      <style>
-        {/* css */ `
-           html, body, body * { 
-             all: initial;
-             box-sizing: border-box;
-             font-family: system-ui;
-             overflow: hidden;
-           }
-           body {
-             position: relative;
-             width: 100vw;
-             height: 100svh;
-           }
-         `}
-      </style>
-      <script>
-        {firstLine}
-        {secondLine}
-      </script>
-    </body>,
+    <html>
+      <head>
+        <style>
+          {/* css */ `html,body,body *{all:initial;box-sizing:border-box;font-family:system-ui;overflow:hidden;}body{position:relative;width:100vw;height:100svh;}`}
+        </style>
+        <script>
+          {firstLine}
+          {secondLine}
+        </script>
+      </head>
+      <body></body>
+    </html>,
   );
-
-  // const appOutputText = rawText(
-  //   <body>
-  //     <style>
-  //       {/* css */`
-  //         html, body, body * {
-  //           all: initial;
-  //           box-sizing: border-box;
-  //           font-family: system-ui;
-  //           overflow: hidden;
-  //         }
-  //         body {
-  //           position: relative;
-  //           width: 100vw;
-  //           height: 100svh;
-  //         }
-  //       `}
-  //     </style>
-  //     <script type="module">
-  //       {code}
-  //     </script>
-  //   </body>,
-  // );
 
   Deno.writeTextFileSync(
     BUNDLE_OUTPUT_FILEPATH,
@@ -224,9 +171,9 @@ function logSize(filePath: string, customMessage?: string) {
   const { size } = Deno.statSync(filePath);
 
   console.log(
-    `%c${customMessage ?? filePath}: %c${format(size)} %c(${
+    `%c${customMessage ?? filePath}: %c${size} / ${JS13K_LIMIT} %c(${
       ((size / JS13K_LIMIT) * 100).toFixed(2)
-    }%)`,
+    }%, ${JS13K_LIMIT - size} bytes remaining)`,
     "color: grey;",
     "color: cyan;",
     "color: white;",

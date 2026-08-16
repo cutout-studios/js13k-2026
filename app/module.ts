@@ -16,44 +16,81 @@
 
 /// <reference lib="dom" />
 
-export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
-export { getBaseStats } from "./stats.ts";
+// export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
+// export { getBaseStats } from "./stats.ts";
 
-import { addEventListener, appendChild, createElement } from "./alias.ts";
+import {
+  /* addEventListener, */ appendChild,
+  createElement,
+  PI,
+} from "./alias.ts";
 
-// will definitely need some version of these
-export * from "~clock";
-export * from "~3D";
-export { createAudioSource } from "~audio";
+import { startClock } from "~clock";
+import {
+  createRenderTarget,
+  paintMaterial,
+  setupDevice,
+  XOCamera,
+  XOObject,
+} from "~3D";
+import { createPyramid, createSphere } from "./shapes.ts";
+
+// import { createAudioSource } from "~audio";
 
 // attach controller
-const activeInputs = new Set();
+// const activeInputs = new Set();
 
-addEventListener(
-  "keydown",
-  ({ code }) => activeInputs.add(code),
-);
-addEventListener(
-  "keyup",
-  ({ code }) => activeInputs.delete(code),
-);
-addEventListener("blur", () => activeInputs.clear());
+// addEventListener(
+//   "keydown",
+//   ({ code }) => activeInputs.add(code),
+// );
+// addEventListener(
+//   "keyup",
+//   ({ code }) => activeInputs.delete(code),
+// );
+// addEventListener("blur", () => activeInputs.clear());
 
-const style = (node: HTMLElement, object: Record<string, unknown>) => {
-  for (const key in object) node.style[key] = object[key];
+const style = (node: HTMLElement, object: Record<string, string>) => {
+  for (const key in object) node.style[key as never] = object[key];
 };
 
-// setup html
-const [canvas, nav] = ["canvas", "nav"].map(createElement);
+const start = async () => {
+  const canvas = createElement("canvas");
 
-style(
-  canvas,
-  { width: "100%", height: "100%" },
-);
+  style(
+    canvas,
+    { width: "100%", height: "100%", display: "block" },
+  );
 
-style(
-  nav,
-  { top: 0, left: 0, position: "absolute", pointerEvents: "none" },
-);
+  appendChild(canvas);
 
-[canvas, nav].forEach((node) => appendChild(node));
+  await setupDevice();
+
+  const camera = new XOCamera(),
+    sphere = new XOObject(
+      createSphere(1, 12),
+      [-2, 0, 0],
+      undefined,
+      paintMaterial(0xEE3030),
+    ),
+    pyramid = new XOObject(
+      createPyramid(),
+      [2, 0, 0],
+      undefined,
+      paintMaterial(0x29A9D4),
+    );
+
+  camera.adjust([0, 0, 5]);
+
+  startClock((tickLength) => {
+    sphere.adjust(undefined, [[0, 1, 1], tickLength]);
+    pyramid.adjust(undefined, [[0, 0, 1], tickLength]);
+
+    camera.render([
+      sphere,
+      pyramid,
+    ], createRenderTarget(canvas as HTMLCanvasElement));
+  });
+};
+
+onload = start;

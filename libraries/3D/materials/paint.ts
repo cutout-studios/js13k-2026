@@ -20,42 +20,15 @@ import {
   MATERIALS_DATA_GROUP_ID,
 } from "../constants.ts";
 
-import { wgsl } from "./wgsl.ts";
+const AMBIENT = 0.4;
+const SHADING_SCALE = 600;
 
+// TODO: actually understand this
 export const paint = (...paints: Array<number | number[]>): XOMaterial => [
-  wgsl`
-    @group(${COORDINATES_DATA_GROUP_ID})
-    @binding(0)
-    var<uniform> coordinateData: mat4x4f;
-
-    struct VertexOutput {
-      @builtin(position) Position: vec4f,
-      @location(0) triangleIndex: u32
-    }
-
-    @vertex
-    fn main(
-      @location(0) position: vec3f,
-      @builtin(vertex_index) vertexIndex: u32
-    ) -> VertexOutput {
-      var output: VertexOutput;
-
-      output.Position = coordinateData * vec4f(position, 1.0); 
-      output.triangleIndex = vertexIndex / 3u;
-
-      return output;
-    }`,
-  wgsl`
-    @group(${MATERIALS_DATA_GROUP_ID})
-    @binding(0) var<storage, read>
-    palette: array<vec4f>;
-
-    @fragment
-    fn main(
-      @location(0) @interpolate(flat) triangleIndex: u32
-    ) -> @location(0) vec4f {
-      return palette[triangleIndex % arrayLength(&palette)];
-    }`,
+  /* wgsl */ `@group(${COORDINATES_DATA_GROUP_ID})@binding(0)var<uniform>c:mat4x4f;struct V{@builtin(position)p:vec4f,@location(0)i:u32}@vertex fn v(@location(0)P:vec3f,@builtin(vertex_index)x:u32)->V{return V(c*vec4f(P,1),x/3u);}`,
+  /* wgsl */ `@group(${MATERIALS_DATA_GROUP_ID})@binding(0)var<storage,read>p:array<vec4f>;@fragment fn f(@builtin(position)P:vec4f,@location(0)@interpolate(flat)i:u32)->@location(0)vec4f{let d=vec2f(dpdx(P.w),dpdy(P.w))*(${SHADING_SCALE}.0/P.w);let l=${AMBIENT}+${
+    1 - AMBIENT
+  }*inverseSqrt(dot(d,d)+1);return vec4f(p[i%arrayLength(&p)].rgb*l,1);}`,
   _buildPaintData(...paints),
 ];
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const { random, round, floor, min, max, atan, PI } = Math;
+export const { random, round, floor, min, max, atan, PI, sin, cos } = Math;
 
 export const length = <T>(array: Array<T>) => array.length;
 // export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
@@ -23,6 +23,10 @@ export const length = <T>(array: Array<T>) => array.length;
 const g = globalThis;
 const d = globalThis.document;
 
-export const addEventListener = (key: any, func: (this: Window, event: any) => void) => g.addEventListener(key, func);
+export const addEventListener = (
+  key: any,
+  func: (this: Window, event: any) => void,
+) => g.addEventListener(key, func);
 export const createElement = (tagName: string) => d.createElement(tagName);
-export const appendChild = (child: Element, parent = d) => parent.appendChild(child);
+export const appendChild = (child: Element, parent = d.body) =>
+  parent.appendChild(child);

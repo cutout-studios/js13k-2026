@@ -22,12 +22,9 @@ import {
   MATERIALS_DATA_GROUP_ID,
 } from "../constants.ts";
 
-import { device } from "./device.ts";
-import {
-  coordinatesLayout,
-  getRenderPipeline,
-  materialsLayout,
-} from "./getRenderPipeline.ts";
+import { device } from "./setupDevice.ts";
+import { getRenderPipeline } from "./getRenderPipeline.ts";
+import { coordinatesLayout, materialsLayout } from "./setupDevice.ts";
 
 export function loadObject(
   renderPass: GPURenderPassEncoder,
@@ -104,27 +101,24 @@ const _containerCache = new WeakMap<
 
 function _getDataContainer(
   objectKey: object,
-  layout: GPUPipelineLayout,
+  layout: GPUBindGroupLayout,
   size: number,
   usage: number,
 ): GPUDataContainer {
   let [buffer, bindGroup] = _containerCache.get(objectKey) ?? [];
 
-  if (!buffer || buffer && buffer.size < size) {
+  if (!buffer || buffer.size < size) {
+    buffer?.destroy();
     buffer = device.createBuffer({ size, usage });
+    bindGroup = device.createBindGroup({
+      layout,
+      entries: [{ binding: 0, resource: { buffer } }],
+    });
   }
 
-  bindGroup ??= device.createBindGroup({
-    layout,
-    entries: [{ binding: 0, resource: buffer }],
-  });
+  const container: GPUDataContainer = [buffer, bindGroup!];
 
-  const binding: GPUDataContainer = [
-    buffer,
-    bindGroup,
-  ];
+  _containerCache.set(objectKey, container);
 
-  _containerCache.set(objectKey, binding);
-
-  return binding;
+  return container;
 }
