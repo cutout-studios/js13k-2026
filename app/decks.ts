@@ -60,7 +60,7 @@ export const difficultyCurve = (level: number, falloff = DIFFICULTY_FALLOFF) =>
 const _statRoll = (
   [start, end]: Band = [0, 0],
   curve: number,
-  spread = 1.1,
+  spread = 1.125,
 ) => {
   const base = start + (end - start) * curve;
   return range(base, base * spread);
@@ -166,7 +166,7 @@ export const drawItem = (
   if (type <= 1) { // e.g. is weapon
     result.push(
       count,
-      ...ITEM_WEAPON_KEYS.map(roll),
+      ...ITEM_WEAPON_KEYS.map((value) => roll(value)),
       bulletPattern,
     );
   }

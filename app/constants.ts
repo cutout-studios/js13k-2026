@@ -24,12 +24,12 @@ export const WAVE_BAND = [2, 14] as Band;
 export const WAVE_SIZE_BAND = [1, 6] as Band;
 
 export const COLOR_TYPES = [
-  "purple",
-  "green",
-  "blue",
-  "pink",
-  "red",
-  "yellow",
+  "Purple",
+  "Green",
+  "Blue",
+  "Pink",
+  "Red",
+  "Yellow",
 ] as const;
 
 export const ENEMY_STAT_KEYS = [
@@ -45,54 +45,54 @@ export const ENEMY_STAT_BANDS = {
   speed: [[10, 25], [30, 75], [60, 100]],
   mass: [[4, 20], [12, 25], [40, 100]],
   damage: [[1, 8], [8, 25], [50, 100]],
-  drop: [[2, 10], [10, 20], [15, 25], [20, 30]],
+  drop: [[2, 8], [10, 20], [18, 25], [20, 40]],
 } as const;
 
-export const ITEM_TYPES = ["leftWing", "rightWing", "body", "engine"];
-export const ITEM_BULLET_TYPES = ["none", "fan", "nova"] as const;
-export const ITEM_RANK_THRESHOLDS = [0.75, 1.25] as const;
+export const ITEM_TYPES = ["Wing (Left)", "Wing (Right)", "Body", "Engine"];
+export const ITEM_BULLET_TYPES = ["Standard", "Wide", "Sphere"] as const;
+export const ITEM_RANK_THRESHOLDS = [0.85, 1.35] as const;
 
 export const ITEM_WEAPON_KEYS = ["damage", "life", "rate", "cost"] as const;
 export const ITEM_STAT_BANDS = {
-  mass: [[1, 15], [1, 15], [3, 40], [2, 15]],
-  affix: [[2, 8], [10, 20], [25, 45], [50, 100]],
+  affix: [[2, 12], [15, 35], [45, 100]],
+  cost: [[0, 0], [20, 10], [150, 100]],
   damage: [[8, 16], [16, 35], [32, 90], [50, 150]],
-  rate: [[0.8, 1.5], [2, 4], [5, 9], [12, 18]],
   life: [[15, 32], [36, 55], [55, 72], [72, 83]],
-  cost: [[0, 0], [3, 1], [15, 10]],
+  mass: [[1, 15], [1, 15], [3, 40], [2, 15]],
+  rate: [[0.7, 1.5], [1.5, 3], [5, 9], [12, 18]],
 } as const;
 
 export const ITEM_RANK_UP_MIX_COUNT = 3;
 
 export const PLAYER_STAT_TYPES = [
-  "armor",
-  "armorSave",
-  "bulletCount",
-  "bulletCritChance",
-  "bulletCritDamage",
-  "bulletDamage",
-  "bulletLife",
-  "bulletRate",
-  "bulletSpread",
-  "damageTaken",
-  "damageTakenFromFuel",
-  "fuel",
-  "fuelCost",
-  "fuelEjectDelay",
-  "fuelRegen",
-  "itemMixQuality",
-  "itemQuality",
-  "levelQuality",
-  "lowestPool",
-  "mass",
-  "resolve",
-  "shield",
-  "shieldRegen",
-  "spinDamage",
-  "spinHandling",
-  "spinTime",
-  "strafeSpeed",
-  "trackSpeed",
+  "Armor",
+  "Armor Save",
+  "Bullet Count",
+  "Bullet Crit Chance",
+  "Bullet Crit Damage",
+  "Bullet Damage",
+  "Bullet Lifetime",
+  "Bullet Rate",
+  "Bullet Spread",
+  "Damage Taken",
+  "Damage Taken From Fuel",
+  "Fuel",
+  "Fuel Cost",
+  "Fuel Eject Delay",
+  "Fuel Regen",
+  "Item Mixture Quality",
+  "Item Quality",
+  "Level Quality",
+  "Lowest Resource",
+  "Mass",
+  "Resolve",
+  "Shield",
+  "Shield Regen",
+  "Spin Damage",
+  "Spin Handling",
+  "Spin Time",
+  "Strafe Speed",
+  "Track Speed",
 ];
 
 // TODO: fill in remaining base stats
@@ -132,9 +132,9 @@ export default [
     density: 1,
     affix: {
       global: [
-        [12, 1, 1], // fuelCost — name, magnitude, type (+percent, -percent, +count)
+        [12, 2, 1], // fuelCost — name, magnitude, type (+percent, -percent, +count)
         [26, 2], // strafeSpeed
-        [6, 4], // bulletLife
+        [6, 3], // bulletLife
       ],
       body: [
         [10, 1], // damageTakenFromFuel
@@ -192,11 +192,11 @@ export default [
   {
     type: COLOR_TYPES[5],
     enemy: [2, 3, 3, 2],
-    weapon: [1, 2, 0, 1, 0, 2, 0],
+    weapon: [1, 2, 0, 1, 0, 2, 2],
     density: 2,
     affix: {
       global: [
-        [18, 2], // lowestPool
+        [18, 2], // lowestResource
         [20, 1], // resolve
         [8, 2], // bulletSpread
       ],

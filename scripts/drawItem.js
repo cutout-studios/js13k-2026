@@ -18,6 +18,7 @@ import {
   COLOR_TYPES,
   ITEM_BULLET_TYPES,
   ITEM_TYPES,
+  PLAYER_STAT_TYPES,
 } from "../app/constants.ts";
 import { drawItem } from "../app/decks.ts";
 import { PAPER_GRID_WIDTH } from "./constants.ts";
@@ -30,38 +31,40 @@ if (Math.random() > chance / 100) {
   console.log("No drop.");
   Deno.exit(0);
 }
+
 logTable([drawItem(type, level)], [
   "color",
   "item",
   "rank",
   "mass",
   "affixes",
-  "count",
-  "damage",
-  "life",
-  "rate",
-  "cost",
-  "spread",
+  "bullet count",
+  "bullet damage",
+  "bullet lifetime",
+  "bullet rate",
+  "bullet raw cost",
+  "bullet pattern",
 ], {
   color: (index) => COLOR_TYPES[index],
   item: (index) => ITEM_TYPES[index],
-  life: (amount) => Math.round(PAPER_GRID_WIDTH * (amount / 100)),
-  spread: (index) => ITEM_BULLET_TYPES[index],
+  ["bullet lifetime"]: (amount) =>
+    Math.round(PAPER_GRID_WIDTH * (amount / 100)),
+  ["bullet pattern"]: (index) => ITEM_BULLET_TYPES[index],
   affixes: (affixes) =>
     affixes.map(
-      ([name, value, type]) => {
+      ([type, value, applicationType]) => {
         value = value.toFixed(1);
 
-        switch (type) {
+        switch (applicationType) {
           case 1:
-            return `-${value}% ${name}`;
+            return `-${value}% ${PLAYER_STAT_TYPES[type]}`;
           case 2:
-            return `+${value} ${name}`;
+            return `+${value} ${PLAYER_STAT_TYPES[type]}`;
           case 0:
           default:
-            return `+${value}% ${name}`;
+            return `+${value}% ${PLAYER_STAT_TYPES[type]}`;
         }
       },
     ),
-  _default: (amount) => Number(amount.toFixed(1)),
+  _default: (amount) => Math.round(amount),
 });
