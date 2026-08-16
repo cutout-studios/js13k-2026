@@ -19,6 +19,7 @@ import { difficultyCurve, drawEnemies, getWaveCount } from "../app/decks.ts";
 import { logTable } from "./logTable.js";
 
 import { COLOR_TYPES } from "../app/constants.ts";
+import { PAPER_GRID_WIDTH } from "./constants.ts";
 
 const level = Number(Deno.args[0]);
 
@@ -26,8 +27,6 @@ const difficulty = difficultyCurve(level);
 const waveCount = getWaveCount(level);
 
 console.log({ level, waveCount, difficulty });
-
-const DEMO_GRID_WIDTH = 30;
 
 doTimes(waveCount, (wave) => {
   console.log({ wave });
@@ -42,7 +41,7 @@ doTimes(waveCount, (wave) => {
     "drop%",
   ], {
     color: (index) => COLOR_TYPES[index],
-    speed: (amount) => Math.round(DEMO_GRID_WIDTH * (amount / 100)),
+    speed: (amount) => Math.round(PAPER_GRID_WIDTH * (amount / 100)),
     _default: (amount) => Number(amount.toFixed(1)),
   });
 });

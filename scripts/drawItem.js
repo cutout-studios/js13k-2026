@@ -20,6 +20,7 @@ import {
   ITEM_TYPES,
 } from "../app/constants.ts";
 import { drawItem } from "../app/decks.ts";
+import { PAPER_GRID_WIDTH } from "./constants.ts";
 
 import { logTable } from "./logTable.js";
 
@@ -29,8 +30,6 @@ if (Math.random() > chance / 100) {
   console.log("No drop.");
   Deno.exit(0);
 }
-const DEMO_GRID_WIDTH = 30;
-
 logTable([drawItem(type, level)], [
   "color",
   "item",
@@ -46,7 +45,7 @@ logTable([drawItem(type, level)], [
 ], {
   color: (index) => COLOR_TYPES[index],
   item: (index) => ITEM_TYPES[index],
-  life: (amount) => Math.round(DEMO_GRID_WIDTH * (amount / 100)),
+  life: (amount) => Math.round(PAPER_GRID_WIDTH * (amount / 100)),
   spread: (index) => ITEM_BULLET_TYPES[index],
   affixes: (affixes) =>
     affixes.map(
