@@ -14,9 +14,34 @@
  * limitations under the License.
  */
 
+import { memo } from "~common";
 import { DEPTH_TEXTURE_FORMAT } from "../constants.ts";
 import { GPURenderTarget } from "../types.ts";
 import { device, format } from "./setupDevice.ts";
+
+const _getCanvasContext = memo((canvas: HTMLCanvasElement) => {
+  const context = canvas.getContext("webgpu")! as GPUCanvasContext;
+
+  context.configure({ device, format });
+
+  return context;
+});
+
+let cacheKey: string | undefined, cacheDepth: GPUTexture | undefined;
+const _getCanvasDepth = (canvas: HTMLCanvasElement): GPUTexture => {
+  const key = `${canvas.width}x${canvas.height}`;
+
+  if (key === cacheKey) return cacheDepth!;
+
+  cacheKey = key;
+  cacheDepth?.destroy();
+
+  return (cacheDepth = device.createTexture({
+    size: [canvas.width, canvas.height],
+    format: DEPTH_TEXTURE_FORMAT,
+    usage: GPUTextureUsage.RENDER_ATTACHMENT,
+  }));
+};
 
 export const createRenderTarget = (
   canvas: HTMLCanvasElement,
@@ -60,32 +85,3 @@ export const createRenderTarget = (
     },
   };
 };
-
-const _contextCache = new WeakMap();
-function _getCanvasContext(canvas: HTMLCanvasElement) {
-  if (_contextCache.has(canvas)) return _contextCache.get(canvas);
-
-  const context = canvas.getContext("webgpu")! as GPUCanvasContext;
-
-  context.configure({ device, format });
-
-  _contextCache.set(canvas, context);
-
-  return context;
-}
-
-let cacheKey: string | undefined, cacheDepth: GPUTexture | undefined;
-function _getCanvasDepth(canvas: HTMLCanvasElement): GPUTexture {
-  const key = `${canvas.width}x${canvas.height}`;
-
-  if (key === cacheKey) return cacheDepth!;
-
-  cacheKey = key;
-  cacheDepth?.destroy();
-
-  return (cacheDepth = device.createTexture({
-    size: [canvas.width, canvas.height],
-    format: DEPTH_TEXTURE_FORMAT,
-    usage: GPUTextureUsage.RENDER_ATTACHMENT,
-  }));
-}

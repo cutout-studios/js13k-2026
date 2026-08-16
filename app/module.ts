@@ -19,10 +19,7 @@
 // export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
 // export { getBaseStats } from "./stats.ts";
 
-import {
-  /* addEventListener, */ appendChild,
-  createElement,
-} from "../libraries/alias.ts";
+import { /* addEventListener, */ appendChild, createElement } from "~alias";
 
 import { startClock } from "~clock";
 import {

@@ -14,7 +14,19 @@
  * limitations under the License.
  */
 
-export const { random, round, floor, min, max, atan, PI, sin, cos, tan } = Math;
+export const {
+  random,
+  round,
+  floor,
+  min,
+  max,
+  atan,
+  PI,
+  sin,
+  cos,
+  tan,
+  hypot,
+} = Math;
 
 export const length = <T>(array: Array<T>) => array.length;
 // export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
@@ -30,3 +42,5 @@ export const addEventListener = (
 export const createElement = (tagName: string) => d.createElement(tagName);
 export const appendChild = (child: Element, parent = d.body) =>
   parent.appendChild(child);
+
+export const F32 = Float32Array;

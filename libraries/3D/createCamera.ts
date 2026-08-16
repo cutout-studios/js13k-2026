@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { F32, PI, tan } from "~alias";
 import type { GPURenderTarget } from "./types.ts";
 import {
   DEFAULT_CAMERA_SAFETY_CROP,
@@ -21,8 +22,7 @@ import {
 } from "./constants.ts";
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";
-import { XOCoordinates } from "./coordinates.ts";
-import { PI, tan } from "../alias.ts";
+import { localize } from "./coordinates.ts";
 
 export const createCamera = (
   viewingRadians = DEFAULT_CAMERA_VIEWING_RADIANS,
@@ -30,7 +30,7 @@ export const createCamera = (
 ) => {
   const viewportHeight = tan(PI / 2 - viewingRadians / 2);
 
-  let cachedAspectRatio = 0, viewingCoordinates: XOCoordinates;
+  let cachedAspectRatio = 0, viewingCoordinates: Float32Array;
 
   return (objects: XOObject[], target: GPURenderTarget) =>
     target.render((process) => {
@@ -38,15 +38,14 @@ export const createCamera = (
 
       if (aspectRatio !== cachedAspectRatio) {
         cachedAspectRatio = aspectRatio;
-        viewingCoordinates = new XOCoordinates(
+        viewingCoordinates =
           // deno-fmt-ignore
-          new Float32Array([
+          new F32([
             viewportHeight / aspectRatio, 0, 0, 0,
             0, viewportHeight, 0, 0,
             0, 0, -1, -1,
             0, 0, -2 * safetyCropDistance, 0,
-          ]),
-        );
+          ]);
       }
 
       for (const object of objects) {
@@ -56,7 +55,7 @@ export const createCamera = (
         loadObject(
           process,
           object.geometry,
-          XOCoordinates.localize(object.coordinates, viewingCoordinates),
+          localize(object.coordinates, viewingCoordinates),
           object.material,
         );
 

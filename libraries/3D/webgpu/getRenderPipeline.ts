@@ -22,15 +22,12 @@ import {
 } from "../constants.ts";
 
 import { device, format, pipelineLayout } from "./setupDevice.ts";
+import { memo } from "~common";
 
-const _pipelineCache = new WeakMap();
-export const getRenderPipeline = (
-  material: XOMaterial,
-): GPURenderPipeline => {
-  if (_pipelineCache.has(material)) return _pipelineCache.get(material);
-
-  const [vertex, fragment] = material;
-  const pipeline = device.createRenderPipeline({
+export const getRenderPipeline = memo((
+  [vertex, fragment]: XOMaterial,
+): GPURenderPipeline =>
+  device.createRenderPipeline({
     layout: pipelineLayout,
     vertex: {
       module: device.createShaderModule({ code: vertex }),
@@ -55,9 +52,5 @@ export const getRenderPipeline = (
       depthCompare: "less",
       format: DEPTH_TEXTURE_FORMAT,
     },
-  });
-
-  _pipelineCache.set(material, pipeline);
-
-  return pipeline;
-};
+  })
+);

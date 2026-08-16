@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { XOCoordinates } from "../coordinates.ts";
+import { memo } from "~common";
+
 import type { GPUDataContainer, XOGeometry, XOMaterial } from "../types.ts";
 import {
   COORDINATE_DATA_SIZE,
@@ -25,13 +26,69 @@ import {
 import { device } from "./setupDevice.ts";
 import { getRenderPipeline } from "./getRenderPipeline.ts";
 import { coordinatesLayout, materialsLayout } from "./setupDevice.ts";
+import { F32 } from "~alias";
 
-export function loadObject(
+const _allocateGeometryBuffer = memo((geometry: XOGeometry) => {
+  const geometryData = new F32(geometry.flat());
+
+  const buffer = device.createBuffer({
+    size: geometryData.byteLength,
+    usage: GPUBufferUsage.VERTEX,
+    mappedAtCreation: true,
+  });
+
+  // NOTE: best for one-time writes vs. "system.queue.writeBuffer"
+  new F32(buffer.getMappedRange()).set(geometryData);
+  buffer.unmap();
+
+  return buffer;
+});
+
+const _writeDataToContainer = (
+  loader: GPURenderPassEncoder,
+  data: Float32Array,
+  [buffer, bindGroup]: GPUDataContainer,
+  groupID: number,
+) => {
+  device.queue.writeBuffer(buffer, 0, data);
+  loader.setBindGroup(groupID, bindGroup);
+};
+
+const _containerCache = new WeakMap<object, GPUDataContainer>();
+const _getDataContainer = (
+  objectKey: object,
+  layout: GPUBindGroupLayout,
+  size: number,
+  usage: number,
+): GPUDataContainer => {
+  let container = _containerCache.get(objectKey);
+
+  if (!container || container[0].size < size) {
+    container?.[0].destroy();
+
+    const buffer = device.createBuffer({ size, usage });
+
+    _containerCache.set(
+      objectKey,
+      container = [
+        buffer,
+        device.createBindGroup({
+          layout,
+          entries: [{ binding: 0, resource: { buffer } }],
+        }),
+      ],
+    );
+  }
+
+  return container;
+};
+
+export const loadObject = (
   renderPass: GPURenderPassEncoder,
   geometry: XOGeometry,
-  coordinates: XOCoordinates,
+  coordinates: Float32Array,
   material: XOMaterial,
-) {
+) => {
   renderPass.setVertexBuffer(0, _allocateGeometryBuffer(geometry));
 
   renderPass.setPipeline(getRenderPipeline(material));
@@ -50,7 +107,7 @@ export function loadObject(
 
   _writeDataToContainer(
     renderPass,
-    coordinates.data,
+    coordinates,
     _getDataContainer(
       coordinates,
       coordinatesLayout,
@@ -59,66 +116,4 @@ export function loadObject(
     ),
     COORDINATES_DATA_GROUP_ID,
   );
-}
-
-const _geometryData = new WeakMap();
-function _allocateGeometryBuffer(geometry: XOGeometry) {
-  if (_geometryData.has(geometry)) {
-    return _geometryData.get(geometry);
-  }
-
-  const geometryData = new Float32Array(geometry.flat());
-
-  const buffer = device.createBuffer({
-    size: geometryData.byteLength,
-    usage: GPUBufferUsage.VERTEX,
-    mappedAtCreation: true,
-  });
-
-  // NOTE: best for one-time writes vs. "system.queue.writeBuffer"
-  new Float32Array(buffer.getMappedRange()).set(geometryData);
-  buffer.unmap();
-
-  _geometryData.set(geometry, buffer);
-
-  return buffer;
-}
-
-function _writeDataToContainer(
-  loader: GPURenderPassEncoder,
-  data: Float32Array,
-  [buffer, bindGroup]: GPUDataContainer,
-  groupID: number,
-) {
-  device.queue.writeBuffer(buffer, 0, data);
-  loader.setBindGroup(groupID, bindGroup);
-}
-
-const _containerCache = new WeakMap<
-  object,
-  [buffer: GPUBuffer, bindGroup: GPUBindGroup]
->();
-
-function _getDataContainer(
-  objectKey: object,
-  layout: GPUBindGroupLayout,
-  size: number,
-  usage: number,
-): GPUDataContainer {
-  let [buffer, bindGroup] = _containerCache.get(objectKey) ?? [];
-
-  if (!buffer || buffer.size < size) {
-    buffer?.destroy();
-    buffer = device.createBuffer({ size, usage });
-    bindGroup = device.createBindGroup({
-      layout,
-      entries: [{ binding: 0, resource: { buffer } }],
-    });
-  }
-
-  const container: GPUDataContainer = [buffer, bindGroup!];
-
-  _containerCache.set(objectKey, container);
-
-  return container;
-}
+};

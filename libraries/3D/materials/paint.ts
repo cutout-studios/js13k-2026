@@ -19,6 +19,7 @@ import {
   COORDINATES_DATA_GROUP_ID,
   MATERIALS_DATA_GROUP_ID,
 } from "../constants.ts";
+import { F32 } from "~alias";
 
 const PIXELS_PER_VIEW_UNIT = 600;
 const MINIMUM_BRIGHTNESS = 0.4;
@@ -34,7 +35,7 @@ export const paint = (...paints: Array<number | number[]>): XOMaterial => [
   _buildPaintData(...paints),
 ];
 
-function _buildPaintData(...paints: Array<number | number[]>) {
+const _buildPaintData = (...paints: Array<number | number[]>) => {
   const _parseHex = (hex: number): RGBA => [
     ((hex >> 16) & 255) / 255,
     ((hex >> 8) & 255) / 255,
@@ -42,7 +43,7 @@ function _buildPaintData(...paints: Array<number | number[]>) {
     1,
   ];
 
-  return new Float32Array(
+  return new F32(
     paints.flatMap((v) => v).flatMap(_parseHex),
   );
-}
+};

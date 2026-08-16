@@ -1,116 +1,54 @@
-/**
- *    Copyright 2026 Cutout Studios LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import { doTimes } from "~common";
+import { F32, hypot } from "~alias";
 
 import type { XYZ } from "./types.ts";
-import { COORDINATE_SIDE_LENGTH, XYZ_LENGTH } from "./constants.ts";
-import { dotProduct } from "./dotProduct.ts";
+import { COORDINATE_SIDE_LENGTH } from "./constants.ts";
 
-const IS_COORDINATE_AXIS = 0;
-const IS_COORDINATE_POINT = 1;
-export class XOCoordinates {
-  readonly data: Float32Array;
+export const createCoordinates = (
+  xAxis: XYZ = [1, 0, 0],
+  yAxis: XYZ = [0, 1, 0],
+  zAxis: XYZ = [0, 0, 1],
+  origin: XYZ = [0, 0, 0],
+) =>
+  /** w = 0 for an axis, 1 for a point */
+  new F32([...xAxis, 0, ...yAxis, 0, ...zAxis, 0, ...origin, 1]);
 
-  static localize(
-    fromChild: XOCoordinates,
-    toParent: XOCoordinates,
-  ): XOCoordinates {
-    const [childColumns, parentRows] = [
-      doTimes(
-        COORDINATE_SIDE_LENGTH,
-        (index) =>
-          fromChild.readLine(
-            index * COORDINATE_SIDE_LENGTH,
-            1,
-            COORDINATE_SIDE_LENGTH,
-          ),
-      ),
-      doTimes(
-        COORDINATE_SIDE_LENGTH,
-        (index) =>
-          toParent.readLine(
-            index,
-            COORDINATE_SIDE_LENGTH,
-            COORDINATE_SIDE_LENGTH,
-          ),
-      ),
-    ];
+export const createRotation = (
+  [axis, angle]: [XYZ, number] = [[1, 0, 0], 0],
+) => {
+  const magnitude = hypot(...axis) || 1;
+  const [x, y, z] = axis.map((value) => value / magnitude);
+  const sin = Math.sin(angle), cos = Math.cos(angle), versine = 1 - cos;
+  const vx = versine * x, vy = versine * y, vz = versine * z;
+  const sx = sin * x, sy = sin * y, sz = sin * z;
 
-    return new XOCoordinates(
-      new Float32Array(
-        doTimes(
-          COORDINATE_SIDE_LENGTH,
-          (columnIndex) =>
-            doTimes(
-              COORDINATE_SIDE_LENGTH,
-              (rowIndex) =>
-                dotProduct(childColumns[columnIndex], parentRows[rowIndex]),
-            ),
-        ).flat(),
-      ),
-    );
+  // deno-fmt-ignore
+  return new F32([
+    vx * x + cos, vx * y + sz, vx * z - sy, 0,
+    vx * y - sz,  vy * y + cos, vy * z + sx, 0,
+    vx * z + sy,  vy * z - sx,  vz * z + cos, 0,
+    0, 0, 0, 1,
+  ]);
+};
+
+const lengthMinusOne = COORDINATE_SIDE_LENGTH - 1;
+export const localize = (fromChild: Float32Array, toParent: Float32Array) => {
+  const result = new F32(COORDINATE_SIDE_LENGTH ** 2);
+
+  let index = COORDINATE_SIDE_LENGTH ** lengthMinusOne;
+
+  // Yeah... bit math...
+  while (index--) {
+    result[index >> 2] += fromChild[
+      (index >> COORDINATE_SIDE_LENGTH << 2) + (index & lengthMinusOne)
+    ] *
+      toParent[
+        (index & lengthMinusOne) * COORDINATE_SIDE_LENGTH +
+        (index >> 2 & lengthMinusOne)
+      ];
   }
 
-  constructor(data: Float32Array);
-  constructor(xAxis?: XYZ, yAxis?: XYZ, zAxis?: XYZ, origin?: XYZ);
-  constructor(
-    xAxisOrData: Float32Array | XYZ = [1, 0, 0],
-    yAxis: XYZ = [0, 1, 0],
-    zAxis: XYZ = [0, 0, 1],
-    origin: XYZ = [0, 0, 0],
-  ) {
-    this.data = xAxisOrData instanceof Float32Array
-      ? xAxisOrData
-      : new Float32Array([
-        ...xAxisOrData,
-        IS_COORDINATE_AXIS,
-        ...yAxis,
-        IS_COORDINATE_AXIS,
-        ...zAxis,
-        IS_COORDINATE_AXIS,
-        ...origin,
-        IS_COORDINATE_POINT,
-      ]);
-  }
+  return result;
+};
 
-  get xAxis() {
-    return this.readLine(0) as XYZ;
-  }
-
-  get yAxis() {
-    return this.readLine(4) as XYZ;
-  }
-
-  get zAxis() {
-    return this.readLine(8) as XYZ;
-  }
-
-  get origin() {
-    return this.readLine(12) as XYZ;
-  }
-
-  readLine(
-    start: number,
-    stride: number = 1,
-    length: number = XYZ_LENGTH,
-  ) {
-    return doTimes(
-      length,
-      (index) => this.data[start + stride * index],
-    );
-  }
-}
+export const readOrigin = (coordinates: Float32Array): XYZ =>
+  [...coordinates.subarray(12, 15)] as XYZ;

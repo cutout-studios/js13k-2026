@@ -16,16 +16,7 @@
 
 import { doTimes } from "~common";
 
-import {
-  atan,
-  floor,
-  length,
-  max,
-  min,
-  PI,
-  random,
-  round,
-} from "../libraries/alias.ts";
+import { atan, floor, length, max, min, PI, random, round } from "~alias";
 import { Affix, Band, Item } from "./types.ts";
 import content, {
   DIFFICULTY_FALLOFF,

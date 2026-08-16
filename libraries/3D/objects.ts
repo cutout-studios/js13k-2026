@@ -15,14 +15,16 @@
  */
 
 import { doTimes } from "~common";
-
 import type { XOGeometry, XOMaterial, XYZ } from "./types.ts";
 import { XYZ_LENGTH } from "./constants.ts";
-import { XOCoordinates } from "./coordinates.ts";
+import { createRotation, localize, readOrigin } from "./coordinates.ts";
+
+const POSITION_INDEX = 12;
 
 export class XOObject {
   geometry?: XOGeometry;
   material?: XOMaterial;
+  coordinates: Float32Array;
 
   constructor(
     geometry?: XOGeometry,
@@ -32,76 +34,37 @@ export class XOObject {
   ) {
     this.geometry = geometry;
     this.material = material;
+    this.coordinates = createRotation(rotation);
 
-    this.positionCoordinates = this.makePositionCoordinates(position);
-    this.rotationCoordinates = this.makeRotationCoordinates(rotation);
+    if (position) this.position = position;
   }
 
-  positionCoordinates: XOCoordinates;
-  get position(): XYZ {
-    return this.positionCoordinates.origin;
+  get position() {
+    return readOrigin(this.coordinates);
   }
 
   set position(input: XYZ) {
-    this.positionCoordinates = this.makePositionCoordinates(input);
+    this.coordinates.set(input, POSITION_INDEX);
   }
-
-  rotationCoordinates: XOCoordinates;
-  // get rotation() {}
 
   set rotation(input: [XYZ, number]) {
-    this.rotationCoordinates = this.makeRotationCoordinates(input);
-  }
+    const next = createRotation(input);
 
-  get coordinates(): XOCoordinates {
-    return XOCoordinates.localize(
-      this.rotationCoordinates,
-      this.positionCoordinates,
-    );
+    next.set(this.position, POSITION_INDEX);
+
+    this.coordinates = next;
   }
 
   adjust(position?: XYZ, rotation?: [XYZ, number]) {
-    this.position = doTimes(
-      XYZ_LENGTH,
-      (index) => this.position[index] + (position?.[index] ?? 0),
-    ) as XYZ;
-
-    this.rotationCoordinates = XOCoordinates.localize(
-      this.makeRotationCoordinates(rotation),
-      this.rotationCoordinates,
-    );
-  }
-
-  makePositionCoordinates(position?: XYZ): XOCoordinates {
-    return new XOCoordinates(undefined, undefined, undefined, position);
-  }
-
-  makeRotationCoordinates(
-    [axis, angle]: [XYZ, number] = [[1, 0, 0], 0],
-  ): XOCoordinates {
-    const magnitude = Math.hypot(...axis);
-    const normalizedAxis = axis.map((value) => value / magnitude) as XYZ;
-    const sin = Math.sin(angle), cos = Math.cos(angle);
-
-    return new XOCoordinates(
-      ...(doTimes(
+    if (position) {
+      doTimes(
         XYZ_LENGTH,
-        (columnIndex) =>
-          doTimes(XYZ_LENGTH, (rowIndex) => {
-            let cell = normalizedAxis[columnIndex] * normalizedAxis[rowIndex] *
-              (1 - cos);
+        (index) => this.coordinates[POSITION_INDEX + index] += position[index],
+      );
+    }
 
-            if (columnIndex === rowIndex) {
-              cell += cos;
-            } else {
-              const leftoverIndex = XYZ_LENGTH - columnIndex - rowIndex;
-              const sign = (rowIndex + 1) % XYZ_LENGTH === columnIndex ? -1 : 1;
-              cell += sin * normalizedAxis[leftoverIndex] * sign;
-            }
-
-            return cell;
-          }),
-      ) as XYZ[]),
-    );
+    if (rotation) {
+      this.coordinates = localize(createRotation(rotation), this.coordinates);
+    }
   }
 }
