@@ -19,7 +19,7 @@
 // export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
 // export { getBaseStats } from "./stats.ts";
 
-import { /* addEventListener, */ appendChild, createElement } from "~alias";
+import { /* addEventListener, */ appendChild, createElement, PI } from "~alias";
 
 import { startClock } from "~clock";
 import {
@@ -28,29 +28,22 @@ import {
   paintMaterial,
   setupDevice,
   XOObject,
+  XYZ,
 } from "~3D";
-import { createPyramid, createSphere } from "./shapes.ts";
+import { createPyramid } from "./shapes.ts";
 
-// import { createAudioSource } from "~audio";
-
-// attach controller
-// const activeInputs = new Set();
-
-// addEventListener(
-//   "keydown",
-//   ({ code }) => activeInputs.add(code),
-// );
-// addEventListener(
-//   "keyup",
-//   ({ code }) => activeInputs.delete(code),
-// );
-// addEventListener("blur", () => activeInputs.clear());
+// TODO: organize these
+const addXYZ = (
+  [x1, y1, z1]: XYZ,
+  [x2, y2, z2]: XYZ,
+): XYZ => [x1 + x2, y1 + y2, z1 + z2];
 
 const style = (node: HTMLElement, object: Record<string, string>) => {
   for (const key in object) node.style[key as never] = object[key];
 };
 
-const start = async () => {
+// --- main loop
+onload = async () => {
   const canvas = createElement("canvas");
 
   style(
@@ -63,28 +56,50 @@ const start = async () => {
   await setupDevice();
 
   const render = createCamera(),
-    sphere = new XOObject(
-      createSphere(1, 12),
-      [-2, 0, -5],
-      undefined,
-      paintMaterial(0xEE3030),
-    ),
     pyramid = new XOObject(
-      createPyramid(),
-      [2, 0, -5],
-      undefined,
-      paintMaterial(0x29A9D4),
+      createPyramid([0.25, 0.1, 0.25]),
+      [0, 0, -3],
+      [[0, 1, 0], PI],
+      paintMaterial(0xFFFFFF),
     );
 
   startClock((tickLength) => {
-    sphere.adjust(undefined, [[0, 1, 1], tickLength]);
-    pyramid.adjust(undefined, [[0, 0, 1], tickLength]);
+    let trackingAdjustment: XYZ = [0, 0, 0];
+    const trackingBindings = getTrackBindings(tickLength);
+
+    for (const inputKeyCode of activeKeys) {
+      trackingAdjustment = addXYZ(
+        trackingBindings[inputKeyCode] ?? [0, 0, 0],
+        trackingAdjustment,
+      );
+    }
+
+    pyramid.adjust(trackingAdjustment);
 
     render([
-      sphere,
       pyramid,
     ], createRenderTarget(canvas as HTMLCanvasElement));
   });
 };
 
-onload = start;
+// --- attach controller
+// TODO: sanitize potential input
+const activeKeys = new Set<string>();
+const getTrackBindings = (speed: number): Record<string, XYZ> => ({
+  KeyW: [0, speed, 0],
+  KeyA: [-speed, 0, 0],
+  KeyS: [0, -speed, 0],
+  KeyD: [speed, 0, 0],
+});
+
+onkeydown = ({ code }) => activeKeys.add(code);
+onkeyup = ({ code }) => activeKeys.delete(code);
+
+// let cursor = [0, null, null];
+// onpointerdown = onpointerup = onpointermove = (
+//   { buttons, clientX, clientY },
+// ) => cursor = [buttons, clientX, clientY];
+
+// suppress browser behavior
+onblur = () => activeKeys.clear();
+oncontextmenu = () => false;
