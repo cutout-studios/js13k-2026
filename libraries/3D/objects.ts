@@ -15,7 +15,7 @@
  */
 
 import { doTimes } from "~common";
-import type { XOGeometry, XOMaterial, XYZ } from "./types.ts";
+import type { AxisAngle, XOGeometry, XOMaterial, XYZ } from "./types.ts";
 import { XYZ_LENGTH } from "./constants.ts";
 import { createRotation, localize, readOrigin } from "./coordinates.ts";
 
@@ -29,7 +29,7 @@ export class XOObject {
   constructor(
     geometry?: XOGeometry,
     position?: XYZ,
-    rotation?: [XYZ, number],
+    rotation?: AxisAngle,
     material?: XOMaterial,
   ) {
     this.geometry = geometry;
@@ -47,7 +47,7 @@ export class XOObject {
     this.coordinates.set(input, POSITION_INDEX);
   }
 
-  set rotation(input: [XYZ, number]) {
+  set rotation(input: AxisAngle) {
     const next = createRotation(input);
 
     next.set(this.position, POSITION_INDEX);
@@ -55,7 +55,7 @@ export class XOObject {
     this.coordinates = next;
   }
 
-  adjust(position?: XYZ, rotation?: [XYZ, number]) {
+  adjust(position?: XYZ, rotation?: AxisAngle) {
     if (position) {
       doTimes(
         XYZ_LENGTH,

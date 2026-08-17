@@ -20,21 +20,19 @@ export {
   type XOMaterial,
   type XYZ,
 } from "./types.ts";
-export {
-  BLUE,
-  GREEN,
-  RED,
-  TRIANGLES_PER_SQUARE,
-  X,
-  XYZ_LENGTH,
-  Y,
-  Z,
-} from "./constants.ts";
+
+export { CAMERA_FOCAL_LENGTH, XYZ_LENGTH } from "./constants.ts";
 
 export { setupDevice } from "./webgpu/setupDevice.ts";
 export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
 export { XOObject } from "./objects.ts";
 export { createCamera } from "./createCamera.ts";
-
+export { createCoordinates } from "./coordinates.ts";
 export { createSquare, createTriangle } from "./geometry.ts";
 export { paint as paintMaterial } from "./materials/paint.ts";
+export {
+  add as addXYZ,
+  cross as crossXYZ,
+  normalize as normalizeXYZ,
+  subtract as subtractXYZ,
+} from "./xyz.ts";

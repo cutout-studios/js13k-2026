@@ -16,90 +16,56 @@
 
 /// <reference lib="dom" />
 
-// export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
-// export { getBaseStats } from "./stats.ts";
-
-import { /* addEventListener, */ appendChild, createElement, PI } from "~alias";
-
+import { appendChild } from "~alias";
 import { startClock } from "~clock";
-import {
-  createCamera,
-  createRenderTarget,
-  paintMaterial,
-  setupDevice,
-  XOObject,
-  XYZ,
-} from "~3D";
-import { createPyramid } from "./shapes.ts";
+import { addXYZ, setupDevice, XYZ } from "~3D";
 
-// TODO: organize these
-const addXYZ = (
-  [x1, y1, z1]: XYZ,
-  [x2, y2, z2]: XYZ,
-): XYZ => [x1 + x2, y1 + y2, z1 + z2];
-
-const style = (node: HTMLElement, object: Record<string, string>) => {
-  for (const key in object) node.style[key as never] = object[key];
-};
+import { canvas, mapClientXY, render } from "./canvas.ts";
+import { aimShip, getStrafeBindings, ship, TEMP_STRAFE_SPEED } from "./ship.ts";
+// export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
 
 // --- main loop
 onload = async () => {
-  const canvas = createElement("canvas");
-
-  style(
-    canvas,
-    { width: "100%", height: "100%", display: "block" },
-  );
+  await setupDevice();
 
   appendChild(canvas);
 
-  await setupDevice();
-
-  const render = createCamera(),
-    pyramid = new XOObject(
-      createPyramid([0.25, 0.1, 0.25]),
-      [0, 0, -3],
-      [[0, 1, 0], PI],
-      paintMaterial(0xFFFFFF),
-    );
-
   startClock((tickLength) => {
-    let trackingAdjustment: XYZ = [0, 0, 0];
-    const trackingBindings = getTrackBindings(tickLength);
+    let strafeAdjust: XYZ = [0, 0, 0];
+    const strafeKeybinds = getStrafeBindings(tickLength * TEMP_STRAFE_SPEED);
 
-    for (const inputKeyCode of activeKeys) {
-      trackingAdjustment = addXYZ(
-        trackingBindings[inputKeyCode] ?? [0, 0, 0],
-        trackingAdjustment,
+    for (const inputKeyCode of keyboardState) {
+      strafeAdjust = addXYZ(
+        strafeKeybinds[inputKeyCode] ?? [0, 0, 0],
+        strafeAdjust,
       );
     }
 
-    pyramid.adjust(trackingAdjustment);
+    ship.object.adjust(strafeAdjust);
 
-    render([
-      pyramid,
-    ], createRenderTarget(canvas as HTMLCanvasElement));
+    if (pointerState) {
+      aimShip(
+        ship,
+        mapClientXY(pointerState[0]),
+      );
+    }
+
+    render([ship.object]);
   });
 };
 
 // --- attach controller
 // TODO: sanitize potential input
-const activeKeys = new Set<string>();
-const getTrackBindings = (speed: number): Record<string, XYZ> => ({
-  KeyW: [0, speed, 0],
-  KeyA: [-speed, 0, 0],
-  KeyS: [0, -speed, 0],
-  KeyD: [speed, 0, 0],
-});
+const keyboardState = new Set<string>();
 
-onkeydown = ({ code }) => activeKeys.add(code);
-onkeyup = ({ code }) => activeKeys.delete(code);
+onkeydown = ({ code }) => keyboardState.add(code);
+onkeyup = ({ code }) => keyboardState.delete(code);
 
-// let cursor = [0, null, null];
-// onpointerdown = onpointerup = onpointermove = (
-//   { buttons, clientX, clientY },
-// ) => cursor = [buttons, clientX, clientY];
+let pointerState: [[x: number, y: number], buttons: number] | undefined;
+onpointerdown = onpointerup = onpointermove = (
+  { clientX, clientY, buttons },
+) => pointerState = [[clientX, clientY], buttons];
 
 // suppress browser behavior
-onblur = () => activeKeys.clear();
+onblur = () => keyboardState.clear();
 oncontextmenu = () => false;

@@ -21,6 +21,7 @@ export const {
   min,
   max,
   atan,
+  atan2,
   PI,
   sin,
   cos,
@@ -39,3 +40,7 @@ export const appendChild = (child: Element, parent = d.body) =>
   parent.appendChild(child);
 
 export const F32 = Float32Array;
+
+export const style = (node: HTMLElement, object: Record<string, string>) => {
+  for (const key in object) node.style[key as never] = object[key];
+};

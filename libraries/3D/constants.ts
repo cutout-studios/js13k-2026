@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { tan } from "~alias";
 import { FLOAT_32_BIN, FLOAT_32_BYTES } from "~common";
 
 export const XYZ_LENGTH = 3;
@@ -37,4 +38,8 @@ export const DEPTH_TEXTURE_FORMAT = "depth24plus";
 export const MATERIALS_DATA_GROUP_ID = 1;
 
 export const DEFAULT_CAMERA_SAFETY_CROP = 0.1;
-export const DEFAULT_CAMERA_VIEWING_RADIANS = Math.PI / 2;
+
+export const CAMERA_VERTICAL_VIEWING_RADIANS = Math.PI / 4;
+export const CAMERA_FOCAL_LENGTH = tan(
+  Math.PI / 2 - CAMERA_VERTICAL_VIEWING_RADIANS / 2,
+);

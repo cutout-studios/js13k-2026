@@ -16,6 +16,7 @@
 
 export type XYZ = [x: number, y: number, z: number];
 export type RGBA = [r: number, g: number, b: number, a: number];
+export type AxisAngle = [axis: XYZ, angle: number];
 
 export type XOGeometry = XYZ[];
 export type XOMaterial = [vertex: string, fragment: string, data: Float32Array];

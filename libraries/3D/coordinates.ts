@@ -1,7 +1,9 @@
-import { F32, hypot } from "~alias";
+import { cos, F32, sin } from "~alias";
 
 import type { XYZ } from "./types.ts";
 import { COORDINATE_SIDE_LENGTH } from "./constants.ts";
+
+import { normalize } from "./xyz.ts";
 
 export const createCoordinates = (
   xAxis: XYZ = [1, 0, 0],
@@ -15,17 +17,16 @@ export const createCoordinates = (
 export const createRotation = (
   [axis, angle]: [XYZ, number] = [[1, 0, 0], 0],
 ) => {
-  const magnitude = hypot(...axis) || 1;
-  const [x, y, z] = axis.map((value) => value / magnitude);
-  const sin = Math.sin(angle), cos = Math.cos(angle), versine = 1 - cos;
+  const [x, y, z] = normalize(axis);
+  const s = sin(angle), c = cos(angle), versine = 1 - c;
   const vx = versine * x, vy = versine * y, vz = versine * z;
-  const sx = sin * x, sy = sin * y, sz = sin * z;
+  const sx = s * x, sy = s * y, sz = s * z;
 
   // deno-fmt-ignore
   return new F32([
-    vx * x + cos, vx * y + sz, vx * z - sy, 0,
-    vx * y - sz,  vy * y + cos, vy * z + sx, 0,
-    vx * z + sy,  vy * z - sx,  vz * z + cos, 0,
+    vx * x + c,  vx * y + sz, vx * z - sy, 0,
+    vx * y - sz, vy * y + c,  vy * z + sx, 0,
+    vx * z + sy, vy * z - sx, vz * z + c,  0,
     0, 0, 0, 1,
   ]);
 };
