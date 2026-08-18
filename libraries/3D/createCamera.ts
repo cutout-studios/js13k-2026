@@ -17,8 +17,8 @@
 import { F32 } from "~alias";
 import type { GPURenderTarget } from "./types.ts";
 import {
-  CAMERA_MAGNIFICATION_RATIO,
   CAMERA_DEFAULT_SAFETY_CROP,
+  CAMERA_MAGNIFICATION_RATIO,
 } from "./constants.ts";
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";

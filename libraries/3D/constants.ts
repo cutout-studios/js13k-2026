@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { tan, PI } from "~alias";
+import { PI, tan } from "~alias";
 import { FLOAT_32_BIN, FLOAT_32_BYTES } from "~common";
 
 export const XYZ_LENGTH = 3;

@@ -22,6 +22,7 @@ export const {
   max,
   atan,
   atan2,
+  E,
   PI,
   sin,
   cos,

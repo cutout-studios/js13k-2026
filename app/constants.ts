@@ -16,6 +16,7 @@
 
 import { Band } from "./types.ts";
 
+export const MAX_DISTANCE = -300;
 export const DIFFICULTY_FALLOFF = 0.135;
 
 export const WAVE_CURVE = 7.5;

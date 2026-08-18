@@ -16,29 +16,23 @@
 
 /// <reference lib="dom" />
 
+import { doTimes } from "~common";
 import { appendChild } from "~alias";
 import { startClock } from "~clock";
 import { scaleXYZ, setupDevice, XYZ } from "~3D";
 
-import { createEnvelope } from "../libraries/envelope.ts";
+import { create as createEnvelope } from "../libraries/envelope.ts";
 
 import { canvas, mapClientXY, render } from "./canvas.ts";
 import { aimShip, ship, TEMP_STRAFE_SPEED } from "./ship.ts";
 
 // export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
 
-const [STRAFE_UP, STRAFE_DOWN, STRAFE_LEFT, STRAFE_RIGHT] = [
-  "KeyW",
-  "KeyS",
-  "KeyA",
-  "KeyD",
-];
-const strafeEvelopes: Record<string, Function | null> = {
-  [STRAFE_UP]: null,
-  [STRAFE_LEFT]: null,
-  [STRAFE_DOWN]: null,
-  [STRAFE_RIGHT]: null,
-};
+const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"];
+const strafeEnvelopes = doTimes(
+  STRAFE_KEYS.length,
+  () => createEnvelope(0.30, 0.35),
+);
 
 // --- main loop
 onload = async () => {
@@ -48,31 +42,13 @@ onload = async () => {
 
   startClock((tickLength) => {
     const strafeMagnitudes: XYZ = [0, 0, 0];
-    for (const key in strafeEvelopes) {
-      let envelope = strafeEvelopes[key as keyof typeof strafeEvelopes], envelopeValue = 0;
-      if (keyboardState.has(key)) {
-        if (!envelope) {
-          strafeEvelopes[key as keyof typeof strafeEvelopes] = envelope = createEnvelope(
-            0.33,
-            0.7,
-          );
-        }
-
-        envelopeValue = envelope(tickLength);
-      } else if (envelope !== null) {
-        envelopeValue = envelope(tickLength, true);
-      }
-
-      if (!envelopeValue) {
-        strafeEvelopes[key as keyof typeof strafeEvelopes] = null;
-        continue;
-      }
-
-      strafeMagnitudes[[STRAFE_LEFT, STRAFE_RIGHT].includes(key) ? 0 : 1] +=
-        [STRAFE_LEFT, STRAFE_DOWN].includes(key)
-          ? -envelopeValue
-          : envelopeValue;
-    }
+    doTimes(STRAFE_KEYS.length, (index: number) => {
+      const value = strafeEnvelopes[index](
+        tickLength,
+        !keyboardState.has(STRAFE_KEYS[index]),
+      );
+      strafeMagnitudes[index >> 1] += index & 1 ? -value : value;
+    });
 
     ship.object.adjust(
       scaleXYZ(strafeMagnitudes, TEMP_STRAFE_SPEED * tickLength),
@@ -82,6 +58,7 @@ onload = async () => {
       aimShip(
         ship,
         mapClientXY(pointerState[0]),
+        tickLength,
       );
     }
 

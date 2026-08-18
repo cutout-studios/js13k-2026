@@ -14,11 +14,15 @@ import { cos, PI, sin } from "~alias";
 // export { getBaseStats } from "./stats.ts";
 import { createPyramid } from "./shapes.ts";
 
+import { approach } from "../libraries/envelope.ts";
+import { MAX_DISTANCE } from "./constants.ts";
+
 type Ship = {
   object: XOObject;
   roll: number;
+  aim: XYZ;
 };
-export const TEMP_STRAFE_SPEED = 4;
+export const TEMP_STRAFE_SPEED = 5, TEMP_TRACKING_TIME = 0.6;
 
 export const ship = {
   object: new XOObject(
@@ -28,10 +32,17 @@ export const ship = {
     paintMaterial(0xFFFFFF),
   ),
   roll: 0,
+  aim: [0, 0, -MAX_DISTANCE] as XYZ,
 };
 
-export const aimShip = (ship: Ship, target: XYZ) => {
-  const zAxis = normalizeXYZ(subtractXYZ(ship.object.position, target)),
+export const aimShip = (ship: Ship, target: XYZ, tickLength: number) => {
+  const ratio = tickLength / TEMP_TRACKING_TIME;
+  const aim = ship.aim = doTimes(
+    XYZ_LENGTH,
+    (index) => approach(ship.aim[index], target[index], ratio),
+  ) as XYZ;
+
+  const zAxis = normalizeXYZ(subtractXYZ(ship.object.position, aim)),
     right = normalizeXYZ(crossXYZ([0, 1, 0], zAxis)),
     up = crossXYZ(zAxis, right),
     s = sin(ship.roll),
@@ -44,10 +55,3 @@ export const aimShip = (ship: Ship, target: XYZ) => {
     ship.object.position,
   );
 };
-
-export const getStrafeBindings = (speed: number): Record<string, XYZ> => ({
-  KeyW: [0, speed, 0],
-  KeyA: [-speed, 0, 0],
-  KeyS: [0, -speed, 0],
-  KeyD: [speed, 0, 0],
-});

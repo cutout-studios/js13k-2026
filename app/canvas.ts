@@ -6,6 +6,7 @@ import {
   XYZ,
 } from "~3D";
 import { createElement, style } from "~alias";
+import { MAX_DISTANCE } from "./constants.ts";
 
 export const canvas = createElement("canvas") as HTMLCanvasElement,
   camera = createCamera();
@@ -20,7 +21,7 @@ export const render = (objects: XOObject[]) =>
 
 export const mapClientXY = (
   [clientX, clientY]: [number, number],
-  distance = -300,
+  distance = MAX_DISTANCE,
 ): XYZ => {
   const { clientWidth, clientHeight, offsetLeft, offsetTop } = canvas;
 

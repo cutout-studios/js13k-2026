@@ -1,10 +1,14 @@
-import { min, max } from "~alias";
+import { min } from "~alias";
 
-export const createEnvelope = (attack: number, release: number) => {
-	let value = 0;
+export const approach = (current: number, target: number, ratio: number) =>
+  current + (target - current) * min(1, ratio);
 
-	return (tickLength: number, released?: boolean) =>
-		value = released
-      ? max(0, value - tickLength / release)
-			: min(1, value + tickLength / attack);
+export const create = (attack: number, release: number) => {
+  let value = 0;
+  return (tickLength: number, released?: boolean) =>
+    value = approach(
+      value,
+      +!released,
+      tickLength / (released ? release : attack),
+    );
 };

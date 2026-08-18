@@ -32,8 +32,8 @@ export { createSquare, createTriangle } from "./geometry.ts";
 export { paint as paintMaterial } from "./materials/paint.ts";
 export {
   add as addXYZ,
-  scale as scaleXYZ,
   cross as crossXYZ,
   normalize as normalizeXYZ,
+  scale as scaleXYZ,
   subtract as subtractXYZ,
 } from "./xyz.ts";
