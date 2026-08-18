@@ -27,6 +27,11 @@ export const subtract = (
   [x2, y2, z2]: XYZ,
 ): XYZ => [x1 - x2, y1 - y2, z1 - z2];
 
+export const scale = (
+  [x, y, z]: XYZ,
+  s: number,
+): XYZ => [x * s, y * s, z * s];
+
 export const cross = (
   [ax, ay, az]: XYZ,
   [bx, by, bz]: XYZ,

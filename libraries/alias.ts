@@ -33,7 +33,7 @@ export const length = <T>(array: Array<T>) => array.length;
 // export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
 // export const map = <T, K>(array: T[], mapper: (item: T) => K) => array.map(mapper);
 
-const d = document;
+const d = globalThis.document;
 
 export const createElement = (tagName: string) => d.createElement(tagName);
 export const appendChild = (child: Element, parent = d.body) =>

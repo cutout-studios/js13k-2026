@@ -18,12 +18,12 @@ type Ship = {
   object: XOObject;
   roll: number;
 };
-export const TEMP_STRAFE_SPEED = 3;
+export const TEMP_STRAFE_SPEED = 4;
 
 export const ship = {
   object: new XOObject(
     createPyramid([0.25, 0.1, 0.25]),
-    [0, 0, -5],
+    [0, 0, -7],
     [[0, 1, 0], PI],
     paintMaterial(0xFFFFFF),
   ),

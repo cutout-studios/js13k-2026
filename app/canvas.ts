@@ -1,5 +1,5 @@
 import {
-  CAMERA_FOCAL_LENGTH,
+  CAMERA_MAGNIFICATION_RATIO,
   createCamera,
   createRenderTarget,
   XOObject,
@@ -24,7 +24,7 @@ export const mapClientXY = (
 ): XYZ => {
   const { clientWidth, clientHeight, offsetLeft, offsetTop } = canvas;
 
-  const scale = distance / (clientHeight * CAMERA_FOCAL_LENGTH);
+  const scale = distance / (clientHeight * CAMERA_MAGNIFICATION_RATIO);
   return [
     (2 * (clientX - offsetLeft) - clientWidth) * scale,
     (clientHeight - 2 * (clientY - offsetTop)) * scale,

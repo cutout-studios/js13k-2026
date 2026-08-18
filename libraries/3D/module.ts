@@ -21,7 +21,7 @@ export {
   type XYZ,
 } from "./types.ts";
 
-export { CAMERA_FOCAL_LENGTH, XYZ_LENGTH } from "./constants.ts";
+export { CAMERA_MAGNIFICATION_RATIO, XYZ_LENGTH } from "./constants.ts";
 
 export { setupDevice } from "./webgpu/setupDevice.ts";
 export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
@@ -32,6 +32,7 @@ export { createSquare, createTriangle } from "./geometry.ts";
 export { paint as paintMaterial } from "./materials/paint.ts";
 export {
   add as addXYZ,
+  scale as scaleXYZ,
   cross as crossXYZ,
   normalize as normalizeXYZ,
   subtract as subtractXYZ,

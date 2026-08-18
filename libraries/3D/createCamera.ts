@@ -17,15 +17,15 @@
 import { F32 } from "~alias";
 import type { GPURenderTarget } from "./types.ts";
 import {
-  CAMERA_FOCAL_LENGTH,
-  DEFAULT_CAMERA_SAFETY_CROP,
+  CAMERA_MAGNIFICATION_RATIO,
+  CAMERA_DEFAULT_SAFETY_CROP,
 } from "./constants.ts";
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";
 import { localize } from "./coordinates.ts";
 
 export const createCamera = (
-  safetyCropDistance = DEFAULT_CAMERA_SAFETY_CROP,
+  safetyCropDistance = CAMERA_DEFAULT_SAFETY_CROP,
 ) => {
   let cachedAspectRatio = 0, viewingCoordinates: Float32Array;
 
@@ -38,8 +38,8 @@ export const createCamera = (
         viewingCoordinates =
           // deno-fmt-ignore
           new F32([
-            CAMERA_FOCAL_LENGTH / aspectRatio, 0, 0, 0,
-            0, CAMERA_FOCAL_LENGTH, 0, 0,
+            CAMERA_MAGNIFICATION_RATIO / aspectRatio, 0, 0, 0,
+            0, CAMERA_MAGNIFICATION_RATIO, 0, 0,
             0, 0, -1, -1,
             0, 0, -2 * safetyCropDistance, 0,
           ]);

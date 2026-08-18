@@ -18,11 +18,27 @@
 
 import { appendChild } from "~alias";
 import { startClock } from "~clock";
-import { addXYZ, setupDevice, XYZ } from "~3D";
+import { scaleXYZ, setupDevice, XYZ } from "~3D";
+
+import { createEnvelope } from "../libraries/envelope.ts";
 
 import { canvas, mapClientXY, render } from "./canvas.ts";
-import { aimShip, getStrafeBindings, ship, TEMP_STRAFE_SPEED } from "./ship.ts";
+import { aimShip, ship, TEMP_STRAFE_SPEED } from "./ship.ts";
+
 // export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
+
+const [STRAFE_UP, STRAFE_DOWN, STRAFE_LEFT, STRAFE_RIGHT] = [
+  "KeyW",
+  "KeyS",
+  "KeyA",
+  "KeyD",
+];
+const strafeEvelopes: Record<string, Function | null> = {
+  [STRAFE_UP]: null,
+  [STRAFE_LEFT]: null,
+  [STRAFE_DOWN]: null,
+  [STRAFE_RIGHT]: null,
+};
 
 // --- main loop
 onload = async () => {
@@ -31,17 +47,36 @@ onload = async () => {
   appendChild(canvas);
 
   startClock((tickLength) => {
-    let strafeAdjust: XYZ = [0, 0, 0];
-    const strafeKeybinds = getStrafeBindings(tickLength * TEMP_STRAFE_SPEED);
+    const strafeMagnitudes: XYZ = [0, 0, 0];
+    for (const key in strafeEvelopes) {
+      let envelope = strafeEvelopes[key as keyof typeof strafeEvelopes], envelopeValue = 0;
+      if (keyboardState.has(key)) {
+        if (!envelope) {
+          strafeEvelopes[key as keyof typeof strafeEvelopes] = envelope = createEnvelope(
+            0.33,
+            0.7,
+          );
+        }
 
-    for (const inputKeyCode of keyboardState) {
-      strafeAdjust = addXYZ(
-        strafeKeybinds[inputKeyCode] ?? [0, 0, 0],
-        strafeAdjust,
-      );
+        envelopeValue = envelope(tickLength);
+      } else if (envelope !== null) {
+        envelopeValue = envelope(tickLength, true);
+      }
+
+      if (!envelopeValue) {
+        strafeEvelopes[key as keyof typeof strafeEvelopes] = null;
+        continue;
+      }
+
+      strafeMagnitudes[[STRAFE_LEFT, STRAFE_RIGHT].includes(key) ? 0 : 1] +=
+        [STRAFE_LEFT, STRAFE_DOWN].includes(key)
+          ? -envelopeValue
+          : envelopeValue;
     }
 
-    ship.object.adjust(strafeAdjust);
+    ship.object.adjust(
+      scaleXYZ(strafeMagnitudes, TEMP_STRAFE_SPEED * tickLength),
+    );
 
     if (pointerState) {
       aimShip(
@@ -54,8 +89,7 @@ onload = async () => {
   });
 };
 
-// --- attach controller
-// TODO: sanitize potential input
+// --- attach controller. TODO: properly manage events
 const keyboardState = new Set<string>();
 
 onkeydown = ({ code }) => keyboardState.add(code);
@@ -66,6 +100,6 @@ onpointerdown = onpointerup = onpointermove = (
   { clientX, clientY, buttons },
 ) => pointerState = [[clientX, clientY], buttons];
 
-// suppress browser behavior
+// suppress undesired browser behavior
 onblur = () => keyboardState.clear();
 oncontextmenu = () => false;
