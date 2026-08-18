@@ -14,57 +14,67 @@
  * limitations under the License.
  */
 
-import { createSquare, createTriangle, XOGeometry, XYZ } from "~3D";
+import { doTimes } from "~common";
+import { createSquare, XOGeometry, XYZ, XYZ_LENGTH } from "~3D";
 
-import { cos, length, PI, sin } from "~alias";
+import { cos, PI, sin, TAU } from "~alias";
 
-export const createPyramid = ([x, y, z]: XYZ = [1, 1, 1]): XOGeometry => {
-  const apex: XYZ = [0, 0, z];
-  const base = [
-    [-x, -y],
-    [-x, y],
-    [x, y],
-    [x, -y],
-  ].map(
-    (pair) => [...pair, -z] as XYZ,
-  ) as [XYZ, XYZ, XYZ, XYZ];
+const DEFAULT_SCALE = doTimes(XYZ_LENGTH, () => 1) as XYZ;
 
-  return [
-    ...createSquare(...base),
-    ...base.flatMap((vertex, index) =>
-      createTriangle(base[(index + 1) % length(base)], vertex, apex)
-    ),
-  ];
+export const createPyramid = (
+  scale: XYZ = DEFAULT_SCALE,
+  divisions = 4,
+): XOGeometry =>
+  _lathe([[0, -1], [_inscribe(divisions), -1], [0, 1]], scale, divisions);
+
+export const createPrism = (
+  scale: XYZ = DEFAULT_SCALE,
+  divisions = 4,
+): XOGeometry => {
+  const radius = _inscribe(divisions);
+  return _lathe(
+    [[0, -1], [radius, -1], [radius, 1], [0, 1]],
+    scale,
+    divisions,
+  );
 };
 
-export const createSphere = (
-  radius: number = 1,
-  divisions = 10,
+export const createSphere = (radius = 1, divisions = 10): XOGeometry =>
+  _lathe(
+    doTimes(divisions + 1, (index) => {
+      const phi = PI * (index / divisions - 0.5);
+      return [cos(phi), sin(phi)];
+    }),
+    [radius, radius, radius],
+    divisions,
+  );
+
+const _lathe = (
+  edgeLoops: Array<[radius: number, distance: number]>,
+  [scaleX, scaleY, scaleZ]: XYZ = DEFAULT_SCALE,
+  loopDivisions = 4,
 ): XOGeometry => {
+  const _getVertex = (loopIndex: number, divisionIndex: number): XYZ => {
+    const [radius, distance] = edgeLoops[loopIndex],
+      angle = TAU * (divisionIndex + 0.5) / loopDivisions;
+    return [radius * cos(angle) * scaleX, radius * sin(angle) * scaleY, distance * scaleZ];
+  };
+
   const result: XOGeometry = [];
 
-  let index = divisions ** 2;
-  while (index--) {
-    const latitude = (index / divisions) | 0, longitude = index % divisions;
-
-    const [p1, p2, p3, p4] = [[0, 0], [0, 1], [1, 1], [1, 0]].map(
-      ([latitudeOffset, longitudeOffset]) => {
-        const phi = PI * ((latitude + latitudeOffset) / divisions - 0.5),
-          theta = (2 * PI * (longitude + longitudeOffset)) / divisions;
-
-        const ring = radius * cos(phi);
-        return [ring * cos(theta), ring * sin(theta), radius * sin(phi)] as XYZ;
-      },
-    );
-
-    result.push(
-      ...(latitude === 0
-        ? createTriangle(p1, p3, p4)
-        : latitude === divisions - 1
-        ? createTriangle(p1, p2, p3)
-        : createSquare(p1, p2, p3, p4)),
-    );
-  }
+  doTimes(
+    edgeLoops.length - 1,
+    (ringIndex) =>
+      doTimes(loopDivisions, (divisionIndex) =>
+        result.push(...createSquare(
+          _getVertex(ringIndex, divisionIndex),
+          _getVertex(ringIndex, divisionIndex + 1),
+          _getVertex(ringIndex + 1, divisionIndex + 1),
+          _getVertex(ringIndex + 1, divisionIndex),
+        ))),
+  );
 
   return result;
 };
+
+const _inscribe = (sides: number) => 1 / cos(PI / sides);

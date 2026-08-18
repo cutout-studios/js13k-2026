@@ -28,7 +28,10 @@ export const {
   cos,
   tan,
   hypot,
+  SQRT2
 } = Math;
+
+export const TAU = PI * 2;
 
 export const length = <T>(array: Array<T>) => array.length;
 // export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);

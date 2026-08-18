@@ -17,7 +17,7 @@
 /// <reference lib="dom" />
 
 import { doTimes } from "~common";
-import { appendChild } from "~alias";
+import { appendChild, max, hypot } from "~alias";
 import { startClock } from "~clock";
 import { scaleXYZ, setupDevice, XYZ } from "~3D";
 
@@ -51,7 +51,7 @@ onload = async () => {
     });
 
     ship.object.adjust(
-      scaleXYZ(strafeMagnitudes, TEMP_STRAFE_SPEED * tickLength),
+      scaleXYZ(strafeMagnitudes, TEMP_STRAFE_SPEED * tickLength / max(1, hypot(...strafeMagnitudes))),
     );
 
     if (pointerState) {

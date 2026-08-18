@@ -13,7 +13,7 @@ export const canvas = createElement("canvas") as HTMLCanvasElement,
 
 style(
   canvas,
-  { width: "100%", height: "100%", display: "block" },
+  { width: "100%", height: "100%", display: "block", cursor: "crosshair" },
 );
 
 export const render = (objects: XOObject[]) =>
