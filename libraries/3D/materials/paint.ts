@@ -21,10 +21,9 @@ import {
 } from "../constants.ts";
 import { F32 } from "~alias";
 
-const PIXELS_PER_VIEW_UNIT = 600;
-const MINIMUM_BRIGHTNESS = 0.4;
+const PIXELS_PER_VIEW_UNIT = 600, MINIMUM_BRIGHTNESS = 0;
 
-export const paint = (...paints: Array<number | number[]>): XOMaterial => [
+export const create = (paintData: Float32Array): XOMaterial => [
   // Annoyingly, we must pre-minify
   /* wgsl */ `@group(${COORDINATES_DATA_GROUP_ID})@binding(0)var<uniform>c:mat4x4f;struct V{@builtin(position)p:vec4f,@location(0)i:u32}@vertex fn v(@location(0)P:vec3f,@builtin(vertex_index)x:u32)->V{return V(c*vec4f(P,1),x/3u);}`,
 
@@ -32,18 +31,20 @@ export const paint = (...paints: Array<number | number[]>): XOMaterial => [
   /* wgsl */ `@group(${MATERIALS_DATA_GROUP_ID})@binding(0)var<storage,read>p:array<vec4f>;@fragment fn f(@builtin(position)P:vec4f,@location(0)@interpolate(flat)i:u32)->@location(0)vec4f{let d=vec2f(dpdx(P.w),dpdy(P.w))*(${PIXELS_PER_VIEW_UNIT}.0/P.w);let l=${MINIMUM_BRIGHTNESS}+${
     1 - MINIMUM_BRIGHTNESS
   }*inverseSqrt(dot(d,d)+1);return vec4f(p[i%arrayLength(&p)].rgb*l,1);}`,
-  _buildPaintData(...paints),
+  paintData,
 ];
 
-const _buildPaintData = (...paints: Array<number | number[]>) => {
-  const _parseHex = (hex: number): RGBA => [
-    ((hex >> 16) & 255) / 255,
-    ((hex >> 8) & 255) / 255,
-    (hex & 255) / 255,
-    1,
-  ];
-
-  return new F32(
+export const createPalette = (...paints: Array<number | number[]>) =>
+  new F32(
     paints.flatMap((v) => v).flatMap(_parseHex),
   );
-};
+
+export const createWithPalette = (...paints: Array<number | number[]>) =>
+  create(createPalette(...paints));
+
+const _parseHex = (hex: number): RGBA => [
+  ((hex >> 16) & 255) / 255,
+  ((hex >> 8) & 255) / 255,
+  (hex & 255) / 255,
+  1,
+];

@@ -15,9 +15,16 @@
  */
 
 import { doTimes } from "~common";
+import { F32 } from "~alias";
+
 import type { AxisAngle, XOGeometry, XOMaterial, XYZ } from "./types.ts";
-import { XYZ_LENGTH } from "./constants.ts";
+import {
+  COORDINATE_SIDE_LENGTH,
+  RGBA_LENGTH,
+  XYZ_LENGTH,
+} from "./constants.ts";
 import { createRotation, localize, readOrigin } from "./coordinates.ts";
+import { createPaintMaterial } from "~3D";
 
 const POSITION_INDEX = 12;
 
@@ -68,3 +75,29 @@ export class XOObject {
     }
   }
 }
+
+// CRUCIAL NOTE!!: assumes all materials are paint materials
+export const flatten = (
+  ...objects: Array<XOObject>
+): XOObject =>
+  new XOObject(
+    objects.flatMap(({ geometry, coordinates }) =>
+      (geometry ?? []).map(([x, y, z]) =>
+        doTimes(XYZ_LENGTH, (row) =>
+          coordinates[row] * x +
+          coordinates[COORDINATE_SIDE_LENGTH + row] * y +
+          coordinates[COORDINATE_SIDE_LENGTH * 2 + row] * z +
+          coordinates[POSITION_INDEX + row]) as XYZ
+      )
+    ),
+    undefined,
+    undefined,
+    createPaintMaterial(
+      new F32(
+        objects.flatMap(({ geometry, material: [, , data = new F32()] = [] }) =>
+          doTimes((geometry ?? []).length / 3 * RGBA_LENGTH, (index) =>
+            data[index % data.length])
+        ),
+      ),
+    ),
+  );

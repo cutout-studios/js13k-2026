@@ -11,6 +11,7 @@
     "~clock": "./libraries/clock.ts",
     "~common": "./libraries/common.ts",
     "~alias": "./libraries/alias.ts",
+    "~envelope": "./libraries/envelope.ts",
     "esbuild": "npm:esbuild",
     "esbuild-minify-templates": "npm:esbuild-minify-templates",
     "roadroller": "npm:roadroller"

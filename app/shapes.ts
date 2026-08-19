@@ -57,7 +57,11 @@ const _lathe = (
   const _getVertex = (loopIndex: number, divisionIndex: number): XYZ => {
     const [radius, distance] = edgeLoops[loopIndex],
       angle = TAU * (divisionIndex + 0.5) / loopDivisions;
-    return [radius * cos(angle) * scaleX, radius * sin(angle) * scaleY, distance * scaleZ];
+    return [
+      radius * cos(angle) * scaleX,
+      radius * sin(angle) * scaleY,
+      distance * scaleZ,
+    ];
   };
 
   const result: XOGeometry = [];

@@ -25,11 +25,15 @@ export { CAMERA_MAGNIFICATION_RATIO, XYZ_LENGTH } from "./constants.ts";
 
 export { setupDevice } from "./webgpu/setupDevice.ts";
 export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
-export { XOObject } from "./objects.ts";
+export { flatten as flattenObjects, XOObject } from "./objects.ts";
 export { createCamera } from "./createCamera.ts";
 export { createCoordinates } from "./coordinates.ts";
 export { createSquare, createTriangle } from "./geometry.ts";
-export { paint as paintMaterial } from "./materials/paint.ts";
+export {
+  create as createPaintMaterial,
+  createPalette as createPaintPalette,
+  createWithPalette as createPaintMaterialWithPalette,
+} from "./materials/paint.ts";
 export {
   add as addXYZ,
   cross as crossXYZ,

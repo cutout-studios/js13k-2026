@@ -19,6 +19,8 @@ import { FLOAT_32_BIN, FLOAT_32_BYTES } from "~common";
 
 export const XYZ_LENGTH = 3;
 
+export const RGBA_LENGTH = 4;
+
 export const COORDINATES_DATA_GROUP_ID = 0;
 export const COORDINATE_SIDE_LENGTH = 4;
 export const COORDINATE_DATA_LENGTH = COORDINATE_SIDE_LENGTH ** 2;

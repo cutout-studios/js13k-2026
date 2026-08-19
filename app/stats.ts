@@ -16,10 +16,10 @@ export const getBaseStats = (
 
   // apply levels
   const base = { ...PLAYER_BASE_STATS };
-  const fold = (i: keyof typeof PLAYER_BASE_STATS) =>
+  const _fold = (i: keyof typeof PLAYER_BASE_STATS) =>
     (base[i] ?? 0) * (1 + (pct[i] ?? 0)) + (add[i] ?? 0);
 
-  const quality = fold(17);
+  const quality = _fold(17);
 
   for (
     const [level, ...stats] of [
@@ -33,10 +33,10 @@ export const getBaseStats = (
   }
 
   const result = PLAYER_STAT_TYPES.map((_, i) =>
-    fold(i as keyof typeof PLAYER_BASE_STATS)
+    _fold(i as keyof typeof PLAYER_BASE_STATS)
   );
 
-  // special case - lowestPool. armor weighted x10
+  // special case - lowestResource. armor weighted x10
   const pools = [21, 0, 11], weights = [1, 10, 1];
   let lowest = 0;
   for (let i = 1; i < 3; i++) {

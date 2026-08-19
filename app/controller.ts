@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-export type Band = readonly [start: number, end: number];
-export type Affix = [type: number, value: number, type: number];
-export type Item = [
-  color: number,
-  gear: number,
-  rank: number,
-  mass: number,
-  affixes: Affix[],
-  ...weapon: number[], // TODO: expand
-];
+export const keyboard = new Set<string>();
+
+onkeydown = ({ code }) => keyboard.add(code);
+onkeyup = ({ code }) => keyboard.delete(code);
+
+export let pointer: [[x: number, y: number], buttons: number] | undefined;
+onpointerdown = onpointerup = onpointermove = (
+  { clientX, clientY, buttons },
+) => pointer = [[clientX, clientY], buttons];
+
+// suppress undesired browser behavior
+onblur = () => keyboard.clear();
+oncontextmenu = () => false;

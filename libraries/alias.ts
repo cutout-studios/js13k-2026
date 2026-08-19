@@ -28,7 +28,6 @@ export const {
   cos,
   tan,
   hypot,
-  SQRT2
 } = Math;
 
 export const TAU = PI * 2;

@@ -16,67 +16,45 @@
 
 /// <reference lib="dom" />
 
-import { doTimes } from "~common";
-import { appendChild, max, hypot } from "~alias";
+import { appendChild } from "~alias";
 import { startClock } from "~clock";
-import { scaleXYZ, setupDevice, XYZ } from "~3D";
+import { setupDevice } from "~3D";
 
-import { create as createEnvelope } from "../libraries/envelope.ts";
+import { canvas, render } from "./canvas.ts";
+import enemyOptions, { createEnemy } from "./enemies.ts";
+import { doTimes } from "~common";
+import { ship } from "./ship.ts";
 
-import { canvas, mapClientXY, render } from "./canvas.ts";
-import { aimShip, ship, TEMP_STRAFE_SPEED } from "./ship.ts";
-
+// export { getBaseStats } from "./stats.ts";
 // export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
+// export { createAudioSource } from "~audio";
 
-const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"];
-const strafeEnvelopes = doTimes(
-  STRAFE_KEYS.length,
-  () => createEnvelope(0.30, 0.35),
+const enemies = Object.values(enemyOptions).map(createEnemy);
+
+doTimes(
+  3,
+  (x) =>
+    doTimes(
+      2,
+      (y) =>
+        enemies[x * 2 + y].object.adjust([(x - 1) * 3, (y - 0.5) * 3, -10]),
+    ),
 );
 
-// --- main loop
 onload = async () => {
   await setupDevice();
 
   appendChild(canvas);
 
   startClock((tickLength) => {
-    const strafeMagnitudes: XYZ = [0, 0, 0];
-    doTimes(STRAFE_KEYS.length, (index: number) => {
-      const value = strafeEnvelopes[index](
-        tickLength,
-        !keyboardState.has(STRAFE_KEYS[index]),
-      );
-      strafeMagnitudes[index >> 1] += index & 1 ? -value : value;
-    });
+    ship.adjust(tickLength);
+    render([
+      ship.object,
+      ...enemies.map((enemy) => {
+        enemy.object.adjust(undefined, [[0, 1, 0], tickLength]);
 
-    ship.object.adjust(
-      scaleXYZ(strafeMagnitudes, TEMP_STRAFE_SPEED * tickLength / max(1, hypot(...strafeMagnitudes))),
-    );
-
-    if (pointerState) {
-      aimShip(
-        ship,
-        mapClientXY(pointerState[0]),
-        tickLength,
-      );
-    }
-
-    render([ship.object]);
+        return enemy.object;
+      }),
+    ]);
   });
 };
-
-// --- attach controller. TODO: properly manage events
-const keyboardState = new Set<string>();
-
-onkeydown = ({ code }) => keyboardState.add(code);
-onkeyup = ({ code }) => keyboardState.delete(code);
-
-let pointerState: [[x: number, y: number], buttons: number] | undefined;
-onpointerdown = onpointerup = onpointermove = (
-  { clientX, clientY, buttons },
-) => pointerState = [[clientX, clientY], buttons];
-
-// suppress undesired browser behavior
-onblur = () => keyboardState.clear();
-oncontextmenu = () => false;
