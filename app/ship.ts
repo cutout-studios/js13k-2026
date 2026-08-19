@@ -15,7 +15,6 @@ import {
 import { approach, create as createEnvelope } from "~envelope";
 
 import { mapClientXY } from "./canvas.ts";
-// export { getBaseStats } from "./stats.ts";
 import { createPyramid } from "./shapes.ts";
 
 import { MAX_DISTANCE } from "./constants.ts";
