@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { F32 } from "~alias";
+import { F32 } from "~/alias";
 import type { GPURenderTarget } from "./types.ts";
 import {
   CAMERA_DEFAULT_SAFETY_CROP,

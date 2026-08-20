@@ -21,14 +21,20 @@ export {
   type XYZ,
 } from "./types.ts";
 
-export { CAMERA_MAGNIFICATION_RATIO, XYZ_LENGTH } from "./constants.ts";
+export {
+  CAMERA_MAGNIFICATION_RATIO,
+  X_AXIS,
+  XYZ_LENGTH,
+  Y_AXIS,
+  Z_AXIS,
+} from "./constants.ts";
 
 export { setupDevice } from "./webgpu/setupDevice.ts";
 export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
 export { flatten as flattenObjects, XOObject } from "./objects.ts";
-export { createCamera } from "./createCamera.ts";
+export { createCamera } from "./camera.ts";
 export { createCoordinates } from "./coordinates.ts";
-export { createSquare, createTriangle } from "./geometry.ts";
+export { createPrism, createPyramid, createSphere } from "./geometry.ts";
 export {
   create as createPaintMaterial,
   createPalette as createPaintPalette,

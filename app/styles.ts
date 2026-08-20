@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-export type Band = readonly [start: number, end: number];
-export type Affix = [type: number, value: number, type: number];
-export type Item = [
-  color: number,
-  gear: number,
-  rank: number,
-  mass: number,
-  affixes: Affix[],
-  ...weapon: number[], // TODO: expand
-];
+export const DEFAULTS = {
+  ["font-family"]: "Menlo,ui-monospace",
+  ["font-size"]: "1rem",
+  color: "#FFF",
+};
+
+export const FULL_SIZE = {
+  width: "100%",
+  height: "100%",
+};
+
+export const FLEX_ROW = {
+  display: "flex",
+  ["justify-content"]: "center",
+  ["align-items"]: "space-between",
+};
+
+export const FLEX_COLUMN = {
+  ...FLEX_ROW,
+  ["flex-direction"]: "column",
+};

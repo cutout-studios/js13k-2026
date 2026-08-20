@@ -19,7 +19,7 @@ import {
   COORDINATES_DATA_GROUP_ID,
   MATERIALS_DATA_GROUP_ID,
 } from "../constants.ts";
-import { F32 } from "~alias";
+import { F32 } from "~/alias";
 
 const PIXELS_PER_VIEW_UNIT = 600, MINIMUM_BRIGHTNESS = 0;
 

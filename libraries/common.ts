@@ -21,11 +21,11 @@ export const BYTES_TO_BIN = 8;
 export const FLOAT_32_BIN = 32;
 export const FLOAT_32_BYTES = FLOAT_32_BIN / BYTES_TO_BIN;
 
-// export const repeat = <T>(times: number, thing: T): T[] =>
-//   Array(times).fill(thing);
+export const repeat = <T>(times: number, thing: T): T[] =>
+  Array(times).fill(thing);
 
 export const doTimes = <T>(count: number, action: (count: number) => T): T[] =>
-  Array(count).fill(null).map((_, index) => action(index));
+  repeat(count, 0).map((_, index) => action(index));
 
 export const memo = <Key extends object, Value>(
   create: (key: Key) => Value,

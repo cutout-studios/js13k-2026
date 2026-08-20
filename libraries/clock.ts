@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SECONDS_TO_MS as MS_TO_SECONDS } from "~common";
+import { SECONDS_TO_MS as MS_TO_SECONDS } from "~/common";
 
 export const startClock = (
   onLoop: (tickLength: number, totalClockTime: number) => void,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MINUTES_TO_SECONDS, SECONDS_TO_MS } from "~common";
+import { MINUTES_TO_SECONDS, SECONDS_TO_MS } from "~/common";
 
 import { Source } from "./types.ts";
 

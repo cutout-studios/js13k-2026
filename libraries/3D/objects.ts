@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~common";
-import { F32 } from "~alias";
+import { doTimes } from "~/common";
+import { F32 } from "~/alias";
 
 import type { AxisAngle, XOGeometry, XOMaterial, XYZ } from "./types.ts";
 import {
@@ -24,7 +24,7 @@ import {
   XYZ_LENGTH,
 } from "./constants.ts";
 import { createRotation, localize, readOrigin } from "./coordinates.ts";
-import { createPaintMaterial } from "~3D";
+import { createPaintMaterial } from "~/3D";
 
 const POSITION_INDEX = 12;
 

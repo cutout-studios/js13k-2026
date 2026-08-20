@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-export const keyboard = new Set<string>();
+import { document } from "~/alias";
 
-onkeydown = ({ code }) => keyboard.add(code);
-onkeyup = ({ code }) => keyboard.delete(code);
-
-export let pointer: [[x: number, y: number], buttons: number] | undefined;
-onpointerdown = onpointerup = onpointermove = (
-  { clientX, clientY, buttons },
-) => pointer = [[clientX, clientY], buttons];
-
-// suppress undesired browser behavior
-onblur = () => keyboard.clear();
-oncontextmenu = () => false;
+export const createElement = (
+  tag: string,
+  style: object = {},
+  attributes: object = {},
+  ...children: Array<HTMLElement | string>
+) => {
+  const element = document.createElement(tag);
+  Object.assign(element, {
+    ...attributes,
+    style: Object.entries(style).reduce(
+      (result, [key, value]) => result + `${key}:${value};`,
+      "",
+    ),
+  });
+  element.append(...children.flat());
+  return element;
+};

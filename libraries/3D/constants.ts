@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { PI, tan } from "~alias";
-import { FLOAT_32_BIN, FLOAT_32_BYTES } from "~common";
+import { PI, tan } from "~/alias";
+import { FLOAT_32_BIN, FLOAT_32_BYTES } from "~/common";
+
+import { XYZ } from "./types.ts";
 
 export const XYZ_LENGTH = 3;
 
-export const RGBA_LENGTH = 4;
+export const X_AXIS: XYZ = [1, 0, 0];
+export const Y_AXIS: XYZ = [0, 1, 0];
+export const Z_AXIS: XYZ = [0, 0, 1];
 
 export const COORDINATES_DATA_GROUP_ID = 0;
 export const COORDINATE_SIDE_LENGTH = 4;
@@ -29,6 +33,8 @@ export const COORDINATE_DATA_SIZE = COORDINATE_DATA_LENGTH * FLOAT_32_BYTES;
 export const VERTEX_DATA_SIZE = XYZ_LENGTH * FLOAT_32_BYTES;
 export const VERTEX_DATA_FORMAT: GPUVertexFormat =
   `float${FLOAT_32_BIN}x${XYZ_LENGTH}`;
+
+export const RGBA_LENGTH = 4;
 
 export const DEPTH_TEXTURE_FORMAT = "depth24plus";
 

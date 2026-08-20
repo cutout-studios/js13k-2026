@@ -22,7 +22,7 @@ import {
 } from "../constants.ts";
 
 import { device, format, pipelineLayout } from "./setupDevice.ts";
-import { memo } from "~common";
+import { memo } from "~/common";
 
 export const getRenderPipeline = memo((
   [vertex, fragment]: XOMaterial,

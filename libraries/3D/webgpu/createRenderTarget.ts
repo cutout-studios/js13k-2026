@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { memo } from "~common";
+import { memo } from "~/common";
 import { DEPTH_TEXTURE_FORMAT } from "../constants.ts";
 import { GPURenderTarget } from "../types.ts";
 import { device, format } from "./setupDevice.ts";

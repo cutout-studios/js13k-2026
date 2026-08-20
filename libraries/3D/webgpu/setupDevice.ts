@@ -50,8 +50,8 @@ export const setupDevice = async () => {
     bindGroupLayouts: [coordinatesLayout, materialsLayout],
   });
 
-  // device.addEventListener(
-  //   "uncapturederror",
-  //   ({ error }) => console.error(error.message),
-  // );
+  device.addEventListener(
+    "uncapturederror",
+    ({ error }) => console.error(error),
+  );
 };

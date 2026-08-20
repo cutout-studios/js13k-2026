@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-export const keyboard = new Set<string>();
+import {
+  createPaintMaterialWithPalette as paint,
+  flattenObjects,
+  XOObject,
+} from "~/3D";
+import { Color } from "../types.ts";
 
-onkeydown = ({ code }) => keyboard.add(code);
-onkeyup = ({ code }) => keyboard.delete(code);
-
-export let pointer: [[x: number, y: number], buttons: number] | undefined;
-onpointerdown = onpointerup = onpointermove = (
-  { clientX, clientY, buttons },
-) => pointer = [[clientX, clientY], buttons];
-
-// suppress undesired browser behavior
-onblur = () => keyboard.clear();
-oncontextmenu = () => false;
+export const createEnemy = ([, paintHex, , [, , , , objectArgs]]: Color) => {
+  const object = flattenObjects(
+    ...objectArgs.map((args) => new XOObject(...args)),
+  );
+  object.material = paint(paintHex);
+  return { object };
+};

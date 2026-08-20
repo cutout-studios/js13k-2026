@@ -14,47 +14,21 @@
  * limitations under the License.
  */
 
-/// <reference lib="dom" />
+import { document } from "~/alias";
+import { startClock } from "~/clock";
+import { setupDevice } from "~/3D";
 
-import { appendChild } from "~alias";
-import { startClock } from "~clock";
-import { setupDevice } from "~3D";
-
-import { canvas, render } from "./canvas.ts";
-import enemyOptions, { createEnemy } from "./enemies.ts";
-import { doTimes } from "~common";
-import { ship } from "./ship.ts";
-
-// export { getBaseStats } from "./stats.ts";
-// export { drawEnemies, drawItem, getWaveCount } from "./decks.ts";
-// export { createAudioSource } from "~audio";
-
-const enemies = Object.values(enemyOptions).map(createEnemy);
-
-doTimes(
-  3,
-  (x) =>
-    doTimes(
-      2,
-      (y) =>
-        enemies[x * 2 + y].object.adjust([(x - 1) * 3, (y - 0.5) * 3, -10]),
-    ),
-);
+import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
+import state, { getScene, updateGame } from "./state/module.ts";
 
 onload = async () => {
   await setupDevice();
 
-  appendChild(canvas);
+  document.body.appendChild(mainCanvas);
 
   startClock((tickLength) => {
-    ship.adjust(tickLength);
-    render([
-      ship.object,
-      ...enemies.map((enemy) => {
-        enemy.object.adjust(undefined, [[0, 1, 0], tickLength]);
+    updateGame(state, tickLength);
 
-        return enemy.object;
-      }),
-    ]);
+    renderMain(getScene(state));
   });
 };

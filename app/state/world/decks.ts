@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~common";
+import { doTimes } from "~/common";
+import { Band, bell, range } from "~/random";
 
-import { atan, floor, length, max, min, PI, random, round } from "~alias";
-import { Affix, Band, Item } from "./types.ts";
-import content, {
-  DIFFICULTY_FALLOFF,
-  ENEMY_STAT_BANDS,
-  ENEMY_STAT_KEYS,
+import { Item, ItemAffix } from "../types.ts";
+import { atan, floor, length, max, min, PI, random, round } from "~/alias";
+import {
+  COLORS,
+  ENEMY_DATA_BANDS,
+  ENEMY_DATA_NAMES,
+  ENEMY_WAVE_COUNT_BAND,
+  ENEMY_WAVE_CURVE,
+  ENEMY_WAVE_PACING,
+  ENEMY_WAVE_SIZE_BAND,
+  GAME_DIFFICULTY_FALLOFF,
+  ITEM_DATA_BANDS,
+  ITEM_NAMES,
   ITEM_RANK_THRESHOLDS,
-  ITEM_STAT_BANDS,
-  ITEM_TYPES,
-  ITEM_WEAPON_KEYS,
-  WAVE_BAND,
-  WAVE_CURVE,
-  WAVE_PACING,
-  WAVE_SIZE_BAND,
-} from "./constants.ts";
-
-// --
-
-const bell = () => (random() + random() + random()) / 3;
-const range = (lo: number, hi: number) => lo + (hi - lo) * bell();
+  ITEM_WEAPON_DATA_NAMES,
+  PLAYER_STATISTICS,
+} from "../constants.ts";
 
 // deck primitives
 const insert = <T>(deck: T[], value: T, delay = 0) =>
@@ -54,8 +52,10 @@ const draw = (deck: number[], delay = 0.67) => {
 };
 
 // difficulty
-export const difficultyCurve = (level: number, falloff = DIFFICULTY_FALLOFF) =>
-  (2 * atan(level * falloff)) / PI;
+export const difficultyCurve = (
+  level: number,
+  falloff = GAME_DIFFICULTY_FALLOFF,
+) => (2 * atan(level * falloff)) / PI;
 
 const _statRoll = (
   [start, end]: Band = [0, 0],
@@ -68,24 +68,20 @@ const _statRoll = (
 
 // enemies
 export const getWaveCount = (level: number) =>
-  round(_statRoll(WAVE_BAND, difficultyCurve(level)));
+  round(_statRoll(ENEMY_WAVE_COUNT_BAND, difficultyCurve(level)));
 
-const _enemyDeck = shuffled(length(content));
+const _enemyDeck = shuffled(length(COLORS));
 const _drawEnemy = (typeIndex: number, level: number) => {
-  const {
-    enemy: [count, health, speed, drop],
-    weapon: [, damage],
-    density: mass,
-  } = content[typeIndex];
-
+  const [, , mass, [count, health, speed, drop], [, damage]] =
+    COLORS[typeIndex];
   const proxy = { health, speed, mass, damage, drop };
 
   return [
     typeIndex,
     count,
-    ...ENEMY_STAT_KEYS.map((key: keyof typeof ENEMY_STAT_BANDS) =>
+    ...ENEMY_DATA_NAMES.map((key: keyof typeof ENEMY_DATA_BANDS) =>
       _statRoll(
-        ENEMY_STAT_BANDS[key][proxy[key] - 1],
+        ENEMY_DATA_BANDS[key][proxy[key] - 1],
         difficultyCurve(level),
       )
     ),
@@ -96,11 +92,11 @@ export const drawEnemies = (wave: number, level: number) =>
   doTimes(
     round(
       min(
-        WAVE_SIZE_BAND[1],
+        ENEMY_WAVE_SIZE_BAND[1],
         max(
-          WAVE_SIZE_BAND[0],
-          WAVE_PACING[wave % length(WAVE_PACING)] *
-            difficultyCurve(level) * WAVE_CURVE,
+          ENEMY_WAVE_SIZE_BAND[0],
+          ENEMY_WAVE_PACING[wave % length(ENEMY_WAVE_PACING)] *
+            difficultyCurve(level) * ENEMY_WAVE_CURVE,
         ),
       ),
     ),
@@ -117,34 +113,32 @@ const _itemRankRoll = (level: number, quality = 0) => {
     : 1;
 };
 
-const _itemDeck = shuffled(length(ITEM_TYPES));
+const _itemDeck = shuffled(length(ITEM_NAMES));
 export const drawItem = (
   colorType: number,
   level: number,
   quality = 0,
 ): Item => {
-  const {
-    affix,
-    density: mass,
-    weapon: [count, damage, life, rate, bonusAffix, cost, bulletPattern],
-  } = content[colorType];
-
+  const [
+    ,
+    ,
+    mass,
+    ,
+    [count, damage, life, rate, bonusAffix, cost, bulletPattern],
+    affixes,
+  ] = COLORS[colorType];
   const rank = _itemRankRoll(level, quality), type = draw(_itemDeck);
-
-  const pool: Affix[] = [];
-  for (
-    const option of [
-      ...affix.global,
-      ...(affix[ITEM_TYPES[type] as keyof typeof affix] ?? []),
-    ]
-  ) insert(pool, option as Affix);
+  const pool: number[] = [];
+  for (const option of [...affixes[0]!, ...(affixes[type + 1] ?? [])]) {
+    insert(pool, option);
+  }
 
   const affixCount = (type <= 1 ? rank - 1 : rank) + (bonusAffix ? 1 : 0);
 
   const proxy = { damage, life, rate, cost, mass, affix: 0 };
-  const roll = (key: keyof typeof ITEM_STAT_BANDS, magnitude = proxy[key]) =>
+  const roll = (key: keyof typeof ITEM_DATA_BANDS, magnitude = proxy[key]) =>
     _statRoll(
-      ITEM_STAT_BANDS[key][magnitude - 1],
+      ITEM_DATA_BANDS[key][magnitude - 1],
       (rank - 1) / 2,
     );
 
@@ -153,20 +147,20 @@ export const drawItem = (
     type,
     rank,
     roll("mass"),
-    doTimes(min(affixCount, length(pool)), () => {
-      const [name, magnitude, type = 0] = pool.pop()!;
-      return type === 2 ? [name, magnitude * rank, type] : [
+    doTimes(min(affixCount, length(pool)), (): ItemAffix => {
+      const name = pool.pop()!,
+        [, affixType, magnitude] = PLAYER_STATISTICS[name];
+      return [
         name,
-        roll("affix", magnitude),
-        type,
+        affixType === 2 ? magnitude * rank : roll("affix", magnitude),
       ];
-    }) as Affix[],
+    }) as ItemAffix[],
   ];
 
   if (type <= 1) { // e.g. is weapon
     result.push(
       count,
-      ...ITEM_WEAPON_KEYS.map((value) => roll(value)),
+      ...ITEM_WEAPON_DATA_NAMES.map((value) => roll(value)),
       bulletPattern,
     );
   }

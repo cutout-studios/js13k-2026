@@ -1,21 +1,21 @@
-import { cos, F32, sin } from "~alias";
+import { cos, F32, sin } from "~/alias";
 
 import type { XYZ } from "./types.ts";
-import { COORDINATE_SIDE_LENGTH } from "./constants.ts";
+import { COORDINATE_SIDE_LENGTH, X_AXIS, Y_AXIS, Z_AXIS } from "./constants.ts";
 
 import { normalize } from "./xyz.ts";
 
 export const createCoordinates = (
-  xAxis: XYZ = [1, 0, 0],
-  yAxis: XYZ = [0, 1, 0],
-  zAxis: XYZ = [0, 0, 1],
+  xAxis: XYZ = X_AXIS,
+  yAxis: XYZ = Y_AXIS,
+  zAxis: XYZ = Z_AXIS,
   origin: XYZ = [0, 0, 0],
 ) =>
   /** w = 0 for an axis, 1 for a point */
   new F32([...xAxis, 0, ...yAxis, 0, ...zAxis, 0, ...origin, 1]);
 
 export const createRotation = (
-  [axis, angle]: [XYZ, number] = [[1, 0, 0], 0],
+  [axis, angle]: [XYZ, number] = [X_AXIS, 0],
 ) => {
   const [x, y, z] = normalize(axis);
   const s = sin(angle), c = cos(angle), versine = 1 - c;

@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
+import { doTimes } from "~/common";
+import { cos, PI, sin, TAU } from "~/alias";
+
+import { XYZ_LENGTH } from "./constants.ts";
 import type { XOGeometry, XYZ } from "./types.ts";
+
+const DEFAULT_SCALE = doTimes(XYZ_LENGTH, () => 1) as XYZ;
 
 export const createTriangle = (
   p1: XYZ,
@@ -28,3 +34,65 @@ export const createSquare = (
   p3: XYZ,
   p4: XYZ,
 ): XOGeometry => [...createTriangle(p1, p2, p3), ...createTriangle(p1, p3, p4)];
+
+export const createPyramid = (
+  scale: XYZ = DEFAULT_SCALE,
+  divisions = 4,
+): XOGeometry =>
+  _lathe([[0, -1], [_inscribe(divisions), -1], [0, 1]], scale, divisions);
+
+export const createPrism = (
+  scale: XYZ = DEFAULT_SCALE,
+  divisions = 4,
+): XOGeometry => {
+  const radius = _inscribe(divisions);
+  return _lathe(
+    [[0, -1], [radius, -1], [radius, 1], [0, 1]],
+    scale,
+    divisions,
+  );
+};
+
+export const createSphere = (radius = 1, divisions = 10): XOGeometry =>
+  _lathe(
+    doTimes(divisions + 1, (index) => {
+      const phi = PI * (index / divisions - 0.5);
+      return [cos(phi), sin(phi)];
+    }),
+    [radius, radius, radius],
+    divisions,
+  );
+
+const _lathe = (
+  edgeLoops: Array<[radius: number, distance: number]>,
+  [scaleX, scaleY, scaleZ]: XYZ = DEFAULT_SCALE,
+  loopDivisions = 4,
+): XOGeometry => {
+  const _getVertex = (loopIndex: number, divisionIndex: number): XYZ => {
+    const [radius, distance] = edgeLoops[loopIndex],
+      angle = TAU * (divisionIndex + 0.5) / loopDivisions;
+    return [
+      radius * cos(angle) * scaleX,
+      radius * sin(angle) * scaleY,
+      distance * scaleZ,
+    ];
+  };
+
+  const result: XOGeometry = [];
+
+  doTimes(
+    edgeLoops.length - 1,
+    (ringIndex) =>
+      doTimes(loopDivisions, (divisionIndex) =>
+        result.push(...createSquare(
+          _getVertex(ringIndex, divisionIndex),
+          _getVertex(ringIndex, divisionIndex + 1),
+          _getVertex(ringIndex + 1, divisionIndex + 1),
+          _getVertex(ringIndex + 1, divisionIndex),
+        ))),
+  );
+
+  return result;
+};
+
+const _inscribe = (sides: number) => 1 / cos(PI / sides);

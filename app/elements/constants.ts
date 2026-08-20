@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export const PAPER_GRID_WIDTH = 30;
+export const DEPTH_LIMIT = -300;

@@ -1,4 +1,4 @@
-import { min } from "~alias";
+import { min } from "~/alias";
 
 export const approach = (current: number, target: number, ratio: number) =>
   current + (target - current) * min(1, ratio);

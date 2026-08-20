@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { memo } from "~common";
+import { memo } from "~/common";
 
 import type { GPUDataContainer, XOGeometry, XOMaterial } from "../types.ts";
 import {
@@ -26,7 +26,7 @@ import {
 import { device } from "./setupDevice.ts";
 import { getRenderPipeline } from "./getRenderPipeline.ts";
 import { coordinatesLayout, materialsLayout } from "./setupDevice.ts";
-import { F32 } from "~alias";
+import { F32 } from "~/alias";
 
 const _allocateGeometryBuffer = memo((geometry: XOGeometry) => {
   const geometryData = new F32(geometry.flat());

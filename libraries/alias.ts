@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+export const { document } = globalThis;
 export const {
   random,
   round,
@@ -31,19 +32,8 @@ export const {
 } = Math;
 
 export const TAU = PI * 2;
+export const F32 = Float32Array;
 
 export const length = <T>(array: Array<T>) => array.length;
 // export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
 // export const map = <T, K>(array: T[], mapper: (item: T) => K) => array.map(mapper);
-
-const d = globalThis.document;
-
-export const createElement = (tagName: string) => d.createElement(tagName);
-export const appendChild = (child: Element, parent = d.body) =>
-  parent.appendChild(child);
-
-export const F32 = Float32Array;
-
-export const style = (node: HTMLElement, object: Record<string, string>) => {
-  for (const key in object) node.style[key as never] = object[key];
-};

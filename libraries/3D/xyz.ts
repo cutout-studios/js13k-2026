@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { XYZ } from "~3D";
-import { hypot } from "~alias";
+import { XYZ } from "~/3D";
+import { hypot } from "~/alias";
 
 export const add = (
   [x1, y1, z1]: XYZ,
