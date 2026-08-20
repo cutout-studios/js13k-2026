@@ -16,16 +16,22 @@
 
 import { document } from "~/alias";
 
+export const DEFAULT_STYLES = {
+  ["font-family"]: "Menlo,ui-monospace",
+  ["font-size"]: "1rem",
+  color: "#FFF",
+};
+
 export const createElement = (
   tag: string,
-  style: object = {},
+  styles: Array<object> = [DEFAULT_STYLES],
   attributes: object = {},
   ...children: Array<HTMLElement | string>
 ) => {
   const element = document.createElement(tag);
   Object.assign(element, {
     ...attributes,
-    style: Object.entries(style).reduce(
+    style: Object.entries(Object.assign({}, ...styles)).reduce(
       (result, [key, value]) => result + `${key}:${value};`,
       "",
     ),

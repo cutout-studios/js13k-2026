@@ -19,12 +19,13 @@ import { startClock } from "~/clock";
 import { setupDevice } from "~/3D";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
+import { hud } from "./elements/hud.ts";
 import state, { getScene, updateGame } from "./state/module.ts";
 
 onload = async () => {
   await setupDevice();
 
-  document.body.appendChild(mainCanvas);
+  [hud, mainCanvas].forEach((element) => document.body.appendChild(element));
 
   startClock((tickLength) => {
     updateGame(state, tickLength);

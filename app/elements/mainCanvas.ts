@@ -29,11 +29,10 @@ import { FULL_SIZE } from "../styles.ts";
 
 import { DEPTH_LIMIT } from "./constants.ts";
 
-export const mainCanvas = createElement("canvas", {
+export const mainCanvas = createElement("canvas", [FULL_SIZE, {
     display: "block",
     cursor: "crosshair",
-    ...FULL_SIZE,
-  }) as HTMLCanvasElement,
+  }]) as HTMLCanvasElement,
   camera = createCamera();
 
 export const renderMain = (objects: XOObject[]) =>

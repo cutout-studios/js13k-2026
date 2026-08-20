@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-export const DEFAULTS = {
-  ["font-family"]: "Menlo,ui-monospace",
-  ["font-size"]: "1rem",
-  color: "#FFF",
-};
+export const NUDGE = (amount: number, direction = "top") => ({
+  position: "relative",
+  [direction]: `${amount}rem`,
+});
+
+export const PADDED = { padding: "1rem" };
 
 export const FULL_SIZE = {
   width: "100%",
@@ -27,11 +28,13 @@ export const FULL_SIZE = {
 
 export const FLEX_ROW = {
   display: "flex",
-  ["justify-content"]: "center",
-  ["align-items"]: "space-between",
+  gap: ".33rem",
+  ["justify-content"]: "space-between",
 };
 
 export const FLEX_COLUMN = {
   ...FLEX_ROW,
   ["flex-direction"]: "column",
 };
+
+export const PADDED_FLEX_ROW = { ...FLEX_ROW, ...PADDED };

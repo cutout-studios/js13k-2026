@@ -136,7 +136,7 @@ async function bundle(
     <html>
       <head>
         <style>
-          {/* css */ `html,body,body *{all:initial;box-sizing:border-box;font-family:system-ui;overflow:hidden;}body{position:relative;width:100vw;height:100svh;}`}
+          {/* css */ `html,body,body *{box-sizing:border-box;padding:0;margin:0;}body{position:relative;width:100vw;height:100svh;}`}
         </style>
         <script>
           {firstLine}
