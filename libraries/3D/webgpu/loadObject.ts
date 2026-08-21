@@ -18,7 +18,6 @@ import { memo } from "~/common";
 
 import type { GPUDataContainer, XOGeometry, XOMaterial } from "../types.ts";
 import {
-  COORDINATE_DATA_SIZE,
   COORDINATES_DATA_GROUP_ID,
   MATERIALS_DATA_GROUP_ID,
 } from "../constants.ts";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { F32, max } from "~/alias";
+import { F32, min } from "~/alias";
 import type { GPURenderTarget } from "./types.ts";
 import {
   CAMERA_DEFAULT_OBJECT_LIMIT,
@@ -33,7 +33,7 @@ export const createCamera = (
 ) => {
   let cachedAspectRatio = 0, viewingCoordinates: Float32Array;
 
-  const _getStableCoordinateBuffer = memo((_group: XOObject[]) =>
+  const _getStableCoordinateBuffer = memo((_group: XOObject | XOObject[]) =>
     new F32(COORDINATE_DATA_LENGTH * objectLimit)
   );
 
@@ -75,12 +75,12 @@ export const createCamera = (
 
               return buffer;
             },
-            _getStableCoordinateBuffer(group),
+            _getStableCoordinateBuffer(objectOrGroup),
           ),
           material,
         );
 
-        process.draw(geometry.length, max(group.length, objectLimit));
+        process.draw(geometry.length, min(group.length, objectLimit));
       }
     });
 };
