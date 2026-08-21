@@ -16,6 +16,13 @@
 
 import { SECONDS_TO_MS as MS_TO_SECONDS } from "~/common";
 
+type SequenceAction = (
+  payload: object,
+  tickLength: number,
+  elapsedTime: number,
+  duration: number,
+) => void;
+
 export const startClock = (
   onLoop: (tickLength: number, totalClockTime: number) => void,
 ) => {
@@ -33,4 +40,37 @@ export const startClock = (
   loopID = requestAnimationFrame(tick);
 
   return () => cancelAnimationFrame(loopID);
+};
+
+export const createSequence = (
+  segments: [action: SequenceAction, duration: number][],
+  loopCount = 1,
+) => {
+  let elapsedTime = 0,
+    actionSwaps = 0,
+    currentAction: SequenceAction,
+    currentDuration: number;
+
+  // NOTE: We're assuming tick length is small and
+  // segment durations are long: only calling the first action triggered each time.
+  // For JS13K, concision > complete correctness.
+  return (payload: object, tickLength: number) => {
+    if (loopCount < 1) return;
+
+    elapsedTime += tickLength;
+
+    if (elapsedTime > currentDuration) {
+      elapsedTime -= currentDuration;
+      actionSwaps++;
+    }
+
+    if (actionSwaps >= segments.length) {
+      actionSwaps %= segments.length;
+      loopCount--;
+    }
+
+    [currentAction, currentDuration] = segments[actionSwaps];
+
+    currentAction(payload, tickLength, elapsedTime, currentDuration);
+  };
 };
