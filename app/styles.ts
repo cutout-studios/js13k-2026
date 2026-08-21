@@ -31,11 +31,12 @@ export const FLEX_ROW = {
 
 export const FLEX_CENTER = {
   ["justify-content"]: "center",
-  ["align-items"]: "center"
+  ["align-items"]: "center",
 };
 
-export const JUSTIFY = (spacing = "around") => ({ ["justify-content"]: `space-${spacing}`});
-
+export const JUSTIFY = (spacing = "around") => ({
+  ["justify-content"]: `space-${spacing}`,
+});
 
 export const FLEX_COLUMN = {
   ...FLEX_ROW,

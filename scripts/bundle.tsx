@@ -136,7 +136,7 @@ async function bundle(
     <script>
       {firstLine}
       {secondLine}
-    </script>
+    </script>,
   );
 
   Deno.writeTextFileSync(

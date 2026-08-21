@@ -20,10 +20,10 @@ import { createElement } from "~/dom";
 // import { GameState } from "../state/types.ts";
 
 import {
-  JUSTIFY,
   CORNER,
   FLEX_COLUMN,
   FLEX_ROW,
+  JUSTIFY,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
 import { PLAYER_STATISTICS } from "../state/constants.ts";

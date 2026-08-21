@@ -16,7 +16,13 @@
 
 import { doTimes } from "~/common";
 import { createElement } from "~/dom";
-import { BORDER, PADDED, PADDED_FLEX_ROW, FLEX_ROW, FLEX_CENTER } from "../styles.ts";
+import {
+  BORDER,
+  FLEX_CENTER,
+  FLEX_ROW,
+  PADDED,
+  PADDED_FLEX_ROW,
+} from "../styles.ts";
 import { createCamera } from "../../libraries/3D/camera.ts";
 import { portrait } from "../state/world/client.ts";
 import { createRenderTarget } from "~/3D";

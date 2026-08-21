@@ -43,3 +43,4 @@ export const MATERIALS_DATA_GROUP_ID = 1;
 // ratio of half-screen height to viewing distance. FOV is implicit
 export const CAMERA_MAGNIFICATION_RATIO = tan(3 * PI / 8);
 export const CAMERA_DEFAULT_SAFETY_CROP = 0.1;
+export const CAMERA_DEFAULT_OBJECT_LIMIT = 256;

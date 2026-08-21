@@ -34,7 +34,7 @@ export const setupDevice = async () => {
     entries: [{
       binding: 0,
       visibility: GPUShaderStage.VERTEX,
-      buffer: { type: "uniform" },
+      buffer: { type: "read-only-storage" },
     }],
   });
 

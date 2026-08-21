@@ -5,7 +5,8 @@
     "jsr:@std/fmt@*": "1.0.10",
     "npm:esbuild-minify-templates@*": "0.13.1_esbuild@0.28.1",
     "npm:esbuild@*": "0.28.1",
-    "npm:roadroller@*": "2.1.0"
+    "npm:roadroller@*": "2.1.0",
+    "npm:wgsl-plus@*": "1.0.1"
   },
   "jsr": {
     "@cutout/jsx@0.0.4": {
@@ -182,6 +183,9 @@
         "@types/estree"
       ]
     },
+    "commander@13.1.0": {
+      "integrity": "sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw=="
+    },
     "esbuild-minify-templates@0.13.1_esbuild@0.28.1": {
       "integrity": "sha512-x6+dQMxYq7Hu54gpcyGBl2ad3SCcbpalA4WxRDiSMGKtZJwArPNg8Kxrd2WNbv2y0OMDAaIubxaspfudb7Hw3Q==",
       "dependencies": [
@@ -243,6 +247,13 @@
         "esm"
       ],
       "bin": true
+    },
+    "wgsl-plus@1.0.1": {
+      "integrity": "sha512-68P8HMtt+159VkwuN8nnG1WjZC6O9d3HRjElWnN1vMP5wduElLz8ssBp0V8kyX21DpLRU2XjnPwWcrPNtjrYew==",
+      "dependencies": [
+        "commander"
+      ],
+      "bin": true
     }
   },
   "workspace": {
@@ -251,7 +262,8 @@
       "jsr:@std/fmt@*",
       "npm:esbuild-minify-templates@*",
       "npm:esbuild@*",
-      "npm:roadroller@*"
+      "npm:roadroller@*",
+      "npm:wgsl-plus@*"
     ]
   }
 }

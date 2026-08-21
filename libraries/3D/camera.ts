@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-import { F32 } from "~/alias";
+import { F32, max } from "~/alias";
 import type { GPURenderTarget } from "./types.ts";
 import {
+  CAMERA_DEFAULT_OBJECT_LIMIT,
   CAMERA_DEFAULT_SAFETY_CROP,
   CAMERA_MAGNIFICATION_RATIO,
+  COORDINATE_DATA_LENGTH,
 } from "./constants.ts";
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";
 import { localize } from "./coordinates.ts";
+import { memo } from "~/common";
 
 export const createCamera = (
+  objectLimit = CAMERA_DEFAULT_OBJECT_LIMIT,
   safetyCropDistance = CAMERA_DEFAULT_SAFETY_CROP,
 ) => {
   let cachedAspectRatio = 0, viewingCoordinates: Float32Array;
 
-  return (objects: XOObject[], target: GPURenderTarget) =>
+  const _getStableCoordinateBuffer = memo((_group: XOObject[]) =>
+    new F32(COORDINATE_DATA_LENGTH * objectLimit)
+  );
+
+  return (objects: (XOObject | XOObject[])[], target: GPURenderTarget) =>
     target.render((process) => {
       const { aspectRatio } = target;
 
@@ -45,18 +53,34 @@ export const createCamera = (
           ]);
       }
 
-      for (const object of objects) {
+      for (const objectOrGroup of objects) {
+        const group = Array.isArray(objectOrGroup)
+          ? objectOrGroup
+          : [objectOrGroup];
+
+        const [{ geometry, material }] = group;
+
         // skip null/invisible objects
-        if (!object.geometry || !object.material) continue;
+        if (!geometry || !material) continue;
 
         loadObject(
           process,
-          object.geometry,
-          localize(object.coordinates, viewingCoordinates),
-          object.material,
+          geometry,
+          group.reduce(
+            (buffer, object, index) => {
+              buffer.set(
+                localize(object.coordinates, viewingCoordinates),
+                index * COORDINATE_DATA_LENGTH,
+              );
+
+              return buffer;
+            },
+            _getStableCoordinateBuffer(group),
+          ),
+          material,
         );
 
-        process.draw(object.geometry.length);
+        process.draw(geometry.length, max(group.length, objectLimit));
       }
     });
 };

@@ -25,12 +25,14 @@ import { device, format, pipelineLayout } from "./setupDevice.ts";
 import { memo } from "~/common";
 
 export const getRenderPipeline = memo((
-  [vertex, fragment]: XOMaterial,
-): GPURenderPipeline =>
-  device.createRenderPipeline({
+  [code]: XOMaterial,
+): GPURenderPipeline => {
+  const module = device.createShaderModule({ code });
+
+  return device.createRenderPipeline({
     layout: pipelineLayout,
     vertex: {
-      module: device.createShaderModule({ code: vertex }),
+      module,
       buffers: [{
         arrayStride: VERTEX_DATA_SIZE,
         attributes: [{
@@ -41,7 +43,7 @@ export const getRenderPipeline = memo((
       }],
     },
     fragment: {
-      module: device.createShaderModule({ code: fragment }),
+      module,
       targets: [{ format }],
     },
     primitive: {
@@ -52,5 +54,5 @@ export const getRenderPipeline = memo((
       depthCompare: "less",
       format: DEPTH_TEXTURE_FORMAT,
     },
-  })
-);
+  });
+});

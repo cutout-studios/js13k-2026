@@ -15,12 +15,14 @@
     "~/envelope": "./libraries/envelope.ts",
     "~/random": "./libraries/random.ts",
     "~/dom": "./libraries/dom.ts",
+    "wgsl-plus": "npm:wgsl-plus",
     "esbuild": "npm:esbuild",
     "esbuild-minify-templates": "npm:esbuild-minify-templates",
     "roadroller": "npm:roadroller"
   },
   "tasks": {
     "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --watch=app,libraries ./scripts/bundle.tsx",
+    "bundle:shader": "deno --allow-read --allow-write wgsl-plus --minify ./libraries/3D/materials/paint.wgsl -o ./libraries/3D/materials/paint.wgsl.ts",
     "clean": "rm -rf .output",
     "setup": "bash ./scripts/setup.sh"
   }

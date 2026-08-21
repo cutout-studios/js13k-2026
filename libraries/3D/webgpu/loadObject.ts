@@ -92,7 +92,7 @@ export const loadObject = (
   renderPass.setVertexBuffer(0, _allocateGeometryBuffer(geometry));
 
   renderPass.setPipeline(getRenderPipeline(material));
-  const [, , materialData] = material;
+  const [, materialData] = material;
   _writeDataToContainer(
     renderPass,
     materialData,
@@ -111,8 +111,8 @@ export const loadObject = (
     _getDataContainer(
       coordinates,
       coordinatesLayout,
-      COORDINATE_DATA_SIZE,
-      GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+      coordinates.byteLength,
+      GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     ),
     COORDINATES_DATA_GROUP_ID,
   );
