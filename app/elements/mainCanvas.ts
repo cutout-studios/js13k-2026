@@ -25,11 +25,11 @@ import {
 } from "~/3D";
 import { createElement } from "~/dom";
 
-import { FULL_SIZE } from "../styles.ts";
-
 import { DEPTH_LIMIT } from "./constants.ts";
 
-export const mainCanvas = createElement("canvas", [FULL_SIZE, {
+export const mainCanvas = createElement("canvas", [{
+    width: "100%",
+    height: "100%",
     display: "block",
     cursor: "crosshair",
   }]) as HTMLCanvasElement,

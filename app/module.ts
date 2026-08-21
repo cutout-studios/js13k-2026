@@ -18,14 +18,26 @@ import { document } from "~/alias";
 import { startClock } from "~/clock";
 import { setupDevice } from "~/3D";
 
+import { createElement } from "~/dom";
+
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud } from "./elements/hud.ts";
 import state, { getScene, updateGame } from "./state/module.ts";
+import { menu, openMenu } from "./elements/menu.ts";
+
+document.head.append(createElement("style", undefined, {
+  textContent:
+    /* css */ `html,body,body *{box-sizing:border-box;padding:0;margin:0;font-family:Menlo,ui-monospace;font-size:16px;color:white;background:black;list-style-type:none;}body{position:relative;width:100vw;height:100svh;}dialog::backdrop{background:#000c}`,
+}));
 
 onload = async () => {
   await setupDevice();
 
-  [hud, mainCanvas].forEach((element) => document.body.appendChild(element));
+  [hud, mainCanvas, menu].forEach((element) =>
+    document.body.appendChild(element)
+  );
+
+  openMenu();
 
   startClock((tickLength) => {
     updateGame(state, tickLength);

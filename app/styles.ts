@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-export const NUDGE = (amount: number, direction = "top") => ({
+export const CORNER = (right?: boolean, top?: boolean) => ({
+  transform: `rotate(${right ? 30 : -30}deg)`,
   position: "relative",
-  [direction]: `${amount}rem`,
+  [top ? "top" : "bottom"]: "2.5rem",
 });
 
-export const PADDED = { padding: "1rem" };
+export const BORDER = (width = 1) => ({ border: `${width}px solid white` });
 
-export const FULL_SIZE = {
-  width: "100%",
-  height: "100%",
-};
+export const PADDED = { padding: "1rem" };
 
 export const FLEX_ROW = {
   display: "flex",
   gap: ".33rem",
-  ["justify-content"]: "space-between",
 };
+
+export const FLEX_CENTER = {
+  ["justify-content"]: "center",
+  ["align-items"]: "center"
+};
+
+export const JUSTIFY = (spacing = "around") => ({ ["justify-content"]: `space-${spacing}`});
+
 
 export const FLEX_COLUMN = {
   ...FLEX_ROW,

@@ -133,18 +133,10 @@ async function bundle(
   const { firstLine, secondLine } = packer.makeDecoder();
 
   const appOutputText = rawText(
-    <html>
-      <head>
-        <style>
-          {/* css */ `html,body,body *{box-sizing:border-box;padding:0;margin:0;}body{position:relative;width:100vw;height:100svh;}`}
-        </style>
-        <script>
-          {firstLine}
-          {secondLine}
-        </script>
-      </head>
-      <body></body>
-    </html>,
+    <script>
+      {firstLine}
+      {secondLine}
+    </script>
   );
 
   Deno.writeTextFileSync(

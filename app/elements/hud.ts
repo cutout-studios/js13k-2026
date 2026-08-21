@@ -15,27 +15,21 @@
  */
 
 import { doTimes } from "~/common";
-import { createElement, DEFAULT_STYLES } from "~/dom";
+import { createElement } from "~/dom";
 
 // import { GameState } from "../state/types.ts";
 
 import {
+  JUSTIFY,
+  CORNER,
   FLEX_COLUMN,
   FLEX_ROW,
-  FULL_SIZE,
-  NUDGE,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
 import { PLAYER_STATISTICS } from "../state/constants.ts";
 
-const _tilt = (amount: number) => ({
-  ...DEFAULT_STYLES,
-  transform: `rotate(${amount}deg);`,
-});
-const [TILT_LEFT, TILT_RIGHT] = [30, -30].map(_tilt);
-
 const [DEFAULT_ARMOR, DEFAULT_FUEL, DEFAULT_SHIELD] = [0, 11, 21].map((index) =>
-  PLAYER_STATISTICS[index].at(-1) as number
+  PLAYER_STATISTICS[index][3] as number
 );
 
 const _createMeter = (
@@ -61,23 +55,22 @@ const _createMeter = (
 
 export const hud = createElement(
   "nav",
-  [FULL_SIZE, FLEX_COLUMN, {
-    ["pointer-events"]: "none",
+  [FLEX_COLUMN, JUSTIFY("between"), {
     position: "absolute",
-    top: 0,
-    left: 0,
+    inset: 0,
+    ["pointer-events"]: "none",
   }],
   undefined,
   createElement(
     "header",
-    [PADDED_FLEX_ROW],
+    [PADDED_FLEX_ROW, JUSTIFY()],
     undefined,
     _createMeter([
       "F",
       DEFAULT_FUEL,
       DEFAULT_FUEL,
       DEFAULT_FUEL / 15,
-    ], [TILT_RIGHT, NUDGE(2.5)]),
+    ], [CORNER(false, true)]),
     _createMeter([
       "S",
       DEFAULT_SHIELD,
@@ -88,21 +81,21 @@ export const hud = createElement(
       DEFAULT_ARMOR,
       DEFAULT_ARMOR,
       DEFAULT_ARMOR,
-    ], [TILT_LEFT, NUDGE(2.5)]),
+    ], [CORNER(true, true)]),
   ),
   createElement(
     "footer",
-    [PADDED_FLEX_ROW],
+    [PADDED_FLEX_ROW, JUSTIFY()],
     undefined,
     createElement(
       "span",
-      [TILT_LEFT, NUDGE(2.5, "bottom")],
+      [CORNER(true)],
       { id: "D" },
       "".padStart(16, "0"),
     ),
     createElement(
       "span",
-      [TILT_RIGHT, NUDGE(2.5, "bottom")],
+      [CORNER()],
       { id: "W" },
       "0, 0",
     ),
