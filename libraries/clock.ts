@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
+import { min } from "~/alias";
 import { SECONDS_TO_MS as MS_TO_SECONDS } from "~/common";
-
-type SequenceAction = (
-  payload: object,
-  tickLength: number,
-  elapsedTime: number,
-  duration: number,
-) => void;
 
 export const startClock = (
   onLoop: (tickLength: number, totalClockTime: number) => void,
@@ -42,19 +36,27 @@ export const startClock = (
   return () => cancelAnimationFrame(loopID);
 };
 
-export const createSequence = (
-  segments: [action: SequenceAction, duration: number][],
+// Timed Action Sequence
+type ContinuousAction<T, K> = (
+  payload: T,
+  tickLength: number,
+  elapsedTime: number,
+  duration: number,
+) => K;
+
+export const createActionSequence = <T, K>(
+  actionTimings: [action: ContinuousAction<T, K>, duration?: number][],
   loopCount = 1,
 ) => {
   let elapsedTime = 0,
     actionSwaps = 0,
-    currentAction: SequenceAction,
+    currentAction: ContinuousAction<T, K>,
     currentDuration: number;
 
   // NOTE: We're assuming tick length is small and
   // segment durations are long: only calling the first action triggered each time.
   // For JS13K, concision > complete correctness.
-  return (payload: object, tickLength: number) => {
+  return (payload: T, tickLength: number): K | undefined => {
     if (loopCount < 1) return;
 
     elapsedTime += tickLength;
@@ -64,13 +66,37 @@ export const createSequence = (
       actionSwaps++;
     }
 
-    if (actionSwaps >= segments.length) {
-      actionSwaps %= segments.length;
+    if (actionSwaps >= actionTimings.length) {
+      actionSwaps %= actionTimings.length;
       loopCount--;
     }
 
-    [currentAction, currentDuration] = segments[actionSwaps];
+    [currentAction, currentDuration = 0] = actionTimings[actionSwaps];
 
-    currentAction(payload, tickLength, elapsedTime, currentDuration);
+    return currentAction(payload, tickLength, elapsedTime, currentDuration);
   };
 };
+
+// Envelope
+export const createEnvelope = (attack: number, release: number) => {
+  const [attackSequence, releaseSequence] = ([[
+    [approachFactory(), attack],
+  ], [[
+    approachFactory(0),
+    release,
+  ]]] as [ContinuousAction<number, number>, number][][]).map(
+    createActionSequence,
+  );
+
+  let value = 0;
+  return (tickLength: number, released?: boolean) =>
+    value = (released
+      ? releaseSequence(value, tickLength)
+      : attackSequence(value, tickLength)) ?? value;
+};
+
+// TODO: IDK where this lives
+export const approachFactory =
+  (target: number = 1): ContinuousAction<number, number> =>
+  (value, tickLength, _, duration) =>
+    value + (target - value) * min(1, tickLength / duration);

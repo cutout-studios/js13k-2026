@@ -4,5 +4,7 @@ Unicorns and Rainbows!!
 
 ## Compression TODOs:
 
-- [ ] "winding" or "gray" iterator that goes 00, 01, 11, 10
+- [ ] (maybe) alias forEach, map, reduce
+- [ ] tuple-ify XOObject, ship data
+- [ ] "winding" or "gray" iterator that goes xx, xy, yy, yx
 - [ ] remove GPU error handler, lol

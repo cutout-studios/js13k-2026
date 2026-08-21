@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+export type OneOrMore<T> = [one: T, ...more: T[]];
+
 export const SECONDS_TO_MS = 1000;
 export const MINUTES_TO_SECONDS = 60;
 

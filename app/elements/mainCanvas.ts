@@ -16,6 +16,7 @@
 
 /// <reference lib="dom" />
 
+import { OneOrMore } from "~/common";
 import {
   CAMERA_MAGNIFICATION_RATIO,
   createCamera,
@@ -35,7 +36,7 @@ export const mainCanvas = createElement("canvas", [{
   }]) as HTMLCanvasElement,
   camera = createCamera();
 
-export const renderMain = (objects: XOObject[]) =>
+export const renderMain = (objects: OneOrMore<XOObject>[]) =>
   camera(objects, createRenderTarget(mainCanvas as HTMLCanvasElement));
 
 export const mapClientXY = (

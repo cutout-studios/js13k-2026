@@ -25,7 +25,7 @@ import {
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./objects.ts";
 import { localize } from "./coordinates.ts";
-import { memo } from "~/common";
+import { memo, OneOrMore } from "~/common";
 
 export const createCamera = (
   objectLimit = CAMERA_DEFAULT_OBJECT_LIMIT,
@@ -37,7 +37,7 @@ export const createCamera = (
     new F32(COORDINATE_DATA_LENGTH * objectLimit)
   );
 
-  return (objects: (XOObject | XOObject[])[], target: GPURenderTarget) =>
+  return (objectGroups: OneOrMore<XOObject>[], target: GPURenderTarget) =>
     target.render((process) => {
       const { aspectRatio } = target;
 
@@ -53,11 +53,7 @@ export const createCamera = (
           ]);
       }
 
-      for (const objectOrGroup of objects) {
-        const group = Array.isArray(objectOrGroup)
-          ? objectOrGroup
-          : [objectOrGroup];
-
+      for (const group of objectGroups) {
         const [{ geometry, material }] = group;
 
         // skip null/invisible objects
@@ -75,7 +71,7 @@ export const createCamera = (
 
               return buffer;
             },
-            _getStableCoordinateBuffer(objectOrGroup),
+            _getStableCoordinateBuffer(group),
           ),
           material,
         );

@@ -26,9 +26,14 @@ export type PlayerState = [
 
 export type PlayerResources = [shield: number, fuel: number, armor: number];
 
+// TODO
+type _Bullets = [ActionSequence[], XOObject[]];
+type _Weapon = [ActionSequence, _Bullets];
+
 export type PlayerShip = {
   body: [object: XOObject, aim: XYZ, roll: number];
   damage: PlayerResources;
+  weapons: [leftWeapon: _Weapon, rightWeapon: _Weapon];
 };
 
 export type PlayerEquipment = [

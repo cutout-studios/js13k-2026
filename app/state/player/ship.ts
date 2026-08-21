@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-import { cos, hypot, max, sin } from "~/alias";
-import { doTimes } from "~/common";
+import { hypot, length, max } from "~/alias";
+import { doTimes, OneOrMore } from "~/common";
 import { keyboard, pointer } from "~/controller";
-import {
-  createCoordinates,
-  crossXYZ,
-  normalizeXYZ,
-  scaleXYZ,
-  subtractXYZ,
-  XYZ,
-  XYZ_LENGTH,
-  Y_AXIS,
-} from "~/3D";
-import { approach, create as createEnvelope } from "~/envelope";
+import { scaleXYZ, XOObject, XYZ, XYZ_LENGTH } from "~/3D";
+import { approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
@@ -60,25 +51,34 @@ export const updateShip = (
   );
 
   if (pointer) {
-    const [object, _, roll] = ship.body;
     const target = mapClientXY(pointer[0]);
-    const ratio = tickLength / sheet[27];
-    const aim = ship.body[1] = doTimes(
+
+    ship.body[1] = doTimes(
       XYZ_LENGTH,
-      (index) => approach(ship.body[1][index], target[index], ratio),
+      (index) =>
+        approachFactory(target[index])(
+          ship.body[1][index],
+          tickLength,
+          0, // don't need this
+          target[index],
+        ),
     ) as XYZ;
 
-    const zAxis = normalizeXYZ(subtractXYZ(object.position, aim)),
-      right = normalizeXYZ(crossXYZ(Y_AXIS, zAxis)),
-      up = crossXYZ(zAxis, right),
-      s = sin(roll),
-      c = cos(roll);
-
-    object.coordinates = createCoordinates(
-      doTimes(XYZ_LENGTH, (index) => right[index] * c + up[index] * s) as XYZ,
-      doTimes(XYZ_LENGTH, (index) => up[index] * c - right[index] * s) as XYZ,
-      zAxis,
-      object.position,
-    );
+    ship.body[0].aim(ship.body[1]);
   }
+
+  /*
+    TODO - for each weapon:
+      if held, call sequence to generate bullets
+      iterate over new bullet list from the end:
+        advance each bullet sequence
+        cull the ones that are empty
+  */
 };
+
+export const getShipObjects = ([ship]: PlayerState): OneOrMore<XOObject>[] =>
+  ship.weapons.reduce((objects, [, [, bullets]]) => {
+    if (length(bullets)) objects.push(bullets as OneOrMore<XOObject>);
+
+    return objects;
+  }, [[ship.body[0]]] as OneOrMore<XOObject>[]);

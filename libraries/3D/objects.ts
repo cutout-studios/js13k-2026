@@ -22,9 +22,16 @@ import {
   COORDINATE_SIDE_LENGTH,
   RGBA_LENGTH,
   XYZ_LENGTH,
+  Y_AXIS,
 } from "./constants.ts";
-import { createRotation, localize, readOrigin } from "./coordinates.ts";
+import {
+  createCoordinates,
+  createRotation,
+  localize,
+  readOrigin,
+} from "./coordinates.ts";
 import { createPaintMaterial } from "~/3D";
+import { cross, normalize, subtract } from "./xyz.ts";
 
 const POSITION_INDEX = 12;
 
@@ -73,6 +80,19 @@ export class XOObject {
     if (rotation) {
       this.coordinates = localize(createRotation(rotation), this.coordinates);
     }
+  }
+
+  aim(heading: XYZ) {
+    const zAxis = normalize(subtract(this.position, heading)),
+      right = normalize(cross(Y_AXIS, zAxis)),
+      up = cross(zAxis, right);
+
+    this.coordinates = createCoordinates(
+      doTimes(XYZ_LENGTH, (index) => right[index]) as XYZ,
+      doTimes(XYZ_LENGTH, (index) => up[index]) as XYZ,
+      zAxis,
+      this.position,
+    );
   }
 }
 
