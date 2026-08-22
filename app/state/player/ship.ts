@@ -38,6 +38,7 @@ export const updateShip = (player: PlayerState, tickLength: number) => {
       tickLength,
       !keyboard.has(STRAFE_KEYS[index]),
     );
+
     strafeMagnitudes[index >> 1] += index & 1 ? -value : value;
   });
 
@@ -58,7 +59,7 @@ export const updateShip = (player: PlayerState, tickLength: number) => {
           body[1][index],
           tickLength,
           0, // don't need this
-          target[index],
+          sheet[27],
         ),
     ) as XYZ;
 

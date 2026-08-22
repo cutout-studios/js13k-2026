@@ -25,7 +25,7 @@ export const createEnvelope = (attack: number, release: number) => {
     approachFactory(0),
     release,
   ]]] as [Action<number, number>, number][][]).map(
-    createActionSequence,
+    (schedule) => createActionSequence(schedule, Infinity),
   );
 
   let value = 0;

@@ -17,6 +17,7 @@
 import { rawText } from "@cutout/jsx/projections";
 
 import * as esbuild from "esbuild";
+import { minify } from "esbuild-minify-templates";
 
 import { InputAction, InputType, Packer } from "roadroller";
 
@@ -108,6 +109,8 @@ async function bundle(
 
   let code = sourceData.text();
   if (options.minify) {
+    code = minify(code).toString();
+
     const result = await esbuild.transform(code, {
       minify: true,
       mangleProps: new RegExp(

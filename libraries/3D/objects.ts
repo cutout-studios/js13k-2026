@@ -83,13 +83,13 @@ export class XOObject {
   }
 
   aim(heading: XYZ) {
-    const zAxis = normalize(subtract(this.position, heading)),
+    const zAxis = normalize(subtract(heading, this.position)),
       right = normalize(cross(Y_AXIS, zAxis)),
       up = cross(zAxis, right);
 
     this.coordinates = createCoordinates(
-      doTimes(XYZ_LENGTH, (index) => right[index]) as XYZ,
-      doTimes(XYZ_LENGTH, (index) => up[index]) as XYZ,
+      right,
+      up,
       zAxis,
       this.position,
     );

@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export const DEPTH_LIMIT = -300;
+export const DEPTH_LIMIT = 300;

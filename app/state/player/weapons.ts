@@ -27,8 +27,9 @@ import {
 
 import { createActionSequence } from "~/clock";
 
-const DEFAULT_BULLET_SHAPE = createPrism([0.05, 0.05, 0.2]),
-  DEFAULT_BULLET_PAINT = paint(0xFFE900);
+const DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
+  DEFAULT_BULLET_PAINT = paint(0xFFE900),
+  BULLET_SPEED_COEFFICIENT = 25;
 
 // TODO: only "default weapons" for now
 export const createWeaponState = (): WeaponState => {
@@ -37,7 +38,7 @@ export const createWeaponState = (): WeaponState => {
     createActionSequence(
       [[(player: PlayerState) => createBulletState(player)], [
         () => undefined,
-        1,
+        0.25,
       ]],
       Infinity,
     ),
@@ -61,7 +62,9 @@ export const createBulletState = (
     bullet,
     createActionSequence([[
       (_, tickLength) =>
-        bullet.adjust(scaleXYZ(direction, tickLength)) ?? tickLength,
+        bullet.adjust(
+          scaleXYZ(direction, tickLength * BULLET_SPEED_COEFFICIENT),
+        ) ?? tickLength,
       1,
     ]]),
   ];

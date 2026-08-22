@@ -94,5 +94,5 @@ export const menu = createElement(
 export const openMenu = () => {
   menu.showModal();
 
-  clientCamera([portrait], createRenderTarget(clientCanvas));
+  clientCamera([[portrait]], createRenderTarget(clientCanvas));
 };

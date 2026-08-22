@@ -33,7 +33,7 @@ export const createActionSequence = <T, K>(
 
     elapsedTime += tickLength;
 
-    if (currentDuration && elapsedTime > currentDuration) {
+    if (currentDuration !== undefined && elapsedTime > currentDuration) {
       elapsedTime -= currentDuration;
       actionSwaps++;
     }
