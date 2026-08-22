@@ -29,29 +29,64 @@ import { PLAYER_SHIP_DISTANCE, PLAYER_SHIP_SHAPE } from "./constants.ts";
 
 import { getShipObjects, updateShip } from "./player/ship.ts";
 import { getSheet } from "./player/sheet.ts";
+import { createWeaponState } from "./player/weapons.ts";
 
 const THREE_ZEROES = () => repeat(3, 0) as [a: number, b: number, c: number];
 
 const state: GameState = [
-  [
-    {
-      body: [
+  [ // player
+    [ // ship
+      [ // body
+        // object
         new XOObject(
           PLAYER_SHIP_SHAPE,
           [0, 0, -PLAYER_SHIP_DISTANCE],
           [Y_AXIS, PI],
           paint(0xFFFFFF),
         ),
+
+        // aim
         [0, 0, -DEPTH_LIMIT],
-        0,
       ],
-      damage: THREE_ZEROES(),
-      weapons: [], // TODO
-    },
-    [THREE_ZEROES(), repeat(4, undefined) as PlayerEquipment, []],
+      // weapons
+      [
+        createWeaponState(),
+        createWeaponState(),
+      ],
+      // damage
+      THREE_ZEROES(),
+    ],
+
+    // stats
+    [
+      // levels
+      THREE_ZEROES(),
+
+      // equipment
+      repeat(4, undefined) as PlayerEquipment,
+
+      // statistics (populated below)
+      [],
+    ],
+
+    // inventory
     [],
   ],
-  [...THREE_ZEROES(), new Set()],
+
+  // world
+  [
+    // stage
+    1,
+
+    // wave
+    1,
+
+    // distance
+    0,
+
+    // collection
+    new Set(),
+  ],
 ];
 
 export const updatePlayerData = (state: GameState): void => {

@@ -9,7 +9,7 @@
     "~/3D": "./libraries/3D/module.ts",
     "~/alias": "./libraries/alias.ts",
     "~/audio": "./libraries/audio/module.ts",
-    "~/clock": "./libraries/clock.ts",
+    "~/clock": "./libraries/clock/module.ts",
     "~/common": "./libraries/common.ts",
     "~/controller": "./libraries/controller.ts",
     "~/envelope": "./libraries/envelope.ts",

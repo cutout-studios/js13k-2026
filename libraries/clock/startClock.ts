@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-export const { document } = globalThis;
-export const {
-  random,
-  round,
-  floor,
-  min,
-  max,
-  atan,
-  atan2,
-  E,
-  PI,
-  sin,
-  cos,
-  tan,
-  hypot,
-} = Math;
+import { SECONDS_TO_MS as MS_TO_SECONDS } from "~/common";
 
-export const TAU = PI * 2;
-export const F32 = Float32Array;
+export const startClock = (
+  onLoop: (tickLength: number, totalClockTime: number) => void,
+) => {
+  const start = performance.now() / MS_TO_SECONDS;
+  let last = start;
 
-export const length = <T>(array: Array<T>) => array.length;
+  let loopID: number;
+  const tick = (now: number) => {
+    now /= MS_TO_SECONDS;
+    onLoop(now - last, now - start);
+    last = now;
+    loopID = requestAnimationFrame(tick);
+  };
 
-// export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
-// export const map = <T, K>(array: T[], mapper: (item: T) => K) => array.map(mapper);
-// export const reduce
+  loopID = requestAnimationFrame(tick);
+
+  return () => cancelAnimationFrame(loopID);
+};

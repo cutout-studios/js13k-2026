@@ -24,23 +24,57 @@ export type PlayerState = [
   inventory: Item[],
 ];
 
+export type Item = [
+  color: number,
+
+  gear: number,
+  rank: number,
+  mass: number,
+  affixes: ItemAffix[],
+
+  // weapon information
+  count?: number,
+  damage?: number,
+  life?: number,
+  rate?: number,
+  bonusAffix?: number,
+  cost?: number,
+  bulletPattern?: number,
+];
+
+export type ItemAffix = [type: number, value: number];
+
 export type PlayerResources = [shield: number, fuel: number, armor: number];
 
-// TODO
-type _Bullets = [ActionSequence[], XOObject[]];
-type _Weapon = [ActionSequence, _Bullets];
+type BulletSequence = (payload: void, tickLength: number) => number | undefined;
 
-export type PlayerShip = {
-  body: [object: XOObject, aim: XYZ, roll: number];
-  damage: PlayerResources;
-  weapons: [leftWeapon: _Weapon, rightWeapon: _Weapon];
-};
+export type BulletState = [
+  object: XOObject,
+  sequence: BulletSequence,
+];
+
+export type WeaponState = [
+  bullets: [XOObject[], BulletSequence[]],
+  sequence: (
+    payload: PlayerState,
+    tickLength: number,
+  ) => BulletState | undefined,
+];
+
+export type PlayerShip = [
+  body: [object: XOObject, aim: XYZ],
+  weapons: [
+    left: WeaponState,
+    right: WeaponState,
+  ],
+  damage: PlayerResources,
+];
 
 export type PlayerEquipment = [
-  leftWing: number | undefined,
-  rightWing: number | undefined,
-  body: number | undefined,
-  engine: number | undefined,
+  leftWing?: number,
+  rightWing?: number,
+  body?: number,
+  engine?: number,
 ];
 
 export type PlayerSheet = [
@@ -60,7 +94,7 @@ export type WorldState = [
   stage: number,
   wave: number,
   distance: number,
-  client: Set<string>,
+  collection: Set<string>,
 ];
 
 export type Color = [
@@ -86,22 +120,3 @@ export type Color = [
   // index 0 = global, index n + 1 = affixes for ITEM_TYPES[n]
   affixes: Array<number[] | undefined>,
 ];
-
-export type Item = [
-  color: number,
-  gear: number,
-  rank: number,
-  mass: number,
-  affixes: ItemAffix[],
-
-  // weapon information
-  count?: number,
-  damage?: number,
-  life?: number,
-  rate?: number,
-  bonusAffix?: number,
-  cost?: number,
-  bulletPattern?: number,
-];
-
-export type ItemAffix = [type: number, value: number];

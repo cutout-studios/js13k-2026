@@ -14,28 +14,11 @@
  * limitations under the License.
  */
 
-export const { document } = globalThis;
-export const {
-  random,
-  round,
-  floor,
-  min,
-  max,
-  atan,
-  atan2,
-  E,
-  PI,
-  sin,
-  cos,
-  tan,
-  hypot,
-} = Math;
+import { min } from "~/alias";
 
-export const TAU = PI * 2;
-export const F32 = Float32Array;
+import { Action } from "./types.ts";
 
-export const length = <T>(array: Array<T>) => array.length;
-
-// export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
-// export const map = <T, K>(array: T[], mapper: (item: T) => K) => array.map(mapper);
-// export const reduce
+export const approachFactory =
+  (target: number = 1): Action<number, number> =>
+  (value, tickLength, _, duration) =>
+    value + (target - value) * min(1, tickLength / duration);

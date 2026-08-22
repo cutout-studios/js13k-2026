@@ -30,10 +30,8 @@ const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"],
     () => createEnvelope(0.30, 0.35),
   );
 
-export const updateShip = (
-  [ship, [, , sheet]]: PlayerState,
-  tickLength: number,
-) => {
+export const updateShip = (player: PlayerState, tickLength: number) => {
+  const [[body, weapons], [, , sheet]] = player;
   const strafeMagnitudes: XYZ = [0, 0, 0];
   doTimes(STRAFE_KEYS.length, (index: number) => {
     const value = strafeEnvelopes[index](
@@ -43,7 +41,7 @@ export const updateShip = (
     strafeMagnitudes[index >> 1] += index & 1 ? -value : value;
   });
 
-  ship.body[0].adjust(
+  body[0].adjust(
     scaleXYZ(
       strafeMagnitudes,
       sheet[26] * tickLength / max(1, hypot(...strafeMagnitudes)),
@@ -53,32 +51,48 @@ export const updateShip = (
   if (pointer) {
     const target = mapClientXY(pointer[0]);
 
-    ship.body[1] = doTimes(
+    body[1] = doTimes(
       XYZ_LENGTH,
       (index) =>
         approachFactory(target[index])(
-          ship.body[1][index],
+          body[1][index],
           tickLength,
           0, // don't need this
           target[index],
         ),
     ) as XYZ;
 
-    ship.body[0].aim(ship.body[1]);
+    body[0].aim(body[1]);
   }
 
-  /*
-    TODO - for each weapon:
-      if held, call sequence to generate bullets
-      iterate over new bullet list from the end:
-        advance each bullet sequence
-        cull the ones that are empty
-  */
+  doTimes(2, (index) => {
+    const [[bulletObjects, bulletSequences], weaponSequence] = weapons[index];
+
+    if (pointer && pointer[1] & (1 << index)) { // respective mouse button press
+      const bullet = weaponSequence(player, tickLength);
+
+      if (bullet) {
+        bulletObjects.push(bullet[0]);
+        bulletSequences.push(bullet[1]);
+      }
+    }
+
+    // TODO: this will be reused by enemies
+    let bulletCount = bulletObjects.length;
+    while (bulletCount--) {
+      if (!bulletSequences[bulletCount](undefined, tickLength)) {
+        bulletObjects.splice(bulletCount, 1);
+        bulletSequences.splice(bulletCount, 1);
+      }
+    }
+  });
 };
 
-export const getShipObjects = ([ship]: PlayerState): OneOrMore<XOObject>[] =>
-  ship.weapons.reduce((objects, [, [, bullets]]) => {
+export const getShipObjects = (
+  [[body, weapons]]: PlayerState,
+): OneOrMore<XOObject>[] =>
+  weapons.reduce((objects, [[bullets]]) => {
     if (length(bullets)) objects.push(bullets as OneOrMore<XOObject>);
 
     return objects;
-  }, [[ship.body[0]]] as OneOrMore<XOObject>[]);
+  }, [[body[0]]] as OneOrMore<XOObject>[]);

@@ -24,31 +24,37 @@ export const GAME_DIFFICULTY_FALLOFF = 0.135;
 
 export const PLAYER_STATISTICS: PlayerStatistic[] = [
   ["Armor", 2, 1, 2],
+
   ["Armor Save", 0, 1, 0],
   ["Bullet Count", 2, 1, 1],
   ["Bullet Crit Chance", 0, 1, 0.05],
   ["Bullet Crit Damage", 0, 3, 1],
   ["Bullet Damage", 0, 2, 1],
+
   ["Bullet Lifetime", 0, 3, 1],
   ["Bullet Rate", 0, 2, 1],
   ["Bullet Spread", 0, 2, 1],
   ["Damage Taken", 1, 1, 1],
   ["Damage Taken From Fuel", 0, 1, 0],
+
   ["Fuel", 0, 2, 30],
   ["Fuel Cost", 1, 2, 0.1],
   ["Fuel Eject Delay", 2, 1, 0],
   ["Fuel Regen", 0, 2, 10],
   ["Item Mixture Quality", 0, 2, 1],
+
   ["Item Quality", 0, 2, 1],
   ["Level Quality", 0, 2, 1.2],
   ["Lowest Resource", 0, 2, 0],
   ["Mass", 0, 2, 1],
   ["Resolve", 0, 1, 0],
+
   ["Shield", 0, 2, 20],
   ["Shield Regen", 0, 2, 10],
   ["Spin Damage", 0, 2, 1],
   ["Spin Handling", 0, 2, 0.1],
   ["Spin Time", 0, 2, 1.5],
+
   ["Strafe Speed", 0, 2, 4],
   ["Track Speed", 0, 2, 0.8],
 ];
