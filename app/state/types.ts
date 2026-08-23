@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { XOObject, XYZ } from "~/3D";
+import { XOGeometry, XOMaterial, XOObject, XOOrientation, XYZ } from "~/3D";
 
 export type GameState = [player: PlayerState, world: WorldState];
 
@@ -106,7 +106,11 @@ export type Color = [
     health: number,
     speed: number,
     drop: number,
-    parts: ConstructorParameters<typeof XOObject>[],
+    objects: [
+      orientation?: XOOrientation,
+      geometry?: XOGeometry,
+      material?: XOMaterial,
+    ][],
   ],
   weapon: [
     count: number,

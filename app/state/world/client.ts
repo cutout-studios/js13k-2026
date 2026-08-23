@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { createPaintMaterialWithPalette as paint, XOObject, XYZ } from "~/3D";
+import {
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  XYZ,
+} from "~/3D";
 import { doTimes, repeat } from "~/common";
 
 const PORTRAIT_OFFSET = 81,
@@ -25,15 +29,17 @@ const PORTRAIT_OFFSET = 81,
   PORTRAIT_DATA =
     `CZ_Zd^CZd^ZaCZZaPkCZPkDeGJ-C0:DePkHq@lHqBwZad^PkGJCZ6NGJ6N-C@6C-T3@6T3R;R;T3u4R;u4r;;tBw6~Pkd^g_Pkg__gPk_gWjg_d^_ZGJUG_ZCZGJ_ZR;r;gRDeHq@l@lBw;tWj_g]rGJ0:@6gRg__ZUGgR_ZGJ@6R;R;gRUGGJR;UG0:$1$#$#C-@6~#y=u4~#u4T3$#@#C-0:$#@6~#~:y=@#~#T3C-@#T3`;
 
-export const portrait = new XOObject(
-  doTimes(PORTRAIT_DATA.length / 2, (index) => [
-    (PORTRAIT_DATA.charCodeAt(index * 2) - PORTRAIT_OFFSET) * PORTRAIT_SCALE,
-    (PORTRAIT_DATA.charCodeAt(index * 2 + 1) - PORTRAIT_OFFSET) *
-    PORTRAIT_SCALE,
-    -2,
-  ]),
-  PORTRAIT_POSITION,
-  undefined,
+export const portrait = createObject(
+  [PORTRAIT_POSITION],
+  [
+    0,
+    doTimes(PORTRAIT_DATA.length / 2, (index) => [
+      (PORTRAIT_DATA.charCodeAt(index * 2) - PORTRAIT_OFFSET) * PORTRAIT_SCALE,
+      (PORTRAIT_DATA.charCodeAt(index * 2 + 1) - PORTRAIT_OFFSET) *
+      PORTRAIT_SCALE,
+      -2,
+    ]),
+  ],
   paint(
     repeat(5, 0x121018),
     repeat(9, 0xE6E9F2),

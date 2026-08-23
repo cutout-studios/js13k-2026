@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
+import { doTimes, repeat } from "~/common";
 import { cos, PI, sin, TAU } from "~/alias";
 
 import { XYZ_LENGTH } from "./constants.ts";
-import type { XOGeometry, XYZ } from "./types.ts";
+import type { XYZ } from "./types.ts";
 
-const DEFAULT_SCALE = doTimes(XYZ_LENGTH, () => 1) as XYZ;
+const DEFAULT_SCALE = repeat(XYZ_LENGTH, 1) as XYZ;
 
 export const createTriangle = (
   p1: XYZ,
   p2: XYZ,
   p3: XYZ,
-): XOGeometry => [p1, p2, p3];
+): XYZ[] => [p1, p2, p3];
 
 export const createSquare = (
   p1: XYZ,
   p2: XYZ,
   p3: XYZ,
   p4: XYZ,
-): XOGeometry => [...createTriangle(p1, p2, p3), ...createTriangle(p1, p3, p4)];
+): XYZ[] => [...createTriangle(p1, p2, p3), ...createTriangle(p1, p3, p4)];
 
 export const createPyramid = (
   scale: XYZ = DEFAULT_SCALE,
   divisions = 4,
-): XOGeometry =>
+): XYZ[] =>
   _lathe([[0, -1], [_inscribe(divisions), -1], [0, 1]], scale, divisions);
 
 export const createPrism = (
   scale: XYZ = DEFAULT_SCALE,
   divisions = 4,
-): XOGeometry => {
+): XYZ[] => {
   const radius = _inscribe(divisions);
   return _lathe(
     [[0, -1], [radius, -1], [radius, 1], [0, 1]],
@@ -53,7 +53,7 @@ export const createPrism = (
   );
 };
 
-export const createSphere = (radius = 1, divisions = 10): XOGeometry =>
+export const createSphere = (radius = 1, divisions = 10): XYZ[] =>
   _lathe(
     doTimes(divisions + 1, (index) => {
       const phi = PI * (index / divisions - 0.5);
@@ -67,7 +67,7 @@ const _lathe = (
   edgeLoops: Array<[radius: number, distance: number]>,
   [scaleX, scaleY, scaleZ]: XYZ = DEFAULT_SCALE,
   loopDivisions = 4,
-): XOGeometry => {
+): XYZ[] => {
   const _getVertex = (loopIndex: number, divisionIndex: number): XYZ => {
     const [radius, distance] = edgeLoops[loopIndex],
       angle = TAU * (divisionIndex + 0.5) / loopDivisions;
@@ -78,7 +78,7 @@ const _lathe = (
     ];
   };
 
-  const result: XOGeometry = [];
+  const result: XYZ[] = [];
 
   doTimes(
     edgeLoops.length - 1,

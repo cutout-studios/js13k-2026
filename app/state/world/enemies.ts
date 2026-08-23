@@ -15,16 +15,20 @@
  */
 
 import {
+  createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
-  XOObject,
 } from "~/3D";
 import { Color } from "../types.ts";
 
-export const createEnemy = ([, paintHex, , [, , , , objectArgs]]: Color) => {
+export const createEnemy = (
+  [, paintHex, , [, , , , createObjectParameters]]: Color,
+) => {
   const object = flattenObjects(
-    ...objectArgs.map((args) => new XOObject(...args)),
+    ...createObjectParameters.map(([orientation, geometry, material]) =>
+      createObject(orientation, geometry, material)
+    ),
   );
-  object.material = paint(paintHex);
-  return { object };
+  object[2] = paint(paintHex);
+  return [object];
 };

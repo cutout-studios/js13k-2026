@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-import { createPrism, createPyramid, createSphere, Z_AXIS, X_AXIS } from "~/3D";
+import {
+  createPrism,
+  createPyramid,
+  createSphere,
+  X_AXIS,
+  XOGeometry,
+  Z_AXIS,
+} from "~/3D";
 import { Band } from "~/random";
 
 import { Color, PlayerStatistic } from "./types.ts";
@@ -65,21 +72,27 @@ export const COLOR_PURPLE: Color = [
   "Purple",
   0x8434D4,
   1,
-  [3, 2, 0, 3, [[createPyramid([0.25, 0.25, 0.125])]]],
+  [3, 2, 0, 3, [
+    [[], [0.375, createPyramid([0.25, 0.25, 0.125])]],
+  ]],
   [1, 3, 3, 0, 0, 2, 0],
   // itemQuality, levelQuality, bulletCritChance, bulletCritDamage
   [[16, 17, 3, 4]],
 ];
 
-const GREEN_PRONG = createPyramid([0.065, 0.065, 0.095], 12);
+const GREEN_PRONG = [
+  0.12,
+  createPyramid([0.065, 0.065, 0.095], 12),
+] as XOGeometry;
+
 export const COLOR_GREEN: Color = [
   "Green",
   0xA0DD27,
   1,
   [4, 2, 3, 2, [
-    [createSphere(0.20, 24)],
-    [GREEN_PRONG, [0.2, -0.08, 0.15], [[0, 1, -1], 1.25]],
-    [GREEN_PRONG, [-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]],
+    [[], [0.2, createSphere(0.20, 24)]],
+    [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
+    [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
   ]],
   [1, 1, 3, 3, 0, 0, 0],
   [
@@ -96,8 +109,11 @@ export const COLOR_BLUE: Color = [
   0x29A9D4,
   3,
   [1, 4, 1, 4, [
-    [createSphere(0.52, 32)],
-    [createPrism([0.09, 0.09, 0.03], 16), [0, -0.30, 0.42], [X_AXIS, 0.57]],
+    [[], [0.52, createSphere(0.52, 32)]],
+    [
+      [[0, -0.30, 0.42], [X_AXIS, 0.57]],
+      [0.1, createPrism([0.09, 0.09, 0.03], 16)],
+    ],
   ]],
   [1, 1, 2, 1, 1, 0, 0],
   [
@@ -113,7 +129,9 @@ export const COLOR_PINK: Color = [
   "Pink",
   0xD4349F,
   1,
-  [9, 1, 2, 1, [[createSphere(0.10, 20)]]],
+  [9, 1, 2, 1, [
+    [[], [0.1, createSphere(0.10, 20)]],
+  ]],
   [9, 1, 1, 1, 0, 1, 2],
   [
     [15, 2, 1], // itemMixtureQuality, bulletCount, armorSave
@@ -128,10 +146,12 @@ export const COLOR_RED: Color = [
   "Red",
   0xEE3030,
   2,
-  [3, 2, 2, 2, [[createPyramid([0.11, 0.09, 0.4], 3), undefined, [
-    Z_AXIS,
-    -1.61,
-  ]]]],
+  [3, 2, 2, 2, [
+    [
+      [undefined, [Z_AXIS, -1.61]],
+      [0.46, createPyramid([0.11, 0.09, 0.4], 3)],
+    ],
+  ]],
   [2, 2, 2, 2, 0, 1, 1],
   [
     [5, 7, 11], // bulletDamage, bulletRate, fuel
@@ -142,16 +162,16 @@ export const COLOR_RED: Color = [
   ],
 ];
 
-const YELLOW_ARM = createPrism([0.2, 0.012, 0.15]);
+const YELLOW_ARM = [0.32, createPrism([0.2, 0.012, 0.15])] as XOGeometry;
 export const COLOR_YELLOW: Color = [
   "Yellow",
   0xF4AD32,
   2,
   [2, 3, 3, 2, [
-    [YELLOW_ARM, [0.19, -0.04, 0], [Z_AXIS, -0.3]],
-    [YELLOW_ARM, [-0.19, -0.04, 0], [Z_AXIS, 0.3]],
-    [YELLOW_ARM, [0.52, 0.02, 0], [Z_AXIS, 0.65]],
-    [YELLOW_ARM, [-0.52, 0.02, 0], [Z_AXIS, -0.65]],
+    [[[0.19, -0.04, 0], [Z_AXIS, -0.3]], YELLOW_ARM],
+    [[[-0.19, -0.04, 0], [Z_AXIS, 0.3]], YELLOW_ARM],
+    [[[0.52, 0.02, 0], [Z_AXIS, 0.65]], YELLOW_ARM],
+    [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], YELLOW_ARM],
   ]],
   [1, 2, 0, 1, 0, 2, 2],
   [

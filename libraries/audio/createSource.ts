@@ -25,7 +25,9 @@ import { Source } from "./types.ts";
 
 export const NOISE_BUFFER = api.createBuffer(1, api.sampleRate, api.sampleRate);
 
-NOISE_BUFFER.getChannelData(0).set(doTimes(api.sampleRate, () => random() * 2 - 1));
+NOISE_BUFFER.getChannelData(0).set(
+  doTimes(api.sampleRate, () => random() * 2 - 1),
+);
 
 export const createSource = (
   type: OscillatorType | AudioBuffer,
@@ -36,7 +38,7 @@ export const createSource = (
     duration,
     delay = 0,
     pan = 0,
-    velocity = 1
+    velocity = 1,
   ) => {
     for (const frequency of frequencies) {
       const startTime = api.currentTime + delay;

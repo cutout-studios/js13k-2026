@@ -25,27 +25,36 @@ import { hud } from "./elements/hud.ts";
 import state, { getScene, updateGame } from "./state/module.ts";
 import { COLORS } from "./state/constants.ts";
 import { createEnemy } from "./state/world/enemies.ts";
+import { setOrigin } from "../libraries/3D/coordinates.ts";
 
 document.head.append(createElement("style", undefined, {
   textContent: /* css */ `
-    html,body,body *{
-      box-sizing:border-box;
-      padding:0;
-      margin:0;
-      font-family:Menlo,ui-monospace;
-      font-size:16px;
-      color:white;
-      list-style-type:none;
+    html, body, body * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      font-family: Menlo, ui-monospace;
+      font-size: 16px;
+      color: white;
+      list-style-type: none;
     }
-    body{position:relative;width:100vw;height:100svh;}
-    dialog::backdrop {background:#000c;}`
+
+    body {
+      position: relative;
+      width: 100vw;
+      height: 100svh;
+    }
+
+    dialog::backdrop {
+      background: #000c;
+    }`,
 }));
 
 const enemies = doTimes(4, (x) =>
   doTimes(4, (y) => {
-    const { object } = createEnemy(COLORS[2]);
+    const [object] = createEnemy(COLORS[2]);
 
-    object.position = [2 * x - 3, 2 * y - 3, -10];
+    object[0] = setOrigin(object[0], [2 * x - 3, 2 * y - 3, -10]);
 
     return object;
   })).flat() as OneOrMore<XOObject>;

@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-export {
-  type RGBA,
-  type XOGeometry,
-  type XOMaterial,
-  type XYZ,
+export type {
+  RGBA,
+  XOGeometry,
+  XOMaterial,
+  XOObject,
+  XOOrientation,
+  XYZ,
 } from "./types.ts";
 
 export {
@@ -31,9 +33,14 @@ export {
 
 export { setupDevice } from "./webgpu/setupDevice.ts";
 export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
-export { flatten as flattenObjects, XOObject } from "./objects.ts";
+export {
+  adjustObject,
+  aimObject,
+  createObject,
+  flattenObjects,
+} from "./objects.ts";
 export { createCamera } from "./camera.ts";
-export { createCoordinates } from "./coordinates.ts";
+export { createCoordinates, readOrigin, setOrigin } from "./coordinates.ts";
 export { createPrism, createPyramid, createSphere } from "./geometry.ts";
 export {
   create as createPaintMaterial,

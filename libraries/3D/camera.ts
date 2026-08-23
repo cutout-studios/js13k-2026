@@ -23,7 +23,7 @@ import {
   COORDINATE_DATA_LENGTH,
 } from "./constants.ts";
 import { loadObject } from "./webgpu/loadObject.ts";
-import { XOObject } from "./objects.ts";
+import { XOObject } from "./types.ts";
 import { localize } from "./coordinates.ts";
 import { memo, OneOrMore } from "~/common";
 
@@ -54,18 +54,17 @@ export const createCamera = (
       }
 
       for (const group of objectGroups) {
-        const [{ geometry, material }] = group;
+        const [[, geometry, material]] = group;
 
-        // skip null/invisible objects
-        if (!geometry || !material) continue;
+        // skip invisible objects
+        if (!material) continue;
 
         loadObject(
           process,
-          geometry,
           group.reduce(
-            (buffer, object, index) => {
+            (buffer, [coordinates], index) => {
               buffer.set(
-                localize(object.coordinates, viewingCoordinates),
+                localize(coordinates, viewingCoordinates),
                 index * COORDINATE_DATA_LENGTH,
               );
 
@@ -73,10 +72,11 @@ export const createCamera = (
             },
             _getStableCoordinateBuffer(group),
           ),
+          geometry,
           material,
         );
 
-        process.draw(geometry.length, min(group.length, objectLimit));
+        process.draw(geometry[1].length, min(group.length, objectLimit));
       }
     });
 };

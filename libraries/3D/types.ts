@@ -18,8 +18,15 @@ export type XYZ = [x: number, y: number, z: number];
 export type RGBA = [r: number, g: number, b: number, a: number];
 export type AxisAngle = [axis: XYZ, angle: number];
 
-export type XOGeometry = XYZ[];
+export type XOOrientation = [position?: XYZ, rotation?: AxisAngle];
+
+export type XOGeometry = [radius: number, verticies: XYZ[]];
 export type XOMaterial = [code: string, data: Float32Array];
+export type XOObject = [
+  coordinates: Float32Array,
+  geometry: XOGeometry,
+  material?: XOMaterial,
+];
 
 export type GPUDataContainer = [buffer: GPUBuffer, bindGroup: GPUBindGroup];
 export type GPURenderTarget = {

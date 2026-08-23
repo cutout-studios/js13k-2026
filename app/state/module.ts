@@ -17,6 +17,7 @@
 import { PI } from "~/alias";
 import { OneOrMore, repeat } from "~/common";
 import {
+  createObject,
   createPaintMaterialWithPalette as paint,
   XOObject,
   Y_AXIS,
@@ -37,11 +38,9 @@ const state: GameState = [
   [ // player
     [ // ship
       [ // body
-        // object
-        new XOObject(
-          PLAYER_SHIP_SHAPE,
-          [0, 0, -PLAYER_SHIP_DISTANCE],
-          [Y_AXIS, PI],
+        createObject(
+          [[0, 0, -PLAYER_SHIP_DISTANCE], [Y_AXIS, PI]],
+          [0, PLAYER_SHIP_SHAPE],
           paint(0xFFFFFF),
         ),
 

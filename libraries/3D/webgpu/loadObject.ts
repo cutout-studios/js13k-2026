@@ -27,8 +27,8 @@ import { getRenderPipeline } from "./getRenderPipeline.ts";
 import { coordinatesLayout, materialsLayout } from "./setupDevice.ts";
 import { F32 } from "~/alias";
 
-const _allocateGeometryBuffer = memo((geometry: XOGeometry) => {
-  const geometryData = new F32(geometry.flat());
+const _allocateGeometryBuffer = memo(([, vertices]: XOGeometry) => {
+  const geometryData = new F32(vertices.flat());
 
   const buffer = device.createBuffer({
     size: geometryData.byteLength,
@@ -84,8 +84,8 @@ const _getDataContainer = (
 
 export const loadObject = (
   renderPass: GPURenderPassEncoder,
-  geometry: XOGeometry,
   coordinates: Float32Array,
+  geometry: XOGeometry,
   material: XOMaterial,
 ) => {
   renderPass.setVertexBuffer(0, _allocateGeometryBuffer(geometry));

@@ -15,9 +15,16 @@
  */
 
 import { doTimes } from "~/common";
-import { F32, hypot } from "~/alias";
+import { F32, hypot, max } from "~/alias";
+import { create as createPaintMaterial } from "./materials/paint.ts";
 
-import type { AxisAngle, XOGeometry, XOMaterial, XYZ } from "./types.ts";
+import type {
+  XOGeometry,
+  XOMaterial,
+  XOObject,
+  XOOrientation,
+  XYZ,
+} from "./types.ts";
 import {
   COORDINATE_SIDE_LENGTH,
   RGBA_LENGTH,
@@ -28,119 +35,96 @@ import {
   createCoordinates,
   createRotation,
   localize,
+  POSITION_INDEX,
   readOrigin,
+  setOrigin,
 } from "./coordinates.ts";
-import { createPaintMaterial, subtractXYZ } from "~/3D";
 import { cross, normalize, subtract } from "./xyz.ts";
 
-const POSITION_INDEX = 12;
+export const createObject = (
+  [position, rotation]: XOOrientation = [],
+  geometry: XOGeometry = [0, []],
+  material?: XOMaterial,
+): XOObject => [
+  setOrigin(createRotation(rotation), position),
+  geometry,
+  material,
+];
+
+export const adjustObject = (
+  object: XOObject,
+  [position, rotation]: XOOrientation,
+) => {
+  if (position) {
+    doTimes(
+      XYZ_LENGTH,
+      (index) => object[0][POSITION_INDEX + index] += position[index],
+    );
+  }
+
+  if (rotation) object[0] = localize(createRotation(rotation), object[0]);
+};
+
+export const aimObject = (object: XOObject, heading: XYZ) => {
+  const origin = readOrigin(object[0]),
+    zAxis = normalize(subtract(heading, origin)),
+    right = normalize(cross(Y_AXIS, zAxis));
+  object[0] = createCoordinates(right, cross(zAxis, right), zAxis, origin);
+};
+
+// CRUCIAL NOTE!!: assumes all materials are paint materials
+export const flattenObjects = (...objects: XOObject[]): XOObject => {
+  const vertices = objects.flatMap(([coordinates, [, verticies = []]]) =>
+    verticies.map(([x, y, z]) =>
+      doTimes(XYZ_LENGTH, (row) =>
+        coordinates[row] * x +
+        coordinates[COORDINATE_SIDE_LENGTH + row] * y +
+        coordinates[COORDINATE_SIDE_LENGTH * 2 + row] * z +
+        coordinates[POSITION_INDEX + row]) as XYZ
+    )
+  );
+
+  return [
+    createRotation(),
+    [
+      objects.reduce(
+        (radius, [coordinates, [partRadius]]) =>
+          max(radius, hypot(...readOrigin(coordinates)) + partRadius),
+        0,
+      ),
+      vertices,
+    ],
+    createPaintMaterial(
+      new F32(
+        objects.flatMap(([, [, verticies = []], [, data = new F32()] = []]) =>
+          doTimes(
+            verticies.length / XYZ_LENGTH * RGBA_LENGTH,
+            (index) => data[index % data.length],
+          )
+        ),
+      ),
+    ),
+  ];
+};
 
 export const getCollisionPairs = (
-  objectGroup1: XOObject[],
-  objectGroup2: XOObject[],
+  group1: XOObject[],
+  group2: XOObject[],
 ) => {
   const result: [XOObject, XOObject][] = [];
 
-  for (const object1 of objectGroup1) {
-    for (const object2 of objectGroup2) {
+  for (const object1 of group1) {
+    for (const object2 of group2) {
+      const [coord1, [radius1]] = object1, [coord2, [radius2]] = object2;
+
       if (
-        hypot(...subtractXYZ(object1.position, object2.position)) <
-          object1.radius + object2.radius
-      ) {
-        result.push([object1, object2]);
-      }
+        hypot(...subtract(readOrigin(coord1), readOrigin(coord2))) >=
+          radius1 + radius2
+      ) continue;
+
+      result.push([object1, object2]);
     }
   }
 
   return result;
 };
-
-export class XOObject {
-  geometry?: XOGeometry;
-  material?: XOMaterial;
-  coordinates: Float32Array;
-  radius: number;
-
-  constructor(
-    geometry?: XOGeometry,
-    position?: XYZ,
-    rotation?: AxisAngle,
-    material?: XOMaterial,
-    radius = 0,
-  ) {
-    this.geometry = geometry;
-    this.material = material;
-    this.radius = radius;
-    this.coordinates = createRotation(rotation);
-
-    if (position) this.position = position;
-  }
-
-  get position() {
-    return readOrigin(this.coordinates);
-  }
-
-  set position(input: XYZ) {
-    this.coordinates.set(input, POSITION_INDEX);
-  }
-
-  set rotation(input: AxisAngle) {
-    const next = createRotation(input);
-
-    next.set(this.position, POSITION_INDEX);
-
-    this.coordinates = next;
-  }
-
-  adjust(position?: XYZ, rotation?: AxisAngle) {
-    if (position) {
-      doTimes(
-        XYZ_LENGTH,
-        (index) => this.coordinates[POSITION_INDEX + index] += position[index],
-      );
-    }
-
-    if (rotation) {
-      this.coordinates = localize(createRotation(rotation), this.coordinates);
-    }
-  }
-
-  aim(heading: XYZ) {
-    const zAxis = normalize(subtract(heading, this.position)),
-      right = normalize(cross(Y_AXIS, zAxis)),
-      up = cross(zAxis, right);
-
-    this.coordinates = createCoordinates(
-      right,
-      up,
-      zAxis,
-      this.position,
-    );
-  }
-}
-
-// CRUCIAL NOTE!!: assumes all materials are paint materials
-export const flatten = (
-  ...objects: Array<XOObject>
-): XOObject =>
-  new XOObject(
-    objects.flatMap(({ geometry, coordinates }) =>
-      (geometry ?? []).map(([x, y, z]) =>
-        doTimes(XYZ_LENGTH, (row) =>
-          coordinates[row] * x +
-          coordinates[COORDINATE_SIDE_LENGTH + row] * y +
-          coordinates[COORDINATE_SIDE_LENGTH * 2 + row] * z +
-          coordinates[POSITION_INDEX + row]) as XYZ
-      )
-    ),
-    undefined,
-    undefined,
-    createPaintMaterial(
-      new F32(
-        objects.flatMap(({ geometry, material: [, , data = new F32()] = [] }) =>
-          doTimes((geometry ?? []).length / 3 * RGBA_LENGTH, (index) =>
-            data[index % data.length])
-        ),
-      ),
-    ),
-  );

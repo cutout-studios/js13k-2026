@@ -1,9 +1,16 @@
 import { cos, F32, sin } from "~/alias";
 
 import type { XYZ } from "./types.ts";
-import { COORDINATE_SIDE_LENGTH, X_AXIS, Y_AXIS, Z_AXIS } from "./constants.ts";
+import {
+  COORDINATE_SIDE_LENGTH,
+  X_AXIS,
+  XYZ_LENGTH,
+  Y_AXIS,
+  Z_AXIS,
+} from "./constants.ts";
 
 import { normalize } from "./xyz.ts";
+import { repeat } from "~/common";
 
 export const createCoordinates = (
   xAxis: XYZ = X_AXIS,
@@ -51,5 +58,16 @@ export const localize = (fromChild: Float32Array, toParent: Float32Array) => {
   return result;
 };
 
+export const POSITION_INDEX = 12;
+
 export const readOrigin = (coordinates: Float32Array): XYZ =>
-  [...coordinates.subarray(12, 15)] as XYZ;
+  [...coordinates.subarray(POSITION_INDEX, POSITION_INDEX + XYZ_LENGTH)] as XYZ;
+
+export const setOrigin = (
+  coordinates: Float32Array,
+  position = repeat(XYZ_LENGTH, 0) as XYZ,
+): Float32Array => {
+  coordinates.set(position, POSITION_INDEX);
+
+  return coordinates;
+};

@@ -17,7 +17,14 @@
 import { hypot, length, max } from "~/alias";
 import { doTimes, OneOrMore } from "~/common";
 import { keyboard, pointer } from "~/controller";
-import { scaleXYZ, XOObject, XYZ, XYZ_LENGTH } from "~/3D";
+import {
+  adjustObject,
+  aimObject,
+  scaleXYZ,
+  XOObject,
+  XYZ,
+  XYZ_LENGTH,
+} from "~/3D";
 import { approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
@@ -42,12 +49,10 @@ export const updateShip = (player: PlayerState, tickLength: number) => {
     strafeMagnitudes[index >> 1] += index & 1 ? -value : value;
   });
 
-  body[0].adjust(
-    scaleXYZ(
-      strafeMagnitudes,
-      sheet[26] * tickLength / max(1, hypot(...strafeMagnitudes)),
-    ),
-  );
+  adjustObject(body[0], [scaleXYZ(
+    strafeMagnitudes,
+    sheet[26] * tickLength / max(1, hypot(...strafeMagnitudes)),
+  )]);
 
   if (pointer) {
     const target = mapClientXY(pointer[0]);
@@ -63,7 +68,7 @@ export const updateShip = (player: PlayerState, tickLength: number) => {
         ),
     ) as XYZ;
 
-    body[0].aim(body[1]);
+    aimObject(body[0], body[1]);
   }
 
   doTimes(2, (index) => {

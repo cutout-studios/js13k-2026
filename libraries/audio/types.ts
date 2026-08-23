@@ -19,5 +19,5 @@ export type Source = (
   duration: number,
   delay?: number,
   pan?: number,
-  velocity?: number
+  velocity?: number,
 ) => void;

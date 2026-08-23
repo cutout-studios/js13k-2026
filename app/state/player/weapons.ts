@@ -18,9 +18,9 @@ import {
   createPaintMaterialWithPalette as paint,
   createPrism,
   normalizeXYZ,
+  readOrigin,
   scaleXYZ,
   subtractXYZ,
-  XOObject,
 } from "~/3D";
 
 import { range } from "~/random";
@@ -29,12 +29,20 @@ import { createActionSequence } from "~/clock";
 import { createAudioSource, NOISE_BUFFER } from "~/audio";
 
 import { BulletState, PlayerState, WeaponState } from "../types.ts";
+import {
+  adjustObject,
+  aimObject,
+  createObject,
+} from "../../../libraries/3D/objects.ts";
 
 const BULLET_SPEED_COEFFICIENT = 25,
-DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
-DEFAULT_BULLET_PAINT = paint(0xFFE900),
-DEFAULT_BULLET_SOUND_BASS = createAudioSource("sine"),
-DEFAULT_BULLET_SOUND_BANG = createAudioSource(NOISE_BUFFER,  [[() => 1, 0.01], [() => 0.2, 0.05]]);
+  DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
+  DEFAULT_BULLET_PAINT = paint(0xFFE900),
+  DEFAULT_BULLET_SOUND_BASS = createAudioSource("sine"),
+  DEFAULT_BULLET_SOUND_BANG = createAudioSource(NOISE_BUFFER, [
+    [() => 1, 0.01],
+    [() => 0.2, 0.05],
+  ]);
 
 // TODO: only "default weapons" for now
 export const createWeaponState = (): WeaponState => {
@@ -42,11 +50,22 @@ export const createWeaponState = (): WeaponState => {
     [[], []],
     createActionSequence(
       [[(player: PlayerState) => {
-        const [[[object]]] = player;
+        const [[[[coordinates]]]] = player;
 
         // TODO: "group" audio sources
-        DEFAULT_BULLET_SOUND_BASS([range(75, 85)], 0.15, 0, object.position[0] / 5, 0.2);
-        DEFAULT_BULLET_SOUND_BANG([range(800, 1000)], 0.15, 0, object.position[0] / 5);  // TODO: derive window sides & clamp
+        DEFAULT_BULLET_SOUND_BASS(
+          [range(75, 85)],
+          0.15,
+          0,
+          readOrigin(coordinates)[0] / 5,
+          0.2,
+        );
+        DEFAULT_BULLET_SOUND_BANG(
+          [range(800, 1000)],
+          0.15,
+          0,
+          readOrigin(coordinates)[0] / 5,
+        ); // TODO: derive window sides & clamp
 
         return createBulletState(player);
       }], [
@@ -61,22 +80,22 @@ export const createWeaponState = (): WeaponState => {
 export const createBulletState = (
   [[[object, aim]]]: PlayerState,
 ): BulletState => {
-  const bullet = new XOObject(
-    DEFAULT_BULLET_SHAPE,
-    object.position,
-    undefined,
+  const bullet = createObject(
+    [readOrigin(object[0])],
+    [0, DEFAULT_BULLET_SHAPE],
     DEFAULT_BULLET_PAINT,
   );
 
-  bullet.aim(aim);
+  aimObject(bullet, aim);
 
-  const direction = normalizeXYZ(subtractXYZ(aim, object.position));
+  const direction = normalizeXYZ(subtractXYZ(aim, readOrigin(object[0])));
   return [
     bullet,
     createActionSequence([[
       (_, tickLength) =>
-        bullet.adjust(
-          scaleXYZ(direction, tickLength * BULLET_SPEED_COEFFICIENT),
+        adjustObject(
+          bullet,
+          [scaleXYZ(direction, tickLength * BULLET_SPEED_COEFFICIENT)],
         ) ?? tickLength,
       1,
     ]]),

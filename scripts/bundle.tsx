@@ -22,7 +22,7 @@ import { minify } from "esbuild-minify-templates";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
-const ESTIMATED_RECLAIMABLE_BYTES = 500;
+const ESTIMATED_RECLAIMABLE_BYTES = 250;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
@@ -34,52 +34,7 @@ const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}`;
 const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
   `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_COMPRESSED_FILE}`;
 
-const PROPS_TO_MANGLE = [
-  "aim",
-  "activeInputs",
-  "adjust",
-  "affix",
-  "attribute",
-  "rotationCoordinates",
-  "coordinates",
-  "cost",
-  "damage",
-  "density",
-  "drop",
-  "element",
-  "enemy",
-  "engine",
-  "geometry",
-  "global",
-  "health",
-  "life",
-  "localize",
-  "makePerspectiveCoordinates",
-  "makePositionCoordinates",
-  "makeRotationCoordinates",
-  "mass",
-  "material",
-  "origin",
-  "orthonormalInverse",
-  "parsePart",
-  "parseScore",
-  "pointers",
-  "positionCoordinates",
-  "rate",
-  "readLine",
-  "render",
-  "root",
-  "rotation",
-  "safetyCropDistance",
-  "score",
-  "speed",
-  "stack",
-  "viewingRadians",
-  "weapon",
-  "xAxis",
-  "yAxis",
-  "zAxis",
-];
+const PROPS_TO_MANGLE = [] as string[];
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
@@ -170,7 +125,9 @@ function logSize(filePath: string, customMessage?: string) {
   console.log(
     `%c${customMessage ?? filePath}: %c${size} / ${JS13K_LIMIT} %c(${
       ((size / JS13K_LIMIT) * 100).toFixed(2)
-    }%, ${JS13K_LIMIT - size} bytes remaining + ~${ESTIMATED_RECLAIMABLE_BYTES} to reclaim)`,
+    }%, ${
+      JS13K_LIMIT - size
+    } bytes remaining + ~${ESTIMATED_RECLAIMABLE_BYTES} to reclaim)`,
     "color: grey;",
     "color: cyan;",
     "color: white;",
