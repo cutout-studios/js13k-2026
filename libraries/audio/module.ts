@@ -15,4 +15,4 @@
  */
 
 export { XOMusicBox } from "./musicBox.ts";
-export { createSource as createAudioSource } from "./createSource.ts";
+export { createSource as createAudioSource, NOISE_BUFFER } from "./createSource.ts";

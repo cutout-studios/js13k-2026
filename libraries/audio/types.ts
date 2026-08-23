@@ -17,6 +17,7 @@
 export type Source = (
   frequencies: number[],
   duration: number,
-  delay: number,
-  pan: number,
+  delay?: number,
+  pan?: number,
+  velocity?: number
 ) => void;

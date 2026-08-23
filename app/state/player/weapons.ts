@@ -23,15 +23,19 @@ import {
   XOObject,
 } from "~/3D";
 
+import { range } from "~/random";
+
 import { createActionSequence } from "~/clock";
-import { createAudioSource } from "~/audio";
+import { createAudioSource, NOISE_BUFFER } from "~/audio";
 
 import { BulletState, PlayerState, WeaponState } from "../types.ts";
 
 const BULLET_SPEED_COEFFICIENT = 25,
-  DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
-  DEFAULT_BULLET_PAINT = paint(0xFFE900),
-  DEFAULT_BULLET_SOUND_BASS = createAudioSource("sine");
+DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
+DEFAULT_BULLET_PAINT = paint(0xFFE900),
+DEFAULT_BULLET_SOUND_BASS = createAudioSource("sine"),
+DEFAULT_BULLET_SOUND_BANG = createAudioSource(NOISE_BUFFER,  [[() => 1, 0.01], [() => 0.2, 0.05]]);
+
 // TODO: only "default weapons" for now
 export const createWeaponState = (): WeaponState => {
   return [
@@ -40,12 +44,14 @@ export const createWeaponState = (): WeaponState => {
       [[(player: PlayerState) => {
         const [[[object]]] = player;
 
-        DEFAULT_BULLET_SOUND_BASS([80], 0.15, 0, object.position[0] / 5); // TODO: derive
+        // TODO: "group" audio sources
+        DEFAULT_BULLET_SOUND_BASS([range(75, 85)], 0.15, 0, object.position[0] / 5, 0.2);
+        DEFAULT_BULLET_SOUND_BANG([range(800, 1000)], 0.15, 0, object.position[0] / 5);  // TODO: derive window sides & clamp
 
         return createBulletState(player);
       }], [
         () => undefined,
-        0.25,
+        0.1,
       ]],
       Infinity,
     ),
