@@ -14,38 +14,41 @@
  * limitations under the License.
  */
 
+import { doTimes, OneOrMore } from "~/common";
 import { document } from "~/alias";
 import { startClock } from "~/clock";
-import { setupDevice } from "~/3D";
-
+import { setupDevice, XOObject } from "~/3D";
 import { createElement } from "~/dom";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud } from "./elements/hud.ts";
 import state, { getScene, updateGame } from "./state/module.ts";
+import { COLORS } from "./state/constants.ts";
+import { createEnemy } from "./state/world/enemies.ts";
 
 document.head.append(createElement("style", undefined, {
   textContent: /* css */ `
-    html, body, body * {
-      box-sizing: border-box;
-      padding: 0;
-      margin: 0;
-      font-family: Menlo, ui-monospace;
-      font-size: 16px;
-      color: white;
-      list-style-type: none;
+    html,body,body *{
+      box-sizing:border-box;
+      padding:0;
+      margin:0;
+      font-family:Menlo,ui-monospace;
+      font-size:16px;
+      color:white;
+      list-style-type:none;
     }
-
-    body {
-      position: relative;
-      width: 100vw;
-      height: 100svh;
-    }
-
-    dialog::backdrop {
-      background: #000c;
-    }`,
+    body{position:relative;width:100vw;height:100svh;}
+    dialog::backdrop {background:#000c;}`
 }));
+
+const enemies = doTimes(4, (x) =>
+  doTimes(4, (y) => {
+    const { object } = createEnemy(COLORS[2]);
+
+    object.position = [2 * x - 3, 2 * y - 3, -10];
+
+    return object;
+  })).flat() as OneOrMore<XOObject>;
 
 onload = async () => {
   await setupDevice();
@@ -55,6 +58,6 @@ onload = async () => {
   startClock((tickLength) => {
     updateGame(state, tickLength);
 
-    renderMain(getScene(state));
+    renderMain([...getScene(state), enemies]);
   });
 };

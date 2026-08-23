@@ -15,7 +15,7 @@
  */
 
 import { doTimes } from "~/common";
-import { F32 } from "~/alias";
+import { F32, hypot } from "~/alias";
 
 import type { AxisAngle, XOGeometry, XOMaterial, XYZ } from "./types.ts";
 import {
@@ -30,24 +30,47 @@ import {
   localize,
   readOrigin,
 } from "./coordinates.ts";
-import { createPaintMaterial } from "~/3D";
+import { createPaintMaterial, subtractXYZ } from "~/3D";
 import { cross, normalize, subtract } from "./xyz.ts";
 
 const POSITION_INDEX = 12;
+
+export const getCollisionPairs = (
+  objectGroup1: XOObject[],
+  objectGroup2: XOObject[],
+) => {
+  const result: [XOObject, XOObject][] = [];
+
+  for (const object1 of objectGroup1) {
+    for (const object2 of objectGroup2) {
+      if (
+        hypot(...subtractXYZ(object1.position, object2.position)) <
+          object1.radius + object2.radius
+      ) {
+        result.push([object1, object2]);
+      }
+    }
+  }
+
+  return result;
+};
 
 export class XOObject {
   geometry?: XOGeometry;
   material?: XOMaterial;
   coordinates: Float32Array;
+  radius: number;
 
   constructor(
     geometry?: XOGeometry,
     position?: XYZ,
     rotation?: AxisAngle,
     material?: XOMaterial,
+    radius = 0,
   ) {
     this.geometry = geometry;
     this.material = material;
+    this.radius = radius;
     this.coordinates = createRotation(rotation);
 
     if (position) this.position = position;

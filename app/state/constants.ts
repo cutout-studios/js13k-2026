@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { createPrism, createPyramid, createSphere, Z_AXIS } from "~/3D";
+import { createPrism, createPyramid, createSphere, Z_AXIS, X_AXIS } from "~/3D";
 import { Band } from "~/random";
 
 import { Color, PlayerStatistic } from "./types.ts";
-import { X_AXIS } from "../../libraries/3D/constants.ts";
 
 export const GAME_DIFFICULTY_FALLOFF = 0.135;
 

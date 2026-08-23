@@ -22,6 +22,7 @@ import { minify } from "esbuild-minify-templates";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
+const ESTIMATED_RECLAIMABLE_BYTES = 500;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
@@ -34,6 +35,7 @@ const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
   `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_COMPRESSED_FILE}`;
 
 const PROPS_TO_MANGLE = [
+  "aim",
   "activeInputs",
   "adjust",
   "affix",
@@ -168,7 +170,7 @@ function logSize(filePath: string, customMessage?: string) {
   console.log(
     `%c${customMessage ?? filePath}: %c${size} / ${JS13K_LIMIT} %c(${
       ((size / JS13K_LIMIT) * 100).toFixed(2)
-    }%, ${JS13K_LIMIT - size} bytes remaining)`,
+    }%, ${JS13K_LIMIT - size} bytes remaining + ~${ESTIMATED_RECLAIMABLE_BYTES} to reclaim)`,
     "color: grey;",
     "color: cyan;",
     "color: white;",
