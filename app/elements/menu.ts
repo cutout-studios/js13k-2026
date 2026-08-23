@@ -40,6 +40,7 @@ export const menu = createElement(
   "dialog",
   [PADDED_FLEX_ROW, FLEX_CENTER, {
     margin: "auto",
+    background: "black",
     gap: "2rem",
   }],
   undefined,
@@ -85,7 +86,7 @@ export const menu = createElement(
       undefined,
       createElement(
         "canvas",
-        [clientSize],
+        [clientSize, { background: "black" }],
       ),
     ),
   ),

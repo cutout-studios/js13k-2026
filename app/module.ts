@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-import { doTimes, OneOrMore } from "~/common";
 import { document } from "~/alias";
 import { startClock } from "~/clock";
-import { setupDevice, XOObject } from "~/3D";
+import { setupDevice } from "~/3D";
 import { createElement } from "~/dom";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud } from "./elements/hud.ts";
 import state, { getScene, updateGame } from "./state/module.ts";
-import { COLORS } from "./state/constants.ts";
-import { createEnemy } from "./state/world/enemies.ts";
-import { setOrigin } from "../libraries/3D/coordinates.ts";
+import { menu, openMenu } from "./elements/menu.ts";
 
 document.head.append(createElement("style", undefined, {
   textContent: /* css */ `
@@ -50,23 +47,18 @@ document.head.append(createElement("style", undefined, {
     }`,
 }));
 
-const enemies = doTimes(4, (x) =>
-  doTimes(4, (y) => {
-    const [object] = createEnemy(COLORS[2]);
-
-    object[0] = setOrigin(object[0], [2 * x - 3, 2 * y - 3, -10]);
-
-    return object;
-  })).flat() as OneOrMore<XOObject>;
-
 onload = async () => {
   await setupDevice();
 
-  [hud, mainCanvas].forEach((element) => document.body.appendChild(element));
+  [hud, mainCanvas, menu].forEach((element) =>
+    document.body.appendChild(element)
+  );
+
+  // openMenu();
 
   startClock((tickLength) => {
     updateGame(state, tickLength);
 
-    renderMain([...getScene(state), enemies]);
+    renderMain(getScene(state));
   });
 };

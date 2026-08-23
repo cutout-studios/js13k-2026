@@ -26,10 +26,10 @@ import {
   JUSTIFY,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
-import { PLAYER_STATISTICS } from "../state/constants.ts";
+import { PLAYER_SHEET_OPTIONS } from "../state/constants.ts";
 
 const [DEFAULT_ARMOR, DEFAULT_FUEL, DEFAULT_SHIELD] = [0, 11, 21].map((index) =>
-  PLAYER_STATISTICS[index][3] as number
+  PLAYER_SHEET_OPTIONS[index][3] as number
 );
 
 const _createMeter = (

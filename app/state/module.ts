@@ -15,7 +15,7 @@
  */
 
 import { PI } from "~/alias";
-import { OneOrMore, repeat } from "~/common";
+import { repeat } from "~/common";
 import {
   createObject,
   createPaintMaterialWithPalette as paint,
@@ -31,6 +31,7 @@ import { PLAYER_SHIP_DISTANCE, PLAYER_SHIP_SHAPE } from "./constants.ts";
 import { getShipObjects, updateShip } from "./player/ship.ts";
 import { getSheet } from "./player/sheet.ts";
 import { createWeaponState } from "./player/weapons.ts";
+import { drawEnemyGroups } from "./world/enemies.ts";
 
 const THREE_ZEROES = () => repeat(3, 0) as [a: number, b: number, c: number];
 
@@ -74,6 +75,11 @@ const state: GameState = [
 
   // world
   [
+    drawEnemyGroups(1, 1),
+
+    // items (floating in the world)
+    [],
+
     // stage
     1,
 
@@ -96,8 +102,9 @@ updatePlayerData(state);
 
 export default state;
 
-export const getScene = ([player]: GameState): OneOrMore<XOObject>[] =>
-  getShipObjects(player);
+export const getScene = (
+  [player]: GameState,
+): XOObject[][] => getShipObjects(player);
 
 export const updateGame = (state: GameState, tickLength: number): void =>
   updateShip(state[0], tickLength);

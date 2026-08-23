@@ -16,49 +16,14 @@
 
 import { XOGeometry, XOMaterial, XOObject, XOOrientation, XYZ } from "~/3D";
 
+// Game
 export type GameState = [player: PlayerState, world: WorldState];
 
+// Player
 export type PlayerState = [
   ship: PlayerShip,
   sheet: PlayerSheet,
-  inventory: Item[],
-];
-
-export type Item = [
-  color: number,
-
-  gear: number,
-  rank: number,
-  mass: number,
-  affixes: ItemAffix[],
-
-  // weapon information
-  count?: number,
-  damage?: number,
-  life?: number,
-  rate?: number,
-  bonusAffix?: number,
-  cost?: number,
-  bulletPattern?: number,
-];
-
-export type ItemAffix = [type: number, value: number];
-
-export type PlayerResources = [shield: number, fuel: number, armor: number];
-
-type BulletSequence = (payload: void, tickLength: number) => number | undefined;
-
-export type BulletState = [
-  object: XOObject,
-  sequence: BulletSequence,
-];
-
-export type WeaponState = [
-  bullets: [XOObject[], BulletSequence[]],
-  sequence: (
-    payload: PlayerState,
-    tickLength: number,
-  ) => BulletState | undefined,
+  inventory: ItemData[],
 ];
 
 export type PlayerShip = [
@@ -70,6 +35,14 @@ export type PlayerShip = [
   damage: PlayerResources,
 ];
 
+export type PlayerResources = [shield: number, fuel: number, armor: number];
+
+export type PlayerSheet = [
+  levels: PlayerResources,
+  equipment: PlayerEquipment,
+  data: number[],
+];
+
 export type PlayerEquipment = [
   leftWing?: number,
   rightWing?: number,
@@ -77,27 +50,24 @@ export type PlayerEquipment = [
   engine?: number,
 ];
 
-export type PlayerSheet = [
-  levels: PlayerResources,
-  equipment: PlayerEquipment,
-  statistics: number[],
-];
-
-export type PlayerStatistic = [
+export type PlayerSheetOptions = [
   name: string,
   type: number,
   magnitude: number,
   base: number,
-];
+][];
 
+// World
 export type WorldState = [
+  enemies: WorldEnemyGroupState[],
+  items: WorldItem[],
   stage: number,
   wave: number,
   distance: number,
   collection: Set<string>,
 ];
 
-export type Color = [
+export type WorldColorOptions = [
   name: string,
   hex: number,
   density: number,
@@ -124,3 +94,57 @@ export type Color = [
   // index 0 = global, index n + 1 = affixes for ITEM_TYPES[n]
   affixes: Array<number[] | undefined>,
 ];
+
+// Enemies
+export type WorldEnemyGroupState = [
+  objects: XOObject[],
+  bullets: [XOObject[], BulletSequence[]],
+  data: [
+    remainingHealth: number,
+    damage: number,
+    mass: number,
+    speed: number,
+  ][],
+  sequence: (payload: GameState, tickLength: number) => void,
+  item: (ItemData | undefined)[],
+];
+
+// Items
+export type WorldItem = [object: XOObject, data: ItemData];
+
+export type ItemData = [
+  color: number,
+
+  gear: number,
+  rank: number,
+  mass: number,
+  affixes: ItemAffix[],
+
+  // (weapon information)
+  bulletCount?: number,
+  bulletDamage?: number,
+  bulletLifetime?: number,
+  firingRate?: number,
+  bonusAffix?: number,
+
+  firingCost?: number,
+  bulletPattern?: number,
+];
+
+export type ItemAffix = [type: number, value: number];
+
+// Weapons/Bullets
+export type WeaponState = [
+  bullets: [XOObject[], BulletSequence[]],
+  sequence: (
+    payload: PlayerState,
+    tickLength: number,
+  ) => BulletState | undefined,
+];
+
+export type BulletState = [
+  object: XOObject,
+  sequence: BulletSequence,
+];
+
+type BulletSequence = (payload: void, tickLength: number) => number | undefined;

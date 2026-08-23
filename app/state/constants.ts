@@ -15,20 +15,22 @@
  */
 
 import {
+  createObject,
   createPrism,
   createPyramid,
   createSphere,
+  flattenObjects,
   X_AXIS,
   XOGeometry,
   Z_AXIS,
 } from "~/3D";
 import { Band } from "~/random";
 
-import { Color, PlayerStatistic } from "./types.ts";
+import { PlayerSheetOptions, WorldColorOptions } from "./types.ts";
 
 export const GAME_DIFFICULTY_FALLOFF = 0.135;
 
-export const PLAYER_STATISTICS: PlayerStatistic[] = [
+export const PLAYER_SHEET_OPTIONS: PlayerSheetOptions = [
   ["Armor", 2, 1, 2],
 
   ["Armor Save", 0, 1, 0],
@@ -68,7 +70,7 @@ export const PLAYER_STATISTICS: PlayerStatistic[] = [
 export const PLAYER_SHIP_DISTANCE = 5;
 export const PLAYER_SHIP_SHAPE = createPyramid([0.25, 0.1, 0.25], 6);
 
-export const COLOR_PURPLE: Color = [
+export const COLOR_PURPLE: WorldColorOptions = [
   "Purple",
   0x8434D4,
   1,
@@ -85,7 +87,7 @@ const GREEN_PRONG = [
   createPyramid([0.065, 0.065, 0.095], 12),
 ] as XOGeometry;
 
-export const COLOR_GREEN: Color = [
+export const COLOR_GREEN: WorldColorOptions = [
   "Green",
   0xA0DD27,
   1,
@@ -104,7 +106,7 @@ export const COLOR_GREEN: Color = [
   ],
 ];
 
-export const COLOR_BLUE: Color = [
+export const COLOR_BLUE: WorldColorOptions = [
   "Blue",
   0x29A9D4,
   3,
@@ -125,7 +127,7 @@ export const COLOR_BLUE: Color = [
   ],
 ];
 
-export const COLOR_PINK: Color = [
+export const COLOR_PINK: WorldColorOptions = [
   "Pink",
   0xD4349F,
   1,
@@ -142,7 +144,7 @@ export const COLOR_PINK: Color = [
   ],
 ];
 
-export const COLOR_RED: Color = [
+export const COLOR_RED: WorldColorOptions = [
   "Red",
   0xEE3030,
   2,
@@ -163,7 +165,7 @@ export const COLOR_RED: Color = [
 ];
 
 const YELLOW_ARM = [0.32, createPrism([0.2, 0.012, 0.15])] as XOGeometry;
-export const COLOR_YELLOW: Color = [
+export const COLOR_YELLOW: WorldColorOptions = [
   "Yellow",
   0xF4AD32,
   2,
@@ -192,6 +194,17 @@ export const COLORS = [
   COLOR_YELLOW,
 ];
 
+export const ENEMY_PLANE_DISTANCE = 10;
+export const ENEMY_SPREAD_AMOUNT = 5;
+
+export const ENEMY_COLOR_SHAPES = COLORS.map((
+  [, , , [, , , , objectsArgs]]: WorldColorOptions,
+) =>
+  flattenObjects(
+    ...objectsArgs.map((objectArgs) => createObject(...objectArgs)),
+  )
+);
+
 export const ENEMY_WAVE_CURVE = 7.5;
 export const ENEMY_WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
 export const ENEMY_WAVE_COUNT_BAND = [2, 14] as Band;
@@ -213,6 +226,7 @@ export const ENEMY_DATA_BANDS = {
   drop: [[2, 8], [10, 20], [18, 25], [20, 40]],
 } as const;
 
+export const ITEM_RANK_FALLOFF = 2;
 export const ITEM_NAMES = ["Wing (L)", "Wing (R)", "Body", "Engine"];
 export const ITEM_WEAPON_NAMES = ["Standard", "Wide", "Sphere"] as const;
 export const ITEM_WEAPON_DATA_NAMES = [

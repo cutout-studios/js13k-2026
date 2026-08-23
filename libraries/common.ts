@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-export type OneOrMore<T> = [one: T, ...more: T[]];
-
 export const SECONDS_TO_MS = 1000;
 export const MINUTES_TO_SECONDS = 60;
 
@@ -29,7 +27,7 @@ export const repeat = <T>(times: number, thing: T): T[] =>
 export const doTimes = <T>(count: number, action: (count: number) => T): T[] =>
   repeat(count, 0).map((_, index) => action(index));
 
-export const memo = <Key extends object, Value>(
+export const memo = <Key extends WeakKey, Value>(
   create: (key: Key) => Value,
 ) => {
   const cache = new WeakMap<Key, Value>();

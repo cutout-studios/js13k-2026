@@ -17,7 +17,7 @@
 import { doTimes } from "~/common";
 import { length } from "~/alias";
 
-import { PLAYER_STATISTICS } from "../constants.ts";
+import { PLAYER_SHEET_OPTIONS } from "../constants.ts";
 import { PlayerState } from "../types.ts";
 
 export const getSheet = (
@@ -27,13 +27,13 @@ export const getSheet = (
   for (const index of equipment) {
     if (index === undefined) continue;
     for (const [name, value] of inventory[index][4]) {
-      const type = PLAYER_STATISTICS[name][1],
+      const type = PLAYER_SHEET_OPTIONS[name][1],
         target = type === 2 ? additionModifier : percentModifier;
       target[name] = (target[name] ?? 0) +
         (type === 2 ? value : type === 1 ? -value / 100 : value / 100);
     }
   }
-  const base = PLAYER_STATISTICS.map(([, , , value]) => value);
+  const base = PLAYER_SHEET_OPTIONS.map(([, , , value]) => value);
   const _fold = (index: number) =>
     base[index] * (1 + (percentModifier[index] ?? 0)) +
     (additionModifier[index] ?? 0);
@@ -47,7 +47,7 @@ export const getSheet = (
     const growth = quality ** level;
     for (const i of stats) base[i] *= growth;
   }
-  const result = doTimes(length(PLAYER_STATISTICS), _fold);
+  const result = doTimes(length(PLAYER_SHEET_OPTIONS), _fold);
 
   // special case - lowestResource. armor weighted x10
   const pools = [21, 0, 11], weights = [1, 10, 1];

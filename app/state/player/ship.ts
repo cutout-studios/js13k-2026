@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { hypot, length, max } from "~/alias";
-import { doTimes, OneOrMore } from "~/common";
+import { hypot, max } from "~/alias";
+import { doTimes } from "~/common";
 import { keyboard, pointer } from "~/controller";
 import {
   adjustObject,
@@ -95,10 +95,10 @@ export const updateShip = (player: PlayerState, tickLength: number) => {
 };
 
 export const getShipObjects = (
-  [[body, weapons]]: PlayerState,
-): OneOrMore<XOObject>[] =>
-  weapons.reduce((objects, [[bullets]]) => {
-    if (length(bullets)) objects.push(bullets as OneOrMore<XOObject>);
-
-    return objects;
-  }, [[body[0]]] as OneOrMore<XOObject>[]);
+  [[[shipObject], [[[leftBulletObjects]], [[rightBulletObjects]]]]]:
+    PlayerState,
+): [ship: XOObject[], leftBullets: XOObject[], rightBullets: XOObject[]] => [
+  [shipObject],
+  leftBulletObjects,
+  rightBulletObjects,
+];

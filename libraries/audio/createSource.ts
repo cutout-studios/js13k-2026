@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import { range } from "~/random";
 import { doTimes } from "~/common";
-import { random } from "~/alias";
 
 import { ActionSchedule } from "../clock/types.ts";
 
@@ -26,7 +26,7 @@ import { Source } from "./types.ts";
 export const NOISE_BUFFER = api.createBuffer(1, api.sampleRate, api.sampleRate);
 
 NOISE_BUFFER.getChannelData(0).set(
-  doTimes(api.sampleRate, () => random() * 2 - 1),
+  doTimes(api.sampleRate, () => range(-1, 1)),
 );
 
 export const createSource = (
