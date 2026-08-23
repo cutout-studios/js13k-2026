@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { createObject, XYZ } from "~/3D";
+import { createObject, XOObject, XYZ } from "~/3D";
 import { createActionSequence } from "~/clock";
 import { length, max, min, random, round } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
 
-import { ItemData, WorldEnemyGroupState } from "../types.ts";
+import { ItemData, WorldEnemyGroupState, WorldState } from "../types.ts";
 import {
   COLORS,
   ENEMY_COLOR_SHAPES,
@@ -90,3 +90,6 @@ const _drawEnemyGroup = (
 
   return [objects, [[], []], data, _sequenceStub, items];
 };
+
+export const getEnemyObjects = ([enemyGroups]: WorldState): XOObject[][] =>
+  enemyGroups.map(([objects]) => objects);

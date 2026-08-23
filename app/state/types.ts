@@ -139,12 +139,15 @@ export type WeaponState = [
   sequence: (
     payload: PlayerState,
     tickLength: number,
-  ) => BulletState | undefined,
+  ) => [XOObject, BulletSequence] | undefined,
 ];
 
 export type BulletState = [
-  object: XOObject,
-  sequence: BulletSequence,
+  objects: XOObject[],
+  sequences: BulletSequence[],
 ];
 
-type BulletSequence = (payload: void, tickLength: number) => number | undefined;
+export type BulletSequence = (
+  payload: void,
+  tickLength: number,
+) => number | undefined;

@@ -108,23 +108,25 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
 };
 
 export const getCollisionPairs = (
-  group1: XOObject[],
-  group2: XOObject[],
+  leftGroup: XOObject[],
+  rightGroup: XOObject[],
 ) => {
-  const result: [XOObject, XOObject][] = [];
+  const result: [number, number][] = [];
 
-  for (const object1 of group1) {
-    for (const object2 of group2) {
-      const [coord1, [radius1]] = object1, [coord2, [radius2]] = object2;
+  doTimes(leftGroup.length, (leftIndex) => {
+    const [leftCoords, [leftRadius]] = leftGroup[leftIndex];
+
+    doTimes(rightGroup.length, (rightIndex) => {
+      const [rightCoords, [rightRadius]] = rightGroup[rightIndex];
 
       if (
-        hypot(...subtract(readOrigin(coord1), readOrigin(coord2))) >=
-          radius1 + radius2
-      ) continue;
+        hypot(...subtract(readOrigin(leftCoords), readOrigin(rightCoords))) >=
+          leftRadius + rightRadius
+      ) return;
 
-      result.push([object1, object2]);
-    }
-  }
+      result.push([leftIndex, rightIndex]);
+    });
+  });
 
   return result;
 };

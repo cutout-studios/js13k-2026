@@ -38,6 +38,7 @@ export {
   aimObject,
   createObject,
   flattenObjects,
+  getCollisionPairs,
 } from "./objects.ts";
 export { createCamera } from "./camera.ts";
 export { createCoordinates, readOrigin, setOrigin } from "./coordinates.ts";

@@ -15,12 +15,16 @@
  */
 
 import {
+  adjustObject,
+  aimObject,
+  createObject,
   createPaintMaterialWithPalette as paint,
   createPrism,
   normalizeXYZ,
   readOrigin,
   scaleXYZ,
   subtractXYZ,
+  XOObject,
 } from "~/3D";
 
 import { range } from "~/random";
@@ -28,12 +32,12 @@ import { range } from "~/random";
 import { createActionSequence } from "~/clock";
 import { createAudioSource, NOISE_BUFFER } from "~/audio";
 
-import { BulletState, PlayerState, WeaponState } from "../types.ts";
 import {
-  adjustObject,
-  aimObject,
-  createObject,
-} from "../../../libraries/3D/objects.ts";
+  BulletSequence,
+  BulletState,
+  PlayerState,
+  WeaponState,
+} from "../types.ts";
 
 const BULLET_SPEED_COEFFICIENT = 25,
   DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
@@ -67,7 +71,7 @@ export const createWeaponState = (): WeaponState => {
           readOrigin(coordinates)[0] / 5,
         ); // TODO: derive window sides & clamp
 
-        return createBulletState(player);
+        return createBullet(player);
       }], [
         () => undefined,
         0.1,
@@ -77,9 +81,9 @@ export const createWeaponState = (): WeaponState => {
   ];
 };
 
-export const createBulletState = (
+export const createBullet = (
   [[[object, aim]]]: PlayerState,
-): BulletState => {
+): [XOObject, BulletSequence] => {
   const bullet = createObject(
     [readOrigin(object[0])],
     [0, DEFAULT_BULLET_SHAPE],
@@ -100,4 +104,32 @@ export const createBulletState = (
       1,
     ]]),
   ];
+};
+
+export const updateBullets = (
+  bullets: BulletState,
+  tickLength: number,
+): void => {
+  const [, sequences] = bullets;
+
+  deleteBullets(
+    bullets,
+    sequences.reduce(
+      (cullIndicies, sequence, index) =>
+        sequence(undefined, tickLength)
+          ? cullIndicies
+          : [...cullIndicies, index],
+      [] as number[],
+    ),
+  );
+};
+
+export const deleteBullets = (
+  [bulletObjects, bulletSequences]: BulletState,
+  bulletIndicies: number[],
+) => {
+  for (const index of bulletIndicies.sort((a, b) => b - a)) {
+    bulletObjects.splice(index, 1);
+    bulletSequences.splice(index, 1);
+  }
 };

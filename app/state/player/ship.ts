@@ -82,15 +82,6 @@ export const updateShip = (player: PlayerState, tickLength: number) => {
         bulletSequences.push(bullet[1]);
       }
     }
-
-    // TODO: this will be reused by enemies
-    let bulletCount = bulletObjects.length;
-    while (bulletCount--) {
-      if (!bulletSequences[bulletCount](undefined, tickLength)) {
-        bulletObjects.splice(bulletCount, 1);
-        bulletSequences.splice(bulletCount, 1);
-      }
-    }
   });
 };
 

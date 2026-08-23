@@ -16,6 +16,7 @@
 
 import {
   createObject,
+  createPaintMaterialWithPalette as paint,
   createPrism,
   createPyramid,
   createSphere,
@@ -194,14 +195,16 @@ export const COLORS = [
   COLOR_YELLOW,
 ];
 
-export const ENEMY_PLANE_DISTANCE = 10;
+export const ENEMY_PLANE_DISTANCE = 7;
 export const ENEMY_SPREAD_AMOUNT = 5;
 
 export const ENEMY_COLOR_SHAPES = COLORS.map((
-  [, , , [, , , , objectsArgs]]: WorldColorOptions,
+  [, hue, , [, , , , objectsArgs]]: WorldColorOptions,
 ) =>
   flattenObjects(
-    ...objectsArgs.map((objectArgs) => createObject(...objectArgs)),
+    ...objectsArgs.map(([orientation, geometry]) =>
+      createObject(orientation, geometry, paint(hue))
+    ),
   )
 );
 

@@ -19,6 +19,7 @@ import { repeat } from "~/common";
 import {
   createObject,
   createPaintMaterialWithPalette as paint,
+  getCollisionPairs,
   XOObject,
   Y_AXIS,
 } from "~/3D";
@@ -29,9 +30,10 @@ import { GameState, PlayerEquipment } from "./types.ts";
 import { PLAYER_SHIP_DISTANCE, PLAYER_SHIP_SHAPE } from "./constants.ts";
 
 import { getShipObjects, updateShip } from "./player/ship.ts";
+import { deleteBullets, updateBullets } from "./player/weapons.ts";
 import { getSheet } from "./player/sheet.ts";
 import { createWeaponState } from "./player/weapons.ts";
-import { drawEnemyGroups } from "./world/enemies.ts";
+import { drawEnemyGroups, getEnemyObjects } from "./world/enemies.ts";
 
 const THREE_ZEROES = () => repeat(3, 0) as [a: number, b: number, c: number];
 
@@ -94,17 +96,38 @@ const state: GameState = [
   ],
 ];
 
-export const updatePlayerData = (state: GameState): void => {
+export const updatePlayerSheet = (state: GameState): void => {
   state[0][1][2] = getSheet(state[0]);
 };
 
-updatePlayerData(state);
+updatePlayerSheet(state);
 
 export default state;
 
-export const getScene = (
-  [player]: GameState,
-): XOObject[][] => getShipObjects(player);
+export const updateGame = (
+  [player, [enemyGroups]]: GameState,
+  tickLength: number,
+): void => {
+  updateShip(player, tickLength);
+  // TODO: updateEnemies(world);
 
-export const updateGame = (state: GameState, tickLength: number): void =>
-  updateShip(state[0], tickLength);
+  const [[, weapons]] = player;
+
+  for (const [[bulletObjects, bulletSequences]] of weapons) {
+    updateBullets([bulletObjects, bulletSequences], tickLength);
+    for (const [enemyObjects] of enemyGroups) {
+      deleteBullets(
+        [bulletObjects, bulletSequences],
+        getCollisionPairs(bulletObjects, enemyObjects).map(([bulletIndex]) =>
+          bulletIndex
+        ),
+      ); // TODO: enemies take damage
+    }
+  }
+
+  // TODO: update each enemy bullet group
+};
+
+export const getSceneObjects = (
+  [player, world]: GameState,
+): XOObject[][] => [...getShipObjects(player), ...getEnemyObjects(world)];

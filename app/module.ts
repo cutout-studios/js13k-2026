@@ -21,8 +21,8 @@ import { createElement } from "~/dom";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud } from "./elements/hud.ts";
-import state, { getScene, updateGame } from "./state/module.ts";
-import { menu, openMenu } from "./elements/menu.ts";
+import state, { getSceneObjects, updateGame } from "./state/module.ts";
+// import { menu, openMenu } from "./elements/menu.ts";
 
 document.head.append(createElement("style", undefined, {
   textContent: /* css */ `
@@ -50,7 +50,7 @@ document.head.append(createElement("style", undefined, {
 onload = async () => {
   await setupDevice();
 
-  [hud, mainCanvas, menu].forEach((element) =>
+  [hud, mainCanvas /* menu */].forEach((element) =>
     document.body.appendChild(element)
   );
 
@@ -59,6 +59,6 @@ onload = async () => {
   startClock((tickLength) => {
     updateGame(state, tickLength);
 
-    renderMain(getScene(state));
+    renderMain(getSceneObjects(state));
   });
 };
