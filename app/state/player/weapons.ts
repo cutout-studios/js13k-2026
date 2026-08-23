@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { BulletState, PlayerState, WeaponState } from "../types.ts";
-
 import {
   createPaintMaterialWithPalette as paint,
   createPrism,
@@ -26,17 +24,26 @@ import {
 } from "~/3D";
 
 import { createActionSequence } from "~/clock";
+import { createAudioSource } from "~/audio";
 
-const DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
+import { BulletState, PlayerState, WeaponState } from "../types.ts";
+
+const BULLET_SPEED_COEFFICIENT = 25,
+  DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
   DEFAULT_BULLET_PAINT = paint(0xFFE900),
-  BULLET_SPEED_COEFFICIENT = 25;
-
+  DEFAULT_BULLET_SOUND_BASS = createAudioSource("sine");
 // TODO: only "default weapons" for now
 export const createWeaponState = (): WeaponState => {
   return [
     [[], []],
     createActionSequence(
-      [[(player: PlayerState) => createBulletState(player)], [
+      [[(player: PlayerState) => {
+        const [[[object]]] = player;
+
+        DEFAULT_BULLET_SOUND_BASS([80], 0.15, 0, object.position[0] / 5); // TODO: derive
+
+        return createBulletState(player);
+      }], [
         () => undefined,
         0.25,
       ]],

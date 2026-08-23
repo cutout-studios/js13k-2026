@@ -20,5 +20,3 @@ export type Source = (
   delay: number,
   pan: number,
 ) => void;
-
-export type Envelope = [timing: number, magnitude: number][];

@@ -17,11 +17,11 @@
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
 
-import { Envelope, Source } from "./types.ts";
+import { Source } from "./types.ts";
 
 export const createSource = (
   type: OscillatorType,
-  envelope: Envelope = [[0, 0], [0, 1]],
+  envelope = [[0, 0], [0, 1]],
 ): Source => {
   return (
     frequencies,
