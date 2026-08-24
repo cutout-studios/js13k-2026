@@ -22,7 +22,8 @@ import { createElement } from "~/dom";
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud, updateHUD } from "./elements/hud.ts";
 import state, { getSceneObjects, updateGame } from "./state/module.ts";
-// import { menu, openMenu } from "./elements/menu.ts";
+import { menu, openMenu } from "./elements/menu.ts";
+import { keyboard } from "~/controller";
 
 document.head.append(createElement("style", undefined, {
   textContent: /* css */ `
@@ -50,13 +51,13 @@ document.head.append(createElement("style", undefined, {
 onload = async () => {
   await setupDevice();
 
-  [hud, mainCanvas /* menu */].forEach((element) =>
+  [hud, mainCanvas, menu].forEach((element) =>
     document.body.appendChild(element)
   );
 
-  // openMenu();
-
   startClock((tickLength) => {
+    keyboard.has("Escape") ? openMenu() : menu.close();
+
     updateGame(state, tickLength);
     updateHUD(state, tickLength);
     renderMain(getSceneObjects(state));
