@@ -18,7 +18,6 @@ import { ceil, min, round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
-import { FUEL_SEGMENT_SIZE } from "../state/constants.ts";
 import { GameState } from "../state/types.ts";
 
 import {
@@ -28,6 +27,8 @@ import {
   JUSTIFY,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
+
+const FUEL_SEGMENT_SIZE = 20; // TODO
 
 const _createMeter = (
   name: string,

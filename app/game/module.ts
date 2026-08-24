@@ -26,29 +26,33 @@ import {
 
 import { DEPTH_LIMIT } from "../elements/constants.ts";
 
-import { GameState, PlayerEquipment } from "./types.ts";
-import { PLAYER_SHIP_DISTANCE, PLAYER_SHIP_SHAPE } from "./constants.ts";
-
-import { getShipObjects, updateShip } from "./player/ship.ts";
+// import { GameState, PlayerEquipment } from "./options/types.ts";
 import {
+  PLAYER_SHIP_DISTANCE,
+  PLAYER_SHIP_SHAPE,
+} from "./options/constants.ts";
+import { Player } from "./player/types.ts";
+import { World } from "./world/types.ts";
+import { getShipObjects, updateShip } from "./player/module.ts";
+import {
+  createWeaponState,
   DEFAULT_WEAPON_DATA,
   deleteBullets,
   playBulletHitSound,
   playExplosionSound,
   updateBullets,
-} from "./player/weapons.ts";
-import { getSheet } from "./player/sheet.ts";
-import { createWeaponState } from "./player/weapons.ts";
+} from "./ship/weapons.ts";
+import { getData } from "./player/data.ts";
 import {
   deleteEnemies,
   drawEnemyGroups,
   getEnemyObjects,
 } from "./world/enemies.ts";
-import { getWaveCount } from "./world/stage.ts";
+import { getWaveCount } from "./world/level.ts";
 
 const THREE_ZEROES = () => repeat(3, 0) as [a: number, b: number, c: number];
 
-const state: GameState = [
+const state: [Player, World] = [
   [ // player
     [ // ship
       [ // body
@@ -102,7 +106,7 @@ const state: GameState = [
 ];
 
 export const updatePlayerSheet = (state: GameState): void => {
-  state[0][1][2] = getSheet(state[0]);
+  state[0][1][2] = getData(state[0]);
 };
 
 updatePlayerSheet(state);

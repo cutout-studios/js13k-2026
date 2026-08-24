@@ -20,7 +20,7 @@ import { Band, range } from "~/random";
 import {
   ENEMY_WAVE_COUNT_BAND,
   GAME_DIFFICULTY_FALLOFF,
-} from "../constants.ts";
+} from "../options/constants.ts";
 
 export const stageCurve = (
   level: number,

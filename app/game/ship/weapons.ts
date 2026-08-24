@@ -38,7 +38,7 @@ import {
   ItemData,
   PlayerState,
   WeaponState,
-} from "../types.ts";
+} from "../options/types.ts";
 
 export const DEFAULT_WEAPON_DATA = [
   -1,

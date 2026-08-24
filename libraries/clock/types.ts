@@ -21,7 +21,7 @@ export type Action<T, K> = (
   duration: number,
 ) => K;
 
-export type ActionSchedule<T, K> = [
+export type ActionSchedule<T, K = T> = [
   action: Action<T, K>,
   duration?: number,
 ][];

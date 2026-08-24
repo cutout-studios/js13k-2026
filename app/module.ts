@@ -18,12 +18,12 @@ import { document } from "~/alias";
 import { startClock } from "~/clock";
 import { setupDevice } from "~/3D";
 import { createElement } from "~/dom";
+import { keyboard } from "~/controller";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud, updateHUD } from "./elements/hud.ts";
 import state, { getSceneObjects, updateGame } from "./state/module.ts";
 import { menu, openMenu } from "./elements/menu.ts";
-import { keyboard } from "~/controller";
 
 document.head.append(createElement("style", undefined, {
   textContent: /* css */ `

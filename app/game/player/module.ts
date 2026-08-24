@@ -29,7 +29,7 @@ import { approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
-import { PlayerState } from "../types.ts";
+import { Player } from "./types.ts";
 
 const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"],
   strafeEnvelopes = doTimes(
@@ -37,7 +37,7 @@ const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"],
     () => createEnvelope(0.30, 0.35),
   );
 
-export const updateShip = (player: PlayerState, tickLength: number) => {
+export const updatePlayer = (player: Player, tickLength: number) => {
   const [[body, weapons], [, , sheet]] = player;
   const strafeMagnitudes: XYZ = [0, 0, 0];
   doTimes(STRAFE_KEYS.length, (index: number) => {

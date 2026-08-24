@@ -17,11 +17,11 @@
 import { doTimes } from "~/common";
 import { length } from "~/alias";
 
-import { PLAYER_SHEET_OPTIONS } from "../constants.ts";
-import { PlayerState } from "../types.ts";
+import { PLAYER_SHEET_OPTIONS } from "../options/constants.ts";
+import { Player } from "../types.ts";
 
-export const getSheet = (
-  [, [[shield, fuel, armor], equipment], inventory]: PlayerState,
+export const getData = (
+  [, [[shield, fuel, armor], equipment], inventory]: Player,
 ): number[] => {
   const percentModifier: number[] = [], additionModifier: number[] = [];
   for (const index of equipment) {

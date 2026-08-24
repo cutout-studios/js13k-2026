@@ -20,7 +20,7 @@ import { length, max, min, random, round } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
 
-import { ItemData, WorldEnemyGroupState, WorldState } from "../types.ts";
+import { ItemData, WorldEnemyGroupState, WorldState } from "../options/types.ts";
 import {
   COLORS,
   ENEMY_COLOR_SHAPES,
@@ -31,11 +31,11 @@ import {
   ENEMY_WAVE_CURVE,
   ENEMY_WAVE_PACING,
   ENEMY_WAVE_SIZE_BAND,
-} from "../constants.ts";
+} from "../options/constants.ts";
 
-import { stageCurve, stageRoll } from "./stage.ts";
-import { createDeck, drawCard } from "./decks.ts";
-import { drawItem } from "./items.ts";
+import { stageCurve, stageRoll } from "./level.ts";
+import { createDeck, drawCard } from "../decks.ts";
+import { drawItem } from "../ship/items.ts";
 
 export const drawEnemyGroups = (wave: number, level: number) =>
   doTimes(

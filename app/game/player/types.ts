@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-export { approachFactory } from "./approachFactory.ts";
-export { createActionSequence } from "./createActionSequence.ts";
-export { createEnvelope } from "./createEnvelope.ts";
-export { startClock } from "./startClock.ts";
-export type { ActionSchedule } from "./types.ts";
+import { Item, Resources, Ship } from "../ship/types.ts";
+
+export type Player = [
+  ship: Ship,
+  levelAssigments: Resources,
+  inventory: [item: Item, equipped: boolean, selected: boolean][],
+];

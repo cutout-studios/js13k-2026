@@ -18,7 +18,7 @@ import { length, min } from "~/alias";
 import { doTimes } from "~/common";
 import { bell } from "~/random";
 
-import { ItemAffix, ItemData } from "../types.ts";
+import { ItemAffix, ItemData } from "./types.ts";
 import {
   COLORS,
   ITEM_DATA_BANDS,
@@ -27,10 +27,10 @@ import {
   ITEM_RANK_THRESHOLDS,
   ITEM_WEAPON_DATA_NAMES,
   PLAYER_SHEET_OPTIONS,
-} from "../constants.ts";
+} from "../options/constants.ts";
 
-import { stageCurve, stageRoll } from "./stage.ts";
-import { createDeck, drawCard, insertCard } from "./decks.ts";
+import { stageCurve, stageRoll } from "../world/module.ts";
+import { createDeck, drawCard, insertCard } from "../decks.ts";
 
 const _itemRankRoll = (
   level: number,
