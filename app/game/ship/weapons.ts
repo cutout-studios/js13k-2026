@@ -32,13 +32,8 @@ import { range } from "~/random";
 import { createActionSequence } from "~/clock";
 import { createAudioSource, NOISE_BUFFER } from "~/audio";
 
-import {
-  BulletSequence,
-  BulletState,
-  ItemData,
-  PlayerState,
-  WeaponState,
-} from "../options/types.ts";
+import { Player } from "../player/types.ts";
+import { Bullet, BulletGroup, Item, Weapon } from "./types.ts";
 
 export const DEFAULT_WEAPON_DATA = [
   -1,
@@ -53,7 +48,7 @@ export const DEFAULT_WEAPON_DATA = [
   0,
   0,
   0,
-] as ItemData;
+] as Item;
 
 const BULLET_SPEED_COEFFICIENT = 25,
   DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
@@ -82,11 +77,11 @@ export const playExplosionSound = (pan: number = 0) => {
 };
 
 // TODO: only "default weapons" for now
-export const createWeaponState = (): WeaponState => {
+export const createWeaponState = (): Weapon => {
   return [
     [[], []],
     createActionSequence(
-      [[(player: PlayerState) => {
+      [[(player: Player) => {
         const [[[[coordinates]]]] = player;
 
         // TODO: "group" audio sources
@@ -115,8 +110,8 @@ export const createWeaponState = (): WeaponState => {
 };
 
 export const createBullet = (
-  [[[object, aim]]]: PlayerState,
-): [XOObject, BulletSequence] => {
+  [[[object, aim]]]: Player,
+): Bullet => {
   const bullet = createObject(
     [readOrigin(object[0])],
     [0, DEFAULT_BULLET_SHAPE],
@@ -140,7 +135,7 @@ export const createBullet = (
 };
 
 export const updateBullets = (
-  bullets: BulletState,
+  bullets: BulletGroup,
   tickLength: number,
 ): void => {
   const [, sequences] = bullets;
@@ -158,7 +153,7 @@ export const updateBullets = (
 };
 
 export const deleteBullets = (
-  [bulletObjects, bulletSequences]: BulletState,
+  [bulletObjects, bulletSequences]: BulletGroup,
   bulletIndicies: number[],
 ) => {
   for (const index of bulletIndicies.sort((a, b) => b - a)) {

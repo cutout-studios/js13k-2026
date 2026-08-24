@@ -20,7 +20,7 @@ import { length, max, min, random, round } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
 
-import { ItemData, WorldEnemyGroupState, WorldState } from "../options/types.ts";
+import { World, EnemyGroup } from "./types.ts";
 import {
   COLORS,
   ENEMY_COLOR_SHAPES,
@@ -33,7 +33,7 @@ import {
   ENEMY_WAVE_SIZE_BAND,
 } from "../options/constants.ts";
 
-import { stageCurve, stageRoll } from "./level.ts";
+import { levelCurve, roll } from "./waves.ts";
 import { createDeck, drawCard } from "../decks.ts";
 import { drawItem } from "../ship/items.ts";
 
@@ -45,7 +45,7 @@ export const drawEnemyGroups = (wave: number, level: number) =>
         max(
           ENEMY_WAVE_SIZE_BAND[0],
           ENEMY_WAVE_PACING[wave % length(ENEMY_WAVE_PACING)] *
-            stageCurve(level) * ENEMY_WAVE_CURVE,
+            levelCurve(level) * ENEMY_WAVE_CURVE,
         ),
       ),
     ),
@@ -57,11 +57,11 @@ const _enemyDeck = createDeck(length(COLORS));
 const _drawEnemyGroup = (
   typeIndex: number,
   level: number,
-): WorldEnemyGroupState => {
+): EnemyGroup => {
   const [, , mass, [count, health, speed, drop], [, damage]] =
       COLORS[typeIndex],
     [, geometry, material] = ENEMY_COLOR_SHAPES[typeIndex],
-    data: WorldEnemyGroupState[2] = [],
+    data: EnemyGroup[2] = [],
     items: (ItemData | undefined)[] = [];
 
   const proxy = { health, speed, mass, damage, drop },
@@ -73,7 +73,7 @@ const _drawEnemyGroup = (
   const objects = doTimes(count, () => {
     const [rolledHealth, rolledSpeed, rolledMass, rolledDamage, rolledDrop] =
       ENEMY_DATA_NAMES.map((key: keyof typeof ENEMY_DATA_BANDS) =>
-        stageRoll(ENEMY_DATA_BANDS[key][proxy[key] - 1], level)
+        roll(ENEMY_DATA_BANDS[key][proxy[key] - 1], level)
       );
 
     data.push([rolledHealth, rolledDamage, rolledMass, rolledSpeed]);
@@ -94,11 +94,11 @@ const _drawEnemyGroup = (
   return [objects, [[], []], data, _sequenceStub, items];
 };
 
-export const getEnemyObjects = ([enemyGroups]: WorldState): XOObject[][] =>
+export const getEnemyObjects = ([enemyGroups]: World): XOObject[][] =>
   enemyGroups.map(([objects]) => objects);
 
 export const deleteEnemies = (
-  enemyGroup: WorldEnemyGroupState,
+  enemyGroup: World,
   enemyIndicies: number[],
 ) => {
   for (const index of enemyIndicies.sort((a, b) => b - a)) {

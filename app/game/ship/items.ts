@@ -18,7 +18,7 @@ import { length, min } from "~/alias";
 import { doTimes } from "~/common";
 import { bell } from "~/random";
 
-import { ItemAffix, ItemData } from "./types.ts";
+import { Item } from "./types.ts";
 import {
   COLORS,
   ITEM_DATA_BANDS,
@@ -29,13 +29,13 @@ import {
   PLAYER_SHEET_OPTIONS,
 } from "../options/constants.ts";
 
-import { stageCurve, stageRoll } from "../world/module.ts";
+import { levelCurve, roll } from "../world/module.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
 
 const _itemRankRoll = (
   level: number,
   quality = 0,
-  roll = bell() + stageCurve(level) + quality,
+  roll = bell() + levelCurve(level) + quality,
 ) => ITEM_RANK_THRESHOLDS.filter((threshold) => roll >= threshold).length + 1;
 
 const _itemDeck = createDeck(length(ITEM_NAMES));
@@ -68,7 +68,7 @@ export const drawItem = (
       ITEM_RANK_FALLOFF,
     );
 
-  const result: ItemData = [
+  const result: Item = [
     colorType,
     type,
     rank,

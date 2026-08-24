@@ -18,7 +18,7 @@ import { doTimes } from "~/common";
 import { length } from "~/alias";
 
 import { PLAYER_SHEET_OPTIONS } from "../options/constants.ts";
-import { Player } from "../types.ts";
+import { Player } from "./types.ts";
 
 export const getData = (
   [, [[shield, fuel, armor], equipment], inventory]: Player,

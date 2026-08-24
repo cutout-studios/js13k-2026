@@ -33,7 +33,7 @@ import {
 } from "./options/constants.ts";
 import { Player } from "./player/types.ts";
 import { World } from "./world/types.ts";
-import { getShipObjects, updateShip } from "./player/module.ts";
+import { getShipObjects, updateShip } from "./player/controls.ts";
 import {
   createWeaponState,
   DEFAULT_WEAPON_DATA,
@@ -48,7 +48,7 @@ import {
   drawEnemyGroups,
   getEnemyObjects,
 } from "./world/enemies.ts";
-import { getWaveCount } from "./world/level.ts";
+import { getWavesInLevel } from "./world/waves.ts";
 
 const THREE_ZEROES = () => repeat(3, 0) as [a: number, b: number, c: number];
 
@@ -98,7 +98,7 @@ const state: [Player, World] = [
     [],
 
     // progress
-    [1, 1, getWaveCount(1)],
+    [1, 1, getWavesInLevel(1)],
 
     // collection
     new Set(),
@@ -170,7 +170,7 @@ export const updateGame = (
     if (progress[1] > progress[2]) {
       progress[1] = 1;
       progress[0]++;
-      progress[2] = getWaveCount(progress[0]);
+      progress[2] = getWavesInLevel(progress[0]);
       [damage[0], damage[1], damage[2]] = repeat(3, 0);
     } else {
       progress[1]++;

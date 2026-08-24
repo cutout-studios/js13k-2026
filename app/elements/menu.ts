@@ -92,8 +92,8 @@ export const menu = createElement(
   ),
 ) as HTMLDialogElement;
 
-export const openMenu = () => {
-  menu.showModal();
+export const toggleMenu = () => {
+  menu.open ? menu.close() : menu.showModal();
 
   clientCamera([[portrait]], createRenderTarget(clientCanvas));
 };

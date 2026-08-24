@@ -27,7 +27,7 @@ import {
 } from "~/3D";
 import { Band } from "~/random";
 
-import { PlayerSheetOptions, WorldColorOptions } from "./types.ts";
+import { ColorOptions } from "./types.ts";
 
 export const GAME_DIFFICULTY_FALLOFF = 0.135;
 

@@ -22,20 +22,20 @@ import {
   GAME_DIFFICULTY_FALLOFF,
 } from "../options/constants.ts";
 
-export const stageCurve = (
+export const levelCurve = (
   level: number,
   falloff = GAME_DIFFICULTY_FALLOFF,
 ) => (2 * atan(level * falloff)) / PI;
 
-export const stageRoll = (
+export const roll = (
   [start, end]: Band = [0, 0],
   level: number,
   falloff = GAME_DIFFICULTY_FALLOFF,
   spread = 1.125,
 ) => {
-  const base = start + (end - start) * stageCurve(level, falloff);
+  const base = start + (end - start) * levelCurve(level, falloff);
   return range(base, base * spread);
 };
 
-export const getWaveCount = (level: number) =>
-  round(stageRoll(ENEMY_WAVE_COUNT_BAND, level));
+export const getWavesInLevel = (level: number) =>
+  round(roll(ENEMY_WAVE_COUNT_BAND, level));
