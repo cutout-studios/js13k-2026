@@ -70,6 +70,7 @@ export const PLAYER_SHEET_OPTIONS: PlayerSheetOptions = [
 
 export const PLAYER_SHIP_DISTANCE = 5;
 export const PLAYER_SHIP_SHAPE = createPyramid([0.25, 0.1, 0.25], 6);
+export const FUEL_SEGMENT_SIZE = 20;
 
 export const COLOR_PURPLE: WorldColorOptions = [
   "Purple",

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PI } from "~/alias";
+import { max, PI } from "~/alias";
 import { repeat } from "~/common";
 import {
   createObject,
@@ -116,7 +116,7 @@ export const updateGame = (
   updateShip(player, tickLength);
   // TODO: updateEnemies(world);
 
-  const [[, weapons], [, equipment, data], inventory] = player,
+  const [[, weapons, damage], [, equipment, data], inventory] = player,
     [enemyGroups, , progress] = world;
 
   for (const weaponIndex in weapons) {
@@ -155,6 +155,10 @@ export const updateGame = (
   }
 
   // TODO: update each enemy bullet group, player takes damage
+  damage[0] = max(0, damage[0] - data[14] * tickLength);
+
+  // TODO: cap fuel at "segment" increments
+  damage[1] = max(0, damage[1] - data[22] * tickLength);
 
   if (enemyGroups.every(([objectGroup]) => !objectGroup.length)) {
     progress[1]++;
@@ -163,6 +167,7 @@ export const updateGame = (
       progress[1] = 1;
       progress[0]++;
       progress[2] = getWaveCount(progress[0]);
+      [damage[0], damage[1], damage[2]] = repeat(3, 0);
     } else {
       progress[1]++;
     }

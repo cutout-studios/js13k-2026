@@ -65,7 +65,10 @@ const _drawEnemyGroup = (
     items: (ItemData | undefined)[] = [];
 
   const proxy = { health, speed, mass, damage, drop },
-    spawnQuadrantSize = min(3.5, (geometry![0] * count * ENEMY_SPREAD_AMOUNT) / 2);
+    spawnQuadrantSize = min(
+      3.5,
+      (geometry![0] * count * ENEMY_SPREAD_AMOUNT) / 2,
+    );
 
   const objects = doTimes(count, () => {
     const [rolledHealth, rolledSpeed, rolledMass, rolledDamage, rolledDrop] =

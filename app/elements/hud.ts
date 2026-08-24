@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { round } from "~/alias";
+import { ceil, min, round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
+import { FUEL_SEGMENT_SIZE } from "../state/constants.ts";
 import { GameState } from "../state/types.ts";
 
 import {
@@ -27,32 +28,39 @@ import {
   JUSTIFY,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
-import { PLAYER_SHEET_OPTIONS } from "../state/constants.ts";
-
-const [DEFAULT_ARMOR, DEFAULT_FUEL, DEFAULT_SHIELD] = [0, 11, 21].map((index) =>
-  PLAYER_SHEET_OPTIONS[index][3] as number
-);
 
 const _createMeter = (
-  [name, limit, value, segments = 1]: [
-    name: string,
-    limit: number,
-    value: number,
-    segments?: number,
-  ],
+  name: string,
   style: object[] = [],
-) =>
-  createElement(
+): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
+  const meters = [createElement("meter") as HTMLMeterElement];
+
+  const element = createElement(
     "span",
     [FLEX_ROW, ...style],
     { id: name },
     createElement("label", undefined, { innerText: name }),
-    ...doTimes(segments, (index) =>
-      createElement("meter", undefined, {
-        max: limit / segments,
-        value: value - limit / segments * index,
-      })),
+    ...meters,
   );
+
+  return [element, (meterAttributes: [max: number, value: number][]) => {
+    while (meters.length < meterAttributes.length) {
+      meters.push(
+        element.appendChild(createElement("meter")) as HTMLMeterElement,
+      );
+    }
+
+    while (meters.length < meterAttributes.length) meters.pop()!.remove();
+
+    meters.forEach((meter, index) =>
+      [meter.max, meter.value] = meterAttributes[index]
+    );
+  }];
+};
+
+const [fuelMeter, fuelUpdate] = _createMeter("F", [CORNER(false, true)]),
+  [shieldMeter, shieldUpdate] = _createMeter("S"),
+  [armorMeter, armorUpdate] = _createMeter("A", [CORNER(true, true)]);
 
 const distanceCounter = createElement(
     "span",
@@ -75,23 +83,9 @@ export const hud = createElement(
     "header",
     [PADDED_FLEX_ROW, JUSTIFY()],
     undefined,
-    _createMeter([
-      "F",
-      DEFAULT_FUEL,
-      DEFAULT_FUEL,
-      DEFAULT_FUEL / 15,
-    ], [CORNER(false, true)]),
-    _createMeter([
-      "S",
-      DEFAULT_SHIELD,
-      DEFAULT_FUEL,
-    ]),
-    _createMeter([
-      "A",
-      DEFAULT_ARMOR,
-      DEFAULT_ARMOR,
-      DEFAULT_ARMOR,
-    ], [CORNER(true, true)]),
+    fuelMeter,
+    shieldMeter,
+    armorMeter,
   ),
   createElement(
     "footer",
@@ -104,7 +98,10 @@ export const hud = createElement(
 
 let gameDuration = 0;
 export const updateHUD = (
-  [, [, , [stage, wave, lastWave]]]: GameState,
+  [
+    [[, , [shieldDamage, fuelDamage, armorDamage]], [, , data]],
+    [, , [stage, wave, lastWave]],
+  ]: GameState,
   tickDuration: number,
 ) => {
   gameDuration += tickDuration;
@@ -113,4 +110,22 @@ export const updateHUD = (
     "0",
   );
   waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
+
+  armorUpdate(doTimes(data[0], (index) => [1, +(index < armorDamage)]));
+  shieldUpdate([[data[21], data[21] - shieldDamage]]);
+  fuelUpdate( // TODO: separate fuel count & segement size
+    doTimes(
+      ceil(data[11] / FUEL_SEGMENT_SIZE),
+      () => {
+        const result = [
+          FUEL_SEGMENT_SIZE,
+          min(FUEL_SEGMENT_SIZE, fuelDamage),
+        ] as [number, number];
+
+        fuelDamage -= FUEL_SEGMENT_SIZE;
+
+        return result;
+      },
+    ),
+  );
 };
