@@ -51,7 +51,7 @@ export const DEFAULT_WEAPON_DATA = [
   1,
   0.1,
   0,
-  3,
+  0,
   0,
 ] as ItemData;
 

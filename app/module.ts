@@ -20,7 +20,7 @@ import { setupDevice } from "~/3D";
 import { createElement } from "~/dom";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
-import { hud } from "./elements/hud.ts";
+import { hud, updateHUD } from "./elements/hud.ts";
 import state, { getSceneObjects, updateGame } from "./state/module.ts";
 // import { menu, openMenu } from "./elements/menu.ts";
 
@@ -58,7 +58,7 @@ onload = async () => {
 
   startClock((tickLength) => {
     updateGame(state, tickLength);
-
+    updateHUD(state, tickLength);
     renderMain(getSceneObjects(state));
   });
 };

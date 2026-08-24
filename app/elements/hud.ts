@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
+import { round } from "~/alias";
+import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
-// import { GameState } from "../state/types.ts";
+import { GameState } from "../state/types.ts";
 
 import {
   CORNER,
@@ -51,6 +52,15 @@ const _createMeter = (
         max: limit / segments,
         value: value - limit / segments * index,
       })),
+  );
+
+const distanceCounter = createElement(
+    "span",
+    [CORNER(true)],
+  ),
+  waveCounter = createElement(
+    "span",
+    [CORNER()],
   );
 
 export const hud = createElement(
@@ -87,30 +97,20 @@ export const hud = createElement(
     "footer",
     [PADDED_FLEX_ROW, JUSTIFY()],
     undefined,
-    createElement(
-      "span",
-      [CORNER(true)],
-      { id: "D" },
-      "".padStart(16, "0"),
-    ),
-    createElement(
-      "span",
-      [CORNER()],
-      { id: "W" },
-      "1, 1",
-    ),
+    distanceCounter,
+    waveCounter,
   ),
 );
 
-// export const updateHUD = ([[ship, [, , stats]], world]: GameState) => {
-//   const [stage, wave, distance] = world;
-//   const { damage: [shieldDamage, fuelDamage, armorDamage] } = ship;
-//   const fuel = stats[11], armor = stats[0], shield = stats[21];
-
-//   hud.querySelector("#F")!.value = fuel - fuelDamage;
-//   hud.querySelector("#S")!.value = shield - shieldDamage;
-//   hud.querySelector("#T")!.value = armor - armorDamage;
-
-//   hud.querySelector("#W")!.innerText = `${stage}, ${wave}`;
-//   hud.querySelector("#D")!.innerText = `${distance}`.padStart(16, "0");
-// };
+let gameDuration = 0;
+export const updateHUD = (
+  [, [, , [stage, wave, lastWave]]]: GameState,
+  tickDuration: number,
+) => {
+  gameDuration += tickDuration;
+  distanceCounter.innerText = `${round(gameDuration * SECONDS_TO_MS)}`.padStart(
+    16,
+    "0",
+  );
+  waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
+};
