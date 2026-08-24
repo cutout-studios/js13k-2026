@@ -111,7 +111,7 @@ export const getCollisionPairs = (
   leftGroup: XOObject[],
   rightGroup: XOObject[],
 ) => {
-  const result: [number, number][] = [];
+  const leftResult = [] as number[], rightResult = [] as number[];
 
   doTimes(leftGroup.length, (leftIndex) => {
     const [leftCoords, [leftRadius]] = leftGroup[leftIndex];
@@ -124,9 +124,9 @@ export const getCollisionPairs = (
           leftRadius + rightRadius
       ) return;
 
-      result.push([leftIndex, rightIndex]);
+      leftResult.push(leftIndex), rightResult.push(rightIndex);
     });
   });
 
-  return result;
+  return [leftResult, rightResult];
 };

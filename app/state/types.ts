@@ -61,9 +61,7 @@ export type PlayerSheetOptions = [
 export type WorldState = [
   enemies: WorldEnemyGroupState[],
   items: WorldItem[],
-  stage: number,
-  wave: number,
-  distance: number,
+  progress: [stage: number, wave: number, waveAmount: number],
   collection: Set<string>,
 ];
 

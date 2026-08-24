@@ -65,7 +65,7 @@ const _drawEnemyGroup = (
     items: (ItemData | undefined)[] = [];
 
   const proxy = { health, speed, mass, damage, drop },
-    spawnQuadrantSize = (geometry![0] * count * ENEMY_SPREAD_AMOUNT) / 2;
+    spawnQuadrantSize = min(3.5, (geometry![0] * count * ENEMY_SPREAD_AMOUNT) / 2);
 
   const objects = doTimes(count, () => {
     const [rolledHealth, rolledSpeed, rolledMass, rolledDamage, rolledDrop] =
@@ -93,3 +93,14 @@ const _drawEnemyGroup = (
 
 export const getEnemyObjects = ([enemyGroups]: WorldState): XOObject[][] =>
   enemyGroups.map(([objects]) => objects);
+
+export const deleteEnemies = (
+  enemyGroup: WorldEnemyGroupState,
+  enemyIndicies: number[],
+) => {
+  for (const index of enemyIndicies.sort((a, b) => b - a)) {
+    enemyGroup[0].splice(index, 1);
+    enemyGroup[2].splice(index, 1);
+    enemyGroup[4].splice(index, 1);
+  }
+};

@@ -97,7 +97,7 @@ export const hud = createElement(
       "span",
       [CORNER()],
       { id: "W" },
-      "0, 0",
+      "1, 1",
     ),
   ),
 );

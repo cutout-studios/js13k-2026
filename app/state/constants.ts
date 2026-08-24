@@ -76,7 +76,7 @@ export const COLOR_PURPLE: WorldColorOptions = [
   0x8434D4,
   1,
   [3, 2, 0, 3, [
-    [[], [0.375, createPyramid([0.25, 0.25, 0.125])]],
+    [[], [0.5, createPyramid([0.25, 0.25, 0.125])]],
   ]],
   [1, 3, 3, 0, 0, 2, 0],
   // itemQuality, levelQuality, bulletCritChance, bulletCritDamage
@@ -133,7 +133,7 @@ export const COLOR_PINK: WorldColorOptions = [
   0xD4349F,
   1,
   [9, 1, 2, 1, [
-    [[], [0.1, createSphere(0.10, 20)]],
+    [[], [0.4, createSphere(0.10, 20)]],
   ]],
   [9, 1, 1, 1, 0, 1, 2],
   [

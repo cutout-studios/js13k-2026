@@ -35,9 +35,25 @@ import { createAudioSource, NOISE_BUFFER } from "~/audio";
 import {
   BulletSequence,
   BulletState,
+  ItemData,
   PlayerState,
   WeaponState,
 } from "../types.ts";
+
+export const DEFAULT_WEAPON_DATA = [
+  -1,
+  0,
+  0,
+  8,
+  [],
+  1,
+  8,
+  1,
+  0.1,
+  0,
+  3,
+  0,
+] as ItemData;
 
 const BULLET_SPEED_COEFFICIENT = 25,
   DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
@@ -47,6 +63,23 @@ const BULLET_SPEED_COEFFICIENT = 25,
     [() => 1, 0.01],
     [() => 0.2, 0.05],
   ]);
+
+const HIT_SOUND = createAudioSource("square");
+const EXPLOSION_NOISE = createAudioSource(NOISE_BUFFER, [[() => 1, 0.01], [
+  () => 0.3,
+  0.12,
+]]);
+const EXPLOSION_BODY = createAudioSource("triangle", [[() => 1, 0.01], [
+  () => 0.4,
+  0.1,
+]]);
+
+export const playBulletHitSound = (pan: number = 0) =>
+  HIT_SOUND([range(1400, 1800)], 0.05, 0, pan / 5, 0.05);
+export const playExplosionSound = (pan: number = 0) => {
+  EXPLOSION_NOISE([range(180, 260)], 0.5, 0, pan / 5, 0.6);
+  EXPLOSION_BODY([range(50, 70)], 0.35, 0.01, pan / 5, 0.5);
+};
 
 // TODO: only "default weapons" for now
 export const createWeaponState = (): WeaponState => {
@@ -74,7 +107,7 @@ export const createWeaponState = (): WeaponState => {
         return createBullet(player);
       }], [
         () => undefined,
-        0.1,
+        DEFAULT_WEAPON_DATA[8],
       ]],
       Infinity,
     ),
