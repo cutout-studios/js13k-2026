@@ -16,6 +16,8 @@
 
 import { doTimes } from "~/common";
 import { createElement } from "~/dom";
+import { createCamera, createRenderTarget } from "~/3D";
+
 import {
   BORDER,
   FLEX_CENTER,
@@ -23,9 +25,8 @@ import {
   PADDED,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
-import { createCamera } from "../../libraries/3D/camera.ts";
-import { portrait } from "../state/world/client.ts";
-import { createRenderTarget } from "~/3D";
+
+import { portrait } from "./portrait.ts";
 
 const INVENTORY_SIZE = 12;
 
@@ -92,8 +93,8 @@ export const menu = createElement(
   ),
 ) as HTMLDialogElement;
 
-export const toggleMenu = () => {
-  menu.open ? menu.close() : menu.showModal();
+export const openMenu = () => {
+  menu.showModal();
 
   clientCamera([[portrait]], createRenderTarget(clientCanvas));
 };

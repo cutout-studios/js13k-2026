@@ -18,7 +18,7 @@ import { ceil, min, round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
-import { GameState } from "../state/types.ts";
+import { Game } from "../game/types.ts";
 
 import {
   CORNER,
@@ -27,8 +27,6 @@ import {
   JUSTIFY,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
-
-const FUEL_SEGMENT_SIZE = 20; // TODO
 
 const _createMeter = (
   name: string,
@@ -102,7 +100,7 @@ export const updateHUD = (
   [
     [[, , [shieldDamage, fuelDamage, armorDamage]], [, , data]],
     [, , [stage, wave, lastWave]],
-  ]: GameState,
+  ]: Game,
   tickDuration: number,
 ) => {
   gameDuration += tickDuration;
@@ -114,7 +112,7 @@ export const updateHUD = (
 
   armorUpdate(doTimes(data[0], (index) => [1, +(index < armorDamage)]));
   shieldUpdate([[data[21], data[21] - shieldDamage]]);
-  fuelUpdate( // TODO: separate fuel count & segment size
+  fuelUpdate(
     doTimes(
       ceil(data[11] / FUEL_SEGMENT_SIZE),
       () => {

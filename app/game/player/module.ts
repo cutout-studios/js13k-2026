@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-export const PLAYER_Z_PLANE = 5;
-export const PLAYER_INVENTORY_SIZE = 12;
+import { repeat } from "~/common";
 
-export const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"];
-export const STRAFE_ATTACK_TIME = 0.3;
-export const STRAFE_RELEASE_TIME = 0.35;
+import { Player } from "./types.ts";
+import { createShip } from "../ship/module.ts";
+import colorOptions from "../options/module.ts";
+import { Resources } from "../ship/types.ts";
+
+export default [
+  createShip(colorOptions[0]),
+  repeat(3, 0) as Resources,
+
+  // inventory
+  [],
+] as Player;

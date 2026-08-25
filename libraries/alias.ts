@@ -16,6 +16,7 @@
 
 export const { document } = globalThis;
 export const {
+  abs,
   ceil,
   random,
   round,

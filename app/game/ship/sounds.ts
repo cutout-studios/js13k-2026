@@ -14,10 +14,37 @@
  * limitations under the License.
  */
 
-export {
+import {
+  createSound,
   NOISE_BUFFER,
   SINE_BUFFER,
   SQUARE_BUFFER,
   TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+} from "~/audio";
+
+export const weaponSound = createSound(
+  [SINE_BUFFER, [75, 85], 0.15, 0, 0.2],
+  [NOISE_BUFFER, [800, 1000], 0.15, 0, 1, [[() => [1, 1, 1], 0.01], [
+    () => [0.2, 1, 1],
+    0.05,
+  ]]],
+);
+
+export const hitSound = createSound([
+  SQUARE_BUFFER,
+  [1400, 1800],
+  0.05,
+  0,
+  0.05,
+]);
+
+export const explosionSound = createSound(
+  [TRIANGLE_BUFFER, [50, 70], 0.35, 0.01, 0.5, [[() => [1, 1, 1], 0.01], [
+    () => [0.4, 1, 1],
+    0.1,
+  ]]],
+  [NOISE_BUFFER, [180, 260], 0.5, 0, 0.6, [[() => [1, 1, 1], 0.01], [
+    () => [0.4, 1, 1],
+    0.1,
+  ]]],
+);

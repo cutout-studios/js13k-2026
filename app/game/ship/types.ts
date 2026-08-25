@@ -24,38 +24,14 @@ export type Ship = [
   weapons: Weapon[],
   sequence: SequenceFunction<Ship>,
   damages: Resources,
-  statBlock: ShipStatSnapshot,
-];
-
-export type Weapon = [
-  object: XOObject,
-  heading: XYZ,
-  bullets: BulletGroup,
-  sequence: SequenceFunction<Weapon>,
-  statBlock: WeaponStatSnapshot,
-];
-
-export type Bullet = [object: XOObject, sequence: SequenceFunction<Bullet>];
-
-export type BulletGroup = [
-  bullets: Bullet[],
-  instanceGroup: XOObject[],
+  _snapshot: ShipSnapshot,
 ];
 
 export type Resources = [shield: number, fuel?: number, armor?: number];
 
-export type Item = [
-  object: XOObject,
-  colorID: number,
-  typeID: number,
-  rank: number,
-  modifiers: [dataID: number, value: number, type: "*" | "x"][],
-  // statBlock?: number[],
-];
-
-export type ShipStatSnapshot = [
+export type ShipSnapshot = [
   armor: number,
-
+  // 0
   armorSave: number,
   damageTaken: number,
   damageTakenFromFuel: number,
@@ -83,12 +59,29 @@ export type ShipStatSnapshot = [
   trackingSpeed: number,
 ];
 
-export type WeaponStatSnapshot = [
+export type Weapon = [
+  object: XOObject,
+  heading: XYZ,
+  bullets: BulletGroup,
+  sequence: SequenceFunction<Weapon>,
+  _snapshot: WeaponSnapshot,
+];
+
+export type WeaponSnapshot = [
   bulletCount: number,
+  // 0
   bulletCritChance: number,
   bulletCritDamage: number,
   bulletDamage: number,
   bulletLifetime: number,
   bulletRate: number,
+  // 5
   bulletSpread: number,
+];
+
+export type Bullet = [object: XOObject, sequence: SequenceFunction<Bullet>];
+
+export type BulletGroup = [
+  bullets: Bullet[],
+  instanceGroup: XOObject[],
 ];

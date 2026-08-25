@@ -18,6 +18,19 @@ import { XOObject } from "~/3D";
 
 import { Ship } from "./types.ts";
 
+export const createShip = (options: ColorOptions, level = 1): Ship => {
+  const result = [SHIP_BASE_PROPERTIES(), WEAPON_BASE_PROPERTIES()] as [
+    ShipSnapshot,
+    WeaponSnapshot,
+  ];
+
+  doTimes(2, (index) => {
+    for (const [statID, statBand] of overrides[index]) {
+      result[index][statID] = levelRoll(statBand, level);
+    }
+  });
+};
+
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,
 ): [ship: XOObject[], ...bulletGroups: XOObject[][]] => [

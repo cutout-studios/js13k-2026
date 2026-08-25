@@ -38,4 +38,9 @@ export const ENEMY_PLACEMENT_SPREAD = 5;
 export const WAVE_CURVE = 7.5;
 export const WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
 export const WAVES_PER_LEVEL_BAND = [2, 14] as Band;
+
 export const GROUPS_PER_WAVE_BAND = [1, 6] as Band;
+
+export const DROP_RANK_THRESHOLDS = [0.85, 1.35] as const;
+export const DROP_RANK_FALLOFF = 2;
+export const DROP_RANK_UP_MIX_COUNT = 3;

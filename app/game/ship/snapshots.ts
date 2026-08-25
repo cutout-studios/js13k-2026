@@ -15,33 +15,25 @@
  */
 
 import { ColorOptions } from "../options/types.ts";
-import { ShipStatSnapshot, WeaponStatSnapshot } from "./types.ts";
-import { SHIP_STAT_BASE, WEAPON_STAT_BASE } from "./constants.ts";
+import { ShipSnapshot, WeaponSnapshot } from "./types.ts";
+import { SHIP_BASE_PROPERTIES, WEAPON_BASE_PROPERTIES } from "./constants.ts";
 import { levelRoll } from "../world/waves.ts";
+import { doTimes } from "~/common";
 
-// TODO: dedupe as "createSnapshot"
-export const createShipSnapshot = (
-  [, , [, [shipOverrides]]]: ColorOptions,
+export const createSnapshot = (
+  [, , [, overrides]]: ColorOptions,
   level = 1,
-): ShipStatSnapshot => {
-  const shipSnapshot = [...SHIP_STAT_BASE] as ShipStatSnapshot;
+): [ShipSnapshot, WeaponSnapshot] => {
+  const result = [SHIP_BASE_PROPERTIES(), WEAPON_BASE_PROPERTIES()] as [
+    ShipSnapshot,
+    WeaponSnapshot,
+  ];
 
-  for (const [statID, statBand] of shipOverrides) {
-    shipSnapshot[statID] = levelRoll(statBand, level);
-  }
+  doTimes(2, (index) => {
+    for (const [statID, statBand] of overrides[index]) {
+      result[index][statID] = levelRoll(statBand, level);
+    }
+  });
 
-  return shipSnapshot;
-};
-
-export const createWeaponSnapshot = (
-  [, , [, [, weaponOverrides]]]: ColorOptions,
-  level = 1,
-) => {
-  const shipSnapshot = [...WEAPON_STAT_BASE] as WeaponStatSnapshot;
-
-  for (const [statID, statBand] of weaponOverrides) {
-    shipSnapshot[statID] = levelRoll(statBand, level);
-  }
-
-  return shipSnapshot;
+  return result;
 };

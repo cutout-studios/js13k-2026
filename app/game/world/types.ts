@@ -15,7 +15,8 @@
  */
 
 import { XOObject } from "~/3D";
-import { Item, Ship } from "../ship/types.ts";
+import { Ship } from "../ship/types.ts";
+import { Item, WeaponItem } from "../player/types.ts";
 
 export type EnemyGroup = [
   colorID: number,
@@ -25,7 +26,9 @@ export type EnemyGroup = [
 
 export type World = [
   activeEnemies: EnemyGroup[],
-  droppedItems: Item[],
+  droppedItems: DroppedItem[],
   currentLevel: [ID: number, wave: number, wavesInLevel: number],
   winCollection: Set<number>,
 ];
+
+export type DroppedItem = [object: XOObject, item: Item | WeaponItem];

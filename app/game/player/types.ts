@@ -14,10 +14,24 @@
  * limitations under the License.
  */
 
-import { Item, Resources, Ship } from "../ship/types.ts";
+import { Resources, Ship } from "../ship/types.ts";
 
 export type Player = [
   ship: Ship,
   levelAssigments: Resources,
   inventory: [item: Item, equipped: boolean, selected: boolean][],
+];
+
+export type Item = [
+  typeID: number,
+  colorID: number,
+  rank: number,
+  modifiers: [propertyID: number, value: number, type: "*" | "x"][],
+  mass: number,
+];
+
+export type WeaponItem = [
+  ...Item,
+  bulletCount: number,
+  bulletDamage: number,
 ];

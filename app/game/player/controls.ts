@@ -70,6 +70,7 @@ export const controlSequence: SequenceFunction<Ship> = (ship, tickLength) => {
     aimObject(object, ship[1]);
   }
 
+  // TODO: not right
   weapons.forEach((weapon, index) =>
     pointer && pointer[1] & (1 << index) && (weapon[1] = ship[1]) &&
     fireWeapon(weapon, tickLength)

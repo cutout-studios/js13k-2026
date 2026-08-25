@@ -35,7 +35,7 @@ import {
 
 import { levelCurve, roll } from "./waves.ts";
 import { createDeck, drawCard } from "../decks.ts";
-import { drawItem } from "../ship/items.ts";
+import { drawItem } from "./drops.ts";
 
 export const drawEnemyGroups = (wave: number, level: number) =>
   doTimes(

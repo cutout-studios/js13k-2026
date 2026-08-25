@@ -23,7 +23,8 @@ import { keyboard } from "~/controller";
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud, updateHUD } from "./elements/hud.ts";
 import { menu, openMenu } from "./elements/menu.ts";
-import state, { getSceneObjects, updateGame } from "./game/module.ts";
+import state, { getSceneObjects } from "./game/module.ts";
+import { updateGame } from "./game/update.ts";
 
 document.head.append(createElement("style", undefined, {
   textContent: /* css */ `
