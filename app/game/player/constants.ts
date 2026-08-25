@@ -14,18 +14,4 @@
  * limitations under the License.
  */
 
-import { XOObject } from "~/3D";
-import { Item, Ship } from "../ship/types.ts";
-
-export type EnemyGroup = [
-  colorID: number,
-  ships: Ship[],
-  instanceGroup: XOObject[],
-];
-
-export type World = [
-  activeEnemies: EnemyGroup[],
-  droppedItems: Item[],
-  currentLevel: [ID: number, wave: number, wavesInLevel: number],
-  winCollection: Set<number>,
-];
+export const PLAYER_Z_PLANE = 5;

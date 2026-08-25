@@ -24,7 +24,7 @@ export type Ship = [
   weapons: Weapon[],
   sequence: SequenceFunction<Ship>,
   damages: Resources,
-  data: GlobalShipStatBlock[],
+  statBlock: ShipStatSnapshot[],
 ];
 
 export type Weapon = [
@@ -32,7 +32,7 @@ export type Weapon = [
   heading: XYZ,
   bullets: BulletGroup,
   sequence: SequenceFunction<Weapon>,
-  data: LocalWeaponStatBlock[],
+  statBlock: WeaponStatSnapshot[],
 ];
 
 export type Bullet = [object: XOObject, sequence: SequenceFunction<Bullet>];
@@ -53,7 +53,7 @@ export type Item = [
   data: number[],
 ];
 
-type GlobalShipStatBlock = [
+export type ShipStatSnapshot = [
   armor: number,
   armorSave: number,
   damageTaken: number,
@@ -78,7 +78,7 @@ type GlobalShipStatBlock = [
   trackingSpeed: number,
 ];
 
-type LocalWeaponStatBlock = [
+export type WeaponStatSnapshot = [
   bulletCount: number,
   bulletCritChance: number,
   bulletCritDamage: number,

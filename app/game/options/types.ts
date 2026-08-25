@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
-import { XOOrientation, XOGeometry } from "~/3D";
+import { Band } from "~/random";
+import { XOGeometry, XOOrientation } from "~/3D";
 import { ActionSchedule } from "~/clock";
 
 import { Ship } from "../ship/types.ts";
 
-export type ModifierOptions = [
-  name: string,
-  baseValue: number,
-  itemTypesID: number,
-  modifierTypeID: number,
-  modifierMagnitudeID: number
-];
-
 export type ColorOptions = [
   name: string,
   value: number,
-  enemy: [
+  ship: [
     shape: [orientation: XOOrientation, geometry: XOGeometry][],
+    overrides: [
+      body: BaseStatOverride[],
+      weapon: BaseStatOverride[],
+    ],
     schedule: ActionSchedule<Ship>,
+    countBand: Band,
   ],
-  modifiers: ModifierOptions[],
+  itemModifiers: ModifierOptions[],
+];
+
+export type BaseStatOverride = [statID: number, band: Band];
+
+export type ModifierOptions = [
+  itemTypeID: number,
+  statID: number,
+  modifierOperation: string,
+  modifierBand: Band,
 ];

@@ -20,7 +20,7 @@ import { length, max, min, random, round } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
 
-import { World, EnemyGroup } from "./types.ts";
+import { EnemyGroup, World } from "./types.ts";
 import {
   COLORS,
   ENEMY_COLOR_SHAPES,
