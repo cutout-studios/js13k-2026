@@ -25,5 +25,5 @@ export type SoundDefinition = [
   duration: number,
   delay?: number,
   velocity?: number,
-  schedule?: ActionSchedule<void, SoundChannels>,
+  schedule?: ActionSchedule<SoundChannels>,
 ];
