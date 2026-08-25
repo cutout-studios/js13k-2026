@@ -17,17 +17,14 @@
 import { atan, PI, round } from "~/alias";
 import { Band, range } from "~/random";
 
-import {
-  ENEMY_WAVE_COUNT_BAND,
-  GAME_DIFFICULTY_FALLOFF,
-} from "../options/constants.ts";
+import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
 
 export const levelCurve = (
   level: number,
   falloff = GAME_DIFFICULTY_FALLOFF,
 ) => (2 * atan(level * falloff)) / PI;
 
-export const roll = (
+export const levelRoll = (
   [start, end]: Band = [0, 0],
   level: number,
   falloff = GAME_DIFFICULTY_FALLOFF,
@@ -38,4 +35,4 @@ export const roll = (
 };
 
 export const getWavesInLevel = (level: number) =>
-  round(roll(ENEMY_WAVE_COUNT_BAND, level));
+  round(levelRoll(WAVES_PER_LEVEL_BAND, level));

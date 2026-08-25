@@ -42,7 +42,7 @@ import {
   playExplosionSound,
   updateBullets,
 } from "./ship/weapons.ts";
-import { getData } from "./player/data.ts";
+import { getData } from "./ship/snapshots.ts";
 import {
   deleteEnemies,
   drawEnemyGroups,

@@ -17,28 +17,27 @@
 import { hypot, max } from "~/alias";
 import { doTimes } from "~/common";
 import { keyboard, pointer } from "~/controller";
-import {
-  adjustObject,
-  aimObject,
-  scaleXYZ,
-  XOObject,
-  XYZ,
-  XYZ_LENGTH,
-} from "~/3D";
+import { adjustObject, aimObject, scaleXYZ, XYZ, XYZ_LENGTH } from "~/3D";
 import { approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
-import { Player } from "./types.ts";
+import { SequenceFunction, Ship } from "../ship/types.ts";
+import { fireWeapon } from "../ship/weapons.ts";
 
-const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"],
-  strafeEnvelopes = doTimes(
-    STRAFE_KEYS.length,
-    () => createEnvelope(0.30, 0.35),
-  );
+import {
+  STRAFE_ATTACK_TIME,
+  STRAFE_KEYS,
+  STRAFE_RELEASE_TIME,
+} from "./constants.ts";
 
-export const updatePlayer = (player: Player, tickLength: number) => {
-  const [[body, weapons], [, , sheet]] = player;
+const strafeEnvelopes = doTimes(
+  STRAFE_KEYS.length,
+  () => createEnvelope(STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME),
+);
+
+export const controlSequence: SequenceFunction<Ship> = (ship, tickLength) => {
+  const [object, heading, weapons, , , statBlock] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];
   doTimes(STRAFE_KEYS.length, (index: number) => {
     const value = strafeEnvelopes[index](
@@ -49,47 +48,32 @@ export const updatePlayer = (player: Player, tickLength: number) => {
     strafeMagnitudes[index >> 1] += index & 1 ? -value : value;
   });
 
-  adjustObject(body[0], [scaleXYZ(
+  adjustObject(object, [scaleXYZ(
     strafeMagnitudes,
-    sheet[26] * tickLength / max(1, hypot(...strafeMagnitudes)),
+    statBlock[19] * tickLength / max(1, hypot(...strafeMagnitudes)),
   )]);
 
   if (pointer) {
     const target = mapClientXY(pointer[0]);
 
-    body[1] = doTimes(
+    ship[1] = doTimes(
       XYZ_LENGTH,
       (index) =>
         approachFactory(target[index])(
-          body[1][index],
+          heading[index],
           tickLength,
           0, // don't need this
-          sheet[27],
+          statBlock[20],
         ),
     ) as XYZ;
 
-    aimObject(body[0], body[1]);
+    aimObject(object, ship[1]);
   }
 
-  doTimes(2, (index) => {
-    const [[bulletObjects, bulletSequences], weaponSequence] = weapons[index];
+  weapons.forEach((weapon, index) =>
+    pointer && pointer[1] & (1 << index) && (weapon[1] = ship[1]) &&
+    fireWeapon(weapon, tickLength)
+  );
 
-    if (pointer && pointer[1] & (1 << index)) { // respective mouse button press
-      const bullet = weaponSequence(player, tickLength);
-
-      if (bullet) {
-        bulletObjects.push(bullet[0]);
-        bulletSequences.push(bullet[1]);
-      }
-    }
-  });
+  return ship;
 };
-
-export const getShipObjects = (
-  [[[shipObject], [[[leftBulletObjects]], [[rightBulletObjects]]]]]:
-    PlayerState,
-): [ship: XOObject[], leftBullets: XOObject[], rightBullets: XOObject[]] => [
-  [shipObject],
-  leftBulletObjects,
-  rightBulletObjects,
-];

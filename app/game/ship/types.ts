@@ -16,7 +16,7 @@
 
 import { XOObject, XYZ } from "~/3D";
 
-type SequenceFunction<T> = (payload: T, tickLength: number) => T;
+export type SequenceFunction<T> = (payload: T, tickLength: number) => T;
 
 export type Ship = [
   object: XOObject,
@@ -24,7 +24,7 @@ export type Ship = [
   weapons: Weapon[],
   sequence: SequenceFunction<Ship>,
   damages: Resources,
-  statBlock: ShipStatSnapshot[],
+  statBlock: ShipStatSnapshot,
 ];
 
 export type Weapon = [
@@ -32,7 +32,7 @@ export type Weapon = [
   heading: XYZ,
   bullets: BulletGroup,
   sequence: SequenceFunction<Weapon>,
-  statBlock: WeaponStatSnapshot[],
+  statBlock: WeaponStatSnapshot,
 ];
 
 export type Bullet = [object: XOObject, sequence: SequenceFunction<Bullet>];
@@ -49,32 +49,37 @@ export type Item = [
   colorID: number,
   typeID: number,
   rank: number,
-  modifiers: [dataID: number, value: number][],
-  data: number[],
+  modifiers: [dataID: number, value: number, type: "*" | "x"][],
+  // statBlock?: number[],
 ];
 
 export type ShipStatSnapshot = [
   armor: number,
+
   armorSave: number,
   damageTaken: number,
   damageTakenFromFuel: number,
   fuel: number,
   fuelCost: number,
+  // 5
   fuelEjectDelay: number,
   fuelRegen: number,
   fuelSegments: number,
   itemMixtureQuality: number,
   itemQuality: number,
+  // 10
   levelQuality: number,
   lowestResource: number,
   mass: number,
   resolve: number,
   shield: number,
+  // 15
   shieldRegen: number,
   spinDamage: number,
   spinHandling: number,
   spinTime: number,
   strafeSpeed: number,
+  // 20
   trackingSpeed: number,
 ];
 

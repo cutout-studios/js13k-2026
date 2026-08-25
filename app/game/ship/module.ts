@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-export const PLAYER_Z_PLANE = 5;
+import { XOObject } from "~/3D";
 
-export const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"];
-export const STRAFE_ATTACK_TIME = 0.3;
-export const STRAFE_RELEASE_TIME = 0.35;
+import { Ship } from "./types.ts";
+
+export const getShipObjects = (
+  [shipObject, , weapons]: Ship,
+): [ship: XOObject[], ...bulletGroups: XOObject[][]] => [
+  [shipObject],
+  ...weapons.map(([, , [, bullets]]) => bullets),
+];

@@ -40,6 +40,6 @@ export type BaseStatOverride = [statID: number, band: Band];
 export type ModifierOptions = [
   itemTypeID: number,
   statID: number,
-  modifierOperation: string,
+  modifierOperation: "*" | "x",
   modifierBand: Band,
 ];

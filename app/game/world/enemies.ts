@@ -31,7 +31,7 @@ import {
   ENEMY_WAVE_CURVE,
   ENEMY_WAVE_PACING,
   ENEMY_WAVE_SIZE_BAND,
-} from "../options/constants.ts";
+} from "./constants.ts";
 
 import { levelCurve, roll } from "./waves.ts";
 import { createDeck, drawCard } from "../decks.ts";

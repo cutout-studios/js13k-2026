@@ -114,7 +114,7 @@ export const updateHUD = (
 
   armorUpdate(doTimes(data[0], (index) => [1, +(index < armorDamage)]));
   shieldUpdate([[data[21], data[21] - shieldDamage]]);
-  fuelUpdate( // TODO: separate fuel count & segement size
+  fuelUpdate( // TODO: separate fuel count & segment size
     doTimes(
       ceil(data[11] / FUEL_SEGMENT_SIZE),
       () => {

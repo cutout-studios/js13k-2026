@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import { ActionSchedule } from "~/clock";
 import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
 
+import { controlSequence } from "../player/controls.ts";
 import { Ship } from "../ship/types.ts";
 
 import { ColorOptions } from "./types.ts";
-import { ActionSchedule } from "~/clock";
 
 const _shipBehaviorStub: ActionSchedule<Ship> = [[(ship: Ship) => ship]];
 
@@ -33,7 +34,7 @@ export default [
   [ // player
     "White",
     0xFFFFFF,
-    [[[], [], [], []], [[], []], _shipBehaviorStub /* TODO: input behavior */],
+    [[[], [], [], []], [[], []], controlSequence],
     [],
   ],
   [ // purple: crit/glass

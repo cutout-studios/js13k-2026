@@ -89,3 +89,44 @@ export const WEAPON_STAT_BASE: WeaponStatSnapshot = [
 export const ITEM_RANK_THRESHOLDS = [0.85, 1.35] as const;
 export const ITEM_RANK_FALLOFF = 2;
 export const ITEM_RANK_UP_MIX_COUNT = 3;
+
+// const BULLET_SPEED_COEFFICIENT = 25,
+//   DEFAULT_BULLET_SHAPE = createPrism([0.01, 0.01, 0.2]),
+//   DEFAULT_BULLET_PAINT = paint(0xFFE900),
+//   DEFAULT_BULLET_SOUND_BASS = createAudioSource("sine"),
+//   DEFAULT_BULLET_SOUND_BANG = createAudioSource(NOISE_BUFFER, [
+//     [() => 1, 0.01],
+//     [() => 0.2, 0.05],
+//   ]);
+
+// const HIT_SOUND = createAudioSource("square");
+// const EXPLOSION_NOISE = createAudioSource(NOISE_BUFFER, [[() => 1, 0.01], [
+//   () => 0.3,
+//   0.12,
+// ]]);
+// const EXPLOSION_BODY = createAudioSource("triangle", [[() => 1, 0.01], [
+//   () => 0.4,
+//   0.1,
+// ]]);
+
+// export const playBulletHitSound = (pan: number = 0) =>
+//   HIT_SOUND([range(1400, 1800)], 0.05, 0, pan / 5, 0.05);
+// export const playExplosionSound = (pan: number = 0) => {
+//   EXPLOSION_NOISE([range(180, 260)], 0.5, 0, pan / 5, 0.6);
+//   EXPLOSION_BODY([range(50, 70)], 0.35, 0.01, pan / 5, 0.5);
+// };
+
+//         // TODO: "group" audio sources
+//         DEFAULT_BULLET_SOUND_BASS(
+//           [range(75, 85)],
+//           0.15,
+//           0,
+//           readOrigin(coordinates)[0] / 5,
+//           0.2,
+//         );
+//         DEFAULT_BULLET_SOUND_BANG(
+//           [range(800, 1000)],
+//           0.15,
+//           0,
+//           readOrigin(coordinates)[0] / 5,
+//         ); // TODO: derive window sides & clamp
