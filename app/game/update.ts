@@ -126,7 +126,8 @@ export const updateGame = (
         if (damages[0] < snapshot[15]) return [];
 
         explosionSound(); // TODO: pan based on location
-        // TODO!: roll item drop
+        
+        // TODO: roll item drop
 
         return [index];
       }),
