@@ -27,6 +27,7 @@ export const {
   E,
   PI,
   sin,
+  sqrt,
   cos,
   tan,
   hypot,

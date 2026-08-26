@@ -15,7 +15,7 @@
  */
 
 import { createObject, flattenObjects, XOObject, XYZ } from "~/3D";
-import { createActionSequence } from "~/clock";
+import { ActionSchedule, createActionSequencer } from "~/clock";
 
 import { ColorOptions } from "../options/types.ts";
 import { levelRollOverrides } from "../world/levels.ts";
@@ -23,18 +23,23 @@ import { Resources, Ship, ShipSnapshot } from "./types.ts";
 import { _THREE_ZEROS, SHIP_BASE_PROPERTIES } from "./constants.ts";
 import { createWeapon } from "./weapons.ts";
 
+const DEFAULT_SHIP_SCHEDULE: ActionSchedule<Ship> = [[
+  (ship, tickLength) =>
+    ship[2].forEach((weapon) => weapon[3](weapon, tickLength)),
+]];
+
 export const createShip = (
   [
     ,
     ,
-    [shapes, shipOverrides, shipSchedule, weapon],
+    [shapes, shipOverrides, shipSchedule = DEFAULT_SHIP_SCHEDULE, weapon],
   ]: ColorOptions,
   level = 1,
 ): Ship => [
   flattenObjects(...shapes.map((args) => createObject(...args))),
   _THREE_ZEROS() as XYZ,
   [createWeapon(weapon, level)],
-  createActionSequence(shipSchedule),
+  createActionSequencer(shipSchedule),
   _THREE_ZEROS() as Resources,
   levelRollOverrides(
     SHIP_BASE_PROPERTIES,

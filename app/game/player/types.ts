@@ -16,9 +16,8 @@
 
 import { XOObject } from "~/3D";
 
-import { SequenceFunction } from "../ship/types.ts";
-
 import { Resources, Ship } from "../ship/types.ts";
+import { ActionSequencer } from "~/clock";
 
 export type Player = [
   ship: Ship,
@@ -32,7 +31,7 @@ export type Player = [
 
 export type Item = [
   object: XOObject,
-  schedule: SequenceFunction<Item>,
+  sequence: ActionSequencer<Item>,
   typeID: number,
   colorID: number,
   rank: number,

@@ -18,11 +18,11 @@ import { hypot, max } from "~/alias";
 import { doTimes } from "~/common";
 import { keyboard, pointer } from "~/controller";
 import { adjustObject, aimObject, scaleXYZ, XYZ, XYZ_LENGTH } from "~/3D";
-import { approachFactory, createEnvelope } from "~/clock";
+import { ActionSequencer, approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
-import { SequenceFunction, Ship } from "../ship/types.ts";
+import { Ship } from "../ship/types.ts";
 
 import {
   STRAFE_ATTACK_TIME,
@@ -37,7 +37,7 @@ const strafeEnvelopes = doTimes(
 
 // TODO: spin counter
 // TODO: boost
-export const controlSequence: SequenceFunction<Ship> = (ship, tickLength) => {
+export const controlSequence: ActionSequencer<Ship> = (ship, tickLength) => {
   const [object, heading, weapons, , , statBlock] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];
   doTimes(STRAFE_KEYS.length, (index: number) => {
@@ -59,13 +59,18 @@ export const controlSequence: SequenceFunction<Ship> = (ship, tickLength) => {
 
     ship[1] = doTimes(
       XYZ_LENGTH,
-      (index) =>
+      (index) => {
+        const valueObject = { value: heading[index] };
+
         approachFactory(target[index])(
-          heading[index],
+          valueObject,
           tickLength,
           0, // don't need this
           statBlock[20],
-        ),
+        );
+
+        return valueObject.value;
+      },
     ) as XYZ;
 
     aimObject(object, ship[1]);
@@ -76,5 +81,5 @@ export const controlSequence: SequenceFunction<Ship> = (ship, tickLength) => {
     weapon[3](weapon, tickLength)
   );
 
-  return ship;
+  return true;
 };

@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-import { Action, ActionSchedule } from "./types.ts";
+import { Action, ActionSchedule, ActionSequencer } from "./types.ts";
 
-export const createActionSequence = <T, K>(
-  actionTimings: ActionSchedule<T, K>,
-  loopCount = 1,
-) => {
+export const createActionSequencer = <T>(
+  actionTimings: ActionSchedule<T>,
+  loopCount = Infinity,
+): ActionSequencer<T> => {
   let elapsedTime = 0,
     actionSwaps = 0,
-    currentAction: Action<T, K>,
+    currentAction: Action<T>,
     currentDuration: number | undefined;
 
   // NOTE: We're assuming tick length is small and
   // segment durations are long: only calling the first action triggered each time.
   // For JS13K, concision > complete correctness.
-  return (payload: T, tickLength: number): K | undefined => {
-    if (loopCount < 1) return;
+  return (payload: T, tickLength: number): boolean => {
+    if (loopCount < 1) return false;
 
     elapsedTime += tickLength;
 
@@ -45,6 +45,7 @@ export const createActionSequence = <T, K>(
 
     [currentAction, currentDuration = 0] = actionTimings[actionSwaps];
 
-    return currentAction(payload, tickLength, elapsedTime, currentDuration);
+    currentAction(payload, tickLength, elapsedTime, currentDuration);
+    return true;
   };
 };

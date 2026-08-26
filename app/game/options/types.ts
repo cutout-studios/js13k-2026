@@ -30,10 +30,10 @@ export type ColorOptions = [
 type ShipOptions = [
   shape: [orientation: XOOrientation, geometry: XOGeometry][],
   overrides: BaseStatOverride[],
-  sequence: ActionSchedule<Ship>,
+  sequence: ActionSchedule<Ship> | undefined,
   weapon: [
     overrides: BaseStatOverride[],
-    sequence: ActionSchedule<Weapon>,
+    sequence: ActionSchedule<Weapon> | undefined,
   ],
   countBand: Band,
 ];

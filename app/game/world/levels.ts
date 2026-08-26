@@ -24,15 +24,13 @@ export const levelCurve = (
   falloff = GAME_DIFFICULTY_FALLOFF,
 ) => (2 * atan(level * falloff)) / PI;
 
-// TODO!: determine true top/bottom based on levelCurve
 export const levelRoll = (
-  [start, end]: Band = [0, 0],
+  [start, end]: Band,
   level: number,
   falloff = GAME_DIFFICULTY_FALLOFF,
-  spread = 1.125,
 ) => {
-  const base = start + (end - start) * levelCurve(level, falloff);
-  return range(base, base * spread);
+  const span = end - start, curve = levelCurve(level, falloff);
+  return range(start + span * curve, start + span * sqrt(curve));
 };
 
 export const levelRollOverrides = (

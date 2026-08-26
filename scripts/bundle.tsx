@@ -22,7 +22,7 @@ import { minify } from "esbuild-minify-templates";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
-const ESTIMATED_RECLAIMABLE_BYTES = 250;
+const ESTIMATED_RECLAIMABLE_BYTES = 60;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
@@ -40,6 +40,8 @@ Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 await bundle();
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
+
+await bundle({ minify: false });
 
 await new Deno.Command("open", {
   args: [BUNDLE_OUTPUT_FILEPATH],

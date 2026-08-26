@@ -45,7 +45,7 @@ export const createSound = (...definitions: SoundDefinition[]) => {
         source.connect(ampKnob).connect(panKnob).connect(groupBus);
 
         const knobs = [ampKnob.gain, source.playbackRate, panKnob.pan];
-        let state: SoundChannels = [
+        const state: SoundChannels = [
           velocity,
           range(lo, hi) / 440,
           pan,
@@ -58,7 +58,7 @@ export const createSound = (...definitions: SoundDefinition[]) => {
         let elapsedTime = startTime;
         for (const [action, timing = 0] of schedule) {
           elapsedTime += timing;
-          state = action(state, timing, elapsedTime, duration) as SoundChannels;
+          action(state, timing, elapsedTime, duration);
 
           state.forEach((value, i) =>
             knobs[i].linearRampToValueAtTime(value, elapsedTime)

@@ -15,17 +15,13 @@
  */
 
 import { XOObject, XYZ } from "~/3D";
-
-export type SequenceFunction<T> = (
-  payload: T,
-  tickLength: number,
-) => T | undefined;
+import { ActionSequencer } from "~/clock";
 
 export type Ship = [
   object: XOObject,
   heading: XYZ,
   weapons: Weapon[],
-  sequence: SequenceFunction<Ship>,
+  sequence: ActionSequencer<Ship>,
   damages: Resources,
   _snapshot: ShipSnapshot,
 ];
@@ -72,7 +68,7 @@ export type Weapon = [
   object: XOObject,
   heading: XYZ,
   bullets: BulletGroup,
-  sequence: SequenceFunction<Weapon>,
+  sequence: ActionSequencer<Weapon>,
   _snapshot: WeaponSnapshot,
 ];
 
@@ -88,7 +84,7 @@ export type WeaponSnapshot = [
   bulletSpread: number,
 ];
 
-export type Bullet = [object: XOObject, sequence: SequenceFunction<Bullet>];
+export type Bullet = [object: XOObject, sequence: ActionSequencer<Bullet>];
 
 export type BulletGroup = [
   bullets: Bullet[],

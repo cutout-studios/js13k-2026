@@ -40,6 +40,8 @@ export const createItem = (
   level: number,
   quality = 0,
 ): Item => {
+  const [, , [geometry]] = options[0];
+
   const [
     [
       baseMass,
@@ -60,8 +62,7 @@ export const createItem = (
   }
 
   return [
-    // TODO!: body/wing/engine geometry
-    createObject(),
+    createObject(...geometry[typeID]),
     createActionSequence([[(item: Item) => item]]),
     typeID,
     colorID,

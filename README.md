@@ -2,16 +2,16 @@
 
 Unicorns and Rainbows!!
 
-## Compression TODOs (Total: ~0.25kB):
+## Compression TODOs (Total: ~60B):
 
-- quantize all values (woof)
 - remove GPU error handler, lol (50B)
-- proper CSS bundling (10B)
-- "winding" or "gray" iterator that goes xx, xy, yy, yx (a few Bs)
+- proper CSS bundling (10B) - will likely require a makefile wrapper
 
 ### Dubious Options
 
-- Add map, reduce, push, forEach to `~/alias`.
+- Additional aliases: for/forEach loops -> 'doTimes', undefined (?).
+  - "winding" or "gray" iterator that goes xx, xy, yy, yx (a few Bs)
+- Quantize all values (out of 256).
 - **Convert all game data (e.g. content definitions) into CSVs.** Then write a
   small compiler that converts each CSV by column into an ASCII string and
   "legend" file for recurring values. We de-compile the CSVs at runtime:
@@ -35,4 +35,3 @@ export default [
   heuristic), which will probably increase between 50%-100%.
 - If the cost savings are 25%-50% on the data, conservatively we're looking
   at... about 200B of savings. Almost 1kB on the top end (!).
-- If we go this route, a `make` file becomes helpful.
