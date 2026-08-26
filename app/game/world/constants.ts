@@ -15,24 +15,10 @@
  */
 
 import { Band } from "~/random";
-import {
-  createObject,
-  createPaintMaterialWithPalette as paint,
-  flattenObjects,
-} from "~/3D";
-
-import GameOptions from "../options/module.ts";
 
 export const GAME_DIFFICULTY_FALLOFF = 0.135;
 
 export const ENEMY_Z_PLANE = 7;
-export const ENEMY_SHAPES = GameOptions.slice(1).map(([, hue, [objectsArgs]]) =>
-  flattenObjects(
-    ...objectsArgs.map(([orientation, geometry]) =>
-      createObject(orientation, geometry, paint(hue))
-    ),
-  )
-);
 export const ENEMY_PLACEMENT_SPREAD = 5;
 
 export const WAVE_CURVE = 7.5;

@@ -18,7 +18,7 @@ import { hypot, max } from "~/alias";
 import { doTimes } from "~/common";
 import { keyboard, pointer } from "~/controller";
 import { adjustObject, aimObject, scaleXYZ, XYZ, XYZ_LENGTH } from "~/3D";
-import { ActionSequencer, approachFactory, createEnvelope } from "~/clock";
+import { ActionSchedule, approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
@@ -37,7 +37,7 @@ const strafeEnvelopes = doTimes(
 
 // TODO: spin counter
 // TODO: boost
-export const controlSequence: ActionSequencer<Ship> = (ship, tickLength) => {
+export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
   const [object, heading, weapons, , , statBlock] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];
   doTimes(STRAFE_KEYS.length, (index: number) => {
@@ -82,4 +82,4 @@ export const controlSequence: ActionSequencer<Ship> = (ship, tickLength) => {
   );
 
   return true;
-};
+}]];

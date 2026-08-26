@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { atan, PI, round } from "~/alias";
+import { atan, PI, round, sqrt } from "~/alias";
 import { Band, range } from "~/random";
 
 import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
@@ -25,12 +25,12 @@ export const levelCurve = (
 ) => (2 * atan(level * falloff)) / PI;
 
 export const levelRoll = (
-  [start, end]: Band,
-  level: number,
-  falloff = GAME_DIFFICULTY_FALLOFF,
+	[start, end]: Band,
+	level: number,
+	falloff = GAME_DIFFICULTY_FALLOFF,
 ) => {
-  const span = end - start, curve = levelCurve(level, falloff);
-  return range(start + span * curve, start + span * sqrt(curve));
+	const span = end - start, curve = levelCurve(level, falloff);
+	return range(start + span * curve, start + span * sqrt(curve));
 };
 
 export const levelRollOverrides = (

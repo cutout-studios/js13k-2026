@@ -64,7 +64,7 @@ const DEFAULT_WEAPON_SCHEDULE = (
       instanceGroup.push(bullet[0]);
     });
   },
-  bulletRate,
+  1 / bulletRate,
 ], [
   ([, , [bullets]]: Weapon, tickLength: number) =>
     bullets.forEach((bullet: Bullet) => bullet[1](bullet, tickLength)),

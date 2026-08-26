@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { doTimes } from "~/common";
 import { random } from "~/alias";
 import { repeat, SECONDS_TO_MS } from "~/common";
 
@@ -40,17 +41,16 @@ const _resolveCollisions = (
   targetObjects: XOObject[],
   callback: (sourceIndex: number, targetIndex: number) => void,
 ): number[] => {
-  const sourceHits = [];
+  const sourceHits = [] as number[];
 
-  for (
-    const [sourceIndex, targetIndex] of getCollisionPairs(
-      sourceObjects,
-      targetObjects,
-    )
-  ) {
+  const [sourceIndicies, targetIndicies] = getCollisionPairs(sourceObjects, targetObjects);
+
+  doTimes(sourceIndicies.length, (index) => {
+    const sourceIndex = sourceIndicies[index], targetIndex = targetIndicies[index];
+
     callback(sourceIndex, targetIndex);
     sourceHits.push(sourceIndex);
-  }
+  });
 
   return sourceHits;
 };
@@ -153,7 +153,7 @@ export const updateGame = (
     damage[4] = true;
 
     // TODO: don't actually crash the game when armor is zero 🥀
-    if (damage[3] >= _snapshot[0]) throw new Error("YOU DIED");
+    if (damage[3] >= _snapshot[0]) console.error("YOU DIED");
   }
 
   // remove temporary invulnerability once shields are restored

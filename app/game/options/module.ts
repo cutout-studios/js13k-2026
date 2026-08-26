@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
-import { controlSequence } from "../player/controls.ts";
+import { controlSchedule } from "../player/controls.ts";
 import { ColorOptions } from "./types.ts";
 
 const GREEN_PRONG = [
@@ -43,7 +43,7 @@ export default [
         createPrism([0.07, 0.07, 0.11], 8),
       ]]],
       [],
-      controlSequence,
+      controlSchedule,
       [[]],
       [1, 1],
     ],
