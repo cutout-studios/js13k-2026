@@ -30,7 +30,13 @@ export type Ship = [
   _snapshot: ShipSnapshot,
 ];
 
-export type Resources = [shield: number, fuel?: number, armor?: number];
+export type Resources = [
+  shield: number,
+  fuel?: number,
+  fuelSegments?: number,
+  armor?: number,
+  invulnerable?: boolean,
+];
 
 export type ShipSnapshot = [
   armor: number,

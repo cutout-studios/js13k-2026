@@ -18,32 +18,26 @@ import { length, min } from "~/alias";
 import { doTimes } from "~/common";
 import { bell } from "~/random";
 
-import { Item } from "./types.ts";
-import {
-  COLORS,
-  ITEM_DATA_BANDS,
-  ITEM_NAMES,
-  ITEM_RANK_FALLOFF,
-  ITEM_RANK_THRESHOLDS,
-  ITEM_WEAPON_DATA_NAMES,
-  PLAYER_SHEET_OPTIONS,
-} from "../options/constants.ts";
+import { DroppedItem } from "./types.ts";
+import { DROP_RANK_THRESHOLDS } from "./constants.ts";
 
-import { levelCurve, levelRoll } from "../world/module.ts";
+import { levelCurve, levelRoll } from "../world/levels.ts";
+import { ColorOptions } from "../options/types.ts";
+
 import { createDeck, drawCard, insertCard } from "../decks.ts";
 
-const _itemRankRoll = (
-  level: number,
-  quality = 0,
-  roll = bell() + levelCurve(level) + quality,
-) => ITEM_RANK_THRESHOLDS.filter((threshold) => roll >= threshold).length + 1;
+const _itemDeck = createDeck(4),
+  _itemRankRoll = (
+    level: number,
+    quality = 0,
+    roll = bell() + levelCurve(level) + quality,
+  ) => DROP_RANK_THRESHOLDS.filter((threshold) => roll >= threshold).length + 1;
 
-const _itemDeck = createDeck(length(ITEM_NAMES));
-export const drawItem = (
-  colorType: number,
+export const dropItem = (
+  options: ColorOptions,
   level: number,
   quality = 0,
-): ItemData => {
+): DroppedItem => {
   const [
     ,
     ,
@@ -51,7 +45,7 @@ export const drawItem = (
     ,
     [count, damage, life, rate, bonusAffix, cost, bulletPattern],
     affixes,
-  ] = COLORS[colorType];
+  ] = options;
   const rank = _itemRankRoll(level, quality), type = drawCard(_itemDeck);
   const pool: number[] = [];
   for (const option of [...affixes[0]!, ...(affixes[type + 1] ?? [])]) {

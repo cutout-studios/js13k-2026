@@ -35,6 +35,8 @@ const strafeEnvelopes = doTimes(
   () => createEnvelope(STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME),
 );
 
+// TODO: spin counter
+// TODO: boost
 export const controlSequence: SequenceFunction<Ship> = (ship, tickLength) => {
   const [object, heading, weapons, , , statBlock] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];

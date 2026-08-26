@@ -14,96 +14,66 @@
  * limitations under the License.
  */
 
-import { createObject, XOObject, XYZ } from "~/3D";
-import { createActionSequence } from "~/clock";
-import { length, max, min, random, round } from "~/alias";
+import { setOrigin, XYZ } from "~/3D";
+import { length, max, min, round } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
-
-import { EnemyGroup, World } from "./types.ts";
+import { EnemyGroup } from "./types.ts";
 import {
-  COLORS,
-  ENEMY_COLOR_SHAPES,
-  ENEMY_DATA_BANDS,
-  ENEMY_DATA_NAMES,
-  ENEMY_PLANE_DISTANCE,
-  ENEMY_SPREAD_AMOUNT,
-  ENEMY_WAVE_CURVE,
-  ENEMY_WAVE_PACING,
-  ENEMY_WAVE_SIZE_BAND,
+  ENEMY_PLACEMENT_SPREAD,
+  ENEMY_Z_PLANE,
+  GROUPS_PER_WAVE_BAND,
+  WAVE_CURVE,
+  WAVE_PACING,
 } from "./constants.ts";
-
-import { levelCurve, roll } from "./levels.ts";
+import { levelCurve, levelRoll } from "./levels.ts";
 import { createDeck, drawCard } from "../decks.ts";
-import { drawItem } from "./itemDrops.ts";
+import { createShip } from "../ship/module.ts";
+import GameOptions from "../options/module.ts";
+import { ColorOptions } from "../options/types.ts";
 
-export const drawEnemyGroups = (wave: number, level: number) =>
+export const rollEnemies = (wave: number, level: number) =>
   doTimes(
     round(
       min(
-        ENEMY_WAVE_SIZE_BAND[1],
+        GROUPS_PER_WAVE_BAND[1],
         max(
-          ENEMY_WAVE_SIZE_BAND[0],
-          ENEMY_WAVE_PACING[wave % length(ENEMY_WAVE_PACING)] *
-            levelCurve(level) * ENEMY_WAVE_CURVE,
+          GROUPS_PER_WAVE_BAND[0],
+          WAVE_PACING[wave % length(WAVE_PACING)] *
+            levelCurve(level) * WAVE_CURVE,
         ),
       ),
     ),
-    () => _drawEnemyGroup(drawCard(_enemyDeck), level),
+    () => _drawEnemyGroup(GameOptions[drawCard(_enemyDeck) + 1], level),
   );
 
-const _sequenceStub = createActionSequence([]);
-const _enemyDeck = createDeck(length(COLORS));
+const _enemyDeck = createDeck(length(GameOptions.slice(1)));
 const _drawEnemyGroup = (
-  typeIndex: number,
+  options: ColorOptions,
   level: number,
 ): EnemyGroup => {
-  const [, , mass, [count, health, speed, drop], [, damage]] =
-      COLORS[typeIndex],
-    [, geometry, material] = ENEMY_COLOR_SHAPES[typeIndex],
-    data: EnemyGroup[2] = [],
-    items: (ItemData | undefined)[] = [];
-
-  const proxy = { health, speed, mass, damage, drop },
+  const [, , [shapes, , , , countBand]] = options;
+  const count = round(levelRoll(countBand, level)),
     spawnQuadrantSize = min(
       3.5,
-      (geometry![0] * count * ENEMY_SPREAD_AMOUNT) / 2,
+      (max(...shapes.map(([, [scale]]) => scale)) * count *
+        ENEMY_PLACEMENT_SPREAD) / 2,
     );
 
-  const objects = doTimes(count, () => {
-    const [rolledHealth, rolledSpeed, rolledMass, rolledDamage, rolledDrop] =
-      ENEMY_DATA_NAMES.map((key: keyof typeof ENEMY_DATA_BANDS) =>
-        roll(ENEMY_DATA_BANDS[key][proxy[key] - 1], level)
-      );
+  const ships = doTimes(count, () => {
+    const ship = createShip(options, level);
 
-    data.push([rolledHealth, rolledDamage, rolledMass, rolledSpeed]);
-    items.push(
-      random() * 100 < rolledDrop ? drawItem(typeIndex, level) : undefined,
-    );
+    // TODO: come in from off the screen, based on the total number of groups
+    ship[0][0] = setOrigin(ship[0][0], [
+      ...doTimes(2, () => range(-spawnQuadrantSize, spawnQuadrantSize)),
+      -ENEMY_Z_PLANE,
+    ] as XYZ);
 
-    return createObject(
-      [[ // TODO: come in from off the screen, based on the total number of groups
-        ...doTimes(2, () => range(-spawnQuadrantSize, spawnQuadrantSize)),
-        -ENEMY_PLANE_DISTANCE,
-      ] as XYZ],
-      geometry,
-      material,
-    );
+    return ship;
   });
 
-  return [objects, [[], []], data, _sequenceStub, items];
-};
-
-export const getEnemyObjects = ([enemyGroups]: World): XOObject[][] =>
-  enemyGroups.map(([objects]) => objects);
-
-export const deleteEnemies = (
-  enemyGroup: World,
-  enemyIndicies: number[],
-) => {
-  for (const index of enemyIndicies.sort((a, b) => b - a)) {
-    enemyGroup[0].splice(index, 1);
-    enemyGroup[2].splice(index, 1);
-    enemyGroup[4].splice(index, 1);
-  }
+  return [
+    ships,
+    ships.map(([object]) => object),
+  ];
 };

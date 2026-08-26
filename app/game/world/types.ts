@@ -15,11 +15,10 @@
  */
 
 import { XOObject } from "~/3D";
-import { Ship } from "../ship/types.ts";
+import { SequenceFunction, Ship } from "../ship/types.ts";
 import { Item, WeaponItem } from "../player/types.ts";
 
 export type EnemyGroup = [
-  colorID: number,
   ships: Ship[],
   instanceGroup: XOObject[],
 ];
@@ -31,4 +30,8 @@ export type World = [
   winCollection: Set<number>,
 ];
 
-export type DroppedItem = [object: XOObject, item: Item | WeaponItem];
+export type DroppedItem = [
+  object: XOObject,
+  schedule: SequenceFunction<DroppedItem>,
+  item: Item | WeaponItem,
+];

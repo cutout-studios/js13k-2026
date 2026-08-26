@@ -93,6 +93,7 @@ export const menu = createElement(
   ),
 ) as HTMLDialogElement;
 
+// TODO: render dropped items
 export const openMenu = () => {
   menu.showModal();
 

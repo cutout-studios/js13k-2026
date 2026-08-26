@@ -19,6 +19,7 @@ import { controlSequence } from "../player/controls.ts";
 import { Ship, Weapon } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
+// TODO: better sequences
 const _shipSequenceStub: ActionSchedule<Ship> = [[(ship: Ship) => ship]],
   _weaponSequenceStub: ActionSchedule<Weapon> = [[(weapon: Weapon) => weapon]];
 

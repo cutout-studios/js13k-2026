@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { drawEnemyGroups } from "./enemies.ts";
+import { rollEnemies } from "./enemies.ts";
 import { getWavesInLevel } from "./levels.ts";
 
 import { World } from "./types.ts";
 
 export default [
-  drawEnemyGroups(1, 1),
+  rollEnemies(1, 1),
 
   // dropped items
   [],

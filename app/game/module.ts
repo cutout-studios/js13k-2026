@@ -19,12 +19,14 @@ import { Game } from "./types.ts";
 
 import startingPlayer from "./player/module.ts";
 import startingWorld from "./world/module.ts";
+import { XOObject } from "~/3D";
 
 export default [startingPlayer, startingWorld] as Game;
 
+// TODO: toggle based on player invulnerability
 export const getSceneObjects = (
   [[playerShip], [activeEnemies]]: Game,
-) =>
-  [playerShip, ...activeEnemies.flatMap(([, ships]) => ships)].map(
-    getShipObjects,
-  );
+): XOObject[][] => [
+  ...getShipObjects(playerShip),
+  ...activeEnemies.flatMap(([ships]) => ships.flatMap(getShipObjects)),
+];

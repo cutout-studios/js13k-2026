@@ -18,7 +18,7 @@ import { createObject, flattenObjects, XOObject, XYZ } from "~/3D";
 import { createActionSequence } from "~/clock";
 
 import { ColorOptions } from "../options/types.ts";
-import { rollOverrides } from "../world/level.ts";
+import { levelRollOverrides } from "../world/levels.ts";
 import { Resources, Ship, ShipSnapshot } from "./types.ts";
 import { _THREE_ZEROS, SHIP_BASE_PROPERTIES } from "./constants.ts";
 import { createWeapon } from "./weapons.ts";
@@ -36,12 +36,16 @@ export const createShip = (
   [createWeapon(weapon, level)],
   createActionSequence(shipSchedule),
   _THREE_ZEROS() as Resources,
-  rollOverrides(SHIP_BASE_PROPERTIES, shipOverrides, level) as ShipSnapshot,
+  levelRollOverrides(
+    SHIP_BASE_PROPERTIES,
+    shipOverrides,
+    level,
+  ) as ShipSnapshot,
 ];
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,
-): [ship: XOObject[], ...bulletGroups: XOObject[][]] => [
+): XOObject[][] => [
   [shipObject],
   ...weapons.map(([, , [, bullets]]) => bullets),
 ];

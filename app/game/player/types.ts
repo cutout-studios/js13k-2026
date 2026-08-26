@@ -19,7 +19,11 @@ import { Resources, Ship } from "../ship/types.ts";
 export type Player = [
   ship: Ship,
   levelAssigments: Resources,
-  inventory: [item: Item, equipped: boolean, selected: boolean][],
+  inventory: [
+    item: Item | WeaponItem,
+    equipped?: boolean,
+    selected?: boolean,
+  ][],
 ];
 
 export type Item = [

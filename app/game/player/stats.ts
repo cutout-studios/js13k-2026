@@ -18,7 +18,7 @@ import { Player } from "./types.ts";
 import { repeat } from "~/common";
 
 export const updatePlayerSnapshots = (
-  [ship, [shieldLevels, fuelLevels = 0, armorLevels = 0], inventory]: Player,
+  [ship, [shieldLevels, fuelLevels = 0, , armorLevels = 0], inventory]: Player,
 ) => {
   const [, , weapons, , , _snapshot] = ship;
   const _weaponsSnapshots = weapons.map(([, , , , _s]) => _s);

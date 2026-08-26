@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ceil, min, round } from "~/alias";
+import { min, round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
@@ -98,7 +98,14 @@ export const hud = createElement(
 let gameDuration = 0;
 export const updateHUD = (
   [
-    [[, , [shieldDamage, fuelDamage, armorDamage]], [, , data]],
+    [[
+      ,
+      ,
+      ,
+      ,
+      [shieldDamage, fuelDamage = 0, fuelSegmentDamage = 0, armorDamage = 0],
+      _snapshot,
+    ]],
     [, , [stage, wave, lastWave]],
   ]: Game,
   tickDuration: number,
@@ -110,21 +117,17 @@ export const updateHUD = (
   );
   waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
 
-  armorUpdate(doTimes(data[0], (index) => [1, +(index < armorDamage)]));
-  shieldUpdate([[data[21], data[21] - shieldDamage]]);
+  armorUpdate(doTimes(_snapshot[0], (index) => [1, +(index < armorDamage)]));
+  shieldUpdate([[_snapshot[21], _snapshot[21] - shieldDamage]]);
   fuelUpdate(
     doTimes(
-      ceil(data[11] / FUEL_SEGMENT_SIZE),
-      () => {
-        const result = [
-          FUEL_SEGMENT_SIZE,
-          min(FUEL_SEGMENT_SIZE, fuelDamage),
-        ] as [number, number];
-
-        fuelDamage -= FUEL_SEGMENT_SIZE;
-
-        return result;
-      },
+      _snapshot[8],
+      (
+        index,
+      ) => [
+        _snapshot[4],
+        index < fuelSegmentDamage ? min(_snapshot[4], fuelDamage) : 0,
+      ],
     ),
   );
 };

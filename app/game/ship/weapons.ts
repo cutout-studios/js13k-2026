@@ -18,9 +18,9 @@ import { createObject, XYZ } from "~/3D";
 import { ActionSchedule, createActionSequence } from "~/clock";
 
 import { BaseStatOverride } from "../options/types.ts";
-import { rollOverrides } from "../world/levels.ts";
+import { levelRollOverrides } from "../world/levels.ts";
 
-import { BulletGroup, Weapon, WeaponSnapshot } from "./types.ts";
+import { Weapon, WeaponSnapshot } from "./types.ts";
 import { _THREE_ZEROS, WEAPON_BASE_PROPERTIES } from "./constants.ts";
 
 export const createWeapon = (
@@ -31,18 +31,9 @@ export const createWeapon = (
   _THREE_ZEROS() as XYZ,
   [[], []],
   createActionSequence(schedule),
-  rollOverrides(
+  levelRollOverrides(
     WEAPON_BASE_PROPERTIES,
     overrides,
     level,
   ) as WeaponSnapshot,
 ];
-
-export const deleteBullets = (
-  [bullets, bulletObjects]: BulletGroup,
-  bulletIndicies: number[],
-) => {
-  for (const index of bulletIndicies.sort((a, b) => b - a)) {
-    bullets.splice(index, 1), bulletObjects.splice(index, 1);
-  }
-};
