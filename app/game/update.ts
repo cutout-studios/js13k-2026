@@ -1,5 +1,3 @@
-###
-
 /**
  *    Copyright 2026 Cutout Studios LLC
  *
@@ -19,7 +17,7 @@
 import { repeat } from "~/common";
 
 import { drawEnemyGroups } from "./world/enemies.ts";
-import { getWavesInLevel } from "./world/waves.ts";
+import { getWavesInLevel } from "./world/levels.ts";
 
 import { Game } from "./types.ts";
 import { getCollisionPairs } from "~/3D";
@@ -28,30 +26,31 @@ export const updateGame = (
   [player, world]: Game,
   tickLength: number,
 ): void => {
-  const [activeEnemies, , progress] = world, [playerShip] = player;
-  const [playerShipObject, , playerWeapons, , damage] = playerShip, enemyShips = activeEnemies.flatMap(([, ships]) => ships);
+  const [activeEnemyGroups, , progress] = world, [playerShip] = player;
+  const [playerShipObject, , playerWeapons, , damage] = playerShip,
+    enemyShips = activeEnemyGroups.flatMap(([, ships]) => ships);
   const enemyShipObjects = enemyShips.map(([object]) => object);
 
   // Update all ships
   for (const ship of [playerShip, ...enemyShips]) ship[3](ship, tickLength);
 
   // Handle collisions
-  for (const [] of activeEnemies) {
-    getCollisionPairs([playerShipObject], );
+  for (const [, , [, weaponBullets]] of playerWeapons) {
+    getCollisionPairs(weaponBullets, enemyShipObjects);
 
-    // takeDamage(playerShip, damage);
+    // TODO: takeDamage(enemyShip, damage, critChance, critAmount);
   }
 
-  for (const [, , [, bulletObjects]] of playerWeapons) {
-    getCollisionPairs(bulletObjects, );
+  for (const [/* enemy bullets */] of activeEnemyGroups) {
+    // TODO: getCollisionPairs([playerShipObject], enemyBullets);
 
-    // takeDamage(enemyShip, damage);
+    // TODO: takeDamage(playerShip, damage, critChance, critAmount);
   }
 
-  // Clean up
-  ###
+  // TODO: update item drops
+  // TODO: delete empty enemy objects/empty enemy groups
 
-  if (activeEnemies.length) return;
+  if (activeEnemyGroups.length) return;
 
   progress[1]++;
 

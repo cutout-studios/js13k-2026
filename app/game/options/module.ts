@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { ActionSchedule } from "~/clock";
 import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
-
 import { controlSequence } from "../player/controls.ts";
-import { Ship } from "../ship/types.ts";
-
+import { Ship, Weapon } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
-const _shipBehaviorStub: ActionSchedule<Ship> = [[(ship: Ship) => ship]];
+const _shipSequenceStub: ActionSchedule<Ship> = [[(ship: Ship) => ship]],
+  _weaponSequenceStub: ActionSchedule<Weapon> = [[(weapon: Weapon) => weapon]];
 
 const GREEN_PRONG = [
     0.12,
@@ -34,7 +32,13 @@ export default [
   [ // player
     "White",
     0xFFFFFF,
-    [[[], [], [], []], [[], []], controlSequence],
+    [
+      [[], [], [], []],
+      [],
+      controlSequence,
+      [[], _weaponSequenceStub],
+      [1, 1],
+    ],
     [],
   ],
   [ // purple: crit/glass
@@ -42,11 +46,12 @@ export default [
     0x8434D4,
     [
       [[[], [0.5, createPyramid([0.25, 0.25, 0.125])]]],
+      [[16, [7, 60]], [18, [0, 0]], [14, [4, 20]], [4, [18, 25]]],
+      _shipSequenceStub,
       [
-        [[16, [7, 60]], [18, [0, 0]], [14, [4, 20]], [4, [18, 25]]],
         [[1, [0.10, 0.25]], [2, [2.0, 3.0]], [5, [1.5, 3]]],
+        _weaponSequenceStub,
       ],
-      _shipBehaviorStub,
       [3, 5],
     ],
     [
@@ -65,11 +70,12 @@ export default [
         [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
         [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
       ],
+      [[16, [7, 60]], [18, [60, 100]], [14, [4, 20]], [4, [10, 20]]],
+      _shipSequenceStub,
       [
-        [[16, [7, 60]], [18, [60, 100]], [14, [4, 20]], [4, [10, 20]]],
         [[1, [0.02, 0.05]], [2, [2.0, 3.0]], [3, [32, 90]]],
+        _weaponSequenceStub,
       ],
-      _shipBehaviorStub,
       [4, 7],
     ],
     [
@@ -91,11 +97,12 @@ export default [
           createPrism([0.09, 0.09, 0.03], 16),
         ]],
       ],
+      [[16, [80, 200]], [18, [10, 25]], [14, [40, 100]], [4, [20, 40]]],
+      _shipSequenceStub,
       [
-        [[16, [80, 200]], [18, [10, 25]], [14, [40, 100]], [4, [20, 40]]],
         [[1, [0.02, 0.05]], [2, [1.5, 2.2]], [3, [8, 16]], [4, [15, 32]]],
+        _weaponSequenceStub,
       ],
-      _shipBehaviorStub,
       [1, 3],
     ],
     [
@@ -111,14 +118,15 @@ export default [
     0xD4349F,
     [
       [[[], [0.4, createSphere(0.10, 20)]]],
+      [[16, [1, 25]], [18, [30, 75]], [14, [4, 20]], [4, [2, 8]]],
+      _shipSequenceStub,
       [
-        [[16, [1, 25]], [18, [30, 75]], [14, [4, 20]], [4, [2, 8]]],
         [[0, [9, 9]], [1, [0.02, 0.05]], [2, [1.2, 1.6]], [3, [8, 16]], [5, [
           0.7,
           1.5,
         ]], [6, [0.05, 0.12]]],
+        _weaponSequenceStub,
       ],
-      _shipBehaviorStub,
       [9, 16],
     ],
     [
@@ -137,14 +145,15 @@ export default [
         0.46,
         createPyramid([0.11, 0.09, 0.4], 3),
       ]]],
+      [[16, [7, 60]], [18, [30, 75]], [14, [12, 25]], [4, [10, 20]]],
+      _shipSequenceStub,
       [
-        [[16, [7, 60]], [18, [30, 75]], [14, [12, 25]], [4, [10, 20]]],
         [[0, [2, 2]], [1, [0.05, 0.12]], [2, [1.5, 2.2]], [3, [16, 35]], [5, [
           0.7,
           1.5,
         ]], [6, [0.02, 0.06]]],
+        _weaponSequenceStub,
       ],
-      _shipBehaviorStub,
       [3, 6],
     ],
     [
@@ -160,17 +169,17 @@ export default [
     0xF4AD32,
     [
       [
-        [[[0.19, -0.04, 0], [Z_AXIS, -0.3]], YELLOW_ARM],
-        [[[-0.19, -0.04, 0], [Z_AXIS, 0.3]], YELLOW_ARM],
-        [[[0.52, 0.02, 0], [Z_AXIS, 0.65]], YELLOW_ARM],
-        [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], YELLOW_ARM],
+        [[0.19, -0.04, 0], [Z_AXIS, -0.3], YELLOW_ARM],
+        [[-0.19, -0.04, 0], [Z_AXIS, 0.3], YELLOW_ARM],
+        [[0.52, 0.02, 0], [Z_AXIS, 0.65], YELLOW_ARM],
+        [[-0.52, 0.02, 0], [Z_AXIS, -0.65], YELLOW_ARM],
       ],
+      [[16, [20, 120]], [18, [60, 100]], [14, [12, 25]], [4, [10, 20]]],
+      _shipSequenceStub,
       [
-        [[16, [20, 120]], [18, [60, 100]], [14, [12, 25]], [4, [10, 20]]],
         [[1, [0.05, 0.12]], [3, [8, 16]], [5, [1.5, 3]], [6, [0.10, 0.30]]],
-        ,
+        _weaponSequenceStub,
       ],
-      _shipBehaviorStub,
       [2, 5],
     ],
     [

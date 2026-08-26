@@ -20,13 +20,16 @@ import { repeat } from "~/common";
 export const updatePlayerSnapshots = (
   [ship, [shieldLevels, fuelLevels = 0, armorLevels = 0], inventory]: Player,
 ) => {
-  // TOOD: get mass & weapons
+  const [, , weapons, , , _snapshot] = ship;
+  const _weaponsSnapshots = weapons.map(([, , , , _s]) => _s);
 
-  for (const [[, , , , modifiers], equipped] of inventory) {
+  // TOOD: compute mass, weapons
+
+  for (const [[, , , modifiers], equipped] of inventory) {
     if (!equipped) continue;
 
     for (const [statID, value, operator] of modifiers) {
-      const targets = statID > 21 ? weaponsStats : [shipStats];
+      const targets = statID > 21 ? _weaponsSnapshots : [_snapshot];
 
       for (const target of targets) {
         operator === "x" ? target[statID] *= value : target[statID] += value;
@@ -41,11 +44,8 @@ export const updatePlayerSnapshots = (
   ];
 
   [0, 4, 7, 8, 15, 16].forEach((id, index) =>
-    shipStats[id] *= shipStats[11] ** levels[index]
+    _snapshot[id] *= _snapshot[11] ** levels[index]
   );
 
   // TODO: lowestResource
-
-  // TODO:
-  ship = [shipStats, weaponsStats];
 };

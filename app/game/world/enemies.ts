@@ -33,9 +33,9 @@ import {
   ENEMY_WAVE_SIZE_BAND,
 } from "./constants.ts";
 
-import { levelCurve, roll } from "./waves.ts";
+import { levelCurve, roll } from "./levels.ts";
 import { createDeck, drawCard } from "../decks.ts";
-import { drawItem } from "./drops.ts";
+import { drawItem } from "./itemDrops.ts";
 
 export const drawEnemyGroups = (wave: number, level: number) =>
   doTimes(

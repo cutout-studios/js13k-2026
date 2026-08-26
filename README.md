@@ -4,7 +4,7 @@ Unicorns and Rainbows!!
 
 ## Compression TODOs (Total: ~0.25kB):
 
-- quantize all the values
+- quantize all values (woof)
 - remove GPU error handler, lol (50B)
 - proper CSS bundling (10B)
 - "winding" or "gray" iterator that goes xx, xy, yy, yx (a few Bs)

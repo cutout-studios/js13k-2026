@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { repeat } from "~/common";
+
 import { ShipSnapshot, WeaponSnapshot } from "./types.ts";
 
 export const SHIP_PROPERTY_NAMES = [
@@ -41,7 +43,7 @@ export const SHIP_PROPERTY_NAMES = [
   "Tracking Speed",
 ];
 
-export const SHIP_BASE_PROPERTIES: () => ShipSnapshot = () => [
+export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   2, // Armor
   0, // Armor Save
   1, // Damage Taken
@@ -76,7 +78,7 @@ export const WEAPON_PROPERTY_NAMES = [
   "Bullet Spread",
 ];
 
-export const WEAPON_BASE_PROPERTIES: () => WeaponSnapshot = () => [
+export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
   1, // Bullet Count
   0.05, // Bullet Crit Chance
   1, // Bullet Crit Damage
@@ -87,3 +89,5 @@ export const WEAPON_BASE_PROPERTIES: () => WeaponSnapshot = () => [
 ];
 
 export const BULLET_SPEED = 25;
+
+export const _THREE_ZEROS = () => repeat(3, 0);

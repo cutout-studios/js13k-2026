@@ -36,3 +36,15 @@ export const levelRoll = (
 
 export const getWavesInLevel = (level: number) =>
   round(levelRoll(WAVES_PER_LEVEL_BAND, level));
+
+export const rollOverrides = (
+  base: number[],
+  overrides: [number, Band][],
+  level = 1,
+) => {
+  for (const [statID, statBand] of overrides) {
+    base[statID] = levelRoll(statBand, level);
+  }
+
+  return base;
+};

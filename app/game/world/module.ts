@@ -15,7 +15,7 @@
  */
 
 import { drawEnemyGroups } from "./enemies.ts";
-import { getWavesInLevel } from "./waves.ts";
+import { getWavesInLevel } from "./levels.ts";
 
 import { World } from "./types.ts";
 

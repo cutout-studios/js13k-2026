@@ -14,58 +14,29 @@
  * limitations under the License.
  */
 
-import {
-  adjustObject,
-  aimObject,
-  createObject,
-  normalizeXYZ,
-  readOrigin,
-  scaleXYZ,
-  subtractXYZ,
-} from "~/3D";
-import { createActionSequence } from "~/clock";
+import { createObject, XYZ } from "~/3D";
+import { ActionSchedule, createActionSequence } from "~/clock";
 
-import { BulletGroup, Weapon } from "./types.ts";
+import { BaseStatOverride } from "../options/types.ts";
+import { rollOverrides } from "../world/levels.ts";
 
-export const fireWeapon = ([object, heading, bullets]: Weapon) => {
-  // TODO: bullet maker by color
-  const bulletObject = createObject(
-    [readOrigin(object[0])],
-    [0, DEFAULT_BULLET_SHAPE],
-    DEFAULT_BULLET_PAINT,
-  );
+import { BulletGroup, Weapon, WeaponSnapshot } from "./types.ts";
+import { _THREE_ZEROS, WEAPON_BASE_PROPERTIES } from "./constants.ts";
 
-  aimObject(bulletObject, heading);
-
-  const direction = normalizeXYZ(subtractXYZ(heading, readOrigin(object[0])));
-
-  bullets[0].push([
-    bulletObject,
-    createActionSequence([[
-      (_, tickLength) =>
-        adjustObject(
-          bulletObject,
-          [scaleXYZ(direction, tickLength * BULLET_SPEED_COEFFICIENT)],
-        ) ?? tickLength,
-      1,
-    ]]),
-  ]), bullets[1].push(bulletObject);
-};
-
-export const updateWeapon = (weapon: Weapon, tickLength: number) => {
-  //   const [, sequences] = bullets;
-
-  //   deleteBullets(
-  //     bullets,
-  //     sequences.reduce(
-  //       (cullIndicies, sequence, index) =>
-  //         sequence(undefined, tickLength)
-  //           ? cullIndicies
-  //           : [...cullIndicies, index],
-  //       [] as number[],
-  //     ),
-  //   );
-};
+export const createWeapon = (
+  [overrides, schedule]: [BaseStatOverride[], ActionSchedule<Weapon>],
+  level = 1,
+): Weapon => [
+  createObject(),
+  _THREE_ZEROS() as XYZ,
+  [[], []],
+  createActionSequence(schedule),
+  rollOverrides(
+    WEAPON_BASE_PROPERTIES,
+    overrides,
+    level,
+  ) as WeaponSnapshot,
+];
 
 export const deleteBullets = (
   [bullets, bulletObjects]: BulletGroup,

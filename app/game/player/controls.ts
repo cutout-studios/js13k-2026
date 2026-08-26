@@ -23,7 +23,6 @@ import { approachFactory, createEnvelope } from "~/clock";
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
 import { SequenceFunction, Ship } from "../ship/types.ts";
-import { fireWeapon } from "../ship/weapons.ts";
 
 import {
   STRAFE_ATTACK_TIME,
@@ -70,10 +69,9 @@ export const controlSequence: SequenceFunction<Ship> = (ship, tickLength) => {
     aimObject(object, ship[1]);
   }
 
-  // TODO: not right
   weapons.forEach((weapon, index) =>
     pointer && pointer[1] & (1 << index) && (weapon[1] = ship[1]) &&
-    fireWeapon(weapon, tickLength)
+    weapon[3](weapon, tickLength)
   );
 
   return ship;

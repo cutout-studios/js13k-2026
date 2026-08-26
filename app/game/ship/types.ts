@@ -16,7 +16,10 @@
 
 import { XOObject, XYZ } from "~/3D";
 
-export type SequenceFunction<T> = (payload: T, tickLength: number) => T;
+export type SequenceFunction<T> = (
+  payload: T,
+  tickLength: number,
+) => T | undefined;
 
 export type Ship = [
   object: XOObject,

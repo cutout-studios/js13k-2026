@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-import { XOObject } from "~/3D";
+import { createObject, flattenObjects, XOObject, XYZ } from "~/3D";
+import { createActionSequence } from "~/clock";
 
-import { Ship } from "./types.ts";
+import { ColorOptions } from "../options/types.ts";
+import { rollOverrides } from "../world/level.ts";
+import { Resources, Ship, ShipSnapshot } from "./types.ts";
+import { _THREE_ZEROS, SHIP_BASE_PROPERTIES } from "./constants.ts";
+import { createWeapon } from "./weapons.ts";
 
-export const createShip = (options: ColorOptions, level = 1): Ship => {
-  const result = [SHIP_BASE_PROPERTIES(), WEAPON_BASE_PROPERTIES()] as [
-    ShipSnapshot,
-    WeaponSnapshot,
-  ];
-
-  doTimes(2, (index) => {
-    for (const [statID, statBand] of overrides[index]) {
-      result[index][statID] = levelRoll(statBand, level);
-    }
-  });
-};
+export const createShip = (
+  [
+    ,
+    ,
+    [shapes, shipOverrides, shipSchedule, weapon],
+  ]: ColorOptions,
+  level = 1,
+): Ship => [
+  flattenObjects(...shapes.map((args) => createObject(...args))),
+  _THREE_ZEROS() as XYZ,
+  [createWeapon(weapon, level)],
+  createActionSequence(shipSchedule),
+  _THREE_ZEROS() as Resources,
+  rollOverrides(SHIP_BASE_PROPERTIES, shipOverrides, level) as ShipSnapshot,
+];
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,
