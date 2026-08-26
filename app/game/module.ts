@@ -25,8 +25,9 @@ export default [startingPlayer, startingWorld] as Game;
 
 // TODO: toggle based on player invulnerability
 export const getSceneObjects = (
-  [[playerShip], [activeEnemies]]: Game,
+  [[playerShip], [activeEnemies, droppedItems]]: Game,
 ): XOObject[][] => [
   ...getShipObjects(playerShip),
   ...activeEnemies.flatMap(([ships]) => ships.flatMap(getShipObjects)),
+  ...droppedItems.map(([object]) => [object])
 ];
