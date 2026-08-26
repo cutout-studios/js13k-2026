@@ -23,7 +23,7 @@ export const createDeck = (size: number) => {
   return deck;
 };
 
-export const drawCard = (deck: number[], delay = 0.67) => {
+export const drawCard = <T>(deck: T[], delay = 0.67) => {
   const value = deck.pop()!;
   insertCard(deck, value, delay);
   return value;

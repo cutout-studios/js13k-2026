@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
+import { XOObject } from "~/3D";
+
+import { SequenceFunction } from "../ship/types.ts";
+
 import { Resources, Ship } from "../ship/types.ts";
 
 export type Player = [
   ship: Ship,
   levelAssigments: Resources,
   inventory: [
-    item: Item | WeaponItem,
+    item: Item,
     equipped?: boolean,
     selected?: boolean,
   ][],
 ];
 
 export type Item = [
+  object: XOObject,
+  schedule: SequenceFunction<Item>,
   typeID: number,
   colorID: number,
   rank: number,
-  modifiers: [propertyID: number, value: number, type: "*" | "x"][],
-  mass: number,
-];
-
-export type WeaponItem = [
-  ...Item,
-  bulletCount: number,
-  bulletDamage: number,
+  modifiers: [propertyID: number, type: "+" | "*", value: number][],
+  baseMass: number,
+  baseWeapon?: [bulletCount: number, bulletRate: number, bulletDamage: number],
 ];

@@ -23,24 +23,37 @@ import { Ship, Weapon } from "../ship/types.ts";
 export type ColorOptions = [
   name: string,
   value: number,
-  ship: [
-    shape: [orientation: XOOrientation, geometry: XOGeometry][],
+  ship: ShipOptions,
+  item?: ItemOptions,
+];
+
+type ShipOptions = [
+  shape: [orientation: XOOrientation, geometry: XOGeometry][],
+  overrides: BaseStatOverride[],
+  sequence: ActionSchedule<Ship>,
+  weapon: [
     overrides: BaseStatOverride[],
-    sequence: ActionSchedule<Ship>,
-    weapon: [
-      overrides: BaseStatOverride[],
-      sequence: ActionSchedule<Weapon>,
-    ],
-    countBand: Band,
+    sequence: ActionSchedule<Weapon>,
   ],
-  itemModifiers: ModifierOptions[],
+  countBand: Band,
 ];
 
 export type BaseStatOverride = [statID: number, band: Band];
 
+export type ItemOptions = [
+  base: [
+    mass: Band,
+    modifiers: number,
+    bulletCount: number,
+    bulletRate: Band,
+    bulletDamage: Band,
+  ],
+  modifiers: ModifierOptions[],
+];
+
 export type ModifierOptions = [
   itemTypeID: number,
-  statID: number,
-  modifierOperation: "*" | "x",
+  propertyID: number,
+  modifierOperation: "+" | "*",
   modifierBand: Band,
 ];

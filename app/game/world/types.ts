@@ -15,8 +15,8 @@
  */
 
 import { XOObject } from "~/3D";
-import { SequenceFunction, Ship } from "../ship/types.ts";
-import { Item, WeaponItem } from "../player/types.ts";
+import { Ship } from "../ship/types.ts";
+import { Item } from "../player/types.ts";
 
 export type EnemyGroup = [
   ships: Ship[],
@@ -25,13 +25,7 @@ export type EnemyGroup = [
 
 export type World = [
   activeEnemies: EnemyGroup[],
-  droppedItems: DroppedItem[],
+  droppedItems: Item[],
   currentLevel: [ID: number, wave: number, wavesInLevel: number],
   winCollection: Set<number>,
-];
-
-export type DroppedItem = [
-  object: XOObject,
-  schedule: SequenceFunction<DroppedItem>,
-  item: Item | WeaponItem,
 ];

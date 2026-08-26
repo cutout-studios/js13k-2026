@@ -19,7 +19,7 @@ import { controlSequence } from "../player/controls.ts";
 import { Ship, Weapon } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
-// TODO: better sequences
+// TODO!: better sequences
 const _shipSequenceStub: ActionSchedule<Ship> = [[(ship: Ship) => ship]],
   _weaponSequenceStub: ActionSchedule<Weapon> = [[(weapon: Weapon) => weapon]];
 
@@ -40,7 +40,6 @@ export default [
       [[], _weaponSequenceStub],
       [1, 1],
     ],
-    [],
   ],
   [ // purple: crit/glass
     "Purple",
@@ -56,10 +55,13 @@ export default [
       [3, 5],
     ],
     [
-      [0, 11, "*", [1, 1.5]], // Item Quality
-      [0, 12, "*", [1, 1.5]], // Level Quality
-      [0, 24, "+", [0, 0.1]], // Bullet Crit Chance
-      [0, 25, "*", [1.5, 3]], // Bullet Crit Damage
+      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER — fill in real balance values
+      [
+        [0, 11, "*", [1, 1.5]], // Item Quality
+        [0, 12, "*", [1, 1.5]], // Level Quality
+        [0, 24, "+", [0, 0.1]], // Bullet Crit Chance
+        [0, 25, "*", [1.5, 3]], // Bullet Crit Damage
+      ],
     ],
   ],
   [ // green: fuel/speed
@@ -80,11 +82,14 @@ export default [
       [4, 7],
     ],
     [
-      [0, 6, "*", [1, 1.5]], // Fuel Cost
-      [0, 18, "*", [1, 1.5]], // Speed
-      [0, 27, "*", [1, 1.5]], // Bullet Lifetime
-      [2, 3, "+", [0, 0.1]], // Damage Taken From Fuel
-      [3, 21, "*", [1, 1.5]], // Spin Time
+      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [
+        [0, 6, "*", [1, 1.5]], // Fuel Cost
+        [0, 18, "*", [1, 1.5]], // Speed
+        [0, 27, "*", [1, 1.5]], // Bullet Lifetime
+        [2, 3, "+", [0, 0.1]], // Damage Taken From Fuel
+        [3, 21, "*", [1, 1.5]], // Spin Time
+      ],
     ],
   ],
   [ // blue: tank
@@ -107,11 +112,14 @@ export default [
       [1, 3],
     ],
     [
-      [0, 16, "*", [1, 1.5]], // Shield
-      [0, 2, "*", [1, 1.5]], // Damage Taken
-      [0, 14, "*", [1, 1.5]], // Mass
-      [2, 0, "+", [0, 2]], // Armor
-      [3, 7, "*", [1, 1.5]], // Fuel Eject Delay
+      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [
+        [0, 16, "*", [1, 1.5]], // Shield
+        [0, 2, "*", [1, 1.5]], // Damage Taken
+        [0, 14, "*", [1, 1.5]], // Mass
+        [2, 0, "+", [0, 2]], // Armor
+        [3, 7, "*", [1, 1.5]], // Fuel Eject Delay
+      ],
     ],
   ],
   [ // pink: swarm/shotgun
@@ -131,11 +139,14 @@ export default [
       [9, 16],
     ],
     [
-      [0, 10, "*", [1, 1.5]], // Item Mixture Quality
-      [0, 23, "+", [0, 2]], // Bullet Count
-      [0, 1, "+", [0, 0.1]], // Armor Save
-      [2, 17, "*", [1, 1.5]], // Shield Regen
-      [3, 8, "*", [1, 1.5]], // Fuel Regen
+      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [
+        [0, 10, "*", [1, 1.5]], // Item Mixture Quality
+        [0, 23, "+", [0, 2]], // Bullet Count
+        [0, 1, "+", [0, 0.1]], // Armor Save
+        [2, 17, "*", [1, 1.5]], // Shield Regen
+        [3, 8, "*", [1, 1.5]], // Fuel Regen
+      ],
     ],
   ],
   [ // red: gunner
@@ -158,11 +169,14 @@ export default [
       [3, 6],
     ],
     [
-      [0, 26, "*", [1, 1.5]], // Bullet Damage
-      [0, 28, "*", [1, 1.5]], // Bullet Rate
-      [0, 5, "*", [1, 1.5]], // Fuel
-      [2, 22, "*", [1, 1.5]], // Tracking Speed
-      [3, 20, "*", [1, 1.5]], // Spin Handling
+      [[1, 1], 2, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [
+        [0, 26, "*", [1, 1.5]], // Bullet Damage
+        [0, 28, "*", [1, 1.5]], // Bullet Rate
+        [0, 5, "*", [1, 1.5]], // Fuel
+        [2, 22, "*", [1, 1.5]], // Tracking Speed
+        [3, 20, "*", [1, 1.5]], // Spin Handling
+      ],
     ],
   ],
   [ // yellow: spread/spin
@@ -184,11 +198,14 @@ export default [
       [2, 5],
     ],
     [
-      [0, 13, "*", [1, 1.5]], // Lowest Resource
-      [0, 15, "+", [0, 0.1]], // Resolve
-      [0, 29, "*", [1, 1.5]], // Bullet Spread
-      [2, 21, "*", [1, 1.5]], // Spin Time
-      [3, 19, "*", [1, 1.5]], // Spin Damage
+      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [
+        [0, 13, "*", [1, 1.5]], // Lowest Resource
+        [0, 15, "+", [0, 0.1]], // Resolve
+        [0, 29, "*", [1, 1.5]], // Bullet Spread
+        [2, 21, "*", [1, 1.5]], // Spin Time
+        [3, 19, "*", [1, 1.5]], // Spin Damage
+      ],
     ],
   ],
 ] as ColorOptions[];

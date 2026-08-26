@@ -29,5 +29,5 @@ export const getSceneObjects = (
 ): XOObject[][] => [
   ...getShipObjects(playerShip),
   ...activeEnemies.flatMap(([ships]) => ships.flatMap(getShipObjects)),
-  ...droppedItems.map(([object]) => [object])
+  ...droppedItems.map(([object]) => [object]),
 ];

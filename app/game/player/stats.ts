@@ -25,14 +25,14 @@ export const updatePlayerSnapshots = (
 
   // TOOD: compute mass, weapons
 
-  for (const [[, , , modifiers], equipped] of inventory) {
+  for (const [[, , , , , modifiers], equipped] of inventory) {
     if (!equipped) continue;
 
-    for (const [statID, value, operator] of modifiers) {
+    for (const [statID, operator, value] of modifiers) {
       const targets = statID > 21 ? _weaponsSnapshots : [_snapshot];
 
       for (const target of targets) {
-        operator === "x" ? target[statID] *= value : target[statID] += value;
+        operator === "*" ? target[statID] *= value : target[statID] += value;
       }
     }
   }
