@@ -21,7 +21,6 @@ import { range } from "~/random";
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
 import { SoundChannels, SoundDefinition } from "./types.ts";
-import { ActionSchedule } from "~/clock";
 
 export const createSound = (...definitions: SoundDefinition[]) => {
   const groupBus = api.createDynamicsCompressor();
@@ -35,7 +34,7 @@ export const createSound = (...definitions: SoundDefinition[]) => {
         duration,
         delay = 0,
         velocity = 1,
-        schedule = [[() => [1]]] as ActionSchedule<SoundChannels>,
+        schedule,
       ],
     ) => {
       const startTime = api.currentTime + delay,
@@ -56,18 +55,18 @@ export const createSound = (...definitions: SoundDefinition[]) => {
         knob.setValueAtTime(index === 0 ? 0 : state[index], startTime));
 
       let elapsedTime = startTime;
-      doTimes(schedule, ([action, timing = 0]) => {
+      ampKnob.gain.linearRampToValueAtTime(
+        0,
+        max(elapsedTime, startTime + duration),
+      );
+
+      schedule && doTimes(schedule, ([action, timing = 0]) => {
         elapsedTime += timing;
         action(state, timing, elapsedTime, duration);
 
         doTimes(state, (value, i) =>
           knobs[i].linearRampToValueAtTime(value, elapsedTime));
       });
-
-      ampKnob.gain.linearRampToValueAtTime(
-        0,
-        max(elapsedTime, startTime + duration),
-      );
 
       source.start(startTime);
       source.stop(startTime + duration);

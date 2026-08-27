@@ -41,7 +41,13 @@ export {
   getCollisionPairs,
 } from "./objects.ts";
 export { createCamera } from "./camera.ts";
-export { createCoordinates, readOrigin, setOrigin } from "./coordinates.ts";
+export {
+  createCoordinates,
+  createRotation,
+  localize,
+  readOrigin,
+  setOrigin,
+} from "./coordinates.ts";
 export { createPrism, createPyramid, createSphere } from "./geometry.ts";
 export {
   create as createPaintMaterial,

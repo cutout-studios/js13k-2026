@@ -38,4 +38,6 @@ export const F32 = Float32Array;
 
 export const length = (array: Array<unknown> | Float32Array | string) =>
   array.length;
+
 export const _ = undefined;
+export const NO_OP = () => {};

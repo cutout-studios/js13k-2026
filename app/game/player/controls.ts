@@ -15,28 +15,21 @@
  */
 
 import { hypot, max } from "~/alias";
-import { doTimes, spliceTable } from "~/common";
+import { doTimes } from "~/common";
 import { keyboard, pointer } from "~/controller";
-import {
-  adjustObject,
-  aimObject,
-  readOrigin,
-  scaleXYZ,
-  setOrigin,
-  XYZ,
-  XYZ_LENGTH,
-} from "~/3D";
+import { adjustObject, scaleXYZ, XYZ, XYZ_LENGTH } from "~/3D";
 import { ActionSchedule, approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
-import { Bullet, Ship } from "../ship/types.ts";
+import { Ship } from "../ship/types.ts";
 
 import {
   STRAFE_ATTACK_TIME,
   STRAFE_KEYS,
   STRAFE_RELEASE_TIME,
 } from "./constants.ts";
+import { DEFAULT_SHIP_ACTION } from "../ship/module.ts";
 
 const strafeEnvelopes = doTimes(
   STRAFE_KEYS,
@@ -46,7 +39,7 @@ const strafeEnvelopes = doTimes(
 // TODO: spin counter
 // TODO: boost
 export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
-  const [object, heading, weapons, , , statBlock] = ship;
+  const [object, heading, , , , statBlock] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];
   doTimes(STRAFE_KEYS, (key, index) => {
     const value = strafeEnvelopes[index](
@@ -80,21 +73,7 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
         return valueObject.value;
       },
     ) as XYZ;
-
-    aimObject(object, ship[1]);
   }
 
-  // TODO!: combine this with default action somehow
-  doTimes(weapons, (weapon, index) => {
-    setOrigin(weapon[0][0], readOrigin(ship[0][0]));
-    weapon[1] = ship[1];
-    const bulletsToCull: number[] = [];
-    doTimes(weapon[2][0], (bullet: Bullet, bulletIndex: number) => {
-      if (!bullet[1](bullet, tickLength)) bulletsToCull.push(bulletIndex);
-    });
-    spliceTable(weapon[2], bulletsToCull);
-    pointer && pointer[1] & (1 << index) && weapon[3](weapon, tickLength);
-  });
-
-  return true;
+  DEFAULT_SHIP_ACTION(ship, tickLength);
 }]];

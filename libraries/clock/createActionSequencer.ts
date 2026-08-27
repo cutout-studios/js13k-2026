@@ -30,7 +30,7 @@ export const createActionSequencer = <T>(
   // segment durations are long: only calling the first action triggered each time.
   // For JS13K, concision > complete correctness.
   return (payload: T, tickLength: number): boolean => {
-    if (loopCount < 1) return false;
+    if (loopCount < 1) return true;
 
     elapsedTime += tickLength;
 
@@ -46,7 +46,7 @@ export const createActionSequencer = <T>(
 
     [currentAction, currentDuration = 0] = actionTimings[actionSwaps];
 
-    currentAction(payload, tickLength, elapsedTime, currentDuration);
-    return true;
+    return currentAction(payload, tickLength, elapsedTime, currentDuration) ??
+      false;
   };
 };

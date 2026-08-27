@@ -19,7 +19,7 @@ export type Action<T> = (
   tickLength: number,
   elapsedTime: number,
   duration: number,
-) => void;
+) => boolean | void;
 
 export type ActionSchedule<T> = [
   action: Action<T>,

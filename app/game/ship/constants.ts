@@ -89,5 +89,3 @@ export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
 ];
 
 export const BULLET_SPEED = 25;
-
-export const _THREE_ZEROS = () => repeat(3, 0);

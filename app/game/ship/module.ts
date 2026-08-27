@@ -16,11 +16,10 @@
 
 import { doTimes, repeat } from "~/common";
 import {
+  aimObject,
   createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
-  readOrigin,
-  setOrigin,
   XOObject,
   XYZ,
 } from "~/3D";
@@ -29,37 +28,46 @@ import { ActionSchedule, createActionSequencer } from "~/clock";
 import { ColorOptions } from "../options/types.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 import { Resources, Ship, ShipSnapshot } from "./types.ts";
-import { _THREE_ZEROS, SHIP_BASE_PROPERTIES } from "./constants.ts";
+import { updateBullets } from "./bullets.ts";
+import { SHIP_BASE_PROPERTIES } from "./constants.ts";
 import { createWeapon } from "./weapons.ts";
 
-const DEFAULT_SHIP_SCHEDULE: ActionSchedule<Ship> = [[
-  (ship: Ship, tickLength: number) =>
-    doTimes(ship[2], (weapon) => {
-      setOrigin(weapon[0][0], readOrigin(ship[0][0]));
-      weapon[1] = ship[1];
-      weapon[3](weapon, tickLength);
-    }),
-]];
+export const DEFAULT_SHIP_ACTION = (ship: Ship, tickLength: number) => {
+  aimObject(ship[0], ship[1]);
+  updateBullets(ship, tickLength);
+  doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
+};
 
 export const createShip = (
-  [
+  options: ColorOptions,
+  level = 1,
+): Ship => {
+  const [
     ,
     value,
-    [shapes, shipOverrides, shipSchedule = DEFAULT_SHIP_SCHEDULE, weapon],
-  ]: ColorOptions,
-  level = 1,
-): Ship => [
-  flattenObjects(...shapes.map((args) => createObject(...args, paint(value)))),
-  _THREE_ZEROS() as XYZ,
-  [createWeapon(value, weapon, level)],
-  createActionSequencer(shipSchedule),
-  repeat(5, 0) as Resources,
-  levelRollOverrides(
-    SHIP_BASE_PROPERTIES,
-    shipOverrides,
-    level,
-  ) as ShipSnapshot,
-];
+    [
+      shapes,
+      shipOverrides,
+      shipSchedule = [[DEFAULT_SHIP_ACTION]] as ActionSchedule<Ship>,
+    ],
+  ] = options;
+
+  return [
+    flattenObjects(
+      ...shapes.map((args) => createObject(...args, paint(value))),
+    ),
+    repeat(3, 0) as XYZ,
+    [createWeapon(options, level, 0)],
+    createActionSequencer(shipSchedule),
+    repeat(5, 0) as Resources,
+    levelRollOverrides(
+      SHIP_BASE_PROPERTIES,
+      shipOverrides,
+      level,
+    ) as ShipSnapshot,
+    options,
+  ];
+};
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,

@@ -17,10 +17,6 @@ import { _ } from "~/alias";
 import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
 import { controlSchedule } from "../player/controls.ts";
 import { ColorOptions } from "./types.ts";
-import {
-  DEFAULT_BULLET_GEOMETRY,
-  DEFAULT_WEAPON_SCHEDULE,
-} from "../ship/weapons.ts";
 
 const GREEN_PRONG = [
     0.12,
@@ -49,11 +45,7 @@ export default [
       ]]],
       [],
       controlSchedule,
-      // TODO!: there's definitely a better way to do this
-      [
-        [],
-        DEFAULT_WEAPON_SCHEDULE(1, 0xFFFFFF, DEFAULT_BULLET_GEOMETRY, false),
-      ],
+      [[]],
       [1, 1],
     ],
   ],

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { _, length } from "~/alias";
+import { _, length, NO_OP } from "~/alias";
 import { doTimes } from "~/common";
 import { createObject } from "~/3D";
 import { bell, range } from "~/random";
@@ -65,7 +65,7 @@ export const createItem = (
 
   return [
     createObject(...geometry[typeID]),
-    createActionSequencer([[(item: Item) => item]]),
+    createActionSequencer([[NO_OP]]),
     typeID,
     colorID,
     rank,

@@ -21,13 +21,16 @@ import {
   SQUARE_BUFFER,
   TRIANGLE_BUFFER,
 } from "~/audio";
+import { NO_OP } from "~/alias";
 
 export const weaponSound = createSound(
   [SINE_BUFFER, [75, 85], 0.15, 0, 0.2],
-  [NOISE_BUFFER, [800, 1000], 0.15, 0, 1, [[() => [1, 1, 1], 0.01], [
-    () => [0.2, 1, 1],
-    0.05,
-  ]]],
+  [NOISE_BUFFER, [800, 1000], 0.15, 0, 1, [
+    [NO_OP, 0.01],
+    [(sound) => {
+      sound[0] = 0.2;
+    }, 0.05],
+  ]],
 );
 
 export const hitSound = createSound([
@@ -39,12 +42,16 @@ export const hitSound = createSound([
 ]);
 
 export const explosionSound = createSound(
-  [TRIANGLE_BUFFER, [50, 70], 0.35, 0.01, 0.5, [[() => [1, 1, 1], 0.01], [
-    () => [0.4, 1, 1],
-    0.1,
-  ]]],
-  [NOISE_BUFFER, [180, 260], 0.5, 0, 0.6, [[() => [1, 1, 1], 0.01], [
-    () => [0.4, 1, 1],
-    0.1,
-  ]]],
+  [TRIANGLE_BUFFER, [50, 70], 0.35, 0.01, 0.5, [
+    [NO_OP, 0.01],
+    [(sound) => {
+      sound[0] = 0.4;
+    }, 0.1],
+  ]],
+  [NOISE_BUFFER, [180, 260], 0.5, 0, 0.6, [
+    [NO_OP, 0.01],
+    [(sound) => {
+      sound[0] = 0.4;
+    }, 0.1],
+  ]],
 );

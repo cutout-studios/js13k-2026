@@ -14,109 +14,89 @@
  * limitations under the License.
  */
 
-import { doTimes, spliceTable } from "~/common";
+import { doTimes } from "~/common";
 import {
   addXYZ,
+  aimObject,
   createObject,
-  createPaintMaterialWithPalette as paint,
-  createSphere,
+  createRotation,
+  localize,
   normalizeXYZ,
   readOrigin,
-  scaleXYZ,
   setOrigin,
   subtractXYZ,
-  XOGeometry,
-  XYZ,
+  XOOrientation,
+  Z_AXIS,
 } from "~/3D";
-import { ActionSchedule, createActionSequencer } from "~/clock";
+import { createActionSequencer } from "~/clock";
 
-import { weaponSound } from "./sounds.ts";
-import { BaseStatOverride } from "../options/types.ts";
+import { ColorOptions } from "../options/types.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
-import { Bullet, Weapon, WeaponSnapshot } from "./types.ts";
-import {
-  _THREE_ZEROS,
-  BULLET_SPEED,
-  WEAPON_BASE_PROPERTIES,
-} from "./constants.ts";
-
-export const DEFAULT_BULLET_GEOMETRY = [
-  0.05,
-  createSphere(0.05, 6),
-] as XOGeometry;
-
-export const DEFAULT_WEAPON_SCHEDULE = (
-  bulletRate: number,
-  bulletColor: number,
-  bulletGeometry = DEFAULT_BULLET_GEOMETRY,
-  handlesOwnBullets = true,
-): ActionSchedule<Weapon> => [[
-  (weapon: Weapon) => {
-    const [[coordinates], heading, [bullets, instanceGroup], , snapshot] =
-        weapon,
-      [count, , , , lifetime] = snapshot,
-      origin = readOrigin(coordinates);
-
-    doTimes(count, () => {
-      const direction = normalizeXYZ(
-          subtractXYZ(heading, readOrigin(coordinates)),
-        ),
-        bulletObject = createObject(
-          [origin],
-          bulletGeometry,
-          paint(bulletColor),
-        ),
-        bullet: Bullet = [
-          bulletObject,
-          createActionSequencer([
-            [(self: Bullet, tickLength: number) =>
-              setOrigin(
-                self[0][0],
-                addXYZ(
-                  readOrigin(self[0][0]),
-                  scaleXYZ(direction, tickLength * BULLET_SPEED),
-                ),
-              )],
-          ], lifetime / .016), // Estimate. 1frame ~= 16ms
-        ]; // TODO!: we can bake the lifetime into the action sequence
-
-      bullets.push(bullet);
-      instanceGroup.push(bullet[0]);
-
-      weaponSound();
-    });
-  },
-], [
-  handlesOwnBullets
-    ? ([, , bullets]: Weapon, tickLength: number) => {
-      const bulletsToCull = [] as number[];
-
-      doTimes(bullets[0], (bullet: Bullet, index: number) => {
-        if (!bullet[1](bullet, tickLength)) bulletsToCull.push(index);
-      });
-
-      spliceTable(bullets, bulletsToCull);
-    }
-    : () => {},
-  1 / bulletRate,
-]];
+import { weaponSound } from "./sounds.ts";
+import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
+import { WEAPON_BASE_PROPERTIES } from "./constants.ts";
+import { NO_OP } from "~/alias";
+import { createBullet } from "./bullets.ts";
 
 export const createWeapon = (
-  value: number,
-  [overrides, schedule = DEFAULT_WEAPON_SCHEDULE(1, value)]: [
-    BaseStatOverride[],
-    ActionSchedule<Weapon> | undefined,
-  ],
+  [, , [, , , [overrides, schedule, , mount = [] as XOOrientation]]]:
+    ColorOptions,
   level = 1,
-): Weapon => [
-  createObject(), // TODO!: wrong, should be the ship's coordinates
-  _THREE_ZEROS() as XYZ, // TODO!: wrong, should be the ship's heading
-  [[], []],
-  createActionSequencer(schedule),
-  levelRollOverrides(
+  weaponIndex = 0,
+): Weapon => {
+  const snapshot = levelRollOverrides(
     WEAPON_BASE_PROPERTIES,
     overrides,
     level,
-  ) as WeaponSnapshot,
-];
+  ) as WeaponSnapshot;
+
+  return [
+    createObject(mount),
+    Z_AXIS,
+    [[], []],
+    createActionSequencer(
+      schedule ?? [
+        [fireWeapon(weaponIndex)],
+        [NO_OP, 1 / snapshot[5]],
+      ],
+    ),
+    snapshot,
+  ];
+};
+
+export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
+  weaponSound();
+
+  const [
+      [shipCoordinates],
+      ,
+      weapons,
+    ] = ship,
+    [[mountCoordinates], localHeading, [bullets, instanceGroup], , snapshot] =
+      weapons[weaponIndex],
+    [count, , , , lifetime] = snapshot,
+    coordinates = localize(mountCoordinates, shipCoordinates),
+    origin = readOrigin(coordinates),
+    aim = subtractXYZ(
+      readOrigin(
+        localize(setOrigin(createRotation(), localHeading), coordinates),
+      ),
+      origin,
+    );
+
+  doTimes(count, () => {
+    const direction = normalizeXYZ(aim),
+      bullet = createBullet(
+        options,
+        origin,
+        aim,
+        lifetime,
+      );
+
+    aimObject(bulletObject, addXYZ(origin, direction));
+
+    bullets.push(bullet);
+    instanceGroup.push(bullet[0]);
+  });
+};
