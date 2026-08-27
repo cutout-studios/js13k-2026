@@ -66,7 +66,8 @@ async function bundle(
   const { outputFiles } = _result;
   const [sourceData] = outputFiles!;
 
-  let code = sourceData.text(), appOutputText = rawText(<script>{code}</script>);
+  let code = sourceData.text(),
+    appOutputText = rawText(<script>{code}</script>);
   if (options.minify) {
     code = minify(code).toString();
 

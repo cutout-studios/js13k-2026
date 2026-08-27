@@ -25,12 +25,12 @@ export const levelCurve = (
 ) => (2 * atan(level * falloff)) / PI;
 
 export const levelRoll = (
-	[start, end]: Band,
-	level: number,
-	falloff = GAME_DIFFICULTY_FALLOFF,
+  [start, end]: Band,
+  level: number,
+  falloff = GAME_DIFFICULTY_FALLOFF,
 ) => {
-	const span = end - start, curve = levelCurve(level, falloff);
-	return range(start + span * curve, start + span * sqrt(curve));
+  const span = end - start, curve = levelCurve(level, falloff);
+  return range(start + span * curve, start + span * sqrt(curve));
 };
 
 export const levelRollOverrides = (

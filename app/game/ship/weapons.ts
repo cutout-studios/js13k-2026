@@ -42,27 +42,27 @@ const DEFAULT_WEAPON_SCHEDULE = (
   bulletGeometry = DEFAULT_BULLET_GEOMETRY,
 ): ActionSchedule<Weapon> => [[
   (weapon: Weapon) => {
-    const [[coordinates], heading, [bullets, instanceGroup], , snapshot] =
-        weapon,
-      [count, , , , lifetime, , spread] = snapshot,
-      origin = readOrigin(coordinates);
-    doTimes(count, (index) => {
-      const offset = spread * (index / max(1, count - 1) - 0.5),
-        direction = [heading[0] + offset, heading[1], heading[2]] as XYZ,
-        bulletObject = createObject([origin, [Z_AXIS, offset]], bulletGeometry),
-        bullet: Bullet = [
-          bulletObject,
-          createActionSequencer([
-            [(self: Bullet, tickLength: number) =>
-              setOrigin(
-                self[0][0],
-                addXYZ(readOrigin(self[0][0]), scaleXYZ(direction, tickLength)),
-              )],
-          ], lifetime / .016), // Estimate. 1frame ~= 16ms
-        ];
-      bullets.push(bullet);
-      instanceGroup.push(bullet[0]);
-    });
+    // const [[coordinates], heading, [bullets, instanceGroup], , snapshot] =
+    //     weapon,
+    //   [count, , , , lifetime, , spread] = snapshot,
+    //   origin = readOrigin(coordinates);
+    // doTimes(count, (index) => {
+    //   const offset = spread * (index / max(1, count - 1) - 0.5),
+    //     direction = [heading[0] + offset, heading[1], heading[2]] as XYZ,
+    //     bulletObject = createObject([origin, [Z_AXIS, offset]], bulletGeometry, paint(0xFFFFFF)),
+    //     bullet: Bullet = [
+    //       bulletObject,
+    //       createActionSequencer([
+    //         [(self: Bullet, tickLength: number) =>
+    //           setOrigin(
+    //             self[0][0],
+    //             addXYZ(readOrigin(self[0][0]), scaleXYZ(direction, tickLength)),
+    //           )],
+    //       ], lifetime / .016), // Estimate. 1frame ~= 16ms
+    //     ];
+    //   bullets.push(bullet);
+    //   instanceGroup.push(bullet[0]);
+    // });
   },
   1 / bulletRate,
 ], [

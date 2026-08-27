@@ -15,7 +15,13 @@
  */
 
 import { repeat } from "~/common";
-import { createObject, flattenObjects, XOObject, XYZ } from "~/3D";
+import {
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  flattenObjects,
+  XOObject,
+  XYZ,
+} from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 
 import { ColorOptions } from "../options/types.ts";
@@ -32,12 +38,12 @@ const DEFAULT_SHIP_SCHEDULE: ActionSchedule<Ship> = [[
 export const createShip = (
   [
     ,
-    ,
+    value,
     [shapes, shipOverrides, shipSchedule = DEFAULT_SHIP_SCHEDULE, weapon],
   ]: ColorOptions,
   level = 1,
 ): Ship => [
-  flattenObjects(...shapes.map((args) => createObject(...args))),
+  flattenObjects(...shapes.map((args) => createObject(...args, paint(value)))),
   _THREE_ZEROS() as XYZ,
   [createWeapon(weapon, level)],
   createActionSequencer(shipSchedule),

@@ -42,10 +42,14 @@ const _resolveCollisions = (
 ): number[] => {
   const sourceHits = [] as number[];
 
-  const [sourceIndicies, targetIndicies] = getCollisionPairs(sourceObjects, targetObjects);
+  const [sourceIndicies, targetIndicies] = getCollisionPairs(
+    sourceObjects,
+    targetObjects,
+  );
 
   doTimes(sourceIndicies.length, (index) => {
-    const sourceIndex = sourceIndicies[index], targetIndex = targetIndicies[index];
+    const sourceIndex = sourceIndicies[index],
+      targetIndex = targetIndicies[index];
 
     callback(sourceIndex, targetIndex);
     sourceHits.push(sourceIndex);

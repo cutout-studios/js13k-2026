@@ -59,7 +59,7 @@ export const createCamera = (
         const [[, geometry, material]] = group;
 
         // skip invisible objects
-        if (!material) continue;
+        if (!geometry) continue;
 
         loadObject(
           process,
@@ -75,7 +75,7 @@ export const createCamera = (
             _getStableCoordinateBuffer(group),
           ),
           geometry,
-          material,
+          material!,
         );
 
         process.draw(geometry[1].length, min(group.length, objectLimit));
