@@ -23,7 +23,7 @@ import { Resources } from "../ship/types.ts";
 
 export default [
   createShip(colorOptions[0]),
-  repeat(3, 0) as Resources,
+  repeat(5, 0) as Resources,
 
   // inventory
   [],

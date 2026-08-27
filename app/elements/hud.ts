@@ -117,7 +117,7 @@ export const updateHUD = (
   );
   waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
 
-  armorUpdate(doTimes(_snapshot[0], (index) => [1, +(index < armorDamage)]));
+  armorUpdate(doTimes(_snapshot[0], (index) => [1, +(index >= armorDamage)]));
   shieldUpdate([[_snapshot[21], _snapshot[21] - shieldDamage]]);
   fuelUpdate(
     doTimes(
@@ -126,7 +126,7 @@ export const updateHUD = (
         index,
       ) => [
         _snapshot[4],
-        index < fuelSegmentDamage ? min(_snapshot[4], fuelDamage) : 0,
+        index >= fuelSegmentDamage ? _snapshot[4] - fuelDamage : 0,
       ],
     ),
   );

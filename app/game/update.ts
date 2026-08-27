@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
 import { random } from "~/alias";
-import { repeat, SECONDS_TO_MS } from "~/common";
+import { doTimes, repeat, SECONDS_TO_MS } from "~/common";
 
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";

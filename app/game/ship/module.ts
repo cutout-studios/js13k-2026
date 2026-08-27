@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { repeat } from "~/common";
 import { createObject, flattenObjects, XOObject, XYZ } from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 
@@ -40,7 +41,7 @@ export const createShip = (
   _THREE_ZEROS() as XYZ,
   [createWeapon(weapon, level)],
   createActionSequencer(shipSchedule),
-  _THREE_ZEROS() as Resources,
+  repeat(5, 0) as Resources,
   levelRollOverrides(
     SHIP_BASE_PROPERTIES,
     shipOverrides,
