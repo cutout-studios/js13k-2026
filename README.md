@@ -2,12 +2,7 @@
 
 Unicorns and Rainbows!!
 
-## Compression TODOs (Total: ~60B):
-
-- remove GPU error handler, lol (50B)
-- proper CSS bundling (10B) - will likely require a makefile wrapper
-
-### Dubious Options
+## Potential Compression TODOs (mostly dubious):
 
 - Additional aliases: for/forEach loops -> 'doTimes', undefined (?).
   - "winding" or "gray" iterator that goes xx, xy, yy, yx (a few Bs)

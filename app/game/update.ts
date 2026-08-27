@@ -42,9 +42,6 @@ const _resolveCollisions = (
   return sourceHits;
 };
 
-// TODO!: move into player ship state
-let _ejectingFuel = false;
-
 // TODO: "mass disruption" - target takes more damage than they have mass
 // TODO: fuel costs
 export const updateGame = (
@@ -54,9 +51,8 @@ export const updateGame = (
   const [activeEnemyGroups, droppedItems, progress] = world,
     [playerShip, , inventory] = player,
     [playerShipObject, , playerWeapons, , damage, _snapshot] = playerShip,
-    enemyShips = activeEnemyGroups.flatMap(([ships]) => ships),
-    enemyShipObjects = enemyShips.map(([object]) => object);
-
+    enemyShips = activeEnemyGroups.flatMap(([ships]) => ships);
+  
   // -- update everything in the game
   for (const ship of [playerShip, ...enemyShips]) ship[3](ship, tickLength);
   for (const drop of droppedItems) drop[1](drop, tickLength);
@@ -70,7 +66,7 @@ export const updateGame = (
       bullets,
       _resolveCollisions(
         bullets[1],
-        enemyShipObjects,
+        enemyShips.map(([object]) => object),
         (_, shipIndex) => {
           hitSound(); // TODO: pan based on location
           enemyShips[shipIndex][4][0] += random() < critChance
@@ -109,7 +105,7 @@ export const updateGame = (
   );
 
   // clean up dead enemies
-  // TODO!: mutates in place, so enemyShips/enemyShipObjects are stale below here
+  // TODO/WARNING: mutates in place, so enemyShips are stale below here
   for (const [ships] of activeEnemyGroups) {
     spliceTable(
       [ships],
@@ -137,8 +133,7 @@ export const updateGame = (
     damage[0] = _snapshot[15];
     damage[3] ??= 0, damage[3]++;
     damage[4] = true;
-    // TODO: don't actually crash the game when armor is zero 🥀
-    if (damage[3] >= _snapshot[0]) throw new Error("YOU DIED");
+    if (damage[3] >= _snapshot[0]) location.reload();
   }
 
   // remove temporary invulnerability once shields are restored
@@ -148,11 +143,11 @@ export const updateGame = (
   damage[1] ??= 0, damage[1] = max(0, damage[1] - _snapshot[7] * tickLength);
 
   // eject fuel if depleted
-  if (damage[1] >= _snapshot[4] && !_ejectingFuel) {
-    _ejectingFuel = true;
+  if (damage[1] >= _snapshot[4] && !damage[5]) {
+    damage[5] = true;
     setTimeout(() => {
       damage[2] ??= 0, damage[2]++;
-      _ejectingFuel = false;
+      damage[5] = false;
     }, _snapshot[6] * SECONDS_TO_MS);
   }
 

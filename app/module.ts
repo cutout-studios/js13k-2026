@@ -27,26 +27,8 @@ import state, { getSceneObjects } from "./game/module.ts";
 import { updateGame } from "./game/update.ts";
 
 document.head.append(createElement("style", undefined, {
-  textContent: /* css */ `
-    html, body, body * {
-      box-sizing: border-box;
-      padding: 0;
-      margin: 0;
-      font-family: Menlo, ui-monospace;
-      font-size: 16px;
-      color: white;
-      list-style-type: none;
-    }
-
-    body {
-      position: relative;
-      width: 100vw;
-      height: 100svh;
-    }
-
-    dialog::backdrop {
-      background: #000c;
-    }`,
+  // minified from ./styles.css
+  textContent: "html,body,body *{box-sizing:border-box;padding:0;margin:0;font-family:Menlo,ui-monospace;font-size:16px;color:#fff;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}",
 }));
 
 onload = async () => {

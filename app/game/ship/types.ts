@@ -32,6 +32,7 @@ export type Resources = [
   fuelSegments?: number,
   armor?: number,
   invulnerable?: boolean,
+  ejectingFuel?: boolean
 ];
 
 export type ShipSnapshot = [
