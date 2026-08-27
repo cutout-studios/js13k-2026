@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { repeat } from "~/common";
+import { doTimes, repeat } from "~/common";
 import {
   createObject,
   createPaintMaterialWithPalette as paint,
@@ -34,7 +34,7 @@ import { createWeapon } from "./weapons.ts";
 
 const DEFAULT_SHIP_SCHEDULE: ActionSchedule<Ship> = [[
   (ship: Ship, tickLength: number) =>
-    ship[2].forEach((weapon) => {
+    doTimes(ship[2], (weapon) => {
       setOrigin(weapon[0][0], readOrigin(ship[0][0]));
       weapon[1] = ship[1];
       weapon[3](weapon, tickLength);

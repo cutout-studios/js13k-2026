@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { round } from "~/alias";
+import { _, length, round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
@@ -38,21 +38,22 @@ const _createMeter = (
     "span",
     [FLEX_ROW, ...style],
     { id: name },
-    createElement("label", undefined, { innerText: name }),
+    createElement("label", _, { innerText: name }),
     ...meters,
   );
 
   return [element, (meterAttributes: [max: number, value: number][]) => {
-    while (meters.length < meterAttributes.length) {
+    while (length(meters) < length(meterAttributes)) {
       meters.push(
         element.appendChild(createElement("meter")) as HTMLMeterElement,
       );
     }
 
-    while (meters.length < meterAttributes.length) meters.pop()!.remove();
+    while (length(meters) < length(meterAttributes)) meters.pop()!.remove();
 
-    meters.forEach((meter, index) =>
-      [meter.max, meter.value] = meterAttributes[index]
+    doTimes(
+      meters,
+      (meter, index) => [meter.max, meter.value] = meterAttributes[index],
     );
   }];
 };
@@ -77,11 +78,11 @@ export const hud = createElement(
     inset: 0,
     ["pointer-events"]: "none",
   }],
-  undefined,
+  _,
   createElement(
     "header",
     [PADDED_FLEX_ROW, JUSTIFY()],
-    undefined,
+    _,
     fuelMeter,
     shieldMeter,
     armorMeter,
@@ -89,7 +90,7 @@ export const hud = createElement(
   createElement(
     "footer",
     [PADDED_FLEX_ROW, JUSTIFY()],
-    undefined,
+    _,
     distanceCounter,
     waveCounter,
   ),

@@ -15,7 +15,7 @@
  */
 
 import { doTimes, repeat } from "~/common";
-import { F32, hypot, max } from "~/alias";
+import { F32, hypot, length, max } from "~/alias";
 import { create as createPaintMaterial } from "./materials/paint.ts";
 
 import type {
@@ -101,8 +101,8 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
           objects,
           ([, [, verticies = []], [, data = repeat(4, 1)] = []]) =>
             doTimes(
-              verticies.length / XYZ_LENGTH * RGBA_LENGTH,
-              (index: number) => data[index % data.length],
+              length(verticies) / XYZ_LENGTH * RGBA_LENGTH,
+              (index: number) => data[index % length(data)],
             ),
         ).flat(),
       ),

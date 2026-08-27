@@ -56,32 +56,34 @@ export const createRenderTarget = (
     _getCanvasDepth(canvas),
   ];
 
-  return {
-    aspectRatio: canvas.width / canvas.height,
-    render(action) {
+  const descriptor: GPURenderPassDescriptor = {
+    colorAttachments: [ // Main, user-facing pixels
+      {
+        view: context.getCurrentTexture().createView(),
+        clearValue: [0, 0, 0, 1],
+        loadOp: "clear",
+        storeOp: "store",
+      },
+    ],
+    depthStencilAttachment: { // Depth computation pixels
+      view: depth,
+      depthClearValue: 1,
+      depthLoadOp: "clear",
+      depthStoreOp: "store",
+    },
+  };
+
+  return [
+    canvas.width / canvas.height,
+    descriptor,
+    (action) => {
       const encoder = device.createCommandEncoder();
-      const pass = encoder.beginRenderPass(this.descriptor);
+      const pass = encoder.beginRenderPass(descriptor);
 
       action(pass);
 
       pass.end();
       device.queue.submit([encoder.finish()]);
     },
-    descriptor: {
-      colorAttachments: [ // Main, user-facing pixels
-        {
-          view: context.getCurrentTexture().createView(),
-          clearValue: [0, 0, 0, 1],
-          loadOp: "clear",
-          storeOp: "store",
-        },
-      ],
-      depthStencilAttachment: { // Depth computation pixels
-        view: depth,
-        depthClearValue: 1,
-        depthLoadOp: "clear",
-        depthStoreOp: "store",
-      },
-    },
-  };
+  ];
 };

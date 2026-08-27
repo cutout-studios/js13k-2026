@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { _, length } from "~/alias";
 import { Action, ActionSchedule, ActionSequencer } from "./types.ts";
 
 export const createActionSequencer = <T>(
@@ -33,12 +34,12 @@ export const createActionSequencer = <T>(
 
     elapsedTime += tickLength;
 
-    if (currentDuration !== undefined && elapsedTime > currentDuration) {
+    if (currentDuration !== _ && elapsedTime > currentDuration) {
       elapsedTime -= currentDuration;
       actionSwaps++;
     }
 
-    if (actionSwaps >= actionTimings.length) {
+    if (actionSwaps >= length(actionTimings)) {
       actionSwaps = 0;
       loopCount--;
     }

@@ -15,7 +15,7 @@
  */
 
 import { Player } from "./types.ts";
-import { repeat } from "~/common";
+import { doTimes, repeat } from "~/common";
 
 export const updatePlayerSnapshots = (
   [ship, [shieldLevels, fuelLevels = 0, , armorLevels = 0], inventory]: Player,
@@ -23,19 +23,19 @@ export const updatePlayerSnapshots = (
   const [, , weapons, , , _snapshot] = ship;
   const _weaponsSnapshots = weapons.map(([, , , , _s]) => _s);
 
-  // TOOD: compute mass, weapons
+  // TODO: compute mass, weapons
 
-  for (const [[, , , , , modifiers], equipped] of inventory) {
-    if (!equipped) continue;
-
-    for (const [statID, operator, value] of modifiers) {
-      const targets = statID > 21 ? _weaponsSnapshots : [_snapshot];
-
-      for (const target of targets) {
-        operator === "*" ? target[statID] *= value : target[statID] += value;
-      }
-    }
-  }
+  doTimes(inventory, ([[, , , , , modifiers], equipped]) => {
+    if (!equipped) return;
+    doTimes(modifiers, ([statID, operator, value]) => {
+      doTimes(
+        (statID > 21 ? _weaponsSnapshots : [_snapshot]) as number[][],
+        (target) => {
+          operator === "*" ? target[statID] *= value : target[statID] += value;
+        },
+      );
+    });
+  });
 
   const levels = [
     armorLevels,
@@ -43,8 +43,9 @@ export const updatePlayerSnapshots = (
     ...repeat(2, shieldLevels),
   ];
 
-  [0, 4, 7, 8, 15, 16].forEach((id, index) =>
-    _snapshot[id] *= _snapshot[11] ** levels[index]
+  doTimes(
+    [0, 4, 7, 8, 15, 16],
+    (id, index) => _snapshot[id] *= _snapshot[11] ** levels[index],
   );
 
   // TODO: lowestResource

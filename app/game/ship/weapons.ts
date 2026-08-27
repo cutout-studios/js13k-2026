@@ -92,7 +92,7 @@ export const DEFAULT_WEAPON_SCHEDULE = (
     ? ([, , bullets]: Weapon, tickLength: number) => {
       const bulletsToCull = [] as number[];
 
-      bullets[0].forEach((bullet: Bullet, index: number) => {
+      doTimes(bullets[0], (bullet: Bullet, index: number) => {
         if (!bullet[1](bullet, tickLength)) bulletsToCull.push(index);
       });
 

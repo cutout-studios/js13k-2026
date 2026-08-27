@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { _, length } from "~/alias";
 import { doTimes } from "~/common";
 import { createObject } from "~/3D";
 import { bell, range } from "~/random";
@@ -32,7 +33,8 @@ const _itemDeck = createDeck(4),
     level: number,
     quality = 0,
     roll = bell() + levelCurve(level) + quality,
-  ) => ITEM_RANK_THRESHOLDS.filter((threshold) => roll >= threshold).length + 1;
+  ) =>
+    length(ITEM_RANK_THRESHOLDS.filter((threshold) => roll >= threshold)) + 1;
 
 export const createItem = (
   options: ColorOptions[],
@@ -55,11 +57,11 @@ export const createItem = (
   const rank = _itemRankRoll(level, quality),
     typeID = drawCard(_itemDeck),
     modifierDeck = [] as ModifierOptions[];
-  for (const modifier of modifiers) {
+  doTimes(modifiers, (modifier) => {
     if (modifier[0] === typeID || modifier[0] === 0) {
       insertCard(modifierDeck, modifier);
     }
-  }
+  });
 
   return [
     createObject(...geometry[typeID]),
@@ -79,6 +81,6 @@ export const createItem = (
         levelRoll(baseBulletRate, level),
         levelRoll(baseBulletDamage, level),
       ]
-      : undefined,
+      : _,
   ];
 };

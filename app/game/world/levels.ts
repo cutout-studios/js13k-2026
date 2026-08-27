@@ -18,6 +18,7 @@ import { atan, PI, round, sqrt } from "~/alias";
 import { Band, range } from "~/random";
 
 import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
+import { doTimes } from "~/common";
 
 export const levelCurve = (
   level: number,
@@ -38,9 +39,9 @@ export const levelRollOverrides = (
   overrides: [number, Band][],
   level = 1,
 ) => {
-  for (const [statID, statBand] of overrides) {
+  doTimes(overrides, ([statID, statBand]) => {
     base[statID] = levelRoll(statBand, level);
-  }
+  });
 
   return base;
 };

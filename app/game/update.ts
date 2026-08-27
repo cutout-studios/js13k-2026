@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { max, random } from "~/alias";
+import { length, max, random } from "~/alias";
 import { doTimes, repeat, SECONDS_TO_MS, spliceTable } from "~/common";
 
 import { rollEnemies } from "./world/enemies.ts";
@@ -52,48 +52,47 @@ export const updateGame = (
     [playerShip, , inventory] = player,
     [playerShipObject, , playerWeapons, , damage, _snapshot] = playerShip,
     enemyShips = activeEnemyGroups.flatMap(([ships]) => ships);
-  
+
   // -- update everything in the game
-  for (const ship of [playerShip, ...enemyShips]) ship[3](ship, tickLength);
-  for (const drop of droppedItems) drop[1](drop, tickLength);
+  doTimes([playerShip, ...enemyShips], (ship) => ship[3](ship, tickLength));
+  doTimes(droppedItems, (drop) => drop[1](drop, tickLength));
 
   // -- handle collisions
-  for (
-    const [, , bullets, , [, critChance, critDamage, bulletDamage]]
-      of playerWeapons
-  ) {
-    spliceTable(
-      bullets,
-      _resolveCollisions(
-        bullets[1],
-        enemyShips.map(([object]) => object),
-        (_, shipIndex) => {
-          hitSound(); // TODO: pan based on location
-          enemyShips[shipIndex][4][0] += random() < critChance
-            ? bulletDamage * critDamage
-            : bulletDamage;
-        },
-      ),
-    );
-  }
-
-  if (!damage[4]) { // skip enemy bullets while the player is invulnerable
-    for (
-      const [, , bullets, , [, critChance, critDamage, bulletDamage]]
-        of enemyShips.flatMap(([, , weapons]) => weapons)
-    ) {
+  doTimes(
+    playerWeapons,
+    ([, , bullets, , [, critChance, critDamage, bulletDamage]]) =>
       spliceTable(
         bullets,
         _resolveCollisions(
           bullets[1],
-          [playerShipObject],
-          () =>
-            playerShip[4][0] += random() < critChance
+          enemyShips.map(([object]) => object),
+          (_, shipIndex) => {
+            hitSound(); // TODO: pan based on location
+            enemyShips[shipIndex][4][0] += random() < critChance
               ? bulletDamage * critDamage
-              : bulletDamage,
+              : bulletDamage;
+          },
         ),
-      );
-    }
+      ),
+  );
+
+  if (!damage[4]) { // skip enemy bullets while the player is invulnerable
+    doTimes(
+      enemyShips,
+      ([, , [[, , bullets, , [, critChance, critDamage, bulletDamage]]]]) => {
+        spliceTable(
+          bullets,
+          _resolveCollisions(
+            bullets[1],
+            [playerShipObject],
+            () =>
+              playerShip[4][0] += random() < critChance
+                ? bulletDamage * critDamage
+                : bulletDamage,
+          ),
+        );
+      },
+    );
   }
 
   // pick up dropped items
@@ -106,7 +105,7 @@ export const updateGame = (
 
   // clean up dead enemies
   // TODO/WARNING: mutates in place, so enemyShips are stale below here
-  for (const [ships] of activeEnemyGroups) {
+  doTimes(activeEnemyGroups, ([ships]) => {
     spliceTable(
       [ships],
       ships.flatMap(([, , , , damages, snapshot], index) => {
@@ -116,12 +115,12 @@ export const updateGame = (
         return [index];
       }),
     );
-  }
+  });
 
   // clean up dead enemy groups
   spliceTable(
     [activeEnemyGroups],
-    activeEnemyGroups.flatMap(([ships], index) => ships.length ? [] : [index]),
+    activeEnemyGroups.flatMap(([ships], index) => length(ships) ? [] : [index]),
   );
 
   // -- update player resources
@@ -151,7 +150,7 @@ export const updateGame = (
     }, _snapshot[6] * SECONDS_TO_MS);
   }
 
-  if (activeEnemyGroups.length) return;
+  if (length(activeEnemyGroups)) return;
 
   // -- update game progress
   if (progress[1] > progress[2]) { // advance to the next level

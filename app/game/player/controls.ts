@@ -39,7 +39,7 @@ import {
 } from "./constants.ts";
 
 const strafeEnvelopes = doTimes(
-  STRAFE_KEYS.length,
+  STRAFE_KEYS,
   () => createEnvelope(STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME),
 );
 
@@ -48,10 +48,10 @@ const strafeEnvelopes = doTimes(
 export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
   const [object, heading, weapons, , , statBlock] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];
-  doTimes(STRAFE_KEYS.length, (index: number) => {
+  doTimes(STRAFE_KEYS, (key, index) => {
     const value = strafeEnvelopes[index](
       tickLength,
-      !keyboard.has(STRAFE_KEYS[index]),
+      !keyboard.has(key),
     );
 
     strafeMagnitudes[index >> 1] += index & 1 ? -value : value;
@@ -85,11 +85,11 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
   }
 
   // TODO!: combine this with default action somehow
-  weapons.forEach((weapon, index) => {
+  doTimes(weapons, (weapon, index) => {
     setOrigin(weapon[0][0], readOrigin(ship[0][0]));
     weapon[1] = ship[1];
     const bulletsToCull: number[] = [];
-    weapon[2][0].forEach((bullet: Bullet, bulletIndex: number) => {
+    doTimes(weapon[2][0], (bullet: Bullet, bulletIndex: number) => {
       if (!bullet[1](bullet, tickLength)) bulletsToCull.push(bulletIndex);
     });
     spliceTable(weapon[2], bulletsToCull);
