@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
+import { doTimes, spliceTable } from "~/common";
 import {
   addXYZ,
   createObject,
@@ -40,18 +40,6 @@ import {
   BULLET_SPEED,
   WEAPON_BASE_PROPERTIES,
 } from "./constants.ts";
-
-// TODO!: combine spliceColumns declarations
-const _spliceColumns = (
-  structure: unknown[][],
-  targetIndicies: number[],
-) => {
-  for (const index of targetIndicies.sort((a, b) => b - a)) {
-    for (const column of structure) {
-      column.splice(index, 1);
-    }
-  }
-};
 
 export const DEFAULT_BULLET_GEOMETRY = [
   0.05,
@@ -107,8 +95,8 @@ export const DEFAULT_WEAPON_SCHEDULE = (
       bullets[0].forEach((bullet: Bullet, index: number) => {
         if (!bullet[1](bullet, tickLength)) bulletsToCull.push(index);
       });
-      
-      _spliceColumns(bullets, bulletsToCull);
+
+      spliceTable(bullets, bulletsToCull);
     }
     : () => {},
   1 / bulletRate,

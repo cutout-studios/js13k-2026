@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { random, max } from "~/alias";
-import { doTimes, repeat, SECONDS_TO_MS } from "~/common";
+import { max, random } from "~/alias";
+import { doTimes, repeat, SECONDS_TO_MS, spliceTable } from "~/common";
 
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
@@ -23,17 +23,6 @@ import { explosionSound, hitSound } from "./ship/sounds.ts";
 
 import { Game } from "./types.ts";
 import { getCollisionPairs, XOObject } from "~/3D";
-
-const _spliceColumns = (
-  structure: unknown[][],
-  targetIndicies: number[],
-) => {
-  for (const index of [...new Set(targetIndicies)].sort((a, b) => b - a)) {
-    for (const column of structure) {
-      column.splice(index, 1);
-    }
-  }
-};
 
 const _resolveCollisions = (
   sourceObjects: XOObject[],
@@ -45,9 +34,8 @@ const _resolveCollisions = (
     sourceObjects,
     targetObjects,
   );
-  doTimes(sourceIndicies.length, (index) => {
-    const sourceIndex = sourceIndicies[index],
-      targetIndex = targetIndicies[index];
+  doTimes(sourceIndicies, (sourceIndex: number, index: number) => {
+    const targetIndex = targetIndicies[index];
     callback(sourceIndex, targetIndex);
     sourceHits.push(sourceIndex);
   });
@@ -78,7 +66,7 @@ export const updateGame = (
     const [, , bullets, , [, critChance, critDamage, bulletDamage]]
       of playerWeapons
   ) {
-    _spliceColumns(
+    spliceTable(
       bullets,
       _resolveCollisions(
         bullets[1],
@@ -98,12 +86,12 @@ export const updateGame = (
       const [, , bullets, , [, critChance, critDamage, bulletDamage]]
         of enemyShips.flatMap(([, , weapons]) => weapons)
     ) {
-      _spliceColumns(
+      spliceTable(
         bullets,
         _resolveCollisions(
           bullets[1],
           [playerShipObject],
-          () => 
+          () =>
             playerShip[4][0] += random() < critChance
               ? bulletDamage * critDamage
               : bulletDamage,
@@ -113,7 +101,7 @@ export const updateGame = (
   }
 
   // pick up dropped items
-  _spliceColumns(
+  spliceTable(
     [droppedItems],
     _resolveCollisions(droppedItems.map(([object]) => object), [
       playerShipObject,
@@ -123,7 +111,7 @@ export const updateGame = (
   // clean up dead enemies
   // TODO!: mutates in place, so enemyShips/enemyShipObjects are stale below here
   for (const [ships] of activeEnemyGroups) {
-    _spliceColumns(
+    spliceTable(
       [ships],
       ships.flatMap(([, , , , damages, snapshot], index) => {
         if (damages[0] < snapshot[15]) return [];
@@ -135,11 +123,9 @@ export const updateGame = (
   }
 
   // clean up dead enemy groups
-  _spliceColumns(
+  spliceTable(
     [activeEnemyGroups],
-    activeEnemyGroups.flatMap(([ships], index) =>
-      ships.length ? [] : [index]
-    ),
+    activeEnemyGroups.flatMap(([ships], index) => ships.length ? [] : [index]),
   );
 
   // -- update player resources

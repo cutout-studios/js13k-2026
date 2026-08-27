@@ -24,8 +24,12 @@ export const FLOAT_32_BYTES = FLOAT_32_BIN / BYTES_TO_BIN;
 export const repeat = <T>(times: number, thing: T): T[] =>
   Array(times).fill(thing);
 
-export const doTimes = <T>(count: number, action: (count: number) => T): T[] =>
-  repeat(count, 0).map((_, index) => action(index));
+export const doTimes = <T, K>(
+  enumerator: number | Array<K>,
+  action: (element: K, index: number) => T,
+): T[] =>
+  (typeof enumerator === "number" ? [...Array(enumerator).keys()] : enumerator)
+    .map(action as (element: K | number, index: number) => T);
 
 export const memo = <Key extends WeakKey, Value>(
   create: (key: Key) => Value,
@@ -40,3 +44,11 @@ export const memo = <Key extends WeakKey, Value>(
     return value;
   };
 };
+
+export const spliceTable = (
+  table: unknown[][],
+  rowIndicies: number[],
+) =>
+  doTimes([...new Set(rowIndicies)].sort((a, b) => b - a), (index: number) => {
+    doTimes(table, (column: unknown[]) => column.splice(index, 1));
+  });
