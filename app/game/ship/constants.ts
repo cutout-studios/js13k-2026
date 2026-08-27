@@ -59,7 +59,7 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   0, // Lowest Resource
   1, // Mass
   0, // Resolve
-  20, // Shield
+  40, // Shield
   10, // Shield Regen
   1, // Spin Damage
   0.1, // Spin Handling

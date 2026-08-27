@@ -14,71 +14,116 @@
  * limitations under the License.
  */
 
-import { max } from "~/alias";
 import { doTimes } from "~/common";
 import {
   addXYZ,
   createObject,
+  createPaintMaterialWithPalette as paint,
   createSphere,
+  normalizeXYZ,
   readOrigin,
   scaleXYZ,
   setOrigin,
+  subtractXYZ,
   XOGeometry,
   XYZ,
-  Z_AXIS,
 } from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 
+import { weaponSound } from "./sounds.ts";
 import { BaseStatOverride } from "../options/types.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
 import { Bullet, Weapon, WeaponSnapshot } from "./types.ts";
-import { _THREE_ZEROS, WEAPON_BASE_PROPERTIES } from "./constants.ts";
+import {
+  _THREE_ZEROS,
+  BULLET_SPEED,
+  WEAPON_BASE_PROPERTIES,
+} from "./constants.ts";
 
-const DEFAULT_BULLET_GEOMETRY = [0.05, createSphere(0.05, 6)] as XOGeometry;
+// TODO!: combine spliceColumns declarations
+const _spliceColumns = (
+  structure: unknown[][],
+  targetIndicies: number[],
+) => {
+  for (const index of targetIndicies.sort((a, b) => b - a)) {
+    for (const column of structure) {
+      column.splice(index, 1);
+    }
+  }
+};
 
-const DEFAULT_WEAPON_SCHEDULE = (
+export const DEFAULT_BULLET_GEOMETRY = [
+  0.05,
+  createSphere(0.05, 6),
+] as XOGeometry;
+
+export const DEFAULT_WEAPON_SCHEDULE = (
   bulletRate: number,
+  bulletColor: number,
   bulletGeometry = DEFAULT_BULLET_GEOMETRY,
+  handlesOwnBullets = true,
 ): ActionSchedule<Weapon> => [[
   (weapon: Weapon) => {
-    // const [[coordinates], heading, [bullets, instanceGroup], , snapshot] =
-    //     weapon,
-    //   [count, , , , lifetime, , spread] = snapshot,
-    //   origin = readOrigin(coordinates);
-    // doTimes(count, (index) => {
-    //   const offset = spread * (index / max(1, count - 1) - 0.5),
-    //     direction = [heading[0] + offset, heading[1], heading[2]] as XYZ,
-    //     bulletObject = createObject([origin, [Z_AXIS, offset]], bulletGeometry, paint(0xFFFFFF)),
-    //     bullet: Bullet = [
-    //       bulletObject,
-    //       createActionSequencer([
-    //         [(self: Bullet, tickLength: number) =>
-    //           setOrigin(
-    //             self[0][0],
-    //             addXYZ(readOrigin(self[0][0]), scaleXYZ(direction, tickLength)),
-    //           )],
-    //       ], lifetime / .016), // Estimate. 1frame ~= 16ms
-    //     ];
-    //   bullets.push(bullet);
-    //   instanceGroup.push(bullet[0]);
-    // });
+    const [[coordinates], heading, [bullets, instanceGroup], , snapshot] =
+        weapon,
+      [count, , , , lifetime] = snapshot,
+      origin = readOrigin(coordinates);
+
+    doTimes(count, () => {
+      const direction = normalizeXYZ(
+          subtractXYZ(heading, readOrigin(coordinates)),
+        ),
+        bulletObject = createObject(
+          [origin],
+          bulletGeometry,
+          paint(bulletColor),
+        ),
+        bullet: Bullet = [
+          bulletObject,
+          createActionSequencer([
+            [(self: Bullet, tickLength: number) =>
+              setOrigin(
+                self[0][0],
+                addXYZ(
+                  readOrigin(self[0][0]),
+                  scaleXYZ(direction, tickLength * BULLET_SPEED),
+                ),
+              )],
+          ], lifetime / .016), // Estimate. 1frame ~= 16ms
+        ]; // TODO!: we can bake the lifetime into the action sequence
+
+      bullets.push(bullet);
+      instanceGroup.push(bullet[0]);
+
+      weaponSound();
+    });
   },
-  1 / bulletRate,
 ], [
-  ([, , [bullets]]: Weapon, tickLength: number) =>
-    bullets.forEach((bullet: Bullet) => bullet[1](bullet, tickLength)),
+  handlesOwnBullets
+    ? ([, , bullets]: Weapon, tickLength: number) => {
+      const bulletsToCull = [] as number[];
+
+      bullets[0].forEach((bullet: Bullet, index: number) => {
+        if (!bullet[1](bullet, tickLength)) bulletsToCull.push(index);
+      });
+      
+      _spliceColumns(bullets, bulletsToCull);
+    }
+    : () => {},
+  1 / bulletRate,
 ]];
 
 export const createWeapon = (
-  [overrides, schedule = DEFAULT_WEAPON_SCHEDULE(1)]: [
+  value: number,
+  [overrides, schedule = DEFAULT_WEAPON_SCHEDULE(1, value)]: [
     BaseStatOverride[],
     ActionSchedule<Weapon> | undefined,
   ],
   level = 1,
 ): Weapon => [
-  createObject(),
-  _THREE_ZEROS() as XYZ,
+  createObject(), // TODO!: wrong, should be the ship's coordinates
+  _THREE_ZEROS() as XYZ, // TODO!: wrong, should be the ship's heading
   [[], []],
   createActionSequencer(schedule),
   levelRollOverrides(

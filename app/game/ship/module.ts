@@ -19,6 +19,8 @@ import {
   createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
+  readOrigin,
+  setOrigin,
   XOObject,
   XYZ,
 } from "~/3D";
@@ -31,8 +33,12 @@ import { _THREE_ZEROS, SHIP_BASE_PROPERTIES } from "./constants.ts";
 import { createWeapon } from "./weapons.ts";
 
 const DEFAULT_SHIP_SCHEDULE: ActionSchedule<Ship> = [[
-  (ship, tickLength) =>
-    ship[2].forEach((weapon) => weapon[3](weapon, tickLength)),
+  (ship: Ship, tickLength: number) =>
+    ship[2].forEach((weapon) => {
+      setOrigin(weapon[0][0], readOrigin(ship[0][0]));
+      weapon[1] = ship[1];
+      weapon[3](weapon, tickLength);
+    }),
 ]];
 
 export const createShip = (
@@ -45,7 +51,7 @@ export const createShip = (
 ): Ship => [
   flattenObjects(...shapes.map((args) => createObject(...args, paint(value)))),
   _THREE_ZEROS() as XYZ,
-  [createWeapon(weapon, level)],
+  [createWeapon(value, weapon, level)],
   createActionSequencer(shipSchedule),
   repeat(5, 0) as Resources,
   levelRollOverrides(

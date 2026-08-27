@@ -25,7 +25,7 @@ import { levelCurve, levelRoll } from "../world/levels.ts";
 import { ColorOptions, ModifierOptions } from "../options/types.ts";
 
 import { createDeck, drawCard, insertCard } from "../decks.ts";
-import { createActionSequence } from "~/clock";
+import { createActionSequencer } from "~/clock";
 
 const _itemDeck = createDeck(4),
   _itemRankRoll = (
@@ -63,7 +63,7 @@ export const createItem = (
 
   return [
     createObject(...geometry[typeID]),
-    createActionSequence([[(item: Item) => item]]),
+    createActionSequencer([[(item: Item) => item]]),
     typeID,
     colorID,
     rank,

@@ -45,11 +45,14 @@ export const createObject = (
   [position, rotation]: XOOrientation = [],
   geometry: XOGeometry = [0, []],
   material?: XOMaterial,
-): XOObject => [
-  setOrigin(createRotation(rotation), position),
-  geometry,
-  material,
-];
+): XOObject => {
+  if (typeof rotation === "number") console.trace(rotation);
+  return [
+    setOrigin(createRotation(rotation), position),
+    geometry,
+    material,
+  ];
+};
 
 export const adjustObject = (
   object: XOObject,

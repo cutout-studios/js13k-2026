@@ -17,18 +17,37 @@
 import { hypot, max } from "~/alias";
 import { doTimes } from "~/common";
 import { keyboard, pointer } from "~/controller";
-import { adjustObject, aimObject, scaleXYZ, XYZ, XYZ_LENGTH } from "~/3D";
+import {
+  adjustObject,
+  aimObject,
+  readOrigin,
+  scaleXYZ,
+  setOrigin,
+  XYZ,
+  XYZ_LENGTH,
+} from "~/3D";
 import { ActionSchedule, approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
-import { Ship } from "../ship/types.ts";
+import { Bullet, Ship } from "../ship/types.ts";
 
 import {
   STRAFE_ATTACK_TIME,
   STRAFE_KEYS,
   STRAFE_RELEASE_TIME,
 } from "./constants.ts";
+
+const _spliceColumns = (
+  structure: unknown[][],
+  targetIndicies: number[],
+) => {
+  for (const index of targetIndicies.sort((a, b) => b - a)) {
+    for (const column of structure) {
+      column.splice(index, 1);
+    }
+  }
+};
 
 const strafeEnvelopes = doTimes(
   STRAFE_KEYS.length,
@@ -76,10 +95,17 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
     aimObject(object, ship[1]);
   }
 
-  weapons.forEach((weapon, index) =>
-    pointer && pointer[1] & (1 << index) && (weapon[1] = ship[1]) &&
-    weapon[3](weapon, tickLength)
-  );
+  // TODO!: combine this with default action somehow
+  weapons.forEach((weapon, index) => {
+    setOrigin(weapon[0][0], readOrigin(ship[0][0]));
+    weapon[1] = ship[1];
+    const bulletsToCull: number[] = [];
+    weapon[2][0].forEach((bullet: Bullet, bulletIndex: number) => {
+      if (!bullet[1](bullet, tickLength)) bulletsToCull.push(bulletIndex);
+    });
+    _spliceColumns(weapon[2], bulletsToCull);
+    pointer && pointer[1] & (1 << index) && weapon[3](weapon, tickLength);
+  });
 
   return true;
 }]];

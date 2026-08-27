@@ -16,6 +16,10 @@
 import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
 import { controlSchedule } from "../player/controls.ts";
 import { ColorOptions } from "./types.ts";
+import {
+  DEFAULT_BULLET_GEOMETRY,
+  DEFAULT_WEAPON_SCHEDULE,
+} from "../ship/weapons.ts";
 
 const GREEN_PRONG = [
     0.12,
@@ -44,7 +48,11 @@ export default [
       ]]],
       [],
       controlSchedule,
-      [[]],
+      // TODO!: there's definitely a better way to do this
+      [
+        [],
+        DEFAULT_WEAPON_SCHEDULE(1, 0xFFFFFF, DEFAULT_BULLET_GEOMETRY, false),
+      ],
       [1, 1],
     ],
   ],
@@ -134,7 +142,7 @@ export default [
       [[16, [1, 25]], [18, [30, 75]], [14, [4, 20]], [4, [2, 8]]],
       undefined,
       [
-        [[0, [9, 9]], [1, [0.02, 0.05]], [2, [1.2, 1.6]], [3, [8, 16]], [5, [
+        [[0, [9, 9]], [1, [0.02, 0.05]], [2, [1.2, 1.6]], [3, [2, 16]], [5, [
           0.7,
           1.5,
         ]], [6, [0.05, 0.12]]],
@@ -163,7 +171,7 @@ export default [
       [[16, [7, 60]], [18, [30, 75]], [14, [12, 25]], [4, [10, 20]]],
       undefined,
       [
-        [[0, [2, 2]], [1, [0.05, 0.12]], [2, [1.5, 2.2]], [3, [16, 35]], [5, [
+        [[0, [2, 2]], [1, [0.05, 0.12]], [2, [1.5, 2.2]], [3, [6, 35]], [5, [
           0.7,
           1.5,
         ]], [6, [0.02, 0.06]]],

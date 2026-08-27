@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { min, round } from "~/alias";
+import { round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
@@ -118,7 +118,7 @@ export const updateHUD = (
   waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
 
   armorUpdate(doTimes(_snapshot[0], (index) => [1, +(index >= armorDamage)]));
-  shieldUpdate([[_snapshot[21], _snapshot[21] - shieldDamage]]);
+  shieldUpdate([[_snapshot[15], _snapshot[15] - shieldDamage]]);
   fuelUpdate(
     doTimes(
       _snapshot[8],
