@@ -15,19 +15,7 @@
  */
 
 import { doTimes } from "~/common";
-import {
-  addXYZ,
-  aimObject,
-  createObject,
-  createRotation,
-  localize,
-  normalizeXYZ,
-  readOrigin,
-  setOrigin,
-  subtractXYZ,
-  XOOrientation,
-  Z_AXIS,
-} from "~/3D";
+import { createObject, XOOrientation, Z_AXIS } from "~/3D";
 import { createActionSequencer } from "~/clock";
 
 import { ColorOptions } from "../options/types.ts";
@@ -40,7 +28,7 @@ import { NO_OP } from "~/alias";
 import { createBullet } from "./bullets.ts";
 
 export const createWeapon = (
-  [, , [, , , [overrides, schedule, , mount = [] as XOOrientation]]]:
+  [, , [, , , [overrides, schedule, mount = [] as XOOrientation]]]:
     ColorOptions,
   level = 1,
   weaponIndex = 0,
@@ -66,35 +54,18 @@ export const createWeapon = (
 };
 
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
-  weaponSound();
-
   const [
-      [shipCoordinates],
+      ,
       ,
       weapons,
     ] = ship,
-    [[mountCoordinates], localHeading, [bullets, instanceGroup], , snapshot] =
-      weapons[weaponIndex],
-    [count, , , , lifetime] = snapshot,
-    coordinates = localize(mountCoordinates, shipCoordinates),
-    origin = readOrigin(coordinates),
-    aim = subtractXYZ(
-      readOrigin(
-        localize(setOrigin(createRotation(), localHeading), coordinates),
-      ),
-      origin,
-    );
+    [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex],
+    [count] = snapshot;
+
+  weaponSound();
 
   doTimes(count, () => {
-    const direction = normalizeXYZ(aim),
-      bullet = createBullet(
-        options,
-        origin,
-        aim,
-        lifetime,
-      );
-
-    aimObject(bulletObject, addXYZ(origin, direction));
+    const bullet = createBullet(ship, weaponIndex);
 
     bullets.push(bullet);
     instanceGroup.push(bullet[0]);

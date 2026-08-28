@@ -46,7 +46,7 @@ export const createActionSequencer = <T>(
 
     [currentAction, currentDuration = 0] = actionTimings[actionSwaps];
 
-    return currentAction(payload, tickLength, elapsedTime, currentDuration) ??
+    return currentAction(payload, tickLength, elapsedTime) ??
       false;
   };
 };

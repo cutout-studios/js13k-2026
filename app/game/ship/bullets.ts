@@ -21,53 +21,81 @@ import {
   createObject,
   createPaintMaterialWithPalette as paint,
   createPrism,
+  createRotation,
+  localize,
+  normalizeXYZ,
   readOrigin,
   scaleXYZ,
   setOrigin,
-  XOGeometry,
+  subtractXYZ,
+  XOOrientation,
   XYZ,
+  Z_AXIS,
 } from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 
-import { ColorOptions } from "../options/types.ts";
 import { Bullet, Ship } from "./types.ts";
 
 import { BULLET_SPEED } from "./constants.ts";
 
 export const createBullet = (
-  [, value, [, , , [
-    ,
-    ,
-    bulletGeometry = [
-      0.06,
-      createPrism([0.015, 0.015, 0.14], 4),
-    ] as XOGeometry,
-    ,
-    bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
-  ]]]: ColorOptions,
-  origin: XYZ,
-  direction: XYZ,
+  ship: Ship,
+  weaponIndex: number,
 ): Bullet => {
+  const [
+      [shipCoordinates],
+      ,
+      weapons,
+      ,
+      ,
+      ,
+      [
+        ,
+        value,
+        [
+          ,
+          ,
+          ,
+          [
+            ,
+            ,
+            ,
+            [
+              bulletGeometry,
+              bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
+            ] = [],
+          ],
+        ],
+      ],
+    ] = ship,
+    [[mountCoordinates], localHeading, , , snapshot] = weapons[weaponIndex],
+    coordinates = localize(mountCoordinates, shipCoordinates),
+    origin = readOrigin(coordinates),
+    aim = subtractXYZ(
+      readOrigin(
+        localize(setOrigin(createRotation(), localHeading), coordinates),
+      ),
+      origin,
+    );
   const object = createObject([origin], bulletGeometry, paint(value));
 
-  aimObject(object, addXYZ(origin, direction));
+  aimObject(object, aim);
 
-  return [object, createActionSequencer(bulletSchedule), direction];
+  return [object, aim, createActionSequencer(bulletSchedule), snapshot[4]];
 };
 
 export const moveBullet = (
-  [[coordinates], , direction]: Bullet,
+  [[coordinates], heading, , lifetime]: Bullet,
   tickLength: number,
   elapsedTime: number,
-  currentDuration: number,
 ) => {
-  if (elapsedTime >= currentDuration) return true;
+  if (elapsedTime >= lifetime) return true;
 
   setOrigin(
     coordinates,
     addXYZ(
       readOrigin(coordinates),
-      scaleXYZ(direction, tickLength * BULLET_SPEED),
+      scaleXYZ(heading, tickLength * BULLET_SPEED),
     ),
   );
 };
@@ -81,7 +109,7 @@ export const updateBullets = (ship: Ship, tickLength: number) =>
       (
         bullet: Bullet,
         index: number,
-      ) => (bullet[1](bullet, tickLength) && bulletsToCull.push(index)),
+      ) => (bullet[2](bullet, tickLength) && bulletsToCull.push(index)),
     );
 
     spliceTable(bullets, bulletsToCull);

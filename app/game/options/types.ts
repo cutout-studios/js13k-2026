@@ -18,7 +18,7 @@ import { Band } from "~/random";
 import { XOGeometry, XOOrientation } from "~/3D";
 import { ActionSchedule } from "~/clock";
 
-import { Ship } from "../ship/types.ts";
+import { Bullet, Ship } from "../ship/types.ts";
 
 export type ColorOptions = [
   name: string,
@@ -33,9 +33,12 @@ type ShipOptions = [
   schedule: ActionSchedule<Ship> | undefined,
   weapon: [
     overrides: BaseStatOverride[],
-    schedule: ActionSchedule<Ship> | undefined,
-    bullet?: XOGeometry,
+    schedule?: ActionSchedule<Ship>,
     mount?: XOOrientation,
+    bullet?: [
+      geometry?: XOGeometry,
+      schedule?: ActionSchedule<Bullet>,
+    ],
   ],
   countBand: Band,
 ];

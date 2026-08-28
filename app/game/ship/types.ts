@@ -87,7 +87,12 @@ export type WeaponSnapshot = [
   bulletSpread: number,
 ];
 
-export type Bullet = [object: XOObject, sequence: ActionSequencer<Bullet>];
+export type Bullet = [
+  object: XOObject,
+  heading: XYZ,
+  sequence: ActionSequencer<Bullet>,
+  lifetime: number,
+];
 
 export type BulletGroup = [
   bullets: Bullet[],
