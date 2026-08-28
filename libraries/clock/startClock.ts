@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
+import { min } from "~/alias";
+
 import { SECONDS_TO_MS as MS_TO_SECONDS } from "~/common";
+
+const MAX_TICK_LENGTH = 0.1;
 
 export const startClock = (
   onLoop: (tickLength: number, totalClockTime: number) => void,
 ) => {
   const start = performance.now() / MS_TO_SECONDS;
-  let last = start;
 
-  let loopID: number;
+  let loopID: number, last = start;
   const tick = (now: number) => {
-    now /= MS_TO_SECONDS;
-    onLoop(now - last, now - start);
-    last = now;
     loopID = requestAnimationFrame(tick);
+    now /= MS_TO_SECONDS;
+    onLoop(min(now - last, MAX_TICK_LENGTH), now - start);
+    last = now;
   };
 
   loopID = requestAnimationFrame(tick);

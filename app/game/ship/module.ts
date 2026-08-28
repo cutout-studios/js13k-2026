@@ -32,10 +32,9 @@ import { updateBullets } from "./bullets.ts";
 import { SHIP_BASE_PROPERTIES } from "./constants.ts";
 import { createWeapon } from "./weapons.ts";
 
-export const DEFAULT_SHIP_ACTION = (ship: Ship, tickLength: number) => {
+export const advanceShip = (ship: Ship, tickLength: number) => {
   aimObject(ship[0], ship[1]);
   updateBullets(ship, tickLength);
-  doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
 };
 
 export const createShip = (
@@ -48,7 +47,10 @@ export const createShip = (
     [
       shapes,
       shipOverrides,
-      shipSchedule = [[DEFAULT_SHIP_ACTION]] as ActionSchedule<Ship>,
+      shipSchedule = [[(ship: Ship, tickLength: number) => {
+        advanceShip(ship, tickLength);
+        doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
+      }]] as ActionSchedule<Ship>,
     ],
   ] = options;
 

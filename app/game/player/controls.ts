@@ -22,14 +22,14 @@ import { ActionSchedule, approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
-import { Ship } from "../ship/types.ts";
+import { Ship, Weapon } from "../ship/types.ts";
 
 import {
   STRAFE_ATTACK_TIME,
   STRAFE_KEYS,
   STRAFE_RELEASE_TIME,
 } from "./constants.ts";
-import { DEFAULT_SHIP_ACTION } from "../ship/module.ts";
+import { advanceShip } from "../ship/module.ts";
 
 const strafeEnvelopes = doTimes(
   STRAFE_KEYS,
@@ -39,7 +39,7 @@ const strafeEnvelopes = doTimes(
 // TODO: spin counter
 // TODO: boost
 export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
-  const [object, heading, , , , statBlock] = ship;
+  const [object, heading, , , , _snapshot] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];
   doTimes(STRAFE_KEYS, (key, index) => {
     const value = strafeEnvelopes[index](
@@ -52,7 +52,7 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
 
   adjustObject(object, [scaleXYZ(
     strafeMagnitudes,
-    statBlock[19] * tickLength / max(1, hypot(...strafeMagnitudes)),
+    (_snapshot[20] * tickLength) / max(1, hypot(...strafeMagnitudes)),
   )]);
 
   if (pointer) {
@@ -67,7 +67,7 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
           valueObject,
           tickLength,
           0, // don't need this
-          statBlock[20],
+          _snapshot[21],
         );
 
         return valueObject.value;
@@ -75,5 +75,11 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
     ) as XYZ;
   }
 
-  DEFAULT_SHIP_ACTION(ship, tickLength);
+  advanceShip(ship, tickLength);
+
+  doTimes(
+    ship[2],
+    (weapon: Weapon, index: number) =>
+      pointer && pointer[1] >> index & 1 && weapon[3](ship, tickLength),
+  );
 }]];

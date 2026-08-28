@@ -20,6 +20,7 @@ import { Action } from "./types.ts";
 
 export const approachFactory =
   (target: number = 1): Action<{ value: number }> =>
-  (valueObject, tickLength, _, duration) =>
+  (valueObject, tickLength, _, duration) => {
     valueObject.value += (target - valueObject.value) *
       min(1, tickLength / duration);
+  };

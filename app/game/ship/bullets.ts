@@ -28,9 +28,7 @@ import {
   scaleXYZ,
   setOrigin,
   subtractXYZ,
-  XOOrientation,
-  XYZ,
-  Z_AXIS,
+  XOGeometry,
 } from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 
@@ -61,7 +59,10 @@ export const createBullet = (
             ,
             ,
             [
-              bulletGeometry,
+              bulletGeometry = [
+                0.06,
+                createPrism([0.008, 0.008, 0.18], 4),
+              ] as XOGeometry,
               bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
             ] = [],
           ],
@@ -71,17 +72,19 @@ export const createBullet = (
     [[mountCoordinates], localHeading, , , snapshot] = weapons[weaponIndex],
     coordinates = localize(mountCoordinates, shipCoordinates),
     origin = readOrigin(coordinates),
-    aim = subtractXYZ(
-      readOrigin(
-        localize(setOrigin(createRotation(), localHeading), coordinates),
+    heading = normalizeXYZ(
+      subtractXYZ(
+        readOrigin(
+          localize(setOrigin(createRotation(), localHeading), coordinates),
+        ),
+        origin,
       ),
-      origin,
-    );
-  const object = createObject([origin], bulletGeometry, paint(value));
+    ),
+    object = createObject([origin], bulletGeometry, paint(value));
 
-  aimObject(object, aim);
+  aimObject(object, addXYZ(origin, heading));
 
-  return [object, aim, createActionSequencer(bulletSchedule), snapshot[4]];
+  return [object, heading, createActionSequencer(bulletSchedule), snapshot[4]];
 };
 
 export const moveBullet = (
