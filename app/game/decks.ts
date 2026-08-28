@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+import { floor, length, random } from "~/alias";
+import { doTimes } from "~/common";
+
+export const createDeck = (size: number) => {
+  const deck: number[] = [];
+  doTimes(size, (i) => insertCard(deck, i));
+  return deck;
+};
+
+export const drawCard = <T>(deck: T[], delay = 0.67) => {
+  const value = deck.pop()!;
+  insertCard(deck, value, delay);
+  return value;
+};
+
+export const insertCard = <T>(deck: T[], value: T, delay = 0) =>
+  deck.splice(floor(random() * (length(deck) * (1 - delay) + 1)), 0, value);

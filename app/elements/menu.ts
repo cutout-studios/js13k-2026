@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
+import { _ } from "~/alias";
 import { doTimes } from "~/common";
 import { createElement } from "~/dom";
+import { createCamera, createRenderTarget } from "~/3D";
+
 import {
   BORDER,
   FLEX_CENTER,
@@ -23,9 +26,8 @@ import {
   PADDED,
   PADDED_FLEX_ROW,
 } from "../styles.ts";
-import { createCamera } from "../../libraries/3D/camera.ts";
-import { portrait } from "../state/world/client.ts";
-import { createRenderTarget } from "~/3D";
+
+import { portrait } from "./portrait.ts";
 
 const INVENTORY_SIZE = 12;
 
@@ -43,11 +45,11 @@ export const menu = createElement(
     background: "black",
     gap: "2rem",
   }],
-  undefined,
+  _,
   createElement(
     "section",
-    undefined,
-    undefined,
+    _,
+    _,
     createElement(
       "ul",
       [BORDER(), {
@@ -56,13 +58,13 @@ export const menu = createElement(
         ["min-height"]: "100%",
         ["aspect-ratio"]: "3 / 4",
       }],
-      undefined,
+      _,
       ...(
         doTimes(INVENTORY_SIZE, () =>
           createElement(
             "li",
             [PADDED, BORDER()],
-            undefined,
+            _,
             // createElement("canvas", [FULL_SIZE]),
           ))
       ),
@@ -70,8 +72,8 @@ export const menu = createElement(
   ),
   createElement(
     "section",
-    undefined,
-    undefined,
+    _,
+    _,
     clientCanvas,
     createElement(
       "div",
@@ -83,7 +85,7 @@ export const menu = createElement(
         ["clip-path"]:
           "polygon(30% 0%, 0% 50%, 30% 100%, 70% 100%, 100% 50%, 70% 0%)",
       }],
-      undefined,
+      _,
       createElement(
         "canvas",
         [clientSize, { background: "black" }],
@@ -92,6 +94,7 @@ export const menu = createElement(
   ),
 ) as HTMLDialogElement;
 
+// TODO: render dropped items
 export const openMenu = () => {
   menu.showModal();
 

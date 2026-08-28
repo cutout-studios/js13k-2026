@@ -22,7 +22,7 @@ import { minify } from "esbuild-minify-templates";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
-const ESTIMATED_RECLAIMABLE_BYTES = 250;
+const ESTIMATED_RECLAIMABLE_BYTES = 60;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
@@ -40,6 +40,8 @@ Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
 await bundle();
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
+
+await bundle({ minify: false, sourcemap: "inline" });
 
 await new Deno.Command("open", {
   args: [BUNDLE_OUTPUT_FILEPATH],
@@ -64,7 +66,8 @@ async function bundle(
   const { outputFiles } = _result;
   const [sourceData] = outputFiles!;
 
-  let code = sourceData.text();
+  let code = sourceData.text(),
+    appOutputText = rawText(<script>{code}</script>);
   if (options.minify) {
     code = minify(code).toString();
 
@@ -77,27 +80,27 @@ async function bundle(
     });
 
     code = result.code;
+
+    console.log(`%cMinifed Source:\n%c${code}`, "color: blue;", "color: gray;");
+
+    const packer = new Packer([
+      {
+        data: code,
+        type: "js" as InputType,
+        action: "eval" as InputAction,
+      },
+    ], {});
+    await packer.optimize();
+
+    const { firstLine, secondLine } = packer.makeDecoder();
+
+    appOutputText = rawText(
+      <script>
+        {firstLine}
+        {secondLine}
+      </script>,
+    );
   }
-
-  console.log(`%cMinifed Source:\n%c${code}`, "color: blue;", "color: gray;");
-
-  const packer = new Packer([
-    {
-      data: code,
-      type: "js" as InputType,
-      action: "eval" as InputAction,
-    },
-  ], {});
-  await packer.optimize();
-
-  const { firstLine, secondLine } = packer.makeDecoder();
-
-  const appOutputText = rawText(
-    <script>
-      {firstLine}
-      {secondLine}
-    </script>,
-  );
 
   Deno.writeTextFileSync(
     BUNDLE_OUTPUT_FILEPATH,

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+export const PLAYER_Z_PLANE = 5;
+export const PLAYER_INVENTORY_SIZE = 12;
+
+export const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"];
+export const STRAFE_ATTACK_TIME = 0.3;
+export const STRAFE_RELEASE_TIME = 0.35;
+
+export const ITEM_RANK_THRESHOLDS = [0.85, 1.35] as const;
+export const ITEM_RANK_FALLOFF = 2;
+export const ITEM_RANK_UP_MIX_COUNT = 3;

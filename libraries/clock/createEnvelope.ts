@@ -16,21 +16,29 @@
 
 import { Action } from "./types.ts";
 import { approachFactory } from "./approachFactory.ts";
-import { createActionSequence } from "./createActionSequence.ts";
+import { createActionSequencer } from "./createActionSequencer.ts";
 
-export const createEnvelope = (attack: number, release: number) => {
+type Envelope = (tickLength: number, released?: boolean) => number;
+
+export const createEnvelope = (
+  attackTime: number,
+  releaseTime: number,
+): Envelope => {
   const [attackSequence, releaseSequence] = ([[
-    [approachFactory(), attack],
+    [approachFactory(), attackTime],
   ], [[
     approachFactory(0),
-    release,
-  ]]] as [Action<number, number>, number][][]).map(
-    (schedule) => createActionSequence(schedule, Infinity),
+    releaseTime,
+  ]]] as [Action<{ value: number }>, number][][]).map(
+    (schedule) => createActionSequencer(schedule),
   );
 
-  let value = 0;
-  return (tickLength: number, released?: boolean) =>
-    value = (released
-      ? releaseSequence(value, tickLength)
-      : attackSequence(value, tickLength)) ?? value;
+  const valueObject = { value: 0 };
+  return (tickLength, released) => {
+    released
+      ? releaseSequence(valueObject, tickLength)
+      : attackSequence(valueObject, tickLength);
+
+    return valueObject.value;
+  };
 };

@@ -15,6 +15,8 @@
  */
 
 export { approachFactory } from "./approachFactory.ts";
-export { createActionSequence } from "./createActionSequence.ts";
+export { createActionSequencer } from "./createActionSequencer.ts";
 export { createEnvelope } from "./createEnvelope.ts";
 export { startClock } from "./startClock.ts";
+
+export type { ActionSchedule, ActionSequencer } from "./types.ts";

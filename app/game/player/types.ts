@@ -14,10 +14,28 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+import { XOObject } from "~/3D";
+
+import { Resources, Ship } from "../ship/types.ts";
+import { ActionSequencer } from "~/clock";
+
+export type Player = [
+  ship: Ship,
+  levelAssigments: Resources,
+  inventory: [
+    item: Item,
+    equipped?: boolean,
+    selected?: boolean,
+  ][],
+];
+
+export type Item = [
+  object: XOObject,
+  sequence: ActionSequencer<Item>,
+  typeID: number,
+  colorID: number,
+  rank: number,
+  modifiers: [propertyID: number, type: "+" | "*", value: number][],
+  baseMass: number,
+  baseWeapon?: [bulletCount: number, bulletRate: number, bulletDamage: number],
+];

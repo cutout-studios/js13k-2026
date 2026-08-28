@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-export type Source = (
-  frequencies: number[],
+import { Band } from "~/random";
+import { ActionSchedule } from "~/clock";
+
+export type SoundChannels = [velocity: number, rate: number, pan: number];
+
+export type SoundDefinition = [
+  buffer: AudioBuffer,
+  frequencyRange: Band,
   duration: number,
   delay?: number,
-  pan?: number,
   velocity?: number,
-) => void;
+  schedule?: ActionSchedule<SoundChannels>,
+];

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import { floor, length, random } from "~/alias";
-import { doTimes } from "~/common";
+import { XOObject } from "~/3D";
+import { Ship } from "../ship/types.ts";
+import { Item } from "../player/types.ts";
 
-export const createDeck = (size: number) => {
-  const deck: number[] = [];
-  doTimes(size, (i) => insertCard(deck, i));
-  return deck;
-};
+export type EnemyGroup = [
+  ships: Ship[],
+  instanceGroup: XOObject[],
+];
 
-export const drawCard = (deck: number[], delay = 0.67) => {
-  const value = deck.pop()!;
-  insertCard(deck, value, delay);
-  return value;
-};
-
-export const insertCard = <T>(deck: T[], value: T, delay = 0) =>
-  deck.splice(floor(random() * (length(deck) * (1 - delay) + 1)), 0, value);
+export type World = [
+  activeEnemies: EnemyGroup[],
+  droppedItems: Item[],
+  currentLevel: [ID: number, wave: number, wavesInLevel: number],
+  winCollection: Set<number>,
+];

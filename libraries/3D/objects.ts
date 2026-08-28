@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
-import { F32, hypot, max } from "~/alias";
+import { doTimes, repeat } from "~/common";
+import { F32, hypot, length, max } from "~/alias";
 import { create as createPaintMaterial } from "./materials/paint.ts";
 
 import type {
@@ -58,10 +58,9 @@ export const adjustObject = (
   if (position) {
     doTimes(
       XYZ_LENGTH,
-      (index) => object[0][POSITION_INDEX + index] += position[index],
+      (index: number) => object[0][POSITION_INDEX + index] += position[index],
     );
   }
-
   if (rotation) object[0] = localize(createRotation(rotation), object[0]);
 };
 
@@ -74,15 +73,17 @@ export const aimObject = (object: XOObject, heading: XYZ) => {
 
 // CRUCIAL NOTE!!: assumes all materials are paint materials
 export const flattenObjects = (...objects: XOObject[]): XOObject => {
-  const vertices = objects.flatMap(([coordinates, [, verticies = []]]) =>
-    verticies.map(([x, y, z]) =>
-      doTimes(XYZ_LENGTH, (row) =>
-        coordinates[row] * x +
-        coordinates[COORDINATE_SIDE_LENGTH + row] * y +
-        coordinates[COORDINATE_SIDE_LENGTH * 2 + row] * z +
-        coordinates[POSITION_INDEX + row]) as XYZ
+  const vertices = objects.map(([coordinates, [, _verticies = []]]) =>
+    doTimes(
+      _verticies,
+      ([x, y, z]: XYZ) =>
+        doTimes(XYZ_LENGTH, (row: number) =>
+          coordinates[row] * x +
+          coordinates[COORDINATE_SIDE_LENGTH + row] * y +
+          coordinates[COORDINATE_SIDE_LENGTH * 2 + row] * z +
+          coordinates[POSITION_INDEX + row]) as XYZ,
     )
-  );
+  ).flat();
 
   return [
     createRotation(),
@@ -96,12 +97,14 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
     ],
     createPaintMaterial(
       new F32(
-        objects.flatMap(([, [, verticies = []], [, data = new F32()] = []]) =>
-          doTimes(
-            verticies.length / XYZ_LENGTH * RGBA_LENGTH,
-            (index) => data[index % data.length],
-          )
-        ),
+        doTimes(
+          objects,
+          ([, [, verticies = []], [, data = repeat(4, 1)] = []]) =>
+            doTimes(
+              length(verticies) / XYZ_LENGTH * RGBA_LENGTH,
+              (index: number) => data[index % length(data)],
+            ),
+        ).flat(),
       ),
     ),
   ];
@@ -113,19 +116,17 @@ export const getCollisionPairs = (
 ) => {
   const leftResult = [] as number[], rightResult = [] as number[];
 
-  doTimes(leftGroup.length, (leftIndex) => {
-    const [leftCoords, [leftRadius]] = leftGroup[leftIndex];
-
-    doTimes(rightGroup.length, (rightIndex) => {
-      const [rightCoords, [rightRadius]] = rightGroup[rightIndex];
-
-      if (
-        hypot(...subtract(readOrigin(leftCoords), readOrigin(rightCoords))) >=
-          leftRadius + rightRadius
-      ) return;
-
-      leftResult.push(leftIndex), rightResult.push(rightIndex);
-    });
+  doTimes(leftGroup, ([leftCoords, [leftRadius]]: XOObject, leftIndex) => {
+    doTimes(
+      rightGroup,
+      ([rightCoords, [rightRadius]]: XOObject, rightIndex) => {
+        if (
+          hypot(...subtract(readOrigin(leftCoords), readOrigin(rightCoords))) >=
+            leftRadius + rightRadius
+        ) return;
+        leftResult.push(leftIndex), rightResult.push(rightIndex);
+      },
+    );
   });
 
   return [leftResult, rightResult];

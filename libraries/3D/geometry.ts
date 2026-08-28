@@ -15,7 +15,7 @@
  */
 
 import { doTimes, repeat } from "~/common";
-import { cos, PI, sin, TAU } from "~/alias";
+import { cos, length, PI, sin, TAU } from "~/alias";
 
 import { XYZ_LENGTH } from "./constants.ts";
 import type { XYZ } from "./types.ts";
@@ -55,7 +55,7 @@ export const createPrism = (
 
 export const createSphere = (radius = 1, divisions = 10): XYZ[] =>
   _lathe(
-    doTimes(divisions + 1, (index) => {
+    doTimes(divisions + 1, (index: number) => {
       const phi = PI * (index / divisions - 0.5);
       return [cos(phi), sin(phi)];
     }),
@@ -81,15 +81,18 @@ const _lathe = (
   const result: XYZ[] = [];
 
   doTimes(
-    edgeLoops.length - 1,
-    (ringIndex) =>
-      doTimes(loopDivisions, (divisionIndex) =>
-        result.push(...createSquare(
-          _getVertex(ringIndex, divisionIndex),
-          _getVertex(ringIndex, divisionIndex + 1),
-          _getVertex(ringIndex + 1, divisionIndex + 1),
-          _getVertex(ringIndex + 1, divisionIndex),
-        ))),
+    length(edgeLoops) - 1,
+    (ringIndex: number) =>
+      doTimes(
+        loopDivisions,
+        (divisionIndex: number) =>
+          result.push(...createSquare(
+            _getVertex(ringIndex, divisionIndex),
+            _getVertex(ringIndex, divisionIndex + 1),
+            _getVertex(ringIndex + 1, divisionIndex + 1),
+            _getVertex(ringIndex + 1, divisionIndex),
+          )),
+      ),
   );
 
   return result;

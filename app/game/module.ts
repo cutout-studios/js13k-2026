@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+import { getShipObjects } from "./ship/module.ts";
+import { Game } from "./types.ts";
+
+import startingPlayer from "./player/module.ts";
+import startingWorld from "./world/module.ts";
+import { XOObject } from "~/3D";
+
+export default [startingPlayer, startingWorld] as Game;
+
+// TODO: toggle based on player invulnerability
+export const getSceneObjects = (
+  [[playerShip], [activeEnemies, droppedItems]]: Game,
+): XOObject[][] => [
+  ...getShipObjects(playerShip),
+  ...activeEnemies.flatMap(([ships]) => ships.flatMap(getShipObjects)),
+  ...droppedItems.map(([object]) => [object]),
+];

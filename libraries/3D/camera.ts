@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { F32, min } from "~/alias";
+import { F32, length, min } from "~/alias";
 import type { GPURenderTarget } from "./types.ts";
 import {
   CAMERA_DEFAULT_OBJECT_LIMIT,
@@ -25,7 +25,7 @@ import {
 import { loadObject } from "./webgpu/loadObject.ts";
 import { XOObject } from "./types.ts";
 import { localize } from "./coordinates.ts";
-import { memo } from "~/common";
+import { doTimes, memo } from "~/common";
 
 export const createCamera = (
   objectLimit = CAMERA_DEFAULT_OBJECT_LIMIT,
@@ -37,10 +37,11 @@ export const createCamera = (
     new F32(COORDINATE_DATA_LENGTH * objectLimit)
   );
 
-  return (objectGroups: XOObject[][], target: GPURenderTarget) =>
-    target.render((process) => {
-      const { aspectRatio } = target;
-
+  return (
+    objectGroups: XOObject[][],
+    [aspectRatio, , render]: GPURenderTarget,
+  ) =>
+    render((process) => {
       if (aspectRatio !== cachedAspectRatio) {
         cachedAspectRatio = aspectRatio;
         viewingCoordinates =
@@ -53,13 +54,13 @@ export const createCamera = (
           ]);
       }
 
-      for (const group of objectGroups) {
-        if (!group.length) continue;
+      doTimes(objectGroups, (group) => {
+        if (!length(group)) return;
 
         const [[, geometry, material]] = group;
 
         // skip invisible objects
-        if (!material) continue;
+        if (!geometry) return;
 
         loadObject(
           process,
@@ -75,10 +76,10 @@ export const createCamera = (
             _getStableCoordinateBuffer(group),
           ),
           geometry,
-          material,
+          material!,
         );
 
-        process.draw(geometry[1].length, min(group.length, objectLimit));
-      }
+        process.draw(length(geometry[1]), min(length(group), objectLimit));
+      });
     });
 };

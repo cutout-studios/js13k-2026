@@ -14,45 +14,31 @@
  * limitations under the License.
  */
 
-import { document } from "~/alias";
+import { _, document } from "~/alias";
 import { startClock } from "~/clock";
 import { setupDevice } from "~/3D";
 import { createElement } from "~/dom";
+import { keyboard } from "~/controller";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud, updateHUD } from "./elements/hud.ts";
-import state, { getSceneObjects, updateGame } from "./state/module.ts";
 import { menu, openMenu } from "./elements/menu.ts";
-import { keyboard } from "~/controller";
+import state, { getSceneObjects } from "./game/module.ts";
+import { updateGame } from "./game/update.ts";
+import { doTimes } from "~/common";
 
-document.head.append(createElement("style", undefined, {
-  textContent: /* css */ `
-    html, body, body * {
-      box-sizing: border-box;
-      padding: 0;
-      margin: 0;
-      font-family: Menlo, ui-monospace;
-      font-size: 16px;
-      color: white;
-      list-style-type: none;
-    }
-
-    body {
-      position: relative;
-      width: 100vw;
-      height: 100svh;
-    }
-
-    dialog::backdrop {
-      background: #000c;
-    }`,
+document.head.append(createElement("style", _, {
+  // minified from ./styles.css
+  textContent:
+    "html,body,body *{box-sizing:border-box;padding:0;margin:0;font-family:Menlo,ui-monospace;font-size:16px;color:#fff;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}",
 }));
 
 onload = async () => {
   await setupDevice();
 
-  [hud, mainCanvas, menu].forEach((element) =>
-    document.body.appendChild(element)
+  doTimes(
+    [hud, mainCanvas, menu],
+    (element) => document.body.appendChild(element),
   );
 
   startClock((tickLength) => {

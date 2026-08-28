@@ -29,8 +29,9 @@ export type XOObject = [
 ];
 
 export type GPUDataContainer = [buffer: GPUBuffer, bindGroup: GPUBindGroup];
-export type GPURenderTarget = {
-  aspectRatio: number;
-  descriptor: GPURenderPassDescriptor;
-  render(process: (encorder: GPURenderPassEncoder) => void): void;
-};
+
+export type GPURenderTarget = [
+  aspectRatio: number,
+  descriptor: GPURenderPassDescriptor,
+  (process: (encoder: GPURenderPassEncoder) => void) => void,
+];

@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+import { getWavesInLevel } from "./levels.ts";
+
+import { World } from "./types.ts";
+
+export default [
+  // enemy groups
+  [],
+
+  // dropped items
+  [],
+
+  // progress
+  [1, 1, getWavesInLevel(1)],
+
+  // collection
+  new Set(),
+] as World;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { OCTAVE_SIZE, TUNING_HZ } from "./constants.ts";
+import { Player } from "./player/types.ts";
+import { World } from "./world/types.ts";
 
-export const getFrequency = (note: number): number =>
-  TUNING_HZ * 2 ** (note / OCTAVE_SIZE);
+export type Game = [Player, World];

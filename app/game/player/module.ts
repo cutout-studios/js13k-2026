@@ -14,10 +14,26 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+import { repeat } from "~/common";
+
+import { Player } from "./types.ts";
+import { createShip } from "../ship/module.ts";
+import colorOptions from "../options/module.ts";
+import { Resources } from "../ship/types.ts";
+import { setOrigin } from "../../../libraries/3D/coordinates.ts";
+import { PLAYER_Z_PLANE } from "./constants.ts";
+import { ENEMY_Z_PLANE } from "../world/constants.ts";
+
+const ship = createShip(colorOptions[0]);
+
+setOrigin(ship[0][0], [0, 0, -PLAYER_Z_PLANE]);
+
+ship[1] = [0, 0, -ENEMY_Z_PLANE];
+
+export default [
+  ship,
+  repeat(5, 0) as Resources,
+
+  // inventory
+  [],
+] as Player;

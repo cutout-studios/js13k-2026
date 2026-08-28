@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { ceil, min, round } from "~/alias";
+import { _, length, round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
-import { FUEL_SEGMENT_SIZE } from "../state/constants.ts";
-import { GameState } from "../state/types.ts";
+import { Game } from "../game/types.ts";
 
 import {
   CORNER,
@@ -39,21 +38,22 @@ const _createMeter = (
     "span",
     [FLEX_ROW, ...style],
     { id: name },
-    createElement("label", undefined, { innerText: name }),
+    createElement("label", _, { innerText: name }),
     ...meters,
   );
 
   return [element, (meterAttributes: [max: number, value: number][]) => {
-    while (meters.length < meterAttributes.length) {
+    while (length(meters) < length(meterAttributes)) {
       meters.push(
         element.appendChild(createElement("meter")) as HTMLMeterElement,
       );
     }
 
-    while (meters.length < meterAttributes.length) meters.pop()!.remove();
+    while (length(meters) < length(meterAttributes)) meters.pop()!.remove();
 
-    meters.forEach((meter, index) =>
-      [meter.max, meter.value] = meterAttributes[index]
+    doTimes(
+      meters,
+      (meter, index) => [meter.max, meter.value] = meterAttributes[index],
     );
   }];
 };
@@ -78,11 +78,11 @@ export const hud = createElement(
     inset: 0,
     ["pointer-events"]: "none",
   }],
-  undefined,
+  _,
   createElement(
     "header",
     [PADDED_FLEX_ROW, JUSTIFY()],
-    undefined,
+    _,
     fuelMeter,
     shieldMeter,
     armorMeter,
@@ -90,7 +90,7 @@ export const hud = createElement(
   createElement(
     "footer",
     [PADDED_FLEX_ROW, JUSTIFY()],
-    undefined,
+    _,
     distanceCounter,
     waveCounter,
   ),
@@ -99,9 +99,16 @@ export const hud = createElement(
 let gameDuration = 0;
 export const updateHUD = (
   [
-    [[, , [shieldDamage, fuelDamage, armorDamage]], [, , data]],
+    [[
+      ,
+      ,
+      ,
+      ,
+      [shieldDamage, fuelDamage = 0, fuelSegmentDamage = 0, armorDamage = 0],
+      _snapshot,
+    ]],
     [, , [stage, wave, lastWave]],
-  ]: GameState,
+  ]: Game,
   tickDuration: number,
 ) => {
   gameDuration += tickDuration;
@@ -111,21 +118,19 @@ export const updateHUD = (
   );
   waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
 
-  armorUpdate(doTimes(data[0], (index) => [1, +(index < armorDamage)]));
-  shieldUpdate([[data[21], data[21] - shieldDamage]]);
-  fuelUpdate( // TODO: separate fuel count & segement size
+  armorUpdate(
+    doTimes(_snapshot[0], (index: number) => [1, +(index >= armorDamage)]),
+  );
+  shieldUpdate([[_snapshot[15], _snapshot[15] - shieldDamage]]);
+  fuelUpdate(
     doTimes(
-      ceil(data[11] / FUEL_SEGMENT_SIZE),
-      () => {
-        const result = [
-          FUEL_SEGMENT_SIZE,
-          min(FUEL_SEGMENT_SIZE, fuelDamage),
-        ] as [number, number];
-
-        fuelDamage -= FUEL_SEGMENT_SIZE;
-
-        return result;
-      },
+      _snapshot[8],
+      (
+        index: number,
+      ) => [
+        _snapshot[4],
+        index >= fuelSegmentDamage ? _snapshot[4] - fuelDamage : 0,
+      ],
     ),
   );
 };

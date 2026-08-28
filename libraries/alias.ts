@@ -16,7 +16,7 @@
 
 export const { document } = globalThis;
 export const {
-  ceil,
+  abs,
   random,
   round,
   floor,
@@ -27,6 +27,7 @@ export const {
   E,
   PI,
   sin,
+  sqrt,
   cos,
   tan,
   hypot,
@@ -35,8 +36,8 @@ export const {
 export const TAU = PI * 2;
 export const F32 = Float32Array;
 
-export const length = <T>(array: Array<T>) => array.length;
+export const length = (array: Array<unknown> | Float32Array | string) =>
+  array.length;
 
-// export const push = <T>(array: Array<T>, ...items: T[]) => array.push(...items);
-// export const map = <T, K>(array: T[], mapper: (item: T) => K) => array.map(mapper);
-// export const reduce
+export const _ = undefined;
+export const NO_OP = () => {};

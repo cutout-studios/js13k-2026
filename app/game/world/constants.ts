@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
+import { Band } from "~/random";
+
+export const GAME_DIFFICULTY_FALLOFF = 0.135;
+
+export const ENEMY_Z_PLANE = 7;
+export const ENEMY_PLACEMENT_SPREAD = 5;
+
+export const WAVE_CURVE = 7.5;
+export const WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
+export const WAVES_PER_LEVEL_BAND = [2, 14] as Band;
+
+export const GROUPS_PER_WAVE_BAND = [1, 6] as Band;

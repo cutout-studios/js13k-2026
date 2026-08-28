@@ -14,28 +14,37 @@
  * limitations under the License.
  */
 
-import { atan, PI, round } from "~/alias";
+import { atan, PI, round, sqrt } from "~/alias";
 import { Band, range } from "~/random";
 
-import {
-  ENEMY_WAVE_COUNT_BAND,
-  GAME_DIFFICULTY_FALLOFF,
-} from "../constants.ts";
+import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
+import { doTimes } from "~/common";
 
-export const stageCurve = (
+export const levelCurve = (
   level: number,
   falloff = GAME_DIFFICULTY_FALLOFF,
 ) => (2 * atan(level * falloff)) / PI;
 
-export const stageRoll = (
-  [start, end]: Band = [0, 0],
+export const levelRoll = (
+  [start, end]: Band,
   level: number,
   falloff = GAME_DIFFICULTY_FALLOFF,
-  spread = 1.125,
 ) => {
-  const base = start + (end - start) * stageCurve(level, falloff);
-  return range(base, base * spread);
+  const span = end - start, curve = levelCurve(level, falloff);
+  return range(start + span * curve, start + span * sqrt(curve));
 };
 
-export const getWaveCount = (level: number) =>
-  round(stageRoll(ENEMY_WAVE_COUNT_BAND, level));
+export const levelRollOverrides = (
+  base: number[],
+  overrides: [number, Band][],
+  level = 1,
+) => {
+  doTimes(overrides, ([statID, statBand]) => {
+    base[statID] = levelRoll(statBand, level);
+  });
+
+  return base;
+};
+
+export const getWavesInLevel = (level: number) =>
+  round(levelRoll(WAVES_PER_LEVEL_BAND, level));

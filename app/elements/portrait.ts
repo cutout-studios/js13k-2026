@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { length } from "~/alias";
 import {
   createObject,
   createPaintMaterialWithPalette as paint,
@@ -33,7 +34,7 @@ export const portrait = createObject(
   [PORTRAIT_POSITION],
   [
     0,
-    doTimes(PORTRAIT_DATA.length / 2, (index) => [
+    doTimes(length(PORTRAIT_DATA) / 2, (index: number) => [
       (PORTRAIT_DATA.charCodeAt(index * 2) - PORTRAIT_OFFSET) * PORTRAIT_SCALE,
       (PORTRAIT_DATA.charCodeAt(index * 2 + 1) - PORTRAIT_OFFSET) *
       PORTRAIT_SCALE,
