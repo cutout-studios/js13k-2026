@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { length, max, random } from "~/alias";
+import { length, max, min, random } from "~/alias";
 import { doTimes, repeat, SECONDS_TO_MS, spliceTable } from "~/common";
 
 import { rollEnemies } from "./world/enemies.ts";
@@ -22,7 +22,17 @@ import { getWavesInLevel } from "./world/levels.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
 
 import { Game } from "./types.ts";
-import { getCollisionPairs, XOObject } from "~/3D";
+import {
+  addXYZ,
+  getCollisionPairs,
+  readOrigin,
+  scaleXYZ,
+  subtractXYZ,
+  XOObject,
+  XYZ,
+  XYZ_LENGTH,
+} from "~/3D";
+import { range } from "~/random";
 
 const _resolveCollisions = (
   sourceObjects: XOObject[],
@@ -42,6 +52,7 @@ const _resolveCollisions = (
   return sourceHits;
 };
 
+const ENEMY_AIM_SPREAD = 1.5;
 // TODO: "mass disruption" - target takes more damage than they have mass
 // TODO: fuel costs
 export const updateGame = (
@@ -51,7 +62,24 @@ export const updateGame = (
   const [activeEnemyGroups, droppedItems, progress] = world,
     [playerShip, , inventory] = player,
     [playerShipObject, , playerWeapons, , damage, _snapshot] = playerShip,
-    enemyShips = activeEnemyGroups.flatMap(([ships]) => ships);
+    enemyShips = activeEnemyGroups.flatMap(([ships]) => ships),
+    playerOrigin = readOrigin(playerShipObject[0]);
+
+  // -- aim enemies at the player
+  doTimes(enemyShips, (ship) => {
+    const target = addXYZ(
+      playerOrigin,
+      doTimes(
+        XYZ_LENGTH,
+        () => range(-ENEMY_AIM_SPREAD, ENEMY_AIM_SPREAD),
+      ) as XYZ,
+    );
+
+    ship[1] = addXYZ(
+      ship[1],
+      scaleXYZ(subtractXYZ(target, ship[1]), min(1, ship[5][21] * tickLength)),
+    );
+  });
 
   // -- update everything in the game
   doTimes([playerShip, ...enemyShips], (ship) => ship[3](ship, tickLength));
