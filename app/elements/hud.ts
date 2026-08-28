@@ -48,7 +48,9 @@ const _createMeter = (
   return [element, (meterAttributes: [max: number, value: number][]) => {
     while (length(meters) < length(meterAttributes)) {
       meters.push(
-        element.appendChild(createElement("meter", [FLEX_FILL])) as HTMLMeterElement,
+        element.appendChild(
+          createElement("meter", [FLEX_FILL]),
+        ) as HTMLMeterElement,
       );
     }
 
@@ -61,9 +63,15 @@ const _createMeter = (
   }];
 };
 
-const [fuelMeter, fuelUpdate] = _createMeter("F", [CORNER(false, true), MIN_WIDTH()]),
+const [fuelMeter, fuelUpdate] = _createMeter("F", [
+    CORNER(false, true),
+    MIN_WIDTH(),
+  ]),
   [shieldMeter, shieldUpdate] = _createMeter("S", [MIN_WIDTH(350)]),
-  [armorMeter, armorUpdate] = _createMeter("A", [CORNER(true, true), MIN_WIDTH()]);
+  [armorMeter, armorUpdate] = _createMeter("A", [
+    CORNER(true, true),
+    MIN_WIDTH(),
+  ]);
 
 const distanceCounter = createElement(
     "span",
