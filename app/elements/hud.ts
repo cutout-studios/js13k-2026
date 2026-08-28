@@ -28,11 +28,14 @@ import {
   PADDED_FLEX_ROW,
 } from "../styles.ts";
 
+const FLEX_FILL = { flex: 1 };
+const MIN_WIDTH = (width: number = 200) => ({ ["min-width"]: `${width}px` });
+
 const _createMeter = (
   name: string,
   style: object[] = [],
 ): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
-  const meters = [createElement("meter") as HTMLMeterElement];
+  const meters = [createElement("meter", [FLEX_FILL]) as HTMLMeterElement];
 
   const element = createElement(
     "span",
@@ -45,7 +48,7 @@ const _createMeter = (
   return [element, (meterAttributes: [max: number, value: number][]) => {
     while (length(meters) < length(meterAttributes)) {
       meters.push(
-        element.appendChild(createElement("meter")) as HTMLMeterElement,
+        element.appendChild(createElement("meter", [FLEX_FILL])) as HTMLMeterElement,
       );
     }
 
@@ -58,9 +61,9 @@ const _createMeter = (
   }];
 };
 
-const [fuelMeter, fuelUpdate] = _createMeter("F", [CORNER(false, true)]),
-  [shieldMeter, shieldUpdate] = _createMeter("S"),
-  [armorMeter, armorUpdate] = _createMeter("A", [CORNER(true, true)]);
+const [fuelMeter, fuelUpdate] = _createMeter("F", [CORNER(false, true), MIN_WIDTH()]),
+  [shieldMeter, shieldUpdate] = _createMeter("S", [MIN_WIDTH(350)]),
+  [armorMeter, armorUpdate] = _createMeter("A", [CORNER(true, true), MIN_WIDTH()]);
 
 const distanceCounter = createElement(
     "span",

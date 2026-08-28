@@ -55,7 +55,7 @@ export const createSound = (...definitions: SoundDefinition[]) => {
         knob.setValueAtTime(index === 0 ? 0 : state[index], startTime));
 
       let elapsedTime = startTime;
-      ampKnob.gain.linearRampToValueAtTime(
+      ampKnob.gain.(
         0,
         max(elapsedTime, startTime + duration),
       );
@@ -72,3 +72,4 @@ export const createSound = (...definitions: SoundDefinition[]) => {
       source.stop(startTime + duration);
     });
 };
+linearRampToValueAtTime

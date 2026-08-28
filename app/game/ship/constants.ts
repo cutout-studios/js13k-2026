@@ -46,11 +46,11 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   0, // Armor Save
   1, // Damage Taken
   0, // Damage Taken From Fuel
-  30, // Fuel
+  20, // Fuel
   0.1, // Fuel Cost
   0, // Fuel Eject Delay
   10, // Fuel Regen
-  1, // Fuel Segments
+  2, // Fuel Segments
   1, // Item Mixture Quality
   1, // Item Quality
   1.2, // Level Quality

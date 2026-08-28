@@ -15,7 +15,7 @@
  */
 
 export const CORNER = (right?: boolean, top?: boolean) => ({
-  transform: `rotate(${right ? 30 : -30}deg)`,
+  transform: `rotate(${right ? 15 : -15}deg)`,
   position: "relative",
   [top ? "top" : "bottom"]: "2.5rem",
 });
