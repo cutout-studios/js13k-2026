@@ -49,7 +49,7 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   20, // Fuel
   0.1, // Fuel Cost
   0, // Fuel Eject Delay
-  10, // Fuel Regen
+  7, // Fuel Regen
   2, // Fuel Segments
   1, // Item Mixture Quality
   1, // Item Quality
@@ -58,7 +58,7 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   1, // Mass
   0, // Resolve
   40, // Shield
-  10, // Shield Regen
+  5, // Shield Regen
   1, // Spin Damage
   0.1, // Spin Handling
   1.5, // Spin Time

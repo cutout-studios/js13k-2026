@@ -19,6 +19,7 @@ import { createObject, XOOrientation, Z_AXIS } from "~/3D";
 import { createActionSequencer } from "~/clock";
 
 import { ColorOptions } from "../options/types.ts";
+import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
 import { weaponSound } from "./sounds.ts";
@@ -53,20 +54,22 @@ export const createWeapon = (
   ];
 };
 
+// PLACEHOLDER/TODO: fuel consumption
+const FUEL_PER_SHOT = 1.5;
+
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
-  const [
-      ,
-      ,
-      weapons,
-    ] = ship,
+  const [, , weapons, , damages, shipSnapshot] = ship,
     [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex],
-    [count] = snapshot;
-
+    [count] = snapshot,
+    fuelUsed = (damages[1] || 0) + FUEL_PER_SHOT;
+  
+   // PLACEHOLDER/TODO: fuel consumption
+  if (ship[6] === GameOptions[0] && fuelUsed > shipSnapshot[4]) return;
+  
+  damages[1] = fuelUsed;
   weaponSound();
-
   doTimes(count, () => {
     const bullet = createBullet(ship, weaponIndex);
-
     bullets.push(bullet);
     instanceGroup.push(bullet[0]);
   });

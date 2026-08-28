@@ -134,14 +134,13 @@ export const updateHUD = (
   );
   shieldUpdate([[_snapshot[15], _snapshot[15] - shieldDamage]]);
   fuelUpdate(
-    doTimes(
-      _snapshot[8],
-      (
-        index: number,
-      ) => [
-        _snapshot[4],
-        index >= fuelSegmentDamage ? _snapshot[4] - fuelDamage : 0,
-      ],
-    ),
+    doTimes(_snapshot[8], (index: number) => [
+      _snapshot[4],
+      (_snapshot[8] - 1 - index) < fuelSegmentDamage
+        ? 0
+        : (_snapshot[8] - 1 - index) > fuelSegmentDamage
+        ? _snapshot[4]
+        : _snapshot[4] - fuelDamage,
+    ]),
   );
 };

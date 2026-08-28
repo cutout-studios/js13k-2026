@@ -54,7 +54,6 @@ const _resolveCollisions = (
 
 const ENEMY_AIM_SPREAD = 1.5;
 // TODO: "mass disruption" - target takes more damage than they have mass
-// TODO: fuel costs
 export const updateGame = (
   [player, world]: Game,
   tickLength: number,
@@ -65,7 +64,7 @@ export const updateGame = (
     enemyShips = activeEnemyGroups.flatMap(([ships]) => ships),
     playerOrigin = readOrigin(playerShipObject[0]);
 
-  // -- aim enemies at the player
+  // PLACEHOLDER/TODO: aim enemies at the player
   doTimes(enemyShips, (ship) => {
     const target = addXYZ(
       playerOrigin,
@@ -171,9 +170,11 @@ export const updateGame = (
 
   // eject fuel if depleted
   if (damage[1] >= _snapshot[4] && !damage[5]) {
+    damage[1] = _snapshot[4];
     damage[5] = true;
     setTimeout(() => {
       damage[2] ??= 0, damage[2]++;
+      damage[1] = 0;
       damage[5] = false;
     }, _snapshot[6] * SECONDS_TO_MS);
   }
