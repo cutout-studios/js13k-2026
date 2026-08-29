@@ -22,7 +22,7 @@ import { keyboard } from "~/controller";
 
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud, updateHUD } from "./elements/hud.ts";
-import { menu, openMenu, updateMenu } from "./elements/menu.ts";
+import { menu, openMenu, updateMenu } from "./elements/menu/module.ts";
 import state, { getSceneObjects } from "./game/module.ts";
 import { updateGame } from "./game/update.ts";
 import { doTimes } from "~/common";
@@ -30,7 +30,7 @@ import { doTimes } from "~/common";
 document.head.append(createElement("style", _, {
   // minified from ./styles.css
   textContent:
-    "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:Menlo, ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked + canvas{outline:3px solid yellow}",
+    "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked + canvas{outline:3px solid yellow}",
 }));
 
 let escapeWasDown = false;

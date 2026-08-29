@@ -30,7 +30,7 @@ export const updatePlayerSnapshots = (
       doTimes(
         (statID > 21 ? _weaponsSnapshots : [_snapshot]) as number[][],
         (target) => {
-          operator === "*" ? target[statID] *= value : target[statID] += value;
+          operator === "x" ? target[statID] *= value : target[statID] += value;
         },
       );
     });

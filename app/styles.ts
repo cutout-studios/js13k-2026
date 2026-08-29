@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
+export const SQUARE = (side: string | number = "100%") => ({
+  width: side,
+  height: side,
+});
+
+export const RESET = { padding: 0, margin: 0 };
 export const BACKGROUND = { background: "black" };
 
 export const POINTER = { cursor: "pointer" };
 
-export const FULL_SIZE = { width: "100%", height: "100%" };
-
 export const BLOCK = { display: "block", position: "relative" };
 
+export const INERT = { ["pointer-events"]: "none" };
 export const HIDDEN = { visibility: "hidden" };
 
 // TODO: separate "rotate" and "corner"

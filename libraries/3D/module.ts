@@ -15,6 +15,7 @@
  */
 
 export type {
+  GPURenderTarget,
   RGBA,
   XOGeometry,
   XOMaterial,

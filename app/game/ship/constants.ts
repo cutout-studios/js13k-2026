@@ -17,28 +17,28 @@
 import { ShipSnapshot, WeaponSnapshot } from "./types.ts";
 
 export const SHIP_PROPERTY_NAMES = [
-  "Armor",
-  "Armor Save",
-  "Damage Taken",
-  "Damage Taken From Fuel",
-  "Fuel",
-  "Fuel Cost",
-  "Fuel Eject Delay",
-  "Fuel Regen",
-  "Fuel Segments",
-  "Item Mixture Quality",
-  "Item Quality",
-  "Level Quality",
-  "Lowest Resource",
-  "Mass",
-  "Resolve",
-  "Shield",
-  "Shield Regen",
-  "Spin Damage",
-  "Spin Handling",
-  "Spin Time",
-  "Strafe Speed",
-  "Tracking Speed",
+  "ARMOR",
+  "ARMOR SAVE",
+  "DAMAGE TAKEN",
+  "DAMAGE TAKEN FROM FUEL",
+  "FUEL",
+  "FUEL COST",
+  "FUEL EJECT DELAY",
+  "FUEL REGEN",
+  "FUEL SEGMENTS",
+  "ITEM MIXTURE QUALITY",
+  "ITEM QUALITY",
+  "LEVEL QUALITY",
+  "LOWEST RESOURCE",
+  "MASS",
+  "RESOLVE",
+  "SHIELD",
+  "SHIELD REGEN",
+  "SPIN DAMAGE",
+  "SPIN HANDLING",
+  "SPIN TIME",
+  "STRAFE SPEED",
+  "TRACKING SPEED",
 ];
 
 export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
@@ -67,13 +67,13 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
 ];
 
 export const WEAPON_PROPERTY_NAMES = [
-  "Bullet Count",
-  "Bullet Crit Chance",
-  "Bullet Crit Damage",
-  "Bullet Damage",
-  "Bullet Lifetime",
-  "Bullet Rate",
-  "Bullet Spread",
+  "BULLET COUNT",
+  "BULLET CRIT CHANCE",
+  "BULLET CRIT DAMAGE",
+  "BULLET DAMAGE",
+  "BULLET LIFETIME",
+  "BULLET RATE",
+  "BULLET SPREAD",
 ];
 
 export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
@@ -87,3 +87,5 @@ export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
 ];
 
 export const BULLET_SPEED = 12;
+
+export const ALL_PROPERTY_NAMES = [...SHIP_PROPERTY_NAMES, ...WEAPON_PROPERTY_NAMES];

@@ -33,7 +33,7 @@ export type Item = [
   sequence: ActionSequencer<Item>,
   typeID: number,
   rank: number,
-  modifiers: [propertyID: number, type: "+" | "*", value: number][],
+  modifiers: [propertyID: number, type: "+" | "x", value: number][],
   baseMass: number,
   baseWeapon?: [bulletCount: number, bulletRate: number, bulletDamage: number],
 ];

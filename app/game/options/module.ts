@@ -26,7 +26,7 @@ const GREEN_PRONG = [
 
 export default [
   [ // player
-    "White",
+    "WHITE",
     0xFFFFFF,
     [
       [[[_, [Z_AXIS, -1.57]], [
@@ -49,7 +49,7 @@ export default [
     ],
   ],
   [ // purple: crit/glass
-    "Purple",
+    "PURPLE",
     0x8434D4,
     [
       [[[], [0.5, createPyramid([0.25, 0.25, 0.125])]]],
@@ -63,15 +63,15 @@ export default [
     [
       [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
       [
-        [0, 11, "*", [1, 1.5]], // Item Quality
-        [0, 12, "*", [1, 1.5]], // Level Quality
+        [0, 11, "x", [1, 1.5]], // Item Quality
+        [0, 12, "x", [1, 1.5]], // Level Quality
         [0, 24, "+", [0, 0.1]], // Bullet Crit Chance
-        [0, 25, "*", [1.5, 3]], // Bullet Crit Damage
+        [0, 25, "x", [1.5, 3]], // Bullet Crit Damage
       ],
     ],
   ],
   [ // green: fuel/speed
-    "Green",
+    "GREEN",
     0xA0DD27,
     [
       [
@@ -89,16 +89,16 @@ export default [
     [
       [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
       [
-        [0, 6, "*", [1, 1.5]], // Fuel Cost
-        [0, 18, "*", [1, 1.5]], // Speed
-        [0, 27, "*", [1, 1.5]], // Bullet Lifetime
+        [0, 6, "x", [1, 1.5]], // Fuel Cost
+        [0, 18, "x", [1, 1.5]], // Speed
+        [0, 27, "x", [1, 1.5]], // Bullet Lifetime
         [2, 3, "+", [0, 0.1]], // Damage Taken From Fuel
-        [3, 21, "*", [1, 1.5]], // Spin Time
+        [3, 21, "x", [1, 1.5]], // Spin Time
       ],
     ],
   ],
   [ // blue: tank
-    "Blue",
+    "BLUE",
     0x29A9D4,
     [
       [
@@ -118,16 +118,16 @@ export default [
     [
       [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
       [
-        [0, 16, "*", [1, 1.5]], // Shield
-        [0, 2, "*", [1, 1.5]], // Damage Taken
-        [0, 14, "*", [1, 1.5]], // Mass
+        [0, 16, "x", [1, 1.5]], // Shield
+        [0, 2, "x", [1, 1.5]], // Damage Taken
+        [0, 14, "x", [1, 1.5]], // Mass
         [2, 0, "+", [0, 2]], // Armor
-        [3, 7, "*", [1, 1.5]], // Fuel Eject Delay
+        [3, 7, "x", [1, 1.5]], // Fuel Eject Delay
       ],
     ],
   ],
   [ // pink: swarm/shotgun
-    "Pink",
+    "PINK",
     0xD4349F,
     [
       [[[], [0.4, createSphere(0.10, 20)]]],
@@ -144,16 +144,16 @@ export default [
     [
       [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
       [
-        [0, 10, "*", [1, 1.5]], // Item Mixture Quality
+        [0, 10, "x", [1, 1.5]], // Item Mixture Quality
         [0, 23, "+", [0, 2]], // Bullet Count
         [0, 1, "+", [0, 0.1]], // Armor Save
-        [2, 17, "*", [1, 1.5]], // Shield Regen
-        [3, 8, "*", [1, 1.5]], // Fuel Regen
+        [2, 17, "x", [1, 1.5]], // Shield Regen
+        [3, 8, "x", [1, 1.5]], // Fuel Regen
       ],
     ],
   ],
   [ // red: gunner
-    "Red",
+    "RED",
     0xEE3030,
     [
       [[[_, [Z_AXIS, -1.61]], [
@@ -174,16 +174,16 @@ export default [
     [
       [[1, 1], 2, 1, [1, 1], [1, 1]], // PLACEHOLDER
       [
-        [0, 26, "*", [1, 1.5]], // Bullet Damage
-        [0, 28, "*", [1, 1.5]], // Bullet Rate
-        [0, 5, "*", [1, 1.5]], // Fuel
-        [2, 22, "*", [1, 1.5]], // Tracking Speed
-        [3, 20, "*", [1, 1.5]], // Spin Handling
+        [0, 26, "x", [1, 1.5]], // Bullet Damage
+        [0, 28, "x", [1, 1.5]], // Bullet Rate
+        [0, 5, "x", [1, 1.5]], // Fuel
+        [2, 22, "x", [1, 1.5]], // Tracking Speed
+        [3, 20, "x", [1, 1.5]], // Spin Handling
       ],
     ],
   ],
   [ // yellow: spread/spin
-    "Yellow",
+    "YELLOW",
     0xF4AD32,
     [
       [
@@ -202,11 +202,11 @@ export default [
     [
       [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
       [
-        [0, 13, "*", [1, 1.5]], // Lowest Resource
+        [0, 13, "x", [1, 1.5]], // Lowest Resource
         [0, 15, "+", [0, 0.1]], // Resolve
-        [0, 29, "*", [1, 1.5]], // Bullet Spread
-        [2, 21, "*", [1, 1.5]], // Spin Time
-        [3, 19, "*", [1, 1.5]], // Spin Damage
+        [0, 29, "x", [1, 1.5]], // Bullet Spread
+        [2, 21, "x", [1, 1.5]], // Spin Time
+        [3, 19, "x", [1, 1.5]], // Spin Damage
       ],
     ],
   ],

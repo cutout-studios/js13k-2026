@@ -17,7 +17,7 @@
 import { _, preventDefault } from "~/alias";
 import { doTimes } from "~/common";
 import { createElement } from "~/dom";
-import { createCamera, createRenderTarget } from "~/3D";
+import { createCamera, createRenderTarget, GPURenderTarget } from "~/3D";
 
 import {
   BACKGROUND,
@@ -26,23 +26,18 @@ import {
   FLEX_CENTER,
   FLEX_COLUMN,
   FLEX_ROW,
-  FULL_SIZE,
   HIDDEN,
   JUSTIFY,
   PADDED,
   POINTER,
-} from "../styles.ts";
+  SQUARE,
+} from "../../styles.ts";
 
-import { portrait } from "./portrait.ts";
-import { Game } from "../game/types.ts";
-import { GPURenderTarget } from "../../libraries/3D/types.ts";
+import { portrait } from "../portrait.ts";
+import GameOptions from "../../game/options/module.ts";
+import { Game } from "../../game/types.ts";
+import { itemPopover, updateItemPopover } from "./itemPopover.ts";
 
-let hoveredCellIndex = -1;
-
-const CELL_SIZE = { width: 128, height: 128 },
-  FORM_COLUMN = [FLEX_COLUMN, FLEX_CENTER, JUSTIFY(), PADDED, { flex: 1 }],
-  EQUIP_OFFSET = 2,
-  INVENTORY_OFFSET = 6;
 const createCellWindow = (index: number) =>
     createElement(
       "canvas",
@@ -61,6 +56,21 @@ const createCellWindow = (index: number) =>
       value,
     );
 
+let hoveredCellIndex = -1;
+
+const CELL_SIZE = SQUARE(128),
+  FORM_COLUMN = [FLEX_COLUMN, FLEX_CENTER, JUSTIFY(), PADDED, { flex: 1 }],
+  EQUIP_OFFSET = 2,
+  INVENTORY_OFFSET = 6,
+  WIN_COLLECTION_VERTICIES = [
+    ["30%", "0%"],
+    ["0%", "50%"],
+    ["30%", "100%"],
+    ["70%", "100%"],
+    ["100%", "50%"],
+    ["70%", "0%"],
+  ];
+
 const canvasCells = doTimes(18, createCellWindow),
   menuCamera = createCamera(),
   [
@@ -71,19 +81,39 @@ const canvasCells = doTimes(18, createCellWindow),
     bodyCanvasCell,
     engineCanvasCell,
     ...inventoryCanvasCells
-  ] = canvasCells;
+  ] = canvasCells,
+  winCollectionElements = doTimes(
+    WIN_COLLECTION_VERTICIES,
+    ([left, top]) =>
+      createElement("span", [BORDER(2), BACKGROUND, SQUARE("1rem"), {
+        ["border-radius"]: "100%",
+        transform: "translate(-50%,-50%)",
+        ["pointer-events"]: "none",
+        position: "absolute",
+        top,
+        left,
+      }]),
+  );
 
 export const menu = createElement(
   "dialog",
-  [FULL_SIZE, BACKGROUND, {
+  [SQUARE(), BACKGROUND, {
     margin: "auto",
     ["max-width"]: "min-content",
-    ["max-height"]: CELL_SIZE.height * 5,
+    ["max-height"]: +CELL_SIZE.height * 5,
   }],
-  { oncancel: preventDefault },
+  {
+    oncancel: preventDefault,
+    onmouseover: ({ clientX, clientY }: MouseEvent) => {
+      const { width, height, top, left } = itemPopover.getBoundingClientRect();
+
+      itemPopover.style.top = (clientY - (top < height ? height : 0)) + "px";
+      itemPopover.style.left = (clientX - (left < width ? width : 0)) + "px";
+    },
+  },
   createElement(
     "form",
-    [FULL_SIZE, FLEX_ROW],
+    [SQUARE(), FLEX_ROW],
     {
       onsubmit: (event: SubmitEvent) => {
         preventDefault(event);
@@ -108,6 +138,7 @@ export const menu = createElement(
         [{
           display: "grid",
           grid: "repeat(4, 1fr) / repeat(3, 1fr)",
+          gap: "0.33rem",
         }],
         _,
         ...doTimes(12, (value: number) =>
@@ -151,26 +182,35 @@ export const menu = createElement(
       patronCanvasCell,
       createElement(
         "div",
-        [FLEX_ROW, FLEX_CENTER, {
-          width: CELL_SIZE.width * 2.5,
-          height: CELL_SIZE.height * 2,
-          background: "white",
-          ["margin-top"]: "2rem",
-          ["clip-path"]:
-            "polygon(30% 0%, 0% 50%, 30% 100%, 70% 100%, 100% 50%, 70% 0%)",
-        }],
+        [BLOCK],
         _,
-        combinationCanvasCell,
+        createElement(
+          "div",
+          [FLEX_ROW, FLEX_CENTER, {
+            width: +CELL_SIZE.width * 2.5,
+            height: +CELL_SIZE.height * 2,
+            background: "white",
+            ["clip-path"]: `polygon(${
+              doTimes(WIN_COLLECTION_VERTICIES, (coords) => coords.join(" "))
+                .join()
+            })`,
+          }],
+          _,
+          combinationCanvasCell,
+        ),
+        ...winCollectionElements,
       ),
       createFormButton("COMMIT"),
     ),
   ),
+  itemPopover,
 ) as HTMLDialogElement;
 
 let renderTargets: GPURenderTarget[];
 export const openMenu = ([[, , inventory]]: Game) => {
   renderTargets ||= doTimes(canvasCells, createRenderTarget);
   menu.showModal();
+
   menuCamera([[portrait]], renderTargets[0]);
 
   doTimes(inventory, ([item, equipped], index) => {
@@ -181,10 +221,20 @@ export const openMenu = ([[, , inventory]]: Game) => {
   });
 };
 
-export const updateMenu = ([[, , inventory]]: Game, tickLength: number) => {
+export const updateMenu = (
+  [[, , inventory], [, , , winCollection]]: Game,
+  tickLength: number,
+) => {
+  doTimes(winCollectionElements, (element, index) =>
+    winCollection.has(index) &&
+    (element.style.background = "#" + GameOptions[index][1].toString(16)));
+
   const entry = inventory[hoveredCellIndex - INVENTORY_OFFSET];
 
-  if (!entry) return;
+  if (!entry) return itemPopover.style.visibility = "hidden";
+
+  updateItemPopover(entry[0]);
+  itemPopover.style.visibility = "visible";
 
   const [item, equipped] = entry;
 

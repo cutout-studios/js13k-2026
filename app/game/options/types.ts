@@ -59,6 +59,6 @@ export type ItemOptions = [
 export type ModifierOptions = [
   itemTypeID: number,
   propertyID: number,
-  modifierOperation: "+" | "*",
+  modifierOperation: "+" | "x",
   modifierBand: Band,
 ];
