@@ -20,6 +20,8 @@ import { doTimes, repeat, SECONDS_TO_MS, spliceTable } from "~/common";
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
+import { createItem } from "./player/items.ts";
+import GameOptions from "./options/module.ts";
 
 import { Game } from "./types.ts";
 import {
@@ -27,6 +29,7 @@ import {
   getCollisionPairs,
   readOrigin,
   scaleXYZ,
+  setOrigin,
   subtractXYZ,
   XOObject,
   XYZ,
@@ -135,10 +138,16 @@ export const updateGame = (
   doTimes(activeEnemyGroups, ([ships]) => {
     spliceTable(
       [ships],
-      ships.flatMap(([, , , , damages, snapshot], index) => {
+      ships.flatMap(([[coordinates], , , , damages, snapshot], index) => {
         if (damages[0] < snapshot[15]) return [];
         explosionSound(); // TODO: pan based on location
-        // TODO: roll item drop
+
+        if (random() < snapshot[10]) {
+          const item = createItem(GameOptions[1], progress[0]);
+          setOrigin(item[0][0], readOrigin(coordinates));
+          droppedItems.push(item);
+        }
+
         return [index];
       }),
     );

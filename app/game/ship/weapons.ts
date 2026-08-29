@@ -67,7 +67,7 @@ export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   if (ship[6] === GameOptions[0] && fuelUsed > shipSnapshot[4]) return;
 
   damages[1] = fuelUsed;
-  weaponSound();
+  weaponSound(); // TODO: pan based on location
   doTimes(count, () => {
     const bullet = createBullet(ship, weaponIndex);
     bullets.push(bullet);

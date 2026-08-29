@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { _, length } from "~/alias";
+import { _, cos, length, random, sin, TAU } from "~/alias";
 import { doTimes, repeat } from "~/common";
 import {
   adjustObject,
   createObject,
   createPaintMaterialWithPalette as paint,
+  XOObject,
   XYZ,
 } from "~/3D";
 import { bell, range } from "~/random";
@@ -31,19 +32,35 @@ import { levelCurve, levelRoll } from "../world/levels.ts";
 import { ColorOptions, ModifierOptions } from "../options/types.ts";
 
 import { createDeck, drawCard, insertCard } from "../decks.ts";
-import { createActionSequencer } from "~/clock";
+import { Action, createActionSequencer } from "~/clock";
 
 import GameOptions from "../options/module.ts";
 
 const _itemDeck = createDeck(4),
   _itemRankRoll = (
     level: number,
-    quality = 0,
-    roll = bell() + levelCurve(level) + quality,
+    roll = bell() + levelCurve(level),
   ) =>
     length(ITEM_RANK_THRESHOLDS.filter((threshold) => roll >= threshold)) + 1;
 
 const [[, , [ITEM_GEOMETRY]]] = GameOptions;
+
+// TODO: generalize
+const _tempMeanderActionFactory = (
+  driftAmount = 0.6,
+  driftSpeed = 1.2,
+): Action<[XOObject]> => {
+  const phase = random() * TAU;
+
+  return ([object], tickLength) => {
+    return adjustObject(object, [
+      [
+        ...doTimes([sin, cos], (f) => f(tickLength + phase) * driftAmount),
+        driftSpeed * tickLength,
+      ] as XYZ,
+    ]);
+  };
+};
 
 export const createItem = (
   [, value, , [[
@@ -54,9 +71,8 @@ export const createItem = (
     baseBulletDamage,
   ], modifiers]]: ColorOptions,
   level: number = 1,
-  quality = 0,
 ): Item => {
-  const rank = _itemRankRoll(level, quality),
+  const rank = _itemRankRoll(level),
     typeID = drawCard(_itemDeck),
     modifierDeck = [] as ModifierOptions[];
   doTimes(modifiers, (modifier) => {
@@ -65,14 +81,18 @@ export const createItem = (
     }
   });
 
+  const meander = _tempMeanderActionFactory();
+
   return [
     createObject(...ITEM_GEOMETRY[typeID], paint(value)),
     createActionSequencer([[
-      ([object], tickLength) =>
+      ([object], tickLength) => {
+        meander([object], tickLength, 0, 0);
         adjustObject(object, [undefined, [
           repeat(3, tickLength) as XYZ,
           tickLength,
-        ]]),
+        ]]);
+      },
     ]]),
     typeID,
     rank,

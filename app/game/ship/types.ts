@@ -50,7 +50,7 @@ export type ShipSnapshot = [
   fuelRegen: number,
   fuelSegments: number,
   itemMixtureQuality: number,
-  itemQuality: number,
+  itemDropRate: number,
   // 10
   levelQuality: number,
   lowestResource: number,
