@@ -38,6 +38,21 @@ import GameOptions from "../../game/options/module.ts";
 import { Game } from "../../game/types.ts";
 import { itemPopover, updateItemPopover } from "./itemPopover.ts";
 
+const CELL_SIZE = SQUARE(128),
+  FORM_COLUMN = [FLEX_COLUMN, FLEX_CENTER, JUSTIFY(), PADDED, { flex: 1 }],
+  EQUIP_OFFSET = 2,
+  INVENTORY_OFFSET = 6,
+  WIN_COLLECTION_VERTICIES = [
+    ["30%", "0%"],
+    ["0%", "50%"],
+    ["30%", "100%"],
+    ["70%", "100%"],
+    ["100%", "50%"],
+    ["70%", "0%"],
+  ];
+
+let hoveredCellIndex = -1;
+
 const createCellWindow = (index: number) =>
     createElement(
       "canvas",
@@ -55,21 +70,6 @@ const createCellWindow = (index: number) =>
       { value },
       value,
     );
-
-let hoveredCellIndex = -1;
-
-const CELL_SIZE = SQUARE(128),
-  FORM_COLUMN = [FLEX_COLUMN, FLEX_CENTER, JUSTIFY(), PADDED, { flex: 1 }],
-  EQUIP_OFFSET = 2,
-  INVENTORY_OFFSET = 6,
-  WIN_COLLECTION_VERTICIES = [
-    ["30%", "0%"],
-    ["0%", "50%"],
-    ["30%", "100%"],
-    ["70%", "100%"],
-    ["100%", "50%"],
-    ["70%", "0%"],
-  ];
 
 const canvasCells = doTimes(18, createCellWindow),
   menuCamera = createCamera(),
@@ -125,7 +125,6 @@ export const menu = createElement(
             detail: new FormData(target as HTMLFormElement).getAll("i"),
           }),
         );
-
         (target as HTMLFormElement).reset();
       },
     },
@@ -208,8 +207,8 @@ export const menu = createElement(
 
 let renderTargets: GPURenderTarget[];
 export const openMenu = ([[, , inventory]]: Game) => {
-  renderTargets ||= doTimes(canvasCells, createRenderTarget);
   menu.showModal();
+  renderTargets ||= doTimes(canvasCells, createRenderTarget);
 
   menuCamera([[portrait]], renderTargets[0]);
 

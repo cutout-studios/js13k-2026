@@ -25,9 +25,8 @@ import {
   FLEX_ROW,
   HIDDEN,
   INERT,
-  RESET,
 } from "../../styles.ts";
-import { ALL_PROPERTY_NAMES } from "../../game/ship/constants.ts";
+import { PROPERTY_NAMES } from "../../game/ship/constants.ts";
 import { Item } from "../../game/player/types.ts";
 
 const header = createElement("header", [FLEX_ROW, FLEX_CENTER, {
@@ -35,8 +34,8 @@ const header = createElement("header", [FLEX_ROW, FLEX_CENTER, {
     background: "white",
     color: "black",
   }]),
-  modifiers = createElement("ul", [RESET]),
-  base = createElement("aside", [BACKGROUND, RESET, BORDER(), {
+  modifiers = createElement("div"),
+  base = createElement("aside", [BACKGROUND, BORDER(), {
     padding: ".33rem",
   }]);
 
@@ -62,15 +61,14 @@ export const itemPopover = createElement(
 
 export const updateItemPopover = (
   [, , _typeID, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
-) => { // TOOD: Color Name
+) => { // TODO: Color Name
   header.innerText = `${repeat(_rank, "⭑").join("")} ${
     ["WING (L)", "WING (R)", "BODY", "ENGINE"][_typeID]
   }`;
 
   modifiers.innerText = doTimes(
     _modifiers,
-    ([id, type, value]) =>
-      `${type}${value.toFixed(2)} ${ALL_PROPERTY_NAMES[id]}`,
+    ([id, type, value]) => `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
   ).join("\n");
 
   base.textContent = `M: ${_baseMass}`;

@@ -30,16 +30,17 @@ import { doTimes } from "~/common";
 document.head.append(createElement("style", _, {
   // minified from ./styles.css
   textContent:
-    "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked + canvas{outline:3px solid yellow}",
+    "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked+canvas{outline:3px solid yellow}",
 }));
 
 let escapeWasDown = false;
 onload = async () => {
   await setupDevice();
   doTimes(
-    [hud, mainCanvas, menu],
+    [mainCanvas, hud, menu],
     (element) => document.body.appendChild(element),
   );
+
   startClock((tickLength) => {
     const escapeIsDown = keyboard.has("Escape");
 

@@ -19,7 +19,6 @@ export const SQUARE = (side: string | number = "100%") => ({
   height: side,
 });
 
-export const RESET = { padding: 0, margin: 0 };
 export const BACKGROUND = { background: "black" };
 
 export const POINTER = { cursor: "pointer" };
