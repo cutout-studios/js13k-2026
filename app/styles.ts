@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-export const CORNER = (right?: boolean, top?: boolean) => ({
+export const BACKGROUND = { background: "black" };
+
+export const POINTER = { cursor: "pointer" };
+
+export const FULL_SIZE = { width: "100%", height: "100%" };
+
+export const BLOCK = { display: "block", position: "relative" };
+
+export const HIDDEN = { visibility: "hidden" };
+
+// TODO: separate "rotate" and "corner"
+export const CORNER = (right?: boolean, top?: boolean, inset = 2.5) => ({
   transform: `rotate(${right ? 15 : -15}deg)`,
   position: "relative",
-  [top ? "top" : "bottom"]: "2.5rem",
+  [top ? "top" : "bottom"]: `${inset}rem`,
 });
 
 export const BORDER = (width = 1) => ({ border: `${width}px solid white` });

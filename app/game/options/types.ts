@@ -24,7 +24,7 @@ export type ColorOptions = [
   name: string,
   value: number,
   ship: ShipOptions,
-  item?: ItemOptions,
+  item: ItemOptions,
 ];
 
 type ShipOptions = [

@@ -26,11 +26,9 @@ import {
 import { createElement } from "~/dom";
 
 import { DEPTH_LIMIT } from "./constants.ts";
+import { BLOCK, FULL_SIZE } from "../styles.ts";
 
-export const mainCanvas = createElement("canvas", [{
-    width: "100%",
-    height: "100%",
-    display: "block",
+export const mainCanvas = createElement("canvas", [FULL_SIZE, BLOCK, {
     cursor: "crosshair",
   }]) as HTMLCanvasElement,
   camera = createCamera();

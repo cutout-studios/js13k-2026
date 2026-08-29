@@ -25,7 +25,6 @@ export type Player = [
   inventory: [
     item: Item,
     equipped?: boolean,
-    selected?: boolean,
   ][],
 ];
 
@@ -33,7 +32,6 @@ export type Item = [
   object: XOObject,
   sequence: ActionSequencer<Item>,
   typeID: number,
-  colorID: number,
   rank: number,
   modifiers: [propertyID: number, type: "+" | "*", value: number][],
   baseMass: number,

@@ -41,3 +41,4 @@ export const length = (array: Array<unknown> | Float32Array | string) =>
 
 export const _ = undefined;
 export const NO_OP = () => {};
+export const preventDefault = (event: Event) => event.preventDefault();

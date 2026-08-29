@@ -32,7 +32,7 @@ const FLEX_FILL = { flex: 1 };
 const MIN_WIDTH = (width: number = 200) => ({ ["min-width"]: `${width}px` });
 
 const _createMeter = (
-  name: string,
+  innerText: string,
   style: object[] = [],
 ): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
   const meters = [createElement("meter", [FLEX_FILL]) as HTMLMeterElement];
@@ -40,8 +40,8 @@ const _createMeter = (
   const element = createElement(
     "span",
     [FLEX_ROW, ...style],
-    { id: name },
-    createElement("label", _, { innerText: name }),
+    _,
+    createElement("label", _, { innerText }),
     ...meters,
   );
 

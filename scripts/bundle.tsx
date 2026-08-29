@@ -22,7 +22,7 @@ import { minify } from "esbuild-minify-templates";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
-const ESTIMATED_RECLAIMABLE_BYTES = 60;
+const ESTIMATED_RECLAIMABLE_BYTES = 0;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";

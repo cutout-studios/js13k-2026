@@ -37,7 +37,6 @@ const strafeEnvelopes = doTimes(
 );
 
 // TODO: spin counter
-// TODO: boost
 export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
   const [object, heading, , , , _snapshot] = ship;
   const strafeMagnitudes: XYZ = [0, 0, 0];

@@ -19,3 +19,8 @@ body {
 dialog::backdrop {
   background: #000c;
 }
+
+/* TEMPORARY/TODO */
+:checked + canvas {
+  outline: 3px solid yellow;
+}

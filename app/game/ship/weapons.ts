@@ -62,10 +62,10 @@ export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
     [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex],
     [count] = snapshot,
     fuelUsed = (damages[1] || 0) + FUEL_PER_SHOT;
-  
-   // PLACEHOLDER/TODO: fuel consumption
+
+  // PLACEHOLDER/TODO: fuel consumption
   if (ship[6] === GameOptions[0] && fuelUsed > shipSnapshot[4]) return;
-  
+
   damages[1] = fuelUsed;
   weaponSound();
   doTimes(count, () => {

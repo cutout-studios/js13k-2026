@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-import { _, length, NO_OP } from "~/alias";
-import { doTimes } from "~/common";
-import { createObject } from "~/3D";
+import { _, length } from "~/alias";
+import { doTimes, repeat } from "~/common";
+import {
+  adjustObject,
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  XYZ,
+} from "~/3D";
 import { bell, range } from "~/random";
 
 import { Item } from "./types.ts";
@@ -28,6 +33,8 @@ import { ColorOptions, ModifierOptions } from "../options/types.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
 import { createActionSequencer } from "~/clock";
 
+import GameOptions from "../options/module.ts";
+
 const _itemDeck = createDeck(4),
   _itemRankRoll = (
     level: number,
@@ -36,24 +43,19 @@ const _itemDeck = createDeck(4),
   ) =>
     length(ITEM_RANK_THRESHOLDS.filter((threshold) => roll >= threshold)) + 1;
 
+const [[, , [ITEM_GEOMETRY]]] = GameOptions;
+
 export const createItem = (
-  options: ColorOptions[],
-  colorID: number,
-  level: number,
+  [, value, , [[
+    baseMass,
+    baseModifierCount,
+    baseBulletCount,
+    baseBulletRate,
+    baseBulletDamage,
+  ], modifiers]]: ColorOptions,
+  level: number = 1,
   quality = 0,
 ): Item => {
-  const [, , [geometry]] = options[0];
-
-  const [
-    [
-      baseMass,
-      baseModifierCount,
-      baseBulletCount,
-      baseBulletRate,
-      baseBulletDamage,
-    ],
-    modifiers,
-  ] = options[colorID][3]!;
   const rank = _itemRankRoll(level, quality),
     typeID = drawCard(_itemDeck),
     modifierDeck = [] as ModifierOptions[];
@@ -64,10 +66,15 @@ export const createItem = (
   });
 
   return [
-    createObject(...geometry[typeID]),
-    createActionSequencer([[NO_OP]]),
+    createObject(...ITEM_GEOMETRY[typeID], paint(value)),
+    createActionSequencer([[
+      ([object], tickLength) =>
+        adjustObject(object, [undefined, [
+          repeat(3, tickLength) as XYZ,
+          tickLength,
+        ]]),
+    ]]),
     typeID,
-    colorID,
     rank,
     doTimes((typeID <= 1 ? rank - 1 : rank) + baseModifierCount, () => {
       const [, propertyID, type, valueBand] = drawCard(modifierDeck);
