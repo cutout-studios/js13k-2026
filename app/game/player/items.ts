@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { _, cos, length, random, sin, TAU } from "~/alias";
+import { _, cos, length, min, random, sin, TAU } from "~/alias";
 import { doTimes, repeat } from "~/common";
 import {
   adjustObject,
@@ -23,13 +23,13 @@ import {
   XOObject,
   XYZ,
 } from "~/3D";
-import { bell, range } from "~/random";
+import { bell, oneOf, range } from "~/random";
 
 import { Item } from "./types.ts";
 import { ITEM_RANK_FALLOFF, ITEM_RANK_THRESHOLDS } from "./constants.ts";
 
 import { levelCurve, levelRoll } from "../world/levels.ts";
-import { ColorOptions, ModifierOptions } from "../options/types.ts";
+import { ModifierOptions } from "../options/types.ts";
 
 import { createDeck, drawCard, insertCard } from "../decks.ts";
 import { Action, createActionSequencer } from "~/clock";
@@ -63,18 +63,19 @@ const _tempMeanderActionFactory = (
 };
 
 export const createItem = (
-  [name, value, , [[
+  colorID: number,
+  typeID: number = drawCard(_itemDeck),
+  level: number = 1,
+  rank: number = _itemRankRoll(level),
+): Item => {
+  const [, value, , [[
     baseMass,
     baseModifierCount,
     baseBulletCount,
     baseBulletRate,
     baseBulletDamage,
-  ], modifiers]]: ColorOptions,
-  level: number = 1,
-): Item => {
-  const rank = _itemRankRoll(level),
-    typeID = drawCard(_itemDeck),
-    modifierDeck = [] as ModifierOptions[];
+  ], modifiers]] = GameOptions[colorID];
+  const modifierDeck = [] as ModifierOptions[];
   doTimes(modifiers, (modifier) => {
     if (modifier[0] === typeID || modifier[0] === 0) {
       insertCard(modifierDeck, modifier);
@@ -95,7 +96,7 @@ export const createItem = (
       },
     ]]),
     typeID,
-    name,
+    colorID,
     rank,
     doTimes((typeID <= 1 ? rank - 1 : rank) + baseModifierCount, () => {
       const [, propertyID, type, valueBand] = drawCard(modifierDeck);
@@ -111,4 +112,17 @@ export const createItem = (
       ]
       : _,
   ];
+};
+
+export const combineItems = (
+  level: number,
+  ...items: Item[]
+): Item | undefined => {
+  if (length(items) < 3) return;
+  return createItem(
+    oneOf(doTimes(items, ([, , , colorID]) => colorID)),
+    oneOf(doTimes(items, ([, , typeID]) => typeID)),
+    level,
+    min(3, min(...doTimes(items, ([, , , , rank]) => rank)) + 1),
+  );
 };

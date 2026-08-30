@@ -25,7 +25,8 @@ import { hud, updateHUD } from "./elements/hud.ts";
 import { menu, openMenu, updateMenu } from "./elements/menu/module.ts";
 import state, { getSceneObjects } from "./game/module.ts";
 import { updateGame } from "./game/update.ts";
-import { doTimes } from "~/common";
+import { doTimes, repeat, spliceTable } from "~/common";
+import { combineItems } from "./game/player/items.ts";
 
 document.head.append(createElement("style", _, {
   // minified from ./styles.css
@@ -57,3 +58,27 @@ onload = async () => {
     renderMain(getSceneObjects(state));
   });
 };
+
+const [[, , inventory], [, , progress]] = state;
+
+addEventListener("EQUIP", ({ detail }: CustomEventInit<number[]>) => {
+  const toEquip = repeat(4, -1);
+  doTimes(detail!, (index) => toEquip[inventory[index][0][2]] = index);
+  doTimes(inventory, (item, index) => {
+    if (toEquip[item[0][2]] === -1) return;
+
+    item[1] = toEquip[item[0][2]] === index;
+  });
+});
+
+addEventListener("RESTORE", ({ detail }: CustomEventInit<number[]>) => {
+  const item = combineItems(
+    progress[0],
+    ...doTimes(detail!, (index) => inventory[index][0]),
+  );
+
+  if (!item) return;
+
+  spliceTable(inventory, detail!);
+  inventory.push([item]);
+});

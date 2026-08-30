@@ -32,7 +32,7 @@ export type Item = [
   object: XOObject,
   sequence: ActionSequencer<Item>,
   typeID: number,
-  colorName: string,
+  colorID: number,
   rank: number,
   modifiers: [propertyID: number, type: "+" | "x", value: number][],
   baseMass: number,
