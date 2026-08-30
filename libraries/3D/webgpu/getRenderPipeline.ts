@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { XOMaterial } from "../types.ts";
+import { memo } from "~/common";
 import {
   DEPTH_TEXTURE_FORMAT,
   VERTEX_DATA_FORMAT,
   VERTEX_DATA_SIZE,
 } from "../constants.ts";
 
+import { XOMaterial } from "../types.ts";
 import { device, format, pipelineLayout } from "./setupDevice.ts";
-import { memo } from "~/common";
 
 export const getRenderPipeline = memo((
   [code]: XOMaterial,

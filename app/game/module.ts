@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { XOObject } from "~/3D";
+import startingPlayer from "./player/module.ts";
+
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
-
-import startingPlayer from "./player/module.ts";
 import startingWorld from "./world/module.ts";
-import { XOObject } from "~/3D";
 
 export default [startingPlayer, startingWorld] as Game;
 

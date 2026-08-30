@@ -16,7 +16,6 @@
 
 import { XOObject, XYZ } from "~/3D";
 import { ActionSequencer } from "~/clock";
-import { ColorOptions } from "../options/types.ts";
 
 export type Ship = [
   object: XOObject,
@@ -25,7 +24,7 @@ export type Ship = [
   sequence: ActionSequencer<Ship>,
   damages: Resources,
   _snapshot: ShipSnapshot,
-  _options: ColorOptions,
+  _optionsIndex: number
 ];
 
 export type Resources = [

@@ -15,10 +15,10 @@
  */
 
 import { atan, PI, round, sqrt } from "~/alias";
-import { Band, range } from "~/random";
-
-import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
 import { doTimes } from "~/common";
+
+import { Band, range } from "~/random";
+import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
 
 export const levelCurve = (
   level: number,

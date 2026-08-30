@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { _, cos, length, min, random, sin, TAU } from "~/alias";
-import { doTimes, repeat } from "~/common";
 import {
   adjustObject,
   createObject,
@@ -23,25 +21,25 @@ import {
   XOObject,
   XYZ,
 } from "~/3D";
+import { _, cos, length, min, random, sin, TAU } from "~/alias";
+import { Action, createActionSequencer } from "~/clock";
+import { doTimes, repeat } from "~/common";
+
 import { bell, oneOf, range } from "~/random";
 
-import { Item } from "./types.ts";
-import { ITEM_RANK_FALLOFF, ITEM_RANK_THRESHOLDS } from "./constants.ts";
-
-import { levelCurve, levelRoll } from "../world/levels.ts";
-import { ModifierOptions } from "../options/types.ts";
-
 import { createDeck, drawCard, insertCard } from "../decks.ts";
-import { Action, createActionSequencer } from "~/clock";
-
 import GameOptions from "../options/module.ts";
+
+import { ModifierOptions } from "../options/types.ts";
+import { levelCurve, levelRoll } from "../world/levels.ts";
+
+import { Item } from "./types.ts";
 
 const _itemDeck = createDeck(4),
   _itemRankRoll = (
     level: number,
     roll = bell() + levelCurve(level),
-  ) =>
-    length(ITEM_RANK_THRESHOLDS.filter((threshold) => roll >= threshold)) + 1;
+  ) => length([0.85, 1.35].filter((threshold) => roll >= threshold)) + 1;
 
 const [[, , [ITEM_GEOMETRY]]] = GameOptions;
 
@@ -101,7 +99,7 @@ export const createItem = (
     doTimes((typeID <= 1 ? rank - 1 : rank) + baseModifierCount, () => {
       const [, propertyID, type, valueBand] = drawCard(modifierDeck);
 
-      return [propertyID, type, levelRoll(valueBand, rank, ITEM_RANK_FALLOFF)];
+      return [propertyID, type, levelRoll(valueBand, rank, 2)];
     }),
     range(...baseMass),
     (typeID < 2)

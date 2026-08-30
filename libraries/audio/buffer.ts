@@ -15,8 +15,8 @@
  */
 
 import { abs, PI, round, sin } from "~/alias";
-import { range } from "~/random";
 import { doTimes } from "~/common";
+import { range } from "~/random";
 
 import { api } from "./api.ts";
 

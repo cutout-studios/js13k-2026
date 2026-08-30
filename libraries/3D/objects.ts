@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-import { doTimes, repeat } from "~/common";
 import { F32, hypot, length, max } from "~/alias";
-import { create as createPaintMaterial } from "./materials/paint.ts";
-
-import type {
-  XOGeometry,
-  XOMaterial,
-  XOObject,
-  XOOrientation,
-  XYZ,
-} from "./types.ts";
+import { doTimes, repeat } from "~/common";
 import {
   COORDINATE_SIDE_LENGTH,
   RGBA_LENGTH,
   XYZ_LENGTH,
   Y_AXIS,
 } from "./constants.ts";
+
 import {
   createCoordinates,
   createRotation,
@@ -39,6 +31,14 @@ import {
   readOrigin,
   setOrigin,
 } from "./coordinates.ts";
+import { create as createPaintMaterial } from "./materials/paint.ts";
+import type {
+  XOGeometry,
+  XOMaterial,
+  XOObject,
+  XOOrientation,
+  XYZ,
+} from "./types.ts";
 import { cross, normalize, subtract } from "./xyz.ts";
 
 export const createObject = (

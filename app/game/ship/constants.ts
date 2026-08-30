@@ -14,46 +14,15 @@
  * limitations under the License.
  */
 
-import { ShipSnapshot, WeaponSnapshot } from "./types.ts";
+import { doTimes } from "~/common";
 
-export const PROPERTY_NAMES =
-  "ARMOR,ARMOR SAVE,DAMAGE TAKEN,DAMAGE TAKEN FROM FUEL,FUEL,FUEL COST,FUEL EJECT DELAY,FUEL REGEN,FUEL SEGMENTS,MIX QUALITY,DROP RATE,LEVEL QUALITY,LOWEST RESOURCE,MASS,RESOLVE,SHIELD,SHIELD REGEN,SPIN DAMAGE,SPIN HANDLING,SPIN TIME,STRAFE SPEED,TRACKING SPEED,BULLET COUNT,BULLET CRIT CHANCE,BULLET CRIT DAMAGE,BULLET DAMAGE,BULLET LIFETIME,BULLET RATE,BULLET SPREAD"
-    .split(",");
+export const WORDS =
+  "HL SAVE DMG TAKEN TO FL AMT COST TIME RESTORE ITEM RATE LVL MIN RESOURCE M RESOLVE SLD CNTR TRACK SPD STRAFE BLT CRIT SPREAD EQUIP"
+    .split(" ");
 
-// TODO: move these to game config
-export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
-  2, // Armor
-  0, // Armor Save
-  1, // Damage Taken
-  0, // Damage Taken From Fuel
-  20, // Fuel
-  0.1, // Fuel Cost
-  0, // Fuel Eject Delay
-  7, // Fuel Regen
-  2, // Fuel Segments
-  1, // Item Mixture Quality
-  1, // Item Drop Rate
-  1.2, // Level Quality
-  0, // Lowest Resource
-  1, // Mass
-  0, // Resolve
-  40, // Shield
-  5, // Shield Regen
-  1, // Spin Damage
-  0.1, // Spin Handling
-  1.5, // Spin Time
-  2.4, // Strafe Speed
-  0.8, // Tracking Speed
-];
-
-export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
-  1, // Bullet Count
-  0.05, // Bullet Crit Chance
-  1, // Bullet Crit Damage
-  1, // Bullet Damage
-  1, // Bullet Lifetime
-  8, // Bullet Rate
-  1, // Bullet Spread
-];
-
-export const BULLET_SPEED = 12;
+export const PROPERTY_NAMES = doTimes(
+  "0 01 23 245 56 57 58 59 5 96 ab c6 de f g h h9 i2 ij ik lk jk m6 mn mn2 m2 m8 mb mo"
+    .split(" "),
+  (code: string) =>
+    doTimes([...code], (char: string) => WORDS[parseInt(char, 36)]).join(""),
+);

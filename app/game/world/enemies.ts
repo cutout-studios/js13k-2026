@@ -18,7 +18,9 @@ import { setOrigin, XYZ } from "~/3D";
 import { length, max, min, round } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
-import { EnemyGroup } from "./types.ts";
+import { createDeck, drawCard } from "../decks.ts";
+import GameOptions from "../options/module.ts";
+import { createShip } from "../ship/module.ts";
 import {
   ENEMY_PLACEMENT_SPREAD,
   ENEMY_Z_PLANE,
@@ -27,10 +29,7 @@ import {
   WAVE_PACING,
 } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
-import { createDeck, drawCard } from "../decks.ts";
-import { createShip } from "../ship/module.ts";
-import GameOptions from "../options/module.ts";
-import { ColorOptions } from "../options/types.ts";
+import { EnemyGroup } from "./types.ts";
 
 export const rollEnemies = (wave: number, level: number) =>
   doTimes(
@@ -44,15 +43,15 @@ export const rollEnemies = (wave: number, level: number) =>
         ),
       ),
     ),
-    () => _drawEnemyGroup(GameOptions[drawCard(_enemyDeck) + 1], level),
+    () => _drawEnemyGroup(drawCard(_enemyDeck) + 1, level),
   );
 
 const _enemyDeck = createDeck(length(GameOptions.slice(1)));
 const _drawEnemyGroup = (
-  options: ColorOptions,
+  optionsIndex: number,
   level: number,
 ): EnemyGroup => {
-  const [, , [shapes, , , , countBand]] = options;
+  const [, , [shapes, , , , countBand]] = GameOptions[optionsIndex];
   const count = round(levelRoll(countBand, level)),
     spawnQuadrantSize = min(
       3.5,
@@ -61,7 +60,7 @@ const _drawEnemyGroup = (
     );
 
   const ships = doTimes(count, () => {
-    const ship = createShip(options, level);
+    const ship = createShip(optionsIndex, level);
 
     // TODO: come in from off the screen, based on the total number of groups
     ship[0][0] = setOrigin(ship[0][0], [

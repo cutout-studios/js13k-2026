@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
+import { setupDevice } from "~/3D";
 import { _, document } from "~/alias";
 import { startClock } from "~/clock";
-import { setupDevice } from "~/3D";
-import { createElement } from "~/dom";
+import { doTimes, repeat, spliceTable } from "~/common";
 import { keyboard } from "~/controller";
+import { createElement } from "~/dom";
 
-import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { hud, updateHUD } from "./elements/hud.ts";
+import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { menu, openMenu, updateMenu } from "./elements/menu/module.ts";
 import state, { getSceneObjects } from "./game/module.ts";
-import { updateGame } from "./game/update.ts";
-import { doTimes, repeat, spliceTable } from "~/common";
 import { combineItems } from "./game/player/items.ts";
+import { WORDS } from "./game/ship/constants.ts";
+import { updateGame } from "./game/update.ts";
 
-document.head.append(createElement("style", _, {
+document.head.append(createElement("style", {
   // minified from ./styles.css
   textContent:
     "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked+canvas{outline:3px solid yellow}",
@@ -61,7 +62,7 @@ onload = async () => {
 
 const [[, , inventory], [, , progress]] = state;
 
-addEventListener("EQUIP", ({ detail }: CustomEventInit<number[]>) => {
+addEventListener(WORDS[26], ({ detail }: CustomEventInit<number[]>) => {
   const toEquip = repeat(4, -1);
   doTimes(detail!, (index) => toEquip[inventory[index][0][2]] = index);
   doTimes(inventory, (item, index) => {
@@ -71,7 +72,7 @@ addEventListener("EQUIP", ({ detail }: CustomEventInit<number[]>) => {
   });
 });
 
-addEventListener("RESTORE", ({ detail }: CustomEventInit<number[]>) => {
+addEventListener(WORDS[9], ({ detail }: CustomEventInit<number[]>) => {
   const item = combineItems(
     progress[0],
     ...doTimes(detail!, (index) => inventory[index][0]),

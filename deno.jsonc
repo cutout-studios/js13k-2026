@@ -3,6 +3,12 @@
     "jsx": "react-jsx",
     "jsxImportSource": "@cutout/jsx"
   },
+  "lint": {
+    "plugins": [
+      "jsr:@ayk/lint-import-order"
+    ]
+  },
+
   "imports": {
     "@cutout/jsx": "jsr:@cutout/jsx",
     "@std/fmt": "jsr:@std/fmt",

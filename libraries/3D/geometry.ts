@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { doTimes, repeat } from "~/common";
 import { cos, length, PI, sin, TAU } from "~/alias";
+import { doTimes, repeat } from "~/common";
 
 import { XYZ_LENGTH } from "./constants.ts";
 import type { XYZ } from "./types.ts";

@@ -15,17 +15,17 @@
  */
 
 import { F32, length, min } from "~/alias";
-import type { GPURenderTarget } from "./types.ts";
+import { doTimes, memo } from "~/common";
 import {
   CAMERA_DEFAULT_OBJECT_LIMIT,
   CAMERA_DEFAULT_SAFETY_CROP,
   CAMERA_MAGNIFICATION_RATIO,
   COORDINATE_DATA_LENGTH,
 } from "./constants.ts";
-import { loadObject } from "./webgpu/loadObject.ts";
-import { XOObject } from "./types.ts";
 import { localize } from "./coordinates.ts";
-import { doTimes, memo } from "~/common";
+import type { GPURenderTarget } from "./types.ts";
+import { XOObject } from "./types.ts";
+import { loadObject } from "./webgpu/loadObject.ts";
 
 export const createCamera = (
   objectLimit = CAMERA_DEFAULT_OBJECT_LIMIT,

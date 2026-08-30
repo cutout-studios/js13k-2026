@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Player } from "./types.ts";
 import { doTimes, repeat } from "~/common";
+import { Player } from "./types.ts";
 
 export const updatePlayerSnapshots = (
   [ship, [shieldLevels, fuelLevels = 0, , armorLevels = 0], inventory]: Player,
@@ -24,7 +24,7 @@ export const updatePlayerSnapshots = (
   const _weaponsSnapshots = weapons.map(([, , , , _s]) => _s);
 
   // TODO: compute mass, weapons
-  doTimes(inventory, ([[, , , , modifiers], equipped]) => {
+  doTimes(inventory, ([[, , , , , modifiers], equipped]) => {
     if (!equipped) return;
     doTimes(modifiers, ([statID, operator, value]) => {
       doTimes(

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Band } from "~/random";
 import { XOGeometry, XOOrientation } from "~/3D";
 import { ActionSchedule } from "~/clock";
+import { Band } from "~/random";
 
 import { Bullet, Ship } from "../ship/types.ts";
 

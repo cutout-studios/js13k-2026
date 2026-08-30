@@ -1,6 +1,6 @@
 import { cos, F32, sin } from "~/alias";
 
-import type { XYZ } from "./types.ts";
+import { repeat } from "~/common";
 import {
   COORDINATE_SIDE_LENGTH,
   X_AXIS,
@@ -9,8 +9,8 @@ import {
   Z_AXIS,
 } from "./constants.ts";
 
+import type { XYZ } from "./types.ts";
 import { normalize } from "./xyz.ts";
-import { repeat } from "~/common";
 
 export const createCoordinates = (
   xAxis: XYZ = X_AXIS,

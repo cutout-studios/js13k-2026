@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { memo } from "~/common";
+import { F32 } from "~/alias";
 
-import type { GPUDataContainer, XOGeometry, XOMaterial } from "../types.ts";
+import { memo } from "~/common";
 import {
   COORDINATES_DATA_GROUP_ID,
   MATERIALS_DATA_GROUP_ID,
 } from "../constants.ts";
 
-import { device } from "./setupDevice.ts";
+import type { GPUDataContainer, XOGeometry, XOMaterial } from "../types.ts";
 import { getRenderPipeline } from "./getRenderPipeline.ts";
+import { device } from "./setupDevice.ts";
 import { coordinatesLayout, materialsLayout } from "./setupDevice.ts";
-import { F32 } from "~/alias";
 
 const _allocateGeometryBuffer = memo(([, vertices]: XOGeometry) => {
   const geometryData = new F32(vertices.flat());

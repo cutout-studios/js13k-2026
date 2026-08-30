@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { doTimes, spliceTable } from "~/common";
 import {
   addXYZ,
   aimObject,
@@ -31,10 +30,11 @@ import {
   XOGeometry,
 } from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
+import { doTimes, spliceTable } from "~/common";
+
+import GameOptions, { BULLET_SPEED } from "../options/module.ts";
 
 import { Bullet, Ship } from "./types.ts";
-
-import { BULLET_SPEED } from "./constants.ts";
 
 export const createBullet = (
   ship: Ship,
@@ -47,28 +47,29 @@ export const createBullet = (
       ,
       ,
       ,
+      optionsIndex,
+    ] = ship,
+    [
+      ,
+      value,
       [
         ,
-        value,
+        ,
+        ,
         [
           ,
           ,
           ,
           [
-            ,
-            ,
-            ,
-            [
-              bulletGeometry = [
-                0.06,
-                createPrism([0.008, 0.008, 0.18], 4),
-              ] as XOGeometry,
-              bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
-            ] = [],
-          ],
+            bulletGeometry = [
+              0.06,
+              createPrism([0.008, 0.008, 0.18], 4),
+            ] as XOGeometry,
+            bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
+          ] = [],
         ],
       ],
-    ] = ship,
+    ] = GameOptions[optionsIndex],
     [[mountCoordinates], localHeading, , , snapshot] = weapons[weaponIndex],
     coordinates = localize(mountCoordinates, shipCoordinates),
     origin = readOrigin(coordinates),

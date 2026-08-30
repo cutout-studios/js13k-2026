@@ -18,38 +18,28 @@ import { _, length, round } from "~/alias";
 import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
+import { WORDS } from "../game/ship/constants.ts";
+
 import { Game } from "../game/types.ts";
-
-import {
-  CORNER,
-  FLEX_COLUMN,
-  FLEX_ROW,
-  JUSTIFY,
-  PADDED_FLEX_ROW,
-} from "../styles.ts";
-
-const FLEX_FILL = { flex: 1 };
-const MIN_WIDTH = (width: number = 200) => ({ ["min-width"]: `${width}px` });
+import { CANTED, CORNER, FLEX, OVERLAY } from "./styles.ts";
 
 const _createMeter = (
   innerText: string,
-  style: object[] = [],
+  style: Partial<CSSStyleProperties>[] = [],
 ): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
-  const meters = [createElement("meter", [FLEX_FILL]) as HTMLMeterElement];
-
-  const element = createElement(
-    "span",
-    [FLEX_ROW, ...style],
-    _,
-    createElement("label", _, { innerText }),
-    ...meters,
-  );
+  const meters = [createElement("meter") as HTMLMeterElement],
+    label = createElement("label", { innerText }),
+    element = createElement(
+      style,
+      label,
+      ...meters,
+    );
 
   return [element, (meterAttributes: [max: number, value: number][]) => {
     while (length(meters) < length(meterAttributes)) {
       meters.push(
         element.appendChild(
-          createElement("meter", [FLEX_FILL]),
+          createElement("meter"),
         ) as HTMLMeterElement,
       );
     }
@@ -63,45 +53,28 @@ const _createMeter = (
   }];
 };
 
-const [fuelMeter, fuelUpdate] = _createMeter("F", [
-    CORNER(false, true),
-    MIN_WIDTH(),
-  ]),
-  [shieldMeter, shieldUpdate] = _createMeter("S", [MIN_WIDTH(350)]),
-  [armorMeter, armorUpdate] = _createMeter("A", [
-    CORNER(true, true),
-    MIN_WIDTH(),
+const [fuelMeter, fuelUpdate] = _createMeter(WORDS[5], [CANTED(), CORNER()]),
+  [shieldMeter, shieldUpdate] = _createMeter(WORDS[17]),
+  [armorMeter, armorUpdate] = _createMeter(WORDS[0], [
+    CANTED(),
+    CORNER(),
   ]);
 
 const distanceCounter = createElement(
-    "span",
-    [CORNER(true)],
+    [CANTED(), CORNER()],
   ),
   waveCounter = createElement(
-    "span",
-    [CORNER()],
+    [CANTED(), CORNER()],
   );
 
 export const hud = createElement(
-  "nav",
-  [FLEX_COLUMN, JUSTIFY("between"), {
-    position: "absolute",
-    inset: 0,
-    ["pointer-events"]: "none",
-  }],
-  _,
+  [FLEX("column"), ...OVERLAY],
   createElement(
-    "header",
-    [PADDED_FLEX_ROW, JUSTIFY()],
-    _,
     fuelMeter,
     shieldMeter,
     armorMeter,
   ),
   createElement(
-    "footer",
-    [PADDED_FLEX_ROW, JUSTIFY()],
-    _,
     distanceCounter,
     waveCounter,
   ),

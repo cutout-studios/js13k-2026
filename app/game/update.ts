@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-import { length, max, min, random } from "~/alias";
-import { doTimes, repeat, SECONDS_TO_MS, spliceTable } from "~/common";
-
-import { rollEnemies } from "./world/enemies.ts";
-import { getWavesInLevel } from "./world/levels.ts";
-import { explosionSound, hitSound } from "./ship/sounds.ts";
-import { createItem } from "./player/items.ts";
-
-import { Game } from "./types.ts";
 import {
   addXYZ,
   adjustObject,
@@ -35,8 +26,16 @@ import {
   XYZ,
   XYZ_LENGTH,
 } from "~/3D";
-import { range } from "~/random";
+import { length, max, min, random } from "~/alias";
 import { createActionSequencer } from "~/clock";
+import { doTimes, repeat, SECONDS_TO_MS, spliceTable } from "~/common";
+import { range } from "~/random";
+
+import { createItem } from "./player/items.ts";
+import { explosionSound, hitSound } from "./ship/sounds.ts";
+import { Game } from "./types.ts";
+import { rollEnemies } from "./world/enemies.ts";
+import { getWavesInLevel } from "./world/levels.ts";
 
 const _resolveCollisions = (
   sourceObjects: XOObject[],
@@ -152,12 +151,12 @@ export const updateGame = (
     spliceTable(
       [ships],
       ships.flatMap(
-        ([[coordinates], , , , damages, snapshot, options], index) => {
+        ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[15]) return [];
           explosionSound(); // TODO: pan based on location
 
           if (random() < snapshot[10]) {
-            const item = createItem(options, progress[0]);
+            const item = createItem(optionsIndex, progress[0]);
             setOrigin(item[0][0], readOrigin(coordinates));
             droppedItems.push(item);
           }

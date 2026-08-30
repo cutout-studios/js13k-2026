@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
 import { createObject, XOOrientation, Z_AXIS } from "~/3D";
+import { NO_OP } from "~/alias";
 import { createActionSequencer } from "~/clock";
+import { doTimes } from "~/common";
 
-import { ColorOptions } from "../options/types.ts";
 import GameOptions from "../options/module.ts";
+import { WEAPON_BASE_PROPERTIES } from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
-
+import { createBullet } from "./bullets.ts";
 import { weaponSound } from "./sounds.ts";
 import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
-import { WEAPON_BASE_PROPERTIES } from "./constants.ts";
-import { NO_OP } from "~/alias";
-import { createBullet } from "./bullets.ts";
 
 export const createWeapon = (
-  [, , [, , , [overrides, schedule, mount = [] as XOOrientation]]]:
-    ColorOptions,
+  optionsIndex: number,
   level = 1,
   weaponIndex = 0,
 ): Weapon => {
-  const snapshot = levelRollOverrides(
-    WEAPON_BASE_PROPERTIES,
-    overrides,
-    level,
-  ) as WeaponSnapshot;
+  const [, , [, , , [overrides, schedule, mount = [] as XOOrientation]]] =
+      GameOptions[optionsIndex],
+    snapshot = levelRollOverrides(
+      WEAPON_BASE_PROPERTIES,
+      overrides,
+      level,
+    ) as WeaponSnapshot;
 
   return [
     createObject(mount),
@@ -64,7 +63,7 @@ export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
     fuelUsed = (damages[1] || 0) + FUEL_PER_SHOT;
 
   // PLACEHOLDER/TODO: fuel consumption
-  if (ship[6] === GameOptions[0] && fuelUsed > shipSnapshot[4]) return;
+  if (ship[6] === 0 && fuelUsed > shipSnapshot[4]) return;
 
   damages[1] = fuelUsed;
   weaponSound(); // TODO: pan based on location

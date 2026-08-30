@@ -15,8 +15,8 @@
  */
 
 import { XOObject } from "~/3D";
-import { Ship } from "../ship/types.ts";
 import { Item } from "../player/types.ts";
+import { Ship } from "../ship/types.ts";
 
 export type EnemyGroup = [
   ships: Ship[],

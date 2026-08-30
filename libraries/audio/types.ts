@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Band } from "~/random";
 import { Schedule } from "~/clock";
+import { Band } from "~/random";
 
 export type SoundDefinition = [buffer: AudioBuffer, schedule: SoundSchedule];
 export type SoundSchedule = Schedule<[knobID: number, value: number | Band]>;

@@ -15,45 +15,28 @@
  */
 
 import { _ } from "~/alias";
-import { doTimes, repeat } from "~/common";
+import { doTimes } from "~/common";
 import { createElement } from "~/dom";
 
-import {
-  BACKGROUND,
-  BORDER,
-  FLEX_CENTER,
-  FLEX_ROW,
-  HIDDEN,
-  INERT,
-} from "../../styles.ts";
-import { PROPERTY_NAMES } from "../../game/ship/constants.ts";
 import { Item } from "../../game/player/types.ts";
+import { PROPERTY_NAMES, WORDS } from "../../game/ship/constants.ts";
+import { BORDER, HIDDEN, INERT, SECONDARY } from "../styles.ts";
 
-const header = createElement("header", [FLEX_ROW, FLEX_CENTER, {
-    padding: ".33rem",
-    background: "white",
-    color: "black",
-  }]),
-  modifiers = createElement("div"),
-  base = createElement("aside", [BACKGROUND, BORDER(), {
-    padding: ".33rem",
-  }]);
+const header = createElement([SECONDARY]),
+  modifiers = createElement(),
+  base = createElement([BORDER]);
 
 export const itemPopover = createElement(
-  "div",
-  [BORDER(2), HIDDEN, INERT, {
+  [BORDER, HIDDEN, INERT, {
     position: "fixed",
-    ["max-width"]: "fit-content",
+    maxWidth: "fit-content",
   }],
-  _,
   header,
   createElement(
-    "section",
-    [BACKGROUND, FLEX_ROW, FLEX_CENTER, {
+    [{
       padding: ".5rem",
       gap: ".7rem",
     }],
-    _,
     modifiers,
     base,
   ),
@@ -62,7 +45,7 @@ export const itemPopover = createElement(
 export const updateItemPopover = (
   [, , _typeID, _name, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
 ) => {
-  header.innerText = `${repeat(_rank, "⭑").join("")} ${_name} ${
+  header.innerText = `${"⭑".repeat(_rank)} ${_name} ${
     ["WING (L)", "WING (R)", "BODY", "ENGINE"][_typeID]
   }`;
 
@@ -71,12 +54,15 @@ export const updateItemPopover = (
     ([id, type, value]) => `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
   ).join("\n");
 
-  base.innerText = `M: ${_baseMass}`;
+  const properties = [WORDS[15], _baseMass];
 
   if (_baseWeapon) {
-    base.innerText += doTimes(
+    doTimes(
       _baseWeapon,
-      (value, index) => `${[" C", "\nR", " D"][index]}: ${value}`,
-    ).join("");
+      (value, index) =>
+        properties.push([WORDS[6], WORDS[11], WORDS[2]][index], value),
+    );
   }
+
+  base.innerText = properties.join(" ");
 };

@@ -16,8 +16,8 @@
 
 import { XOObject } from "~/3D";
 
-import { Resources, Ship } from "../ship/types.ts";
 import { ActionSequencer } from "~/clock";
+import { Resources, Ship } from "../ship/types.ts";
 
 export type Player = [
   ship: Ship,

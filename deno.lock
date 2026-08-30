@@ -1,6 +1,7 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@ayk/lint-import-order@*": "0.1.0",
     "jsr:@cutout/jsx@*": "0.0.4",
     "jsr:@std/fmt@*": "1.0.10",
     "npm:esbuild-minify-templates@*": "0.13.1_esbuild@0.28.1",
@@ -9,6 +10,9 @@
     "npm:wgsl-plus@*": "1.0.1"
   },
   "jsr": {
+    "@ayk/lint-import-order@0.1.0": {
+      "integrity": "be312f8269525055394118ac89d5a12dbb0bdc4a94d0ced4994b1823cc41c393"
+    },
     "@cutout/jsx@0.0.4": {
       "integrity": "93251e25028fc491f1e92c288fe593375bb2885c8dcf3e76a99b4eacb5f5c4b1"
     },

@@ -16,15 +16,14 @@
 
 import { repeat } from "~/common";
 
-import { Player } from "./types.ts";
-import { createShip } from "../ship/module.ts";
-import colorOptions from "../options/module.ts";
-import { Resources } from "../ship/types.ts";
 import { setOrigin } from "../../../libraries/3D/coordinates.ts";
-import { PLAYER_Z_PLANE } from "./constants.ts";
+import { createShip } from "../ship/module.ts";
+import { Resources } from "../ship/types.ts";
 import { ENEMY_Z_PLANE } from "../world/constants.ts";
+import { PLAYER_Z_PLANE } from "./constants.ts";
+import { Player } from "./types.ts";
 
-const ship = createShip(colorOptions[0]);
+const ship = createShip(0);
 
 setOrigin(ship[0][0], [0, 0, -PLAYER_Z_PLANE]);
 

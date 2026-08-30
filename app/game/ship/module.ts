@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { doTimes, repeat } from "~/common";
 import {
   aimObject,
   createObject,
@@ -24,12 +23,13 @@ import {
   XYZ,
 } from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
+import { doTimes, repeat } from "~/common";
 
-import { ColorOptions } from "../options/types.ts";
+import { SHIP_BASE_PROPERTIES } from "../options/module.ts";
+import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
-import { Resources, Ship, ShipSnapshot } from "./types.ts";
 import { updateBullets } from "./bullets.ts";
-import { SHIP_BASE_PROPERTIES } from "./constants.ts";
+import { Resources, Ship, ShipSnapshot } from "./types.ts";
 import { createWeapon } from "./weapons.ts";
 
 export const advanceShip = (ship: Ship, tickLength: number) => {
@@ -38,7 +38,7 @@ export const advanceShip = (ship: Ship, tickLength: number) => {
 };
 
 export const createShip = (
-  options: ColorOptions,
+  optionsIndex: number,
   level = 1,
 ): Ship => {
   const [
@@ -52,14 +52,14 @@ export const createShip = (
         doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
       }]] as ActionSchedule<Ship>,
     ],
-  ] = options;
+  ] = GameOptions[optionsIndex];
 
   return [
     flattenObjects(
       ...shapes.map((args) => createObject(...args, paint(value))),
     ),
     repeat(3, 0) as XYZ,
-    [createWeapon(options, level, 0)],
+    [createWeapon(optionsIndex, level, 0)],
     createActionSequencer(shipSchedule),
     repeat(5, 0) as Resources,
     levelRollOverrides(
@@ -67,7 +67,7 @@ export const createShip = (
       shipOverrides,
       level,
     ) as ShipSnapshot,
-    options,
+    optionsIndex,
   ];
 };
 

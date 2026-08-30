@@ -14,35 +14,34 @@
  * limitations under the License.
  */
 
-import { oneOf } from "~/random";
+import { createCamera, createRenderTarget, GPURenderTarget } from "~/3D";
 import { _, preventDefault } from "~/alias";
+import { createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
 import { createElement } from "~/dom";
-import { createCamera, createRenderTarget, GPURenderTarget } from "~/3D";
 
-import {
-  BACKGROUND,
-  BLOCK,
-  BORDER,
-  FLEX_CENTER,
-  FLEX_COLUMN,
-  FLEX_ROW,
-  HIDDEN,
-  JUSTIFY,
-  PADDED,
-  POINTER,
-  SQUARE,
-} from "../../styles.ts";
+import { oneOf } from "~/random";
 
-import { portrait } from "../portrait.ts";
 import GameOptions from "../../game/options/module.ts";
-import { Game } from "../../game/types.ts";
-import { itemPopover, updateItemPopover } from "./itemPopover.ts";
-import { createActionSequencer } from "~/clock";
 import { Item } from "../../game/player/types.ts";
+import { WORDS } from "../../game/ship/constants.ts";
+import { Game } from "../../game/types.ts";
+import { portrait } from "../portrait.ts";
+import {
+  BORDER,
+  CORNER,
+  FLEX,
+  HIDDEN,
+  INERT,
+  POINTER,
+  SECONDARY,
+  SQUARE,
+} from "../styles.ts";
+import { itemPopover, updateItemPopover } from "./itemPopover.ts";
+
+let hoveredCellIndex = -1, restorePreviewItem: Item | undefined;
 
 const CELL_SIZE = SQUARE(128),
-  FORM_COLUMN = [FLEX_COLUMN, FLEX_CENTER, JUSTIFY(), PADDED, { flex: 1 }],
   EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
   WIN_COLLECTION_VERTICIES = [
@@ -52,14 +51,11 @@ const CELL_SIZE = SQUARE(128),
     ["70%", "100%"],
     ["100%", "50%"],
     ["70%", "0%"],
-  ];
-
-let hoveredCellIndex = -1;
-
-const createCellWindow = (index: number) =>
+  ],
+  createCellWindow = (index: number) =>
     createElement(
       "canvas",
-      [CELL_SIZE, BORDER(2), POINTER],
+      [CELL_SIZE, POINTER],
       {
         ...CELL_SIZE,
         onmouseenter: () => hoveredCellIndex = index,
@@ -69,12 +65,11 @@ const createCellWindow = (index: number) =>
   createFormButton = (value: string) =>
     createElement(
       "button",
-      [BACKGROUND, BORDER(), PADDED, POINTER],
+      [POINTER],
       { value },
       value,
-    );
-
-const canvasCells = doTimes(18, createCellWindow),
+    ),
+  canvasCells = doTimes(18, createCellWindow),
   menuCamera = createCamera(),
   [
     patronCanvasCell,
@@ -88,117 +83,103 @@ const canvasCells = doTimes(18, createCellWindow),
   winCollectionElements = doTimes(
     WIN_COLLECTION_VERTICIES,
     ([left, top]) =>
-      createElement("span", [BORDER(2), BACKGROUND, SQUARE("1rem"), {
-        ["border-radius"]: "100%",
+      createElement("span", [BORDER, INERT, SQUARE(16), CORNER(top, left), {
+        borderRadius: "100%",
         transform: "translate(-50%,-50%)",
-        ["pointer-events"]: "none",
-        position: "absolute",
-        top,
-        left,
       }]),
-  );
+  ),
+  form = createElement(
+    "form",
+    [SQUARE()],
+    {
+      onsubmit: (event: SubmitEvent) => {
+        preventDefault(event);
 
-const form = createElement(
-  "form",
-  [SQUARE(), FLEX_ROW],
-  {
-    onsubmit: (event: SubmitEvent) => {
-      preventDefault(event);
+        const { target, submitter } = event;
 
-      const { target, submitter } = event;
-
-      dispatchEvent(
-        new CustomEvent((submitter as HTMLButtonElement).value, {
-          detail: new FormData(target as HTMLFormElement).getAll("i").map(
-            Number,
-          ),
-        }),
-      );
-      (target as HTMLFormElement).reset();
-    },
-  },
-  createElement(
-    "section",
-    FORM_COLUMN,
-    _,
-    createElement(
-      "div",
-      [{
-        display: "grid",
-        grid: "repeat(4, 1fr) / repeat(3, 1fr)",
-        gap: "0.33rem",
-      }],
-      _,
-      ...doTimes(12, (value: number) =>
-        createElement(
-          "label",
-          [BLOCK],
-          _,
-          createElement("input", [HIDDEN], {
-            type: "checkbox",
-            name: "i",
-            value,
+        dispatchEvent(
+          new CustomEvent((submitter as HTMLButtonElement).value, {
+            detail: new FormData(target as HTMLFormElement).getAll("i").map(
+              Number,
+            ),
           }),
-          inventoryCanvasCells[value],
-        )),
-    ),
-  ),
-  createElement(
-    "section",
-    FORM_COLUMN,
-    _,
+        );
+        (target as HTMLFormElement).reset();
+      },
+    },
     createElement(
-      "div",
-      [FLEX_COLUMN],
-      _,
-      createElement("span", [FLEX_ROW, FLEX_CENTER], _, bodyCanvasCell),
       createElement(
-        "span",
-        [FLEX_ROW, FLEX_CENTER],
-        _,
-        leftWingCanvasCell,
-        rightWingCanvasCell,
-      ),
-      createElement("span", [FLEX_ROW, FLEX_CENTER], _, engineCanvasCell),
-    ),
-    createFormButton("EQUIP"),
-  ),
-  createElement(
-    "section",
-    FORM_COLUMN,
-    _,
-    patronCanvasCell,
-    createElement(
-      "div",
-      [BLOCK],
-      _,
-      createElement(
-        "div",
-        [FLEX_ROW, FLEX_CENTER, {
-          width: +CELL_SIZE.width * 2.5,
-          height: +CELL_SIZE.height * 2,
-          cursor: "help",
-          background: "white",
-          ["clip-path"]: `polygon(${
-            doTimes(WIN_COLLECTION_VERTICIES, (coords) => coords.join(" "))
-              .join()
-          })`,
+        [{
+          display: "grid",
+          grid: "repeat(4, 1fr) / repeat(3, 1fr)",
+          gap: "0.33rem",
         }],
-        _,
-        combinationCanvasCell,
+        ...doTimes(12, (value: number) =>
+          createElement(
+            "label",
+            createElement("input", [HIDDEN], {
+              type: "checkbox",
+              name: "i",
+              value,
+            }),
+            inventoryCanvasCells[value],
+          )),
       ),
-      ...winCollectionElements,
     ),
-    createFormButton("RESTORE"),
-  ),
-) as HTMLFormElement;
+    createElement(
+      createElement(
+        [FLEX("column")],
+        createElement(bodyCanvasCell),
+        createElement(
+          leftWingCanvasCell,
+          rightWingCanvasCell,
+        ),
+        createElement(engineCanvasCell),
+      ),
+      createFormButton(WORDS[26]),
+    ),
+    createElement(
+      "section",
+      patronCanvasCell,
+      createElement(
+        createElement(
+          [SECONDARY, SQUARE(+CELL_SIZE.width! * 2.5, +CELL_SIZE.height! * 2), {
+            cursor: "help",
+            clipPath: `polygon(${
+              doTimes(WIN_COLLECTION_VERTICIES, (coords) => coords.join(" "))
+                .join()
+            })`,
+          }],
+          combinationCanvasCell,
+        ),
+        ...winCollectionElements,
+      ),
+      createFormButton(WORDS[9]),
+    ),
+  ) as HTMLFormElement,
+  restorePreviewSequence = createActionSequencer<
+    [item: Item, equipped?: boolean | undefined][]
+  >([
+    [(inventory) => {
+      restorePreviewItem = oneOf(doTimes(
+        new FormData(form).getAll("i") as string[],
+        (value: string) => inventory[+value][0],
+      ));
+    }],
+    [(_, tickLength) => {
+      restorePreviewItem?.[1](restorePreviewItem, tickLength);
+      menuCamera(
+        restorePreviewItem ? [[restorePreviewItem[0]]] : [],
+        renderTargets[1],
+      );
+    }, 0.5],
+  ]);
 
 export const menu = createElement(
   "dialog",
-  [SQUARE(), BACKGROUND, {
-    margin: "auto",
-    ["max-width"]: "min-content",
-    ["max-height"]: +CELL_SIZE.height * 5,
+  [SQUARE(), {
+    maxWidth: "min-content",
+    maxHeight: String(+CELL_SIZE.height! * 5),
   }],
   {
     oncancel: preventDefault,
@@ -228,25 +209,6 @@ export const openMenu = ([[, , inventory]]: Game) => {
     }
   });
 };
-
-let restorePreviewItem: Item | undefined;
-const restorePreviewSequence = createActionSequencer<
-  [item: Item, equipped?: boolean | undefined][]
->([
-  [(inventory) => {
-    restorePreviewItem = oneOf(doTimes(
-      new FormData(form).getAll("i") as string[],
-      (value: string) => inventory[+value][0],
-    ));
-  }],
-  [(_, tickLength) => {
-    restorePreviewItem?.[1](restorePreviewItem, tickLength);
-    menuCamera(
-      restorePreviewItem ? [[restorePreviewItem[0]]] : [],
-      renderTargets[1],
-    );
-  }, 0.5],
-]);
 
 export const updateMenu = (
   [[, , inventory], [, , , winCollection]]: Game,

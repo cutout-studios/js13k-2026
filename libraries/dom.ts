@@ -15,27 +15,33 @@
  */
 
 import { document } from "~/alias";
-
-export const DEFAULT_STYLES = {
-  ["font-family"]: "Menlo,ui-monospace",
-  ["font-size"]: "1rem",
-  color: "#FFF",
-};
+import { doTimes } from "~/common";
+import { DEFAULT } from "../app/elements/styles.ts";
 
 export const createElement = (
-  tag: string,
-  styles: Array<object> = [DEFAULT_STYLES],
-  attributes: object = {},
-  ...children: Array<HTMLElement | string>
+  ...parameters:
+    (string | Partial<CSSStyleProperties>[] | Record<string, unknown> | Node)[]
 ) => {
-  const element = document.createElement(tag);
-  Object.assign(element, {
-    ...attributes,
-    style: Object.entries(Object.assign({}, ...styles)).reduce(
-      (result, [key, value]) => result + `${key}:${value};`,
-      "",
-    ),
+  const children = [] as Node[];
+
+  let tag = "div", styles = DEFAULT(), attributes = {};
+  doTimes(parameters, (param) => {
+    if (typeof param === "string") return tag = param;
+    if (param instanceof Node) return children.push(param);
+    if (Array.isArray(param)) {
+      return styles = [...styles, ...param] as CSSStyleProperties[];
+    }
+
+    attributes = { ...attributes, ...param };
   });
-  element.append(...children.flat());
+
+  const element = document.createElement(tag);
+  Object.assign(element, attributes);
+  Object.assign(element.style, ...styles);
+  element.append(...children);
+
   return element;
 };
+
+export const createTextNode = (text: string): Node =>
+  document.createTextNode(text);

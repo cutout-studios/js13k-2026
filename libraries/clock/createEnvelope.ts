@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Action } from "./types.ts";
 import { approachFactory } from "./approachFactory.ts";
 import { createActionSequencer } from "./createActionSequencer.ts";
+import { Action } from "./types.ts";
 
 type Envelope = (tickLength: number, released?: boolean) => number;
 

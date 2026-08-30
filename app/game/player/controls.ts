@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
+import { adjustObject, scaleXYZ, XYZ, XYZ_LENGTH } from "~/3D";
 import { hypot, max } from "~/alias";
+import { ActionSchedule, approachFactory, createEnvelope } from "~/clock";
 import { doTimes } from "~/common";
 import { keyboard, pointer } from "~/controller";
-import { adjustObject, scaleXYZ, XYZ, XYZ_LENGTH } from "~/3D";
-import { ActionSchedule, approachFactory, createEnvelope } from "~/clock";
 
 import { mapClientXY } from "../../elements/mainCanvas.ts";
 
-import { Ship, Weapon } from "../ship/types.ts";
+import { advanceShip } from "../ship/module.ts";
 
+import { Ship, Weapon } from "../ship/types.ts";
 import {
   STRAFE_ATTACK_TIME,
   STRAFE_KEYS,
   STRAFE_RELEASE_TIME,
 } from "./constants.ts";
-import { advanceShip } from "../ship/module.ts";
 
 const strafeEnvelopes = doTimes(
   STRAFE_KEYS,

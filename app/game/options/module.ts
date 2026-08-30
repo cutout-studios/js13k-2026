@@ -13,10 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { _ } from "~/alias";
 import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
+import { _ } from "~/alias";
 import { controlSchedule } from "../player/controls.ts";
+import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
+
+export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
+  2, // Armor
+  0, // Armor Save
+  1, // Damage Taken
+  0, // Damage Taken From Fuel
+  20, // Fuel
+  0.1, // Fuel Cost
+  0, // Fuel Eject Delay
+  7, // Fuel Regen
+  2, // Fuel Segments
+  1, // Item Mixture Quality
+  1, // Item Drop Rate
+  1.2, // Level Quality
+  0, // Lowest Resource
+  1, // Mass
+  0, // Resolve
+  40, // Shield
+  5, // Shield Regen
+  1, // Spin Damage
+  0.1, // Spin Handling
+  1.5, // Spin Time
+  2.4, // Strafe Speed
+  0.8, // Tracking Speed
+];
+
+export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
+  1, // Bullet Count
+  0.05, // Bullet Crit Chance
+  1, // Bullet Crit Damage
+  1, // Bullet Damage
+  1, // Bullet Lifetime
+  8, // Bullet Rate
+  1, // Bullet Spread
+];
+
+export const BULLET_SPEED = 12;
 
 const GREEN_PRONG = [
     0.12,
@@ -29,15 +67,15 @@ export default [
     "WHITE",
     0xFFFFFF,
     [
-      [[[_, [Z_AXIS, -1.57]], [
-        0.44,
-        createPyramid([0.05, 0.15, 0.27], 6),
-      ]], [[[0.2, 0, -0.22], [[0, 1, 0], 1.9]], [
+      [[[[0.2, 0, -0.22], [[0, 1, 0], 1.9]], [
         0.3,
         createPyramid([0.1, 0.02, 0.2], 4),
       ]], [[[-0.2, 0, -0.22], [[0, 1, 0], -1.9]], [
         0.3,
         createPyramid([0.1, 0.02, 0.2], 4),
+      ]], [[_, [Z_AXIS, -1.57]], [
+        0.44,
+        createPyramid([0.05, 0.15, 0.27], 6),
       ]], [[[0, 0, -0.28], _], [
         0.17,
         createPrism([0.03, 0.03, 0.04], 8),

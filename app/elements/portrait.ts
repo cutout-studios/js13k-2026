@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { length } from "~/alias";
 import {
   createObject,
   createPaintMaterialWithPalette as paint,
   XYZ,
 } from "~/3D";
+import { length } from "~/alias";
 import { doTimes, repeat } from "~/common";
 
 const PORTRAIT_OFFSET = 81,

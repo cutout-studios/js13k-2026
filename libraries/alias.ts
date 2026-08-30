@@ -23,8 +23,6 @@ export const {
   min,
   max,
   atan,
-  atan2,
-  E,
   PI,
   sin,
   sqrt,
