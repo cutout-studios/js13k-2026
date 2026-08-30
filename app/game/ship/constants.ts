@@ -32,7 +32,7 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   7, // Fuel Regen
   2, // Fuel Segments
   1, // Item Mixture Quality
-  0.05, // Item Drop Rate
+  1, // Item Drop Rate
   1.2, // Level Quality
   0, // Lowest Resource
   1, // Mass

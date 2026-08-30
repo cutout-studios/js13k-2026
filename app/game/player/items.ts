@@ -47,8 +47,8 @@ const [[, , [ITEM_GEOMETRY]]] = GameOptions;
 
 // TODO: generalize
 const _tempMeanderActionFactory = (
-  driftAmount = 0.6,
-  driftSpeed = 1.2,
+  driftAmount = 0.0005,
+  driftSpeed = 0.25,
 ): Action<[XOObject]> => {
   const phase = random() * TAU;
 
@@ -63,7 +63,7 @@ const _tempMeanderActionFactory = (
 };
 
 export const createItem = (
-  [, value, , [[
+  [name, value, , [[
     baseMass,
     baseModifierCount,
     baseBulletCount,
@@ -95,6 +95,7 @@ export const createItem = (
       },
     ]]),
     typeID,
+    name,
     rank,
     doTimes((typeID <= 1 ? rank - 1 : rank) + baseModifierCount, () => {
       const [, propertyID, type, valueBand] = drawCard(modifierDeck);

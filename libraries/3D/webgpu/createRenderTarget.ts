@@ -51,34 +51,31 @@ export const createRenderTarget = (
     canvas.clientHeight * devicePixelRatio,
   ];
 
-  const [context, depth] = [
-    _getCanvasContext(canvas),
-    _getCanvasDepth(canvas),
-  ];
-
-  const descriptor: GPURenderPassDescriptor = {
-    colorAttachments: [ // Main, user-facing pixels
-      {
-        view: context.getCurrentTexture().createView(),
-        clearValue: [0, 0, 0, 1],
-        loadOp: "clear",
-        storeOp: "store",
+  const context = _getCanvasContext(canvas),
+    depth = _getCanvasDepth(canvas),
+    colorAttachment = {
+      clearValue: [0, 0, 0, 1],
+      loadOp: "clear",
+      storeOp: "store", // 'view' is set in the render call
+    } as unknown as GPURenderPassColorAttachment,
+    descriptor: GPURenderPassDescriptor = {
+      colorAttachments: [colorAttachment],
+      depthStencilAttachment: {
+        view: depth,
+        depthClearValue: 1,
+        depthLoadOp: "clear",
+        depthStoreOp: "store",
       },
-    ],
-    depthStencilAttachment: { // Depth computation pixels
-      view: depth,
-      depthClearValue: 1,
-      depthLoadOp: "clear",
-      depthStoreOp: "store",
-    },
-  };
+    };
 
   return [
     canvas.width / canvas.height,
     descriptor,
     (action) => {
-      const encoder = device.createCommandEncoder();
-      const pass = encoder.beginRenderPass(descriptor);
+      colorAttachment.view = context.getCurrentTexture().createView();
+
+      const encoder = device.createCommandEncoder(),
+        pass = encoder.beginRenderPass(descriptor);
 
       action(pass);
 

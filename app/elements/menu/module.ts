@@ -104,11 +104,12 @@ export const menu = createElement(
   }],
   {
     oncancel: preventDefault,
-    onmouseover: ({ clientX, clientY }: MouseEvent) => {
-      const { width, height, top, left } = itemPopover.getBoundingClientRect();
-
-      itemPopover.style.top = (clientY - (top < height ? height : 0)) + "px";
-      itemPopover.style.left = (clientX - (left < width ? width : 0)) + "px";
+    onmousemove: ({ clientX, clientY }: MouseEvent) => {
+      const { width, height } = itemPopover.getBoundingClientRect();
+      itemPopover.style.top =
+        (clientY + height > innerHeight ? clientY - height : clientY) + "px";
+      itemPopover.style.left =
+        (clientX + width > innerWidth ? clientX - width : clientX) + "px";
     },
   },
   createElement(
@@ -215,7 +216,7 @@ export const openMenu = ([[, , inventory]]: Game) => {
   doTimes(inventory, ([item, equipped], index) => {
     menuCamera([[item[0]]], renderTargets[index + INVENTORY_OFFSET]);
     if (equipped) {
-      menuCamera([[item[0]]], renderTargets[item[3] + EQUIP_OFFSET]);
+      menuCamera([[item[0]]], renderTargets[item[2] + EQUIP_OFFSET]);
     }
   });
 };
@@ -241,5 +242,5 @@ export const updateMenu = (
 
   menuCamera([[item[0]]], renderTargets[hoveredCellIndex]);
 
-  if (equipped) menuCamera([[item[0]]], renderTargets[item[3] + EQUIP_OFFSET]);
+  if (equipped) menuCamera([[item[0]]], renderTargets[item[2] + EQUIP_OFFSET]);
 };

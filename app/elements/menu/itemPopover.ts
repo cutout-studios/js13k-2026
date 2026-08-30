@@ -60,9 +60,9 @@ export const itemPopover = createElement(
 );
 
 export const updateItemPopover = (
-  [, , _typeID, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
-) => { // TODO: Color Name
-  header.innerText = `${repeat(_rank, "⭑").join("")} ${
+  [, , _typeID, _name, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
+) => {
+  header.innerText = `${repeat(_rank, "⭑").join("")} ${_name} ${
     ["WING (L)", "WING (R)", "BODY", "ENGINE"][_typeID]
   }`;
 
@@ -71,12 +71,12 @@ export const updateItemPopover = (
     ([id, type, value]) => `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
   ).join("\n");
 
-  base.textContent = `M: ${_baseMass}`;
+  base.innerText = `M: ${_baseMass}`;
 
   if (_baseWeapon) {
-    base.textContent += doTimes(
+    base.innerText += doTimes(
       _baseWeapon,
-      (value, index) => `${["C", "R", "D"][index]}: ${value}`,
-    ).join("\n");
+      (value, index) => `${[" C", "\nR", " D"][index]}: ${value}`,
+    ).join("");
   }
 };

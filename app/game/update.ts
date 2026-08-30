@@ -21,11 +21,11 @@ import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
 import { createItem } from "./player/items.ts";
-import GameOptions from "./options/module.ts";
 
 import { Game } from "./types.ts";
 import {
   addXYZ,
+  adjustObject,
   getCollisionPairs,
   readOrigin,
   scaleXYZ,
@@ -36,6 +36,7 @@ import {
   XYZ_LENGTH,
 } from "~/3D";
 import { range } from "~/random";
+import { createActionSequencer } from "~/clock";
 
 const _resolveCollisions = (
   sourceObjects: XOObject[],
@@ -130,7 +131,19 @@ export const updateGame = (
     [droppedItems],
     _resolveCollisions(droppedItems.map(([object]) => object), [
       playerShipObject,
-    ], (itemIndex) => inventory.push([droppedItems[itemIndex]])),
+    ], (itemIndex) => {
+      setOrigin(droppedItems[itemIndex][0][0], [0, 0, -1.5]);
+      droppedItems[itemIndex][1] = createActionSequencer([[
+        (item, tickLength) => {
+          adjustObject(item[0], [undefined, [
+            repeat(3, tickLength) as XYZ,
+            tickLength,
+          ]]);
+        },
+      ]]);
+
+      inventory.push([droppedItems[itemIndex]]);
+    }),
   );
 
   // clean up dead enemies
@@ -138,18 +151,20 @@ export const updateGame = (
   doTimes(activeEnemyGroups, ([ships]) => {
     spliceTable(
       [ships],
-      ships.flatMap(([[coordinates], , , , damages, snapshot], index) => {
-        if (damages[0] < snapshot[15]) return [];
-        explosionSound(); // TODO: pan based on location
+      ships.flatMap(
+        ([[coordinates], , , , damages, snapshot, options], index) => {
+          if (damages[0] < snapshot[15]) return [];
+          explosionSound(); // TODO: pan based on location
 
-        if (random() < snapshot[10]) {
-          const item = createItem(GameOptions[1], progress[0]);
-          setOrigin(item[0][0], readOrigin(coordinates));
-          droppedItems.push(item);
-        }
+          if (random() < snapshot[10]) {
+            const item = createItem(options, progress[0]);
+            setOrigin(item[0][0], readOrigin(coordinates));
+            droppedItems.push(item);
+          }
 
-        return [index];
-      }),
+          return [index];
+        },
+      ),
     );
   });
 
