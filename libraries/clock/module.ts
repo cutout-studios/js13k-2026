@@ -19,4 +19,9 @@ export { createActionSequencer } from "./createActionSequencer.ts";
 export { createEnvelope } from "./createEnvelope.ts";
 export { startClock } from "./startClock.ts";
 
-export type { Action, ActionSchedule, ActionSequencer } from "./types.ts";
+export type {
+  Action,
+  ActionSchedule,
+  ActionSequencer,
+  Schedule,
+} from "./types.ts";

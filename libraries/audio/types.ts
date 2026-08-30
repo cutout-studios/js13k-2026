@@ -15,15 +15,7 @@
  */
 
 import { Band } from "~/random";
-import { ActionSchedule } from "~/clock";
+import { Schedule } from "~/clock";
 
-export type SoundChannels = [velocity: number, rate: number, pan: number];
-
-export type SoundDefinition = [
-  buffer: AudioBuffer,
-  frequencyRange: Band,
-  duration: number,
-  delay?: number,
-  velocity?: number,
-  schedule?: ActionSchedule<SoundChannels>,
-];
+export type SoundDefinition = [buffer: AudioBuffer, schedule: SoundSchedule];
+export type SoundSchedule = Schedule<[knobID: number, value: number | Band]>;

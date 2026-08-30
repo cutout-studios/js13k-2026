@@ -14,61 +14,38 @@
  * limitations under the License.
  */
 
-import { max } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
 
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
-import { SoundChannels, SoundDefinition } from "./types.ts";
+import { SoundDefinition } from "./types.ts";
 
 export const createSound = (...definitions: SoundDefinition[]) => {
   const groupBus = api.createDynamicsCompressor();
   groupBus.connect(masterBus);
 
   return (pan = 0) =>
-    doTimes(definitions, (
-      [
-        buffer,
-        [lo, hi],
-        duration,
-        delay = 0,
-        velocity = 1,
-        schedule,
-      ],
-    ) => {
-      const startTime = api.currentTime + delay,
-        source = new AudioBufferSourceNode(api, { buffer, loop: true }),
+    doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
+      const source = new AudioBufferSourceNode(api, { buffer, loop: true }),
         ampKnob = api.createGain(),
-        panKnob = api.createStereoPanner();
+        panKnob = api.createStereoPanner(),
+        knobs = [ampKnob.gain, source.playbackRate, panKnob.pan];
 
+      let time = api.currentTime;
+      ampKnob.gain.setValueAtTime(0, time);
+      panKnob.pan.setValueAtTime(pan, time);
       source.connect(ampKnob).connect(panKnob).connect(groupBus);
+      source.start(time);
 
-      const knobs = [ampKnob.gain, source.playbackRate, panKnob.pan];
-      const state: SoundChannels = [
-        velocity,
-        range(lo, hi) / 440,
-        pan,
-      ];
-
-      doTimes(knobs, (knob, index) =>
-        knob.setValueAtTime(index === 0 ? 0 : state[index], startTime));
-
-      let elapsedTime = startTime;
-      ampKnob.gain.linearRampToValueAtTime(
-        0,
-        max(elapsedTime, startTime + duration),
-      );
-
-      schedule && doTimes(schedule, ([action, timing = 0]) => {
-        elapsedTime += timing;
-        action(state, timing, elapsedTime, duration);
-
-        doTimes(state, (value, i) =>
-          knobs[i].linearRampToValueAtTime(value, elapsedTime));
+      doTimes(schedule, ([[knobID, value], duration = 0]) => {
+        time += duration;
+        knobs[knobID].linearRampToValueAtTime(
+          typeof value === "number" ? value : range(...value),
+          time,
+        );
       });
 
-      source.start(startTime);
-      source.stop(startTime + duration);
+      source.stop(time);
     });
 };

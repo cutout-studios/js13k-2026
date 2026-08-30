@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
+export type Schedule<T> = [value: T, timing?: number][];
+
 export type Action<T> = (
   payload: T,
   tickLength: number,
   elapsedTime: number,
-  duration: number,
+  timing: number,
 ) => boolean | void;
 
-export type ActionSchedule<T> = [
-  action: Action<T>,
-  duration?: number,
-][];
+export type ActionSchedule<T> = Schedule<Action<T>>;
 
 export type ActionSequencer<T> = (
   payload: T,
