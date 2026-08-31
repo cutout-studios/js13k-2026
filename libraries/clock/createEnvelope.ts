@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { doTimes } from "~/common";
 import { approachFactory } from "./approachFactory.ts";
 import { createActionSequencer } from "./createActionSequencer.ts";
 import { Action } from "./types.ts";
@@ -24,12 +25,13 @@ export const createEnvelope = (
   attackTime: number,
   releaseTime: number,
 ): Envelope => {
-  const [attackSequence, releaseSequence] = ([[
-    [approachFactory(), attackTime],
-  ], [[
-    approachFactory(0),
-    releaseTime,
-  ]]] as [Action<{ value: number }>, number][][]).map(
+  const [attackSequence, releaseSequence] = doTimes(
+    [[
+      [approachFactory(), attackTime],
+    ], [[
+      approachFactory(0),
+      releaseTime,
+    ]]] as [Action<{ value: number }>, number][][],
     (schedule) => createActionSequencer(schedule),
   );
 

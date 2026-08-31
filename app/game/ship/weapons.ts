@@ -63,7 +63,7 @@ export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
     fuelUsed = (damages[1] || 0) + FUEL_PER_SHOT;
 
   // PLACEHOLDER/TODO: fuel consumption
-  if (ship[6] === 0 && fuelUsed > shipSnapshot[4]) return;
+  if (ship[6] == 0 && fuelUsed > shipSnapshot[4]) return;
 
   damages[1] = fuelUsed;
   weaponSound(); // TODO: pan based on location

@@ -28,11 +28,19 @@ import {
 } from "~/3D";
 import { length, max, min, random } from "~/alias";
 import { createActionSequencer } from "~/clock";
-import { doTimes, repeat, SECONDS_TO_MS, spliceTable } from "~/common";
+import {
+  doTimes,
+  flat,
+  flatDoTimes,
+  repeat,
+  SECONDS_TO_MS,
+  spliceTable,
+} from "~/common";
 import { range } from "~/random";
 
 import { createItem } from "./player/items.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
+import { Ship } from "./ship/types.ts";
 import { Game } from "./types.ts";
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
@@ -64,7 +72,7 @@ export const updateGame = (
   const [activeEnemyGroups, droppedItems, progress] = world,
     [playerShip, , inventory] = player,
     [playerShipObject, , playerWeapons, , damage, _snapshot] = playerShip,
-    enemyShips = activeEnemyGroups.flatMap(([ships]) => ships),
+    enemyShips = flatDoTimes(activeEnemyGroups, ([ships]) => ships) as Ship[],
     playerOrigin = readOrigin(playerShipObject[0]);
 
   // PLACEHOLDER/TODO: aim enemies at the player
@@ -84,7 +92,7 @@ export const updateGame = (
   });
 
   // -- update everything in the game
-  doTimes([playerShip, ...enemyShips], (ship) => ship[3](ship, tickLength));
+  doTimes(flat([playerShip], enemyShips), (ship) => ship[3](ship, tickLength));
   doTimes(droppedItems, (drop) => drop[1](drop, tickLength));
 
   // -- handle collisions
@@ -95,7 +103,7 @@ export const updateGame = (
         bullets,
         _resolveCollisions(
           bullets[1],
-          enemyShips.map(([object]) => object),
+          doTimes(enemyShips, ([object]) => object),
           (_, shipIndex) => {
             hitSound(); // TODO: pan based on location
             enemyShips[shipIndex][4][0] += random() < critChance
@@ -150,7 +158,8 @@ export const updateGame = (
   doTimes(activeEnemyGroups, ([ships]) => {
     spliceTable(
       [ships],
-      ships.flatMap(
+      flatDoTimes(
+        ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[15]) return [];
           explosionSound(); // TODO: pan based on location
@@ -170,7 +179,10 @@ export const updateGame = (
   // clean up dead enemy groups
   spliceTable(
     [activeEnemyGroups],
-    activeEnemyGroups.flatMap(([ships], index) => length(ships) ? [] : [index]),
+    flatDoTimes(
+      activeEnemyGroups,
+      ([ships], index) => length(ships) ? [] : [index],
+    ),
   );
 
   // -- update player resources

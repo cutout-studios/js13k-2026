@@ -55,7 +55,7 @@ const _drawEnemyGroup = (
   const count = round(levelRoll(countBand, level)),
     spawnQuadrantSize = min(
       3.5,
-      (max(...shapes.map(([, [scale]]) => scale)) * count *
+      (max(...doTimes(shapes, ([, [scale]]) => scale)) * count *
         ENEMY_PLACEMENT_SPREAD) / 2,
     );
 
@@ -73,6 +73,6 @@ const _drawEnemyGroup = (
 
   return [
     ships,
-    ships.map(([object]) => object),
+    doTimes(ships, ([object]) => object),
   ];
 };

@@ -23,7 +23,7 @@ import {
   XYZ,
 } from "~/3D";
 import { ActionSchedule, createActionSequencer } from "~/clock";
-import { doTimes, repeat } from "~/common";
+import { doTimes, flat, repeat } from "~/common";
 
 import { SHIP_BASE_PROPERTIES } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
@@ -73,7 +73,8 @@ export const createShip = (
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,
-): XOObject[][] => [
-  [shipObject],
-  ...weapons.map(([, , [, bullets]]) => bullets),
-];
+): XOObject[][] =>
+  flat(
+    [[shipObject]],
+    doTimes(weapons, ([, , [, bullets]]) => bullets),
+  );

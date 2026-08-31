@@ -15,11 +15,10 @@
  */
 
 import { createCamera, createRenderTarget, GPURenderTarget } from "~/3D";
-import { _, preventDefault } from "~/alias";
+import { _, join, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
-import { doTimes } from "~/common";
-import { createElement } from "~/dom";
-
+import { doTimes, flat, repeat } from "~/common";
+import { createElement, createTextNode } from "~/dom";
 import { oneOf } from "~/random";
 
 import GameOptions from "../../game/options/module.ts";
@@ -29,35 +28,38 @@ import { Game } from "../../game/types.ts";
 import { portrait } from "../portrait.ts";
 import {
   BORDER,
-  CORNER,
   FLEX,
+  FULL_PERCENT,
+  HALF_PERCENT,
   HIDDEN,
   INERT,
+  percent,
   POINTER,
+  px,
+  rem,
   SECONDARY,
   SQUARE,
 } from "../styles.ts";
+
 import { itemPopover, updateItemPopover } from "./itemPopover.ts";
 
 let hoveredCellIndex = -1, restorePreviewItem: Item | undefined;
 
-const CELL_SIZE = SQUARE(128),
+const CELL_SIDE = 128,
+  CELL_SIZE = SQUARE(px(CELL_SIDE)),
   EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
-  WIN_COLLECTION_VERTICIES = [
-    ["30%", "0%"],
-    ["0%", "50%"],
-    ["30%", "100%"],
-    ["70%", "100%"],
-    ["100%", "50%"],
-    ["70%", "0%"],
-  ],
+  _HALF_HEX = [[0, 50], [30, 100], [70, 100]],
+  WIN_COLLECTION_VERTICIES = flat(
+    doTimes(_HALF_HEX, ([x, y]) => [percent(x), percent(y)]),
+    doTimes(_HALF_HEX, ([x, y]) => [percent(100 - x), percent(100 - y)]),
+  ),
   createCellWindow = (index: number) =>
     createElement(
       "canvas",
       [CELL_SIZE, POINTER],
+      CELL_SIZE,
       {
-        ...CELL_SIZE,
         onmouseenter: () => hoveredCellIndex = index,
         onmouseleave: () => hoveredCellIndex = -1,
       },
@@ -67,7 +69,7 @@ const CELL_SIZE = SQUARE(128),
       "button",
       [POINTER],
       { value },
-      value,
+      createTextNode(value),
     ),
   canvasCells = doTimes(18, createCellWindow),
   menuCamera = createCamera(),
@@ -83,9 +85,12 @@ const CELL_SIZE = SQUARE(128),
   winCollectionElements = doTimes(
     WIN_COLLECTION_VERTICIES,
     ([left, top]) =>
-      createElement("span", [BORDER, INERT, SQUARE(16), CORNER(top, left), {
-        borderRadius: "100%",
-        transform: "translate(-50%,-50%)",
+      createElement([BORDER, INERT, SQUARE(px(16)), {
+        position: "absolute",
+        top,
+        left,
+        borderRadius: FULL_PERCENT,
+        transform: `translate(${join(repeat(2, "-" + HALF_PERCENT))}`,
       }]),
   ),
   form = createElement(
@@ -99,9 +104,7 @@ const CELL_SIZE = SQUARE(128),
 
         dispatchEvent(
           new CustomEvent((submitter as HTMLButtonElement).value, {
-            detail: new FormData(target as HTMLFormElement).getAll("i").map(
-              Number,
-            ),
+            detail: getFormValues(),
           }),
         );
         (target as HTMLFormElement).reset();
@@ -111,8 +114,8 @@ const CELL_SIZE = SQUARE(128),
       createElement(
         [{
           display: "grid",
-          grid: "repeat(4, 1fr) / repeat(3, 1fr)",
-          gap: "0.33rem",
+          grid: join(repeat(2, "repeat(4,1fr)"), "/"),
+          gap: rem(0.33),
         }],
         ...doTimes(12, (value: number) =>
           createElement(
@@ -143,13 +146,21 @@ const CELL_SIZE = SQUARE(128),
       patronCanvasCell,
       createElement(
         createElement(
-          [SECONDARY, SQUARE(+CELL_SIZE.width! * 2.5, +CELL_SIZE.height! * 2), {
-            cursor: "help",
-            clipPath: `polygon(${
-              doTimes(WIN_COLLECTION_VERTICIES, (coords) => coords.join(" "))
-                .join()
-            })`,
-          }],
+          [
+            SECONDARY,
+            SQUARE(px(CELL_SIDE * 2)),
+            {
+              cursor: "help",
+              clipPath: `polygon(${
+                join(
+                  doTimes(
+                    WIN_COLLECTION_VERTICIES,
+                    (coords) => join(coords, " "),
+                  ),
+                )
+              })`,
+            },
+          ],
           combinationCanvasCell,
         ),
         ...winCollectionElements,
@@ -157,13 +168,14 @@ const CELL_SIZE = SQUARE(128),
       createFormButton(WORDS[9]),
     ),
   ) as HTMLFormElement,
+  getFormValues = () => doTimes(new FormData(form).getAll("i"), Number),
   restorePreviewSequence = createActionSequencer<
     [item: Item, equipped?: boolean | undefined][]
   >([
     [(inventory) => {
       restorePreviewItem = oneOf(doTimes(
-        new FormData(form).getAll("i") as string[],
-        (value: string) => inventory[+value][0],
+        getFormValues(),
+        (value) => inventory[value][0],
       ));
     }],
     [(_, tickLength) => {
@@ -177,18 +189,17 @@ const CELL_SIZE = SQUARE(128),
 
 export const menu = createElement(
   "dialog",
-  [SQUARE(), {
-    maxWidth: "min-content",
-    maxHeight: String(+CELL_SIZE.height! * 5),
-  }],
+  [SQUARE(), SQUARE("min-content", "max")],
   {
     oncancel: preventDefault,
     onmousemove: ({ clientX, clientY }: MouseEvent) => {
       const { width, height } = itemPopover.getBoundingClientRect();
-      itemPopover.style.top =
-        (clientY + height > innerHeight ? clientY - height : clientY) + "px";
-      itemPopover.style.left =
-        (clientX + width > innerWidth ? clientX - width : clientX) + "px";
+      itemPopover.style.top = px(
+        clientY + height > innerHeight ? clientY - height : clientY,
+      );
+      itemPopover.style.left = px(
+        clientX + width > innerWidth ? clientX - width : clientX,
+      );
     },
   },
   form,
@@ -222,7 +233,7 @@ export const updateMenu = (
 
   const entry = inventory[hoveredCellIndex - INVENTORY_OFFSET];
 
-  if (!entry) return itemPopover.style.visibility = "hidden";
+  if (!entry) return Object.assign(itemPopover.style, HIDDEN);
 
   updateItemPopover(entry[0]);
   itemPopover.style.visibility = "visible";

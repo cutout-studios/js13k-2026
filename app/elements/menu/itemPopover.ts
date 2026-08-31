@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-import { _ } from "~/alias";
+import { _, join } from "~/alias";
 import { doTimes } from "~/common";
 import { createElement } from "~/dom";
 
 import { Item } from "../../game/player/types.ts";
-import { PROPERTY_NAMES, WORDS } from "../../game/ship/constants.ts";
-import { BORDER, HIDDEN, INERT, SECONDARY } from "../styles.ts";
+import { PARTS, PROPERTY_NAMES, WORDS } from "../../game/ship/constants.ts";
+
+import { BORDER, HIDDEN, INERT, rem, SECONDARY, SQUARE } from "../styles.ts";
 
 const header = createElement([SECONDARY]),
   modifiers = createElement(),
   base = createElement([BORDER]);
 
 export const itemPopover = createElement(
-  [BORDER, HIDDEN, INERT, {
+  [BORDER, HIDDEN, INERT, SQUARE("fit-content", "max"), {
     position: "fixed",
-    maxWidth: "fit-content",
   }],
   header,
   createElement(
     [{
-      padding: ".5rem",
-      gap: ".7rem",
+      padding: rem(0.5),
+      gap: rem(0.7),
     }],
     modifiers,
     base,
@@ -45,14 +45,15 @@ export const itemPopover = createElement(
 export const updateItemPopover = (
   [, , _typeID, _name, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
 ) => {
-  header.innerText = `${"⭑".repeat(_rank)} ${_name} ${
-    ["WING (L)", "WING (R)", "BODY", "ENGINE"][_typeID]
-  }`;
+  header.innerText = join(["⭑".repeat(_rank), _name, PARTS[_typeID]], " ");
 
-  modifiers.innerText = doTimes(
-    _modifiers,
-    ([id, type, value]) => `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
-  ).join("\n");
+  modifiers.innerText = join(
+    doTimes(
+      _modifiers,
+      ([id, type, value]) => `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
+    ),
+    "\n",
+  );
 
   const properties = [WORDS[15], _baseMass];
 
@@ -64,5 +65,5 @@ export const updateItemPopover = (
     );
   }
 
-  base.innerText = properties.join(" ");
+  base.innerText = join(properties, " ");
 };

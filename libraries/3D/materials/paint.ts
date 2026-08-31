@@ -15,7 +15,7 @@
  */
 
 import { F32 } from "~/alias";
-
+import { flatDoTimes } from "~/common";
 import type { RGBA, XOMaterial } from "../types.ts";
 
 import shaderCode from "./paint.wgsl.ts";
@@ -24,12 +24,10 @@ export const create = (
   paintData: Float32Array,
 ): XOMaterial => [shaderCode, paintData];
 
-export const createPalette = (...paints: Array<number | number[]>) =>
-  new F32(
-    paints.flatMap((v) => v).flatMap(_parseHex),
-  );
+export const createPalette = (...paints: number[]) =>
+  new F32(flatDoTimes(paints, _parseHex));
 
-export const createWithPalette = (...paints: Array<number | number[]>) =>
+export const createWithPalette = (...paints: number[]) =>
   create(createPalette(...paints));
 
 const _parseHex = (hex: number): RGBA => [

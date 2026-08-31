@@ -41,7 +41,7 @@ export const createSound = (...definitions: SoundDefinition[]) => {
       doTimes(schedule, ([[knobID, value], duration = 0]) => {
         time += duration;
         knobs[knobID].linearRampToValueAtTime(
-          typeof value === "number" ? value : range(...value),
+          typeof value == "number" ? value : range(...value),
           time,
         );
       });

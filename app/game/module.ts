@@ -15,8 +15,9 @@
  */
 
 import { XOObject } from "~/3D";
-import startingPlayer from "./player/module.ts";
+import { doTimes, flat, flatDoTimes } from "~/common";
 
+import startingPlayer from "./player/module.ts";
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
 import startingWorld from "./world/module.ts";
@@ -26,8 +27,10 @@ export default [startingPlayer, startingWorld] as Game;
 // TODO: toggle based on player invulnerability
 export const getSceneObjects = (
   [[playerShip], [activeEnemies, droppedItems]]: Game,
-): XOObject[][] => [
-  ...getShipObjects(playerShip),
-  ...activeEnemies.flatMap(([ships]) => ships.flatMap(getShipObjects)),
-  ...droppedItems.map(([object]) => [object]),
-];
+): XOObject[][] =>
+  flat(
+    getShipObjects(playerShip),
+    flatDoTimes(activeEnemies, ([ships]) =>
+      flatDoTimes(ships, getShipObjects) as XOObject[][]),
+    doTimes(droppedItems, ([object]) => [object]),
+  );

@@ -24,7 +24,7 @@ export type Ship = [
   sequence: ActionSequencer<Ship>,
   damages: Resources,
   _snapshot: ShipSnapshot,
-  _optionsIndex: number
+  _optionsIndex: number,
 ];
 
 export type Resources = [

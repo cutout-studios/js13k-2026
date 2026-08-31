@@ -15,6 +15,7 @@
  */
 
 import { document } from "~/alias";
+import { flat } from "~/common";
 import { doTimes } from "~/common";
 import { DEFAULT } from "../app/elements/styles.ts";
 
@@ -26,13 +27,13 @@ export const createElement = (
 
   let tag = "div", styles = DEFAULT(), attributes = {};
   doTimes(parameters, (param) => {
-    if (typeof param === "string") return tag = param;
+    if (typeof param == "string") return tag = param;
     if (param instanceof Node) return children.push(param);
     if (Array.isArray(param)) {
-      return styles = [...styles, ...param] as CSSStyleProperties[];
+      return styles = flat(styles, param) as CSSStyleProperties[];
     }
 
-    attributes = { ...attributes, ...param };
+    attributes = flat(attributes, param);
   });
 
   const element = document.createElement(tag);

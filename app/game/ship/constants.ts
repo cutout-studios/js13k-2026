@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { join } from "~/alias";
 import { doTimes } from "~/common";
 
 export const WORDS =
@@ -24,5 +25,10 @@ export const PROPERTY_NAMES = doTimes(
   "0 01 23 245 56 57 58 59 5 96 ab c6 de f g h h9 i2 ij ik lk jk m6 mn mn2 m2 m8 mb mo"
     .split(" "),
   (code: string) =>
-    doTimes([...code], (char: string) => WORDS[parseInt(char, 36)]).join(""),
+    join(
+      doTimes(Array.from(code), (char: string) => WORDS[parseInt(char, 36)]),
+      "",
+    ),
 );
+
+export const PARTS = ["WING (L)", "WING (R)", "BODY", "ENGINE"];

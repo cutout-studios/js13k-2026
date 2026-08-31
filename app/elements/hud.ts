@@ -15,60 +15,57 @@
  */
 
 import { _, length, round } from "~/alias";
-import { doTimes, SECONDS_TO_MS } from "~/common";
+import { doTimes, flat, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 
 import { WORDS } from "../game/ship/constants.ts";
-
 import { Game } from "../game/types.ts";
-import { CANTED, CORNER, FLEX, OVERLAY } from "./styles.ts";
+
+import { FLEX, OVERLAY, TILT } from "./styles.ts";
 
 const _createMeter = (
-  innerText: string,
-  style: Partial<CSSStyleProperties>[] = [],
-): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
-  const meters = [createElement("meter") as HTMLMeterElement],
-    label = createElement("label", { innerText }),
-    element = createElement(
-      style,
-      label,
-      ...meters,
-    );
-
-  return [element, (meterAttributes: [max: number, value: number][]) => {
-    while (length(meters) < length(meterAttributes)) {
-      meters.push(
-        element.appendChild(
-          createElement("meter"),
-        ) as HTMLMeterElement,
+    innerText: string,
+    style: Partial<CSSStyleProperties>[] = [],
+  ): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
+    const meters = [createElement("meter") as HTMLMeterElement],
+      label = createElement("label", { innerText }),
+      element = createElement(
+        style,
+        label,
+        ...meters,
       );
-    }
 
-    while (length(meters) < length(meterAttributes)) meters.pop()!.remove();
+    return [element, (meterAttributes: [max: number, value: number][]) => {
+      while (length(meters) < length(meterAttributes)) {
+        meters.push(
+          element.appendChild(
+            createElement("meter"),
+          ) as HTMLMeterElement,
+        );
+      }
 
-    doTimes(
-      meters,
-      (meter, index) => [meter.max, meter.value] = meterAttributes[index],
-    );
-  }];
-};
+      while (length(meters) < length(meterAttributes)) meters.pop()!.remove();
 
-const [fuelMeter, fuelUpdate] = _createMeter(WORDS[5], [CANTED(), CORNER()]),
+      doTimes(
+        meters,
+        (meter, index) => [meter.max, meter.value] = meterAttributes[index],
+      );
+    }];
+  },
+  [fuelMeter, fuelUpdate] = _createMeter(WORDS[5], [TILT(-1)]),
   [shieldMeter, shieldUpdate] = _createMeter(WORDS[17]),
   [armorMeter, armorUpdate] = _createMeter(WORDS[0], [
-    CANTED(),
-    CORNER(),
-  ]);
-
-const distanceCounter = createElement(
-    [CANTED(), CORNER()],
+    TILT(1),
+  ]),
+  distanceCounter = createElement(
+    [TILT(-1)],
   ),
   waveCounter = createElement(
-    [CANTED(), CORNER()],
+    [TILT(1)],
   );
 
 export const hud = createElement(
-  [FLEX("column"), ...OVERLAY],
+  flat([FLEX("column")], OVERLAY),
   createElement(
     fuelMeter,
     shieldMeter,

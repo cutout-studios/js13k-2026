@@ -15,7 +15,7 @@
  */
 
 import { F32, hypot, length, max } from "~/alias";
-import { doTimes, repeat } from "~/common";
+import { doTimes, flatDoTimes, repeat } from "~/common";
 import {
   COORDINATE_SIDE_LENGTH,
   RGBA_LENGTH,
@@ -73,17 +73,19 @@ export const aimObject = (object: XOObject, heading: XYZ) => {
 
 // CRUCIAL NOTE!!: assumes all materials are paint materials
 export const flattenObjects = (...objects: XOObject[]): XOObject => {
-  const vertices = objects.map(([coordinates, [, _verticies = []]]) =>
-    doTimes(
-      _verticies,
-      ([x, y, z]: XYZ) =>
-        doTimes(XYZ_LENGTH, (row: number) =>
-          coordinates[row] * x +
-          coordinates[COORDINATE_SIDE_LENGTH + row] * y +
-          coordinates[COORDINATE_SIDE_LENGTH * 2 + row] * z +
-          coordinates[POSITION_INDEX + row]) as XYZ,
-    )
-  ).flat();
+  const vertices = flatDoTimes(
+    objects,
+    ([coordinates, [, _verticies = []]]) =>
+      doTimes(
+        _verticies,
+        ([x, y, z]: XYZ) =>
+          doTimes(XYZ_LENGTH, (row: number) =>
+            coordinates[row] * x +
+            coordinates[COORDINATE_SIDE_LENGTH + row] * y +
+            coordinates[COORDINATE_SIDE_LENGTH * 2 + row] * z +
+            coordinates[POSITION_INDEX + row]) as XYZ,
+      ),
+  );
 
   return [
     createRotation(),
@@ -93,18 +95,18 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
           max(radius, hypot(...readOrigin(coordinates)) + partRadius),
         0,
       ),
-      vertices,
+      vertices as XYZ[],
     ],
     createPaintMaterial(
       new F32(
-        doTimes(
+        flatDoTimes(
           objects,
           ([, [, verticies = []], [, data = repeat(4, 1)] = []]) =>
             doTimes(
               length(verticies) / XYZ_LENGTH * RGBA_LENGTH,
               (index: number) => data[index % length(data)],
             ),
-        ).flat(),
+        ),
       ),
     ),
   ];

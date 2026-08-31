@@ -14,57 +14,30 @@
  * limitations under the License.
  */
 
-const rem = (value: number) => `${value}rem`,
-  background = "black",
-  color = "white";
+const background = "black", color = "white";
 
-export const SQUARE = (
-  side: string | number = "100%",
-  height = side,
-): Partial<CSSStyleProperties> => ({
-  width: String(side),
-  height: String(height),
-});
+export const rem = (value: number) => value + "rem";
+export const px = (value: number) => value + "px";
+export const percent = (value: number) => value + "%";
+
+export const FULL_PERCENT = percent(100);
+export const HALF_PERCENT = percent(50);
 
 export const PRIMARY: Partial<CSSStyleProperties> = {
   background,
   color,
   borderColor: color,
 };
+
 export const SECONDARY: Partial<CSSStyleProperties> = {
   background: color,
   color: background,
 };
 
+export const BORDER: Partial<CSSStyleProperties> = { borderWidth: px(2) };
 export const POINTER: Partial<CSSStyleProperties> = { cursor: "pointer" };
-
 export const INERT: Partial<CSSStyleProperties> = { pointerEvents: "none" };
 export const HIDDEN: Partial<CSSStyleProperties> = { visibility: "hidden" };
-
-export const CANTED = (amount = 15): Partial<CSSStyleProperties> => ({
-  transform: `rotate(${amount})`,
-});
-
-export const CORNER = (
-  top: number | string = 0,
-  left: number | string = 0,
-): Partial<CSSStyleProperties> => ({
-  position: "absolute",
-  top: String(top),
-  left: String(left),
-});
-
-export const BORDER: Partial<CSSStyleProperties> = { border: "2px solid" };
-
-export const FLEX = (dir = "row", gap = 0.33): Partial<CSSStyleProperties> => ({
-  display: "flex",
-  padding: rem(1),
-  flexDirection: dir,
-  alignItems: "center",
-  justifyContent: "center",
-  flex: "1",
-  gap: String(gap),
-});
 
 export const OVERLAY: Partial<CSSStyleProperties>[] = [INERT, {
   position: "absolute",
@@ -72,3 +45,28 @@ export const OVERLAY: Partial<CSSStyleProperties>[] = [INERT, {
 }];
 
 export const DEFAULT = (): Partial<CSSStyleProperties>[] => [FLEX(), PRIMARY];
+
+export const FLEX = (
+  flexDirection = "row",
+  gap = rem(0.33),
+): Partial<CSSStyleProperties> => ({
+  alignItems: "center",
+  display: "flex",
+  flex: "1",
+  flexDirection,
+  gap,
+  justifyContent: "center",
+  padding: rem(1),
+});
+
+export const SQUARE = (
+  side: string = FULL_PERCENT,
+  prefix = "",
+): Partial<CSSStyleProperties> => ({
+  [prefix + (prefix ? "W" : "w") + "idth"]: side,
+  [prefix + (prefix ? "H" : "h") + "eight"]: side,
+});
+
+export const TILT = (sign: number): Partial<CSSStyleProperties> => ({
+  transform: `rotate(${15 * sign}deg)`,
+});

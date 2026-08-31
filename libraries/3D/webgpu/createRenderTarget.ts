@@ -31,7 +31,7 @@ let cacheKey: string | undefined, cacheDepth: GPUTexture | undefined;
 const _getCanvasDepth = (canvas: HTMLCanvasElement): GPUTexture => {
   const key = `${canvas.width}x${canvas.height}`;
 
-  if (key === cacheKey) return cacheDepth!;
+  if (key == cacheKey) return cacheDepth!;
 
   cacheKey = key;
   cacheDepth?.destroy();

@@ -42,7 +42,7 @@ export const createCamera = (
     [aspectRatio, , render]: GPURenderTarget,
   ) =>
     render((process) => {
-      if (aspectRatio !== cachedAspectRatio) {
+      if (aspectRatio != cachedAspectRatio) {
         cachedAspectRatio = aspectRatio;
         viewingCoordinates =
           // deno-fmt-ignore

@@ -21,7 +21,7 @@ export const updatePlayerSnapshots = (
   [ship, [shieldLevels, fuelLevels = 0, , armorLevels = 0], inventory]: Player,
 ) => {
   const [, , weapons, , , _snapshot] = ship;
-  const _weaponsSnapshots = weapons.map(([, , , , _s]) => _s);
+  const _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
 
   // TODO: compute mass, weapons
   doTimes(inventory, ([[, , , , , modifiers], equipped]) => {
@@ -30,7 +30,7 @@ export const updatePlayerSnapshots = (
       doTimes(
         (statID > 21 ? _weaponsSnapshots : [_snapshot]) as number[][],
         (target) => {
-          operator === "x" ? target[statID] *= value : target[statID] += value;
+          operator == "x" ? target[statID] *= value : target[statID] += value;
         },
       );
     });

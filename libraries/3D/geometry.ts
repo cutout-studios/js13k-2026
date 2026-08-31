@@ -15,7 +15,7 @@
  */
 
 import { cos, length, PI, sin, TAU } from "~/alias";
-import { doTimes, repeat } from "~/common";
+import { doTimes, flat, repeat } from "~/common";
 
 import { XYZ_LENGTH } from "./constants.ts";
 import type { XYZ } from "./types.ts";
@@ -33,7 +33,7 @@ export const createSquare = (
   p2: XYZ,
   p3: XYZ,
   p4: XYZ,
-): XYZ[] => [...createTriangle(p1, p2, p3), ...createTriangle(p1, p3, p4)];
+): XYZ[] => flat(createTriangle(p1, p2, p3), createTriangle(p1, p3, p4));
 
 export const createPyramid = (
   scale: XYZ = DEFAULT_SCALE,

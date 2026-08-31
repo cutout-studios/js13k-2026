@@ -16,7 +16,7 @@
 
 import { F32 } from "~/alias";
 
-import { memo } from "~/common";
+import { flat, memo } from "~/common";
 import {
   COORDINATES_DATA_GROUP_ID,
   MATERIALS_DATA_GROUP_ID,
@@ -28,7 +28,7 @@ import { device } from "./setupDevice.ts";
 import { coordinatesLayout, materialsLayout } from "./setupDevice.ts";
 
 const _allocateGeometryBuffer = memo(([, vertices]: XOGeometry) => {
-  const geometryData = new F32(vertices.flat());
+  const geometryData = new F32(flat(...vertices));
 
   const buffer = device.createBuffer({
     size: geometryData.byteLength,

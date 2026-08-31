@@ -1,6 +1,6 @@
 import { cos, F32, sin } from "~/alias";
 
-import { repeat } from "~/common";
+import { flat, repeat } from "~/common";
 import {
   COORDINATE_SIDE_LENGTH,
   X_AXIS,
@@ -19,7 +19,7 @@ export const createCoordinates = (
   origin: XYZ = [0, 0, 0],
 ) =>
   /** w = 0 for an axis, 1 for a point */
-  new F32([...xAxis, 0, ...yAxis, 0, ...zAxis, 0, ...origin, 1]);
+  new F32(flat(xAxis, [0], yAxis, [0], zAxis, [0], origin, [1]));
 
 export const createRotation = (
   [axis, angle]: [XYZ, number] = [X_AXIS, 0],
@@ -61,7 +61,9 @@ export const localize = (fromChild: Float32Array, toParent: Float32Array) => {
 export const POSITION_INDEX = 12;
 
 export const readOrigin = (coordinates: Float32Array): XYZ =>
-  [...coordinates.subarray(POSITION_INDEX, POSITION_INDEX + XYZ_LENGTH)] as XYZ;
+  flat(
+    coordinates.subarray(POSITION_INDEX, POSITION_INDEX + XYZ_LENGTH),
+  ) as XYZ;
 
 export const setOrigin = (
   coordinates: Float32Array,

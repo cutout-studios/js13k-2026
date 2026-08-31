@@ -15,7 +15,7 @@
  */
 
 import { setupDevice } from "~/3D";
-import { _, document } from "~/alias";
+import { _, document, addEventListener } from "~/alias";
 import { startClock } from "~/clock";
 import { doTimes, repeat, spliceTable } from "~/common";
 import { keyboard } from "~/controller";
@@ -32,7 +32,7 @@ import { updateGame } from "./game/update.ts";
 document.head.append(createElement("style", {
   // minified from ./styles.css
   textContent:
-    "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked+canvas{outline:3px solid yellow}",
+    "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked+canvas{border-color:yellow}",
 }));
 
 let escapeWasDown = false;
@@ -66,9 +66,9 @@ addEventListener(WORDS[26], ({ detail }: CustomEventInit<number[]>) => {
   const toEquip = repeat(4, -1);
   doTimes(detail!, (index) => toEquip[inventory[index][0][2]] = index);
   doTimes(inventory, (item, index) => {
-    if (toEquip[item[0][2]] === -1) return;
+    if (toEquip[item[0][2]] == -1) return;
 
-    item[1] = toEquip[item[0][2]] === index;
+    item[1] = toEquip[item[0][2]] == index;
   });
 });
 
@@ -80,6 +80,6 @@ addEventListener(WORDS[9], ({ detail }: CustomEventInit<number[]>) => {
 
   if (!item) return;
 
-  spliceTable(inventory, detail!);
+  spliceTable([inventory], detail!);
   inventory.push([item]);
 });

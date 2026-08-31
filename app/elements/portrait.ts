@@ -20,7 +20,7 @@ import {
   XYZ,
 } from "~/3D";
 import { length } from "~/alias";
-import { doTimes, repeat } from "~/common";
+import { doTimes, flat, repeat } from "~/common";
 
 const PORTRAIT_OFFSET = 81,
   PORTRAIT_HALF_HEIGHT = 0.15,
@@ -42,11 +42,13 @@ export const portrait = createObject(
     ]),
   ],
   paint(
-    repeat(5, 0x121018),
-    repeat(9, 0xE6E9F2),
-    repeat(8, 0x9C93B0),
-    repeat(9, 0x6E6480),
-    repeat(4, 0x8FA0BC),
-    repeat(5, 0x5A6880),
+    ...flat(
+      repeat(5, 0x121018),
+      repeat(9, 0xE6E9F2),
+      repeat(8, 0x9C93B0),
+      repeat(9, 0x6E6480),
+      repeat(4, 0x8FA0BC),
+      repeat(5, 0x5A6880),
+    ),
   ),
 );

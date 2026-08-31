@@ -18,12 +18,14 @@ import {
   adjustObject,
   createObject,
   createPaintMaterialWithPalette as paint,
+  XOGeometry,
   XOObject,
+  XOOrientation,
   XYZ,
 } from "~/3D";
 import { _, cos, length, min, random, sin, TAU } from "~/alias";
 import { Action, createActionSequencer } from "~/clock";
-import { doTimes, repeat } from "~/common";
+import { doTimes, flat, repeat } from "~/common";
 
 import { bell, oneOf, range } from "~/random";
 
@@ -75,7 +77,7 @@ export const createItem = (
   ], modifiers]] = GameOptions[colorID];
   const modifierDeck = [] as ModifierOptions[];
   doTimes(modifiers, (modifier) => {
-    if (modifier[0] === typeID || modifier[0] === 0) {
+    if (modifier[0] == typeID || modifier[0] == 0) {
       insertCard(modifierDeck, modifier);
     }
   });
@@ -83,7 +85,10 @@ export const createItem = (
   const meander = _tempMeanderActionFactory();
 
   return [
-    createObject(...ITEM_GEOMETRY[typeID], paint(value)),
+    createObject(
+      ...flat(ITEM_GEOMETRY[typeID]) as [XOOrientation, XOGeometry],
+      paint(value),
+    ),
     createActionSequencer([[
       ([object], tickLength) => {
         meander([object], tickLength, 0, 0);
