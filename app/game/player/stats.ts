@@ -23,7 +23,6 @@ export const updatePlayerSnapshots = (
   const [, , weapons, , , _snapshot] = ship;
   const _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
 
-  // TODO: compute mass, weapons
   doTimes(inventory, ([[, , , , , modifiers], equipped]) => {
     if (!equipped) return;
     doTimes(modifiers, ([statID, operator, value]) => {
@@ -46,6 +45,4 @@ export const updatePlayerSnapshots = (
     [0, 4, 7, 8, 15, 16],
     (id, index) => _snapshot[id] *= _snapshot[11] ** levels[index],
   );
-
-  // TODO: lowestResource
 };

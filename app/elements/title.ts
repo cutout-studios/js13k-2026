@@ -31,7 +31,6 @@ export const title = createElement(
   ),
 );
 
-// TODO: maybe pull these from various key locations?
 export const legend = createElement(
   OVERLAY,
   createTextNode(

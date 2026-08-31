@@ -64,7 +64,6 @@ const _resolveCollisions = (
 };
 
 const ENEMY_AIM_SPREAD = 1.5;
-// TODO: "mass disruption" - target takes more damage than they have mass
 export const updateGame = (
   [player, world]: Game,
   tickLength: number,
@@ -75,7 +74,7 @@ export const updateGame = (
     enemyShips = flatDoTimes(activeEnemyGroups, ([ships]) => ships) as Ship[],
     playerOrigin = readOrigin(playerShipObject[0]);
 
-  // PLACEHOLDER/TODO: aim enemies at the player
+  // TEMP: aim enemies at the player
   doTimes(enemyShips, (ship) => {
     const target = addXYZ(
       playerOrigin,
@@ -105,7 +104,7 @@ export const updateGame = (
           bullets[1],
           doTimes(enemyShips, ([object]) => object),
           (_, shipIndex) => {
-            hitSound(); // TODO: pan based on location
+            hitSound();
             enemyShips[shipIndex][4][0] += random() < critChance
               ? bulletDamage * critDamage
               : bulletDamage;
@@ -154,7 +153,7 @@ export const updateGame = (
   );
 
   // clean up dead enemies
-  // TODO/WARNING: mutates in place, so enemyShips are stale below here
+  // WARNING: mutates in place, so enemyShips are stale below here
   doTimes(activeEnemyGroups, ([ships]) => {
     spliceTable(
       [ships],
@@ -162,7 +161,7 @@ export const updateGame = (
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[15]) return [];
-          explosionSound(); // TODO: pan based on location
+          explosionSound();
 
           if (random() < snapshot[10]) {
             const item = createItem(optionsIndex, progress[0]);

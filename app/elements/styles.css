@@ -36,7 +36,7 @@ dialog::backdrop {
   background: #000c;
 }
 
-/* TEMPORARY/TODO */
+/* TEMP */
 :checked + canvas {
   border-color: yellow;
 }

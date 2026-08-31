@@ -45,7 +45,7 @@ const _itemDeck = createDeck(4),
 
 const [[, , [ITEM_GEOMETRY]]] = GameOptions;
 
-// TODO: generalize
+// TEMP
 const _tempMeanderActionFactory = (
   driftAmount = 0.0005,
   driftSpeed = 0.25,

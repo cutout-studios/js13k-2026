@@ -53,7 +53,7 @@ export const createWeapon = (
   ];
 };
 
-// PLACEHOLDER/TODO: fuel consumption
+// TEMP: fuel consumption
 const FUEL_PER_SHOT = 1.5;
 
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
@@ -62,11 +62,11 @@ export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
     [count] = snapshot,
     fuelUsed = (damages[1] || 0) + FUEL_PER_SHOT;
 
-  // PLACEHOLDER/TODO: fuel consumption
+  // TEMP: fuel consumption
   if (ship[6] == 0 && fuelUsed > shipSnapshot[4]) return;
 
   damages[1] = fuelUsed;
-  weaponSound(); // TODO: pan based on location
+  weaponSound();
   doTimes(count, () => {
     const bullet = createBullet(ship, weaponIndex);
     bullets.push(bullet);

@@ -24,7 +24,6 @@ import startingWorld from "./world/module.ts";
 
 export default [startingPlayer, startingWorld] as Game;
 
-// TODO: toggle based on player invulnerability
 export const getSceneObjects = (
   [[playerShip], [activeEnemies, droppedItems]]: Game,
 ): XOObject[][] =>

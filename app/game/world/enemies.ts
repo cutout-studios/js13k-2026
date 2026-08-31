@@ -62,7 +62,6 @@ const _drawEnemyGroup = (
   const ships = doTimes(count, () => {
     const ship = createShip(optionsIndex, level);
 
-    // TODO: come in from off the screen, based on the total number of groups
     ship[0][0] = setOrigin(ship[0][0], [
       ...doTimes(2, () => range(-spawnQuadrantSize, spawnQuadrantSize)),
       -ENEMY_Z_PLANE,
