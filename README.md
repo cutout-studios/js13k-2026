@@ -4,6 +4,7 @@
 
 - misc mechanics
   - stats refresh
+  - two weapons
   - wire remaining stats
   - mass disruption, player vulnerability toggle
 - pan audio based on source location
