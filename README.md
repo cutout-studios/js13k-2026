@@ -34,6 +34,7 @@
 
 ### _Very_ small, possibly net neutral
 
+- Audio 'connect' and GPU tuple aliai
 - tuple-ify styles?
 - pull HTML key code strings into player legend
 - "winding" or "gray" iterator that goes xx, xy, yy, yx
