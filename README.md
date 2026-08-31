@@ -11,6 +11,7 @@
   - highlight color
   - level up
   - hook up intro screen and controller legend
+  - death message
 - spin counter
 - enemy behaviors
 
@@ -24,13 +25,13 @@
 
 ## Misc. Compression Ideas:
 
-### The Big One
+### The Big One (~150B)
 
 - Quantize all values (out of 256)... then...
 - **Convert all game data (e.g. content definitions) into CSVs.** Then write a
   small compiler that bitepacks each CSV by column into an ASCII string.
 
-### _Very_ small
+### _Very_ small, possibly net neutral
 
 - tuple-ify styles?
 - pull HTML key code strings into player legend
