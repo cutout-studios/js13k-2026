@@ -14,32 +14,29 @@
  * limitations under the License.
  */
 
-import { _, join } from "~/alias";
+import { _ } from "~/alias";
+import { repeat, doTimes } from "~/common";
 import { createElement, createTextNode } from "~/dom";
 
 import { WORDS } from "../game/ship/constants.ts";
-
-import { OVERLAY } from "./styles.ts";
+import { ABSOLUTE, INERT, LAYOUT } from "./styles.ts";
 
 export const title = createElement(
-  OVERLAY,
-  createTextNode(
-    join([
-      "MISSION: DARKWHITE",
-      `WHAT WAS DIVIDED YOU MUST ${WORDS[9]}`,
-      "CLICK TO BEGIN",
-    ], "\n"),
-  ),
+  [INERT, ABSOLUTE, LAYOUT(["auto"], repeat(3, "min-content")), {
+    inset: "auto 0 0 0",
+    height: "45svh",
+    alignContent: "center",
+    background: "linear-gradient(transparent,black 45%)",
+    transition: "opacity 240ms",
+  }],
+  ...doTimes([
+    "MISSION: DARKWHITE",
+    `WHAT WAS DIVIDED YOU MUST ${WORDS[9]}`,
+    "CLICK TO BEGIN",
+  ], text => createElement(createTextNode(text))),
 );
 
-export const legend = createElement(
-  OVERLAY,
-  createTextNode(
-    join([
-      `[ESC]: ${WORDS[25]}`,
-      `[WASD]: ${WORDS[21]}`,
-      `[SPACE]: ${WORDS[18]}`,
-      `[CLICK]: ${WORDS[22]}`,
-    ], "\t"),
-  ),
-);
+export const hideTitle = () => {
+  title.style.opacity = "0";
+  title.ontransitionend = () => title.remove();
+};

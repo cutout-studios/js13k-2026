@@ -18,7 +18,7 @@ import { createCamera, createRenderTarget, GPURenderTarget } from "~/3D";
 import { join, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat } from "~/common";
-import { createElement, createTextNode } from "~/dom";
+import { createElement, createTextNode, updateStyles } from "~/dom";
 import { oneOf } from "~/random";
 import GameOptions from "../../game/options/module.ts";
 import { Item } from "../../game/player/types.ts";
@@ -57,9 +57,7 @@ const CELL_SIDE = 128,
     doTimes(_HALF_HEX, ([x, y]) => [pct(x), pct(y)]),
     doTimes(_HALF_HEX, ([x, y]) => [pct(1 - x), pct(1 - y)]),
   ),
-  place = (element: HTMLElement, gridArea: string) => (
-    Object.assign(element.style, { gridArea }), element
-  ),
+  place = (element: HTMLElement, gridArea: string) => updateStyles(element, { gridArea }),
   createCellWindow = (index: number) =>
     createElement(
       "canvas",
@@ -100,8 +98,8 @@ const CELL_SIDE = 128,
   inventoryGrid = createElement(
     [
       LAYOUT(
-        join(repeat(3, "auto")),
-        join(repeat(4, "auto")),
+        repeat(3, "auto"),
+        repeat(4, "auto"),
         0.33,
         0,
       ),
@@ -111,7 +109,7 @@ const CELL_SIDE = 128,
       createElement(
         "label",
         [POINTER, CONTENT(0)],
-        createElement("input", [HIDDEN], {
+        createElement("input", [HIDDEN, ABSOLUTE], {
           type: "checkbox",
           name: "i",
           value,
@@ -120,7 +118,7 @@ const CELL_SIDE = 128,
       )),
   ),
   shipGrid = createElement(
-    [LAYOUT("auto auto", "auto auto auto", 0.33, 0), AT("1/2", "start")],
+    [LAYOUT(repeat(2, "auto"), repeat(3, "auto"), 0.33, 0), AT("1/2", "start")],
     place(bodyCanvasCell, "1/1/2/3"),
     place(leftWingCanvasCell, "2/1"),
     place(rightWingCanvasCell, "2/2"),
@@ -137,7 +135,7 @@ const CELL_SIDE = 128,
     combinationCanvasCell,
   ),
   patronPanel = createElement(
-    [LAYOUT("auto", "auto auto", 0.5, 0), AT("1/3", "start")],
+    [LAYOUT(["auto"], repeat(2, "auto"), 2, 0), AT("1/3", "start")],
     patronCanvasCell,
     createElement(
       [RELATIVE, SIZING("fit-content")],
@@ -147,7 +145,7 @@ const CELL_SIDE = 128,
   ),
   form = createElement(
     "form",
-    [LAYOUT("auto auto auto", "auto min-content")],
+    [LAYOUT(repeat(3, "auto"), ["auto", "min-content"], 3)],
     {
       onsubmit: (event: SubmitEvent) => {
         preventDefault(event);
@@ -197,7 +195,8 @@ export const menu = createElement(
     oncancel: preventDefault,
     onmousemove: ({ clientX, clientY }: MouseEvent) => {
       const { width, height } = itemPopover.getBoundingClientRect();
-      Object.assign(itemPopover.style, {
+
+      updateStyles(itemPopover, {
         top: px(clientY + height > innerHeight ? clientY - height : clientY),
         left: px(clientX + width > innerWidth ? clientX - width : clientX),
       });
@@ -212,10 +211,13 @@ let renderTargets: GPURenderTarget[];
 export const openMenu = ([[, , inventory], [, , , winCollection]]: Game) => {
   menu.showModal();
   renderTargets ||= doTimes(canvasCells, createRenderTarget);
+  
   doTimes(winCollectionElements, (element, index) =>
     winCollection.has(index) &&
     (element.style.background = "#" + GameOptions[index][1].toString(16)));
-  menuCamera([[portrait]], renderTargets[0]);
+  
+    menuCamera([[portrait]], renderTargets[0]);
+
   doTimes(inventory, ([item, equipped], index) => {
     menuCamera([[item[0]]], renderTargets[index + INVENTORY_OFFSET]);
     if (equipped) {
@@ -229,12 +231,17 @@ export const updateMenu = (
   tickLength: number,
 ) => {
   restorePreviewSequence(inventory, tickLength);
+  
   const entry = inventory[hoveredCellIndex - INVENTORY_OFFSET];
-  if (!entry) return Object.assign(itemPopover.style, HIDDEN);
+  if (!entry) return updateStyles(itemPopover, HIDDEN);
+  
   updateItemPopover(entry[0]);
-  Object.assign(itemPopover.style, SHOWN);
+  updateStyles(itemPopover, SHOWN);
+  
   const [item, equipped] = entry;
   item[1](item, tickLength);
+
   menuCamera([[item[0]]], renderTargets[hoveredCellIndex]);
+
   if (equipped) menuCamera([[item[0]]], renderTargets[item[2] + EQUIP_OFFSET]);
 };

@@ -15,8 +15,9 @@
  */
 
 import { join } from "~/alias";
-import { doTimes } from "~/common";
+import { doTimes, repeat } from "~/common";
 import { createElement } from "~/dom";
+import GameOptions from "../../game/options/module.ts";
 import { Item } from "../../game/player/types.ts";
 import { PARTS, PROPERTY_NAMES, WORDS } from "../../game/ship/constants.ts";
 import {
@@ -24,16 +25,15 @@ import {
   FIXED,
   HIDDEN,
   INERT,
+  LAYOUT,
   MAX_SIZE,
   rem,
   SECONDARY,
-  LAYOUT,
 } from "../styles.ts";
 
-const
-  padding = { padding: rem(0.3) },
-  header = createElement([SECONDARY, padding]),
-  modifiers = createElement(),
+const padding = { padding: rem(0.3) },
+  header = createElement([SECONDARY, padding, { textAlign: "center" }]),
+  modifiers = createElement([{ textAlign: "center" }]),
   base = createElement([BORDER, padding]);
 
 export const itemPopover = createElement(
@@ -43,22 +43,26 @@ export const itemPopover = createElement(
   }],
   header,
   createElement(
-    [LAYOUT("auto", "auto auto", 0.5), { justifyItems: "start" }],
+    [LAYOUT(["auto"], repeat(2, "auto"), 0.5)],
     modifiers,
     base,
   ),
 );
 
 export const updateItemPopover = (
-  [, , _typeID, _name, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
+  [, , _typeID, _colorID, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
 ) => {
-  header.innerText = join(["⭑".repeat(_rank), _name, PARTS[_typeID]]);
-  modifiers.innerText = join(
+  header.innerText = join([
+    "⭑".repeat(_rank),
+    GameOptions[_colorID][0],
+    PARTS[_typeID],
+  ]);
+  modifiers.innerHTML = join(
     doTimes(
       _modifiers,
       ([id, type, value]) => `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
     ),
-    "\n",
+    "<br>",
   );
 
   const properties = [WORDS[15], _baseMass];

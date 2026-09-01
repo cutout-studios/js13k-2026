@@ -15,7 +15,7 @@
  */
 
 import { setupDevice } from "~/3D";
-import { _, document, addEventListener } from "~/alias";
+import { _, addEventListener, document } from "~/alias";
 import { startClock } from "~/clock";
 import { doTimes, repeat, spliceTable } from "~/common";
 import { keyboard } from "~/controller";
@@ -24,6 +24,7 @@ import { createElement } from "~/dom";
 import { hud, updateHUD } from "./elements/hud.ts";
 import { mainCanvas, renderMain } from "./elements/mainCanvas.ts";
 import { menu, openMenu, updateMenu } from "./elements/menu/module.ts";
+import { hideTitle, title } from "./elements/title.ts";
 import state, { getSceneObjects } from "./game/module.ts";
 import { combineItems } from "./game/player/items.ts";
 import { WORDS } from "./game/ship/constants.ts";
@@ -35,15 +36,22 @@ document.head.append(createElement("style", {
     "body,body *,html{box-sizing:border-box;padding:0;margin:0;font-family:ui-monospace;font-size:16px;color:white;list-style-type:none}body{position:relative;width:100vw;height:100svh}dialog::backdrop{background:#000c}:checked+canvas{border-color:yellow}",
 }));
 
-let escapeWasDown = false;
+let escapeWasDown = false, started = false;
+
 onload = async () => {
   await setupDevice();
   doTimes(
-    [mainCanvas, hud, menu],
+    [mainCanvas, hud, menu, title],
     (element) => document.body.appendChild(element),
   );
-
   startClock((tickLength) => {
+    if (!started) {
+      const ship = state[0][0];
+      ship[3](ship, tickLength);
+      updateHUD(state, tickLength);
+      return renderMain(getSceneObjects(state));
+    }
+
     const escapeIsDown = keyboard.has("Escape");
 
     if (escapeIsDown && !escapeWasDown) {
@@ -55,11 +63,15 @@ onload = async () => {
     if (menu.open) return updateMenu(state, tickLength);
 
     updateGame(state, tickLength);
-
     updateHUD(state, tickLength);
     renderMain(getSceneObjects(state));
   });
 };
+
+addEventListener("mousedown", () => {
+  started = true;
+  hideTitle();
+}, { once: true });
 
 const [[, , inventory], [, , progress]] = state;
 

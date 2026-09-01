@@ -193,7 +193,10 @@ export const updateGame = (
     damage[0] = _snapshot[15];
     damage[3] ??= 0, damage[3]++;
     damage[4] = true;
-    if (damage[3] >= _snapshot[0]) location.reload();
+    if (damage[3] >= _snapshot[0]) {
+      alert("MISSION OVER");
+      location.reload();
+    }
   }
 
   // remove temporary invulnerability once shields are restored

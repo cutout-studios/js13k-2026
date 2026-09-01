@@ -25,7 +25,7 @@ import { Player } from "./types.ts";
 
 const ship = createShip(0);
 
-setOrigin(ship[0][0], [0, 0, -PLAYER_Z_PLANE]);
+setOrigin(ship[0][0], [-1.2, 0.7, -PLAYER_Z_PLANE]);
 
 ship[1] = [0, 0, -ENEMY_Z_PLANE];
 

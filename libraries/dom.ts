@@ -19,6 +19,13 @@ import { flat } from "~/common";
 import { doTimes } from "~/common";
 import { DEFAULT } from "../app/elements/styles.ts";
 
+export type Style = Partial<CSSStyleProperties>;
+
+export const updateStyles = (element: HTMLElement, ...styles: Style[]) => {
+  Object.assign(element.style, ...styles);
+  return element;
+};
+
 export const createElement = (
   ...parameters:
     (string | Partial<CSSStyleProperties>[] | Record<string, unknown> | Node)[]
@@ -38,10 +45,9 @@ export const createElement = (
 
   const element = document.createElement(tag);
   Object.assign(element, attributes);
-  Object.assign(element.style, ...styles);
   element.append(...children);
 
-  return element;
+  return updateStyles(element, ...styles);
 };
 
 export const createTextNode = (text: string): Node =>

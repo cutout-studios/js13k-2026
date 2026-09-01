@@ -15,27 +15,28 @@
  */
 
 import { length, round } from "~/alias";
-import { doTimes, flat, SECONDS_TO_MS } from "~/common";
-import { createElement } from "~/dom";
+import { doTimes, flat, repeat, SECONDS_TO_MS } from "~/common";
+import { createElement, createTextNode, Style } from "~/dom";
 import { WORDS } from "../game/ship/constants.ts";
 import { Game } from "../game/types.ts";
-import {
-  AT,
-  CONTENT,
-  MAX_SIZE,
-  OVERLAY,
-  LAYOUT,
-  Style,
-  TILT,
-} from "./styles.ts";
+import { AT, CONTENT, LAYOUT, OVERLAY, pct, TILT } from "./styles.ts";
+
+const CONTROLS = [
+  ["ESC", WORDS[25]],
+  ["WASD", WORDS[21]],
+  ["SPACE", WORDS[18]],
+  ["CLICK", WORDS[22]],
+];
 
 const _createMeter = (
     innerText: string,
     style: Style[] = [],
   ): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
-    const meters = [createElement("meter") as HTMLMeterElement],
+    const meters = [
+        createElement("meter", [{ flex: "1" }]) as HTMLMeterElement,
+      ],
       element = createElement(
-        [CONTENT(), MAX_SIZE(300, "none")],
+        [CONTENT()],
         style,
         createElement("label", { innerText }),
         ...meters,
@@ -56,24 +57,43 @@ const _createMeter = (
   [fuelMeter, fuelUpdate] = _createMeter(WORDS[5], [
     TILT(-1),
     AT("1/1", "start start"),
+    { transformOrigin: "right bottom" },
   ]),
   [shieldMeter, shieldUpdate] = _createMeter(WORDS[17], [
     AT("1/2", "start center"),
+    { width: pct(1) },
   ]),
   [armorMeter, armorUpdate] = _createMeter(WORDS[0], [
     TILT(1),
     AT("1/3", "start end"),
+    { transformOrigin: "left bottom" },
   ]),
-  distanceCounter = createElement([TILT(1), AT("2/1", "end start")]),
-  waveCounter = createElement([TILT(-1), AT("2/3", "end end")]);
+  distanceCounter = createElement([TILT(1), AT("2/1", "end start"), {
+    transformOrigin: "right top",
+  }]),
+  waveCounter = createElement([TILT(-1), AT("2/3", "end end"), {
+    transformOrigin: "left top",
+  }]),
+  controlLegend = createElement(
+    [CONTENT(1), AT("3/1/4/4", "end center"), { opacity: "0.5" }],
+    ...doTimes(
+      CONTROLS,
+      ([key, word]) =>
+        createElement([CONTENT()], createTextNode(`[${key}]: ${word}`)),
+    ),
+  );
 
 export const hud = createElement(
-  flat([LAYOUT("1fr 1fr 1fr", "min-content 1fr")], OVERLAY),
+  flat(
+    [LAYOUT(repeat(3, "1fr"), ["min-content", "1fr", "min-content"])],
+    OVERLAY,
+  ),
   fuelMeter,
   shieldMeter,
   armorMeter,
   distanceCounter,
   waveCounter,
+  controlLegend,
 );
 
 let gameDuration = 0;

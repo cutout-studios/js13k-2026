@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-export type Style = Partial<CSSStyleProperties>;
+import { join } from "~/alias";
+import { Style } from "~/dom";
 
 export const px = (value: number) => value + "px";
 export const pct = (value: number) => (value * 100).toFixed(0) + "%";
@@ -53,16 +54,15 @@ export const MAX_SIZE = (
 	width: number | string,
 	height: number | string = width,
 ): Style => ({ maxWidth: _unit(width), maxHeight: _unit(height) });
-
-
+  
 export const LAYOUT = (
-	columns = "auto",
-	rows = "auto",
+	columns = ["auto"],
+	rows = ["auto"],
 	gap = 1,
 	padding = gap,
 ): Style => ({
 	display: "grid",
-	grid: `${rows} / ${columns}`,
+	grid: `${join(rows)} / ${join(columns)}`,
 	gap: rem(gap),
 	padding: rem(padding),
 	justifyItems: "center",
@@ -70,7 +70,7 @@ export const LAYOUT = (
 
 export const TILT = (sign: number): Style => ({ transform: `rotate(${15 * sign}deg)` });
 
-export const CONTENT = (gap = 0.33): Style => ({
+export const CONTENT = (gap = 0.5): Style => ({
 	display: "inline-flex",
 	alignItems: "center",
 	gap: rem(gap),
