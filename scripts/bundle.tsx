@@ -90,7 +90,7 @@ async function bundle(
         action: "eval" as InputAction,
       },
     ], { allowFreeVars: true });
-    // await packer.optimize(2)
+    // await packer.optimize(2);
     await packer.optimize();
 
     const { firstLine, secondLine } = packer.makeDecoder();

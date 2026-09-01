@@ -7,12 +7,10 @@
   - two weapons
   - wire remaining stats
   - mass disruption, player vulnerability toggle
-- pan audio based on source location
 - remaining UI
   - highlight color
   - level up
-  - hook up intro screen and controller legend
-  - death message
+- pan audio based on source location
 - spin counter
 - enemy behaviors
 
