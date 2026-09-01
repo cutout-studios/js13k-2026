@@ -25,7 +25,7 @@ export const createElement = (
 ) => {
   const children = [] as Node[];
 
-  let tag = "div", styles = DEFAULT(), attributes = {};
+  let tag = "div", styles = DEFAULT, attributes = {};
   doTimes(parameters, (param) => {
     if (typeof param == "string") return tag = param;
     if (param instanceof Node) return children.push(param);

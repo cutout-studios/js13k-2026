@@ -15,13 +15,14 @@
  */
 
 import { _, join } from "~/alias";
-import { flat } from "~/common";
 import { createElement, createTextNode } from "~/dom";
+
 import { WORDS } from "../game/ship/constants.ts";
-import { FLEX, OVERLAY } from "./styles.ts";
+
+import { OVERLAY } from "./styles.ts";
 
 export const title = createElement(
-  flat([FLEX("column")], OVERLAY),
+  OVERLAY,
   createTextNode(
     join([
       "MISSION: DARKWHITE",

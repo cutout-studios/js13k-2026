@@ -14,59 +14,68 @@
  * limitations under the License.
  */
 
+export type Style = Partial<CSSStyleProperties>;
+
+export const px = (value: number) => value + "px";
+export const pct = (value: number) => (value * 100).toFixed(0) + "%";
+export const rem = (value: number) => value + "rem";
+
 const background = "black", color = "white";
 
-export const rem = (value: number) => value + "rem";
-export const px = (value: number) => value + "px";
-export const percent = (value: number) => value + "%";
+export const PRIMARY: Style = { background, color };
+export const SECONDARY: Style = { background: color, color: background };
+export const CLEAR: Style = { background: "transparent" };
 
-export const FULL_PERCENT = percent(100);
-export const HALF_PERCENT = percent(50);
+export const BORDER: Style = { border: rem(0.1) + " solid " + color };
 
-export const PRIMARY: Partial<CSSStyleProperties> = {
-  background,
-  color,
-  borderColor: color,
-};
+export const POINTER: Style = { cursor: "pointer" };
+export const HELP: Style = { cursor: "help" };
 
-export const SECONDARY: Partial<CSSStyleProperties> = {
-  background: color,
-  color: background,
-};
+export const INERT: Style = { pointerEvents: "none" };
 
-export const BORDER: Partial<CSSStyleProperties> = { borderWidth: px(2) };
-export const POINTER: Partial<CSSStyleProperties> = { cursor: "pointer" };
-export const INERT: Partial<CSSStyleProperties> = { pointerEvents: "none" };
-export const HIDDEN: Partial<CSSStyleProperties> = { visibility: "hidden" };
+export const HIDDEN: Style = { visibility: "hidden" };
+export const SHOWN: Style = { visibility: "visible" };
 
-export const OVERLAY: Partial<CSSStyleProperties>[] = [INERT, {
-  position: "absolute",
-  inset: "0",
-}];
+export const RELATIVE: Style = { position: "relative" };
+export const ABSOLUTE: Style = { position: "absolute" };
+export const FIXED: Style = { position: "fixed" };
 
-export const DEFAULT = (): Partial<CSSStyleProperties>[] => [FLEX(), PRIMARY];
+export const OVERLAY: Style[] = [INERT, CLEAR, { position: "absolute", inset: "0" }];
 
-export const FLEX = (
-  flexDirection = "row",
-  gap = rem(0.33),
-): Partial<CSSStyleProperties> => ({
-  alignItems: "center",
-  display: "flex",
-  flex: "1",
-  flexDirection,
-  gap,
-  justifyContent: "center",
-  padding: rem(1),
+const _unit = (value: number | string) => typeof value == "number" ? px(value) : value;
+
+export const SIZING = (
+	width: number | string = pct(1),
+	height: number | string = width,
+): Style => ({ width: _unit(width), height: _unit(height) });
+
+export const MAX_SIZE = (
+	width: number | string,
+	height: number | string = width,
+): Style => ({ maxWidth: _unit(width), maxHeight: _unit(height) });
+
+
+export const LAYOUT = (
+	columns = "auto",
+	rows = "auto",
+	gap = 1,
+	padding = gap,
+): Style => ({
+	display: "grid",
+	grid: `${rows} / ${columns}`,
+	gap: rem(gap),
+	padding: rem(padding),
+	justifyItems: "center",
 });
 
-export const SQUARE = (
-  side: string = FULL_PERCENT,
-  prefix = "",
-): Partial<CSSStyleProperties> => ({
-  [prefix + (prefix ? "W" : "w") + "idth"]: side,
-  [prefix + (prefix ? "H" : "h") + "eight"]: side,
+export const TILT = (sign: number): Style => ({ transform: `rotate(${15 * sign}deg)` });
+
+export const CONTENT = (gap = 0.33): Style => ({
+	display: "inline-flex",
+	alignItems: "center",
+	gap: rem(gap),
 });
 
-export const TILT = (sign: number): Partial<CSSStyleProperties> => ({
-  transform: `rotate(${15 * sign}deg)`,
-});
+export const AT = (gridArea: string, placeSelf = "center"): Style => ({ gridArea, placeSelf });
+
+export const DEFAULT = [PRIMARY];

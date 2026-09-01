@@ -55,6 +55,7 @@ onload = async () => {
     if (menu.open) return updateMenu(state, tickLength);
 
     updateGame(state, tickLength);
+
     updateHUD(state, tickLength);
     renderMain(getSceneObjects(state));
   });

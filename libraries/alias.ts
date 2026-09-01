@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export const { document, addEventListener } = globalThis;
+export const { document } = globalThis;
 export const {
   abs,
   random,
@@ -30,6 +30,7 @@ export const {
   tan,
   hypot,
 } = Math;
+export const { addEventListener } = document;
 
 export const TAU = PI * 2;
 export const F32 = Float32Array;
@@ -38,7 +39,8 @@ export const _ = undefined;
 
 export const length = (array: unknown[] | Float32Array | string) =>
   array.length;
-export const join = (array: (string | number)[], delimiter?: string) =>
+export const join = (array: (string | number)[], delimiter: string = " ") =>
   array.join(delimiter);
+export const arrayFrom = <T>(iterable: Iterable<T>) => Array.from(iterable);
 
 export const preventDefault = (event: Event) => event.preventDefault();

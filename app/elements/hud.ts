@@ -14,70 +14,70 @@
  * limitations under the License.
  */
 
-import { _, length, round } from "~/alias";
+import { length, round } from "~/alias";
 import { doTimes, flat, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
-
 import { WORDS } from "../game/ship/constants.ts";
 import { Game } from "../game/types.ts";
-
-import { FLEX, OVERLAY, TILT } from "./styles.ts";
+import {
+  AT,
+  CONTENT,
+  MAX_SIZE,
+  OVERLAY,
+  LAYOUT,
+  Style,
+  TILT,
+} from "./styles.ts";
 
 const _createMeter = (
     innerText: string,
-    style: Partial<CSSStyleProperties>[] = [],
+    style: Style[] = [],
   ): [HTMLElement, (meters: [max: number, value: number][]) => void] => {
     const meters = [createElement("meter") as HTMLMeterElement],
-      label = createElement("label", { innerText }),
       element = createElement(
+        [CONTENT(), MAX_SIZE(300, "none")],
         style,
-        label,
+        createElement("label", { innerText }),
         ...meters,
       );
-
     return [element, (meterAttributes: [max: number, value: number][]) => {
       while (length(meters) < length(meterAttributes)) {
         meters.push(
-          element.appendChild(
-            createElement("meter"),
-          ) as HTMLMeterElement,
+          element.appendChild(createElement("meter")) as HTMLMeterElement,
         );
       }
-
-      while (length(meters) < length(meterAttributes)) meters.pop()!.remove();
-
+      while (length(meters) > length(meterAttributes)) meters.pop()!.remove();
       doTimes(
         meters,
         (meter, index) => [meter.max, meter.value] = meterAttributes[index],
       );
     }];
   },
-  [fuelMeter, fuelUpdate] = _createMeter(WORDS[5], [TILT(-1)]),
-  [shieldMeter, shieldUpdate] = _createMeter(WORDS[17]),
+  [fuelMeter, fuelUpdate] = _createMeter(WORDS[5], [
+    TILT(-1),
+    AT("1/1", "start start"),
+  ]),
+  [shieldMeter, shieldUpdate] = _createMeter(WORDS[17], [
+    AT("1/2", "start center"),
+  ]),
   [armorMeter, armorUpdate] = _createMeter(WORDS[0], [
     TILT(1),
+    AT("1/3", "start end"),
   ]),
-  distanceCounter = createElement(
-    [TILT(-1)],
-  ),
-  waveCounter = createElement(
-    [TILT(1)],
-  );
+  distanceCounter = createElement([TILT(1), AT("2/1", "end start")]),
+  waveCounter = createElement([TILT(-1), AT("2/3", "end end")]);
 
 export const hud = createElement(
-  flat([FLEX("column")], OVERLAY),
-  createElement(
-    fuelMeter,
-    shieldMeter,
-    armorMeter,
-  ),
-  createElement(
-    distanceCounter,
-    waveCounter,
-  ),
+  flat([LAYOUT("1fr 1fr 1fr", "min-content 1fr")], OVERLAY),
+  fuelMeter,
+  shieldMeter,
+  armorMeter,
+  distanceCounter,
+  waveCounter,
 );
 
 let gameDuration = 0;
+
 export const updateHUD = (
   [
     [[
@@ -98,7 +98,6 @@ export const updateHUD = (
     "0",
   );
   waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
-
   armorUpdate(
     doTimes(_snapshot[0], (index: number) => [1, +(index >= armorDamage)]),
   );

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { arrayFrom, max } from "~/alias";
+
 export const SECONDS_TO_MS = 1000;
 export const MINUTES_TO_SECONDS = 60;
 
@@ -28,7 +30,9 @@ export const doTimes = <T, K>(
   enumerator: number | Array<K>,
   action: (element: K, index: number) => T,
 ): T[] =>
-  (typeof enumerator == "number" ? flat(Array(enumerator).keys()) : enumerator)
+  (typeof enumerator == "number"
+    ? arrayFrom(Array(max(0, enumerator)).keys())
+    : enumerator)
     .map(action as (element: K | number, index: number) => T);
 
 export const flat = <T>(
@@ -38,15 +42,22 @@ export const flat = <T>(
 
   let index = 0;
   doTimes(enumerables, (enumerable) => {
-    doTimes(Object.entries(enumerable), ([key, value]) => {
-      if (isNaN(+key)) return result[key] = value;
-
-      result[index] = value;
-      index++;
-    });
+    if (!enumerable) return;
+    doTimes(
+      Object.entries(
+        (enumerable as Iterable<T>)[Symbol.iterator]
+          ? arrayFrom(enumerable as Iterable<T>)
+          : enumerable,
+      ),
+      ([key, value]) => {
+        if (isNaN(+key)) return result[key] = value;
+        result[index] = value;
+        index++;
+      },
+    );
   });
 
-  return Array.from(result);
+  return result as unknown as T[];
 };
 
 export const flatDoTimes = <T extends AnyEnumerable<J>, K, J>(
