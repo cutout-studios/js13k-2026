@@ -60,6 +60,7 @@ export const updateItemPopover = (
     ),
     "\n",
   );
+
   const properties = [WORDS[15], _baseMass];
   if (_baseWeapon) {
     doTimes(
@@ -68,5 +69,6 @@ export const updateItemPopover = (
         properties.push([WORDS[6], WORDS[11], WORDS[2]][index], value),
     );
   }
+
   base.innerText = join(properties);
 };
