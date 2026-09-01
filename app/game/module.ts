@@ -25,11 +25,14 @@ import startingWorld from "./world/module.ts";
 export default [startingPlayer, startingWorld] as Game;
 
 export const getSceneObjects = (
-  [[playerShip], [activeEnemies, droppedItems]]: Game,
-): XOObject[][] =>
-  flat(
-    getShipObjects(playerShip),
-    flatDoTimes(activeEnemies, ([ships]) =>
-      flatDoTimes(ships, getShipObjects) as XOObject[][]),
-    doTimes(droppedItems, ([object]) => [object]),
-  );
+	[[playerShip], [activeEnemies, droppedItems]]: Game,
+): XOObject[][] => {
+	const [hull, ...rest] = getShipObjects(playerShip);
+	return flat(
+		playerShip[4][4] && (Date.now() / 80 | 0) % 2 ? [] : [hull],
+		rest,
+		flatDoTimes(activeEnemies, ([ships]) =>
+			flatDoTimes(ships, getShipObjects) as XOObject[][]),
+		doTimes(droppedItems, ([object]) => [object]),
+	);
+};

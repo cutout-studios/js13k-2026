@@ -2,15 +2,12 @@
 
 ## MVP TODOs
 
-- misc mechanics
-  - stats refresh
-  - two weapons
-  - wire remaining stats
-  - mass disruption, player vulnerability toggle
-- remaining UI
-  - highlight color
-  - level up
-- pan audio based on source location
+- misc
+  - remaining UI: highlight color (?)
+  - pan audio based on source location
+  - show default items in inventory
+  
+- wire remaining stats
 - spin counter
 - enemy behaviors
 

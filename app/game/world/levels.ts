@@ -15,7 +15,7 @@
  */
 
 import { atan, PI, round, sqrt } from "~/alias";
-import { doTimes } from "~/common";
+import { doTimes, flat } from "~/common";
 
 import { Band, range } from "~/random";
 import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
@@ -39,11 +39,13 @@ export const levelRollOverrides = (
   overrides: [number, Band][],
   level = 1,
 ) => {
+  const snapshot = flat(base);
+
   doTimes(overrides, ([statID, statBand]) => {
-    base[statID] = levelRoll(statBand, level);
+    snapshot[statID] = levelRoll(statBand, level);
   });
 
-  return base;
+  return snapshot;
 };
 
 export const getWavesInLevel = (level: number) =>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createObject, XOOrientation, Z_AXIS } from "~/3D";
+import { createObject, XOOrientation, XYZ, Z_AXIS } from "~/3D";
 import { NO_OP } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
@@ -28,11 +28,11 @@ import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
 
 export const createWeapon = (
   optionsIndex: number,
-  level = 1,
   weaponIndex = 0,
+  level = 1,
 ): Weapon => {
-  const [, , [, , , [overrides, schedule, mount = [] as XOOrientation]]] =
-      GameOptions[optionsIndex],
+  const [, , [, , , weapons]] = GameOptions[optionsIndex],
+    [overrides, schedule, mount = [0, 0, 0] as XYZ] = weapons[weaponIndex],
     snapshot = levelRollOverrides(
       WEAPON_BASE_PROPERTIES,
       overrides,
@@ -40,7 +40,7 @@ export const createWeapon = (
     ) as WeaponSnapshot;
 
   return [
-    createObject(mount),
+    createObject([mount] as XOOrientation),
     Z_AXIS,
     [[], []],
     createActionSequencer(

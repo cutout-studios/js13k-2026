@@ -171,7 +171,7 @@ const CELL_SIDE = 128,
     [(inventory) => {
       restorePreviewItem = oneOf(doTimes(
         getFormValues(),
-        (value) => inventory[value][0],
+        (value) => inventory[value]?.[0],
       ));
     }],
     [(_inventory, tickLength) => {

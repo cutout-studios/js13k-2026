@@ -22,7 +22,7 @@ import { minify } from "esbuild-minify-templates";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
-const ESTIMATED_RECLAIMABLE_BYTES = 150;
+const ESTIMATED_RECLAIMABLE_BYTES = 650;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
@@ -90,7 +90,7 @@ async function bundle(
         action: "eval" as InputAction,
       },
     ], { allowFreeVars: true });
-    // await packer.optimize(2);
+    // await packer.optimize(2); // TODO
     await packer.optimize();
 
     const { firstLine, secondLine } = packer.makeDecoder();
@@ -127,11 +127,11 @@ function logSize(filePath: string, customMessage?: string) {
   const { size } = Deno.statSync(filePath);
 
   console.log(
-    `%c${customMessage ?? filePath}: %c${size} / ${JS13K_LIMIT} %c(${
-      ((size / JS13K_LIMIT) * 100).toFixed(2)
-    }%, ${
-      JS13K_LIMIT - size
-    } bytes remaining + ~${ESTIMATED_RECLAIMABLE_BYTES} to reclaim)`,
+    `%c${customMessage ?? filePath}: %c${size} / ${JS13K_LIMIT} %c(~${
+      (((size - ESTIMATED_RECLAIMABLE_BYTES) / JS13K_LIMIT) * 100).toFixed(0)
+    }%: ${
+      JS13K_LIMIT - size + ESTIMATED_RECLAIMABLE_BYTES
+    } bytes remaining if ~${ESTIMATED_RECLAIMABLE_BYTES} reclaimed)`,
     "color: grey;",
     "color: cyan;",
     "color: white;",

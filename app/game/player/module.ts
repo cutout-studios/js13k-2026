@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { setOrigin } from "~/3D";
 import { repeat } from "~/common";
 
-import { setOrigin } from "../../../libraries/3D/coordinates.ts";
 import { createShip } from "../ship/module.ts";
 import { Resources } from "../ship/types.ts";
 import { ENEMY_Z_PLANE } from "../world/constants.ts";
@@ -31,7 +31,7 @@ ship[1] = [0, 0, -ENEMY_Z_PLANE];
 
 export default [
   ship,
-  repeat(5, 0) as Resources,
+  repeat(6, 0) as Resources,
 
   // inventory
   [],

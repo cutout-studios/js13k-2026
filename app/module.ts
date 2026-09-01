@@ -27,8 +27,10 @@ import { menu, openMenu, updateMenu } from "./elements/menu/module.ts";
 import { hideTitle, title } from "./elements/title.ts";
 import state, { getSceneObjects } from "./game/module.ts";
 import { combineItems } from "./game/player/items.ts";
+import { updatePlayerSnapshots } from "./game/player/stats.ts";
 import { WORDS } from "./game/ship/constants.ts";
 import { updateGame } from "./game/update.ts";
+import { logShip } from "./log.ts";
 
 document.head.append(createElement("style", {
   // minified from ./styles.css
@@ -44,6 +46,9 @@ onload = async () => {
     [mainCanvas, hud, menu, title],
     (element) => document.body.appendChild(element),
   );
+
+  logShip(state[0][0]);
+
   startClock((tickLength) => {
     if (!started) {
       const ship = state[0][0];
@@ -73,7 +78,8 @@ addEventListener("mousedown", () => {
   hideTitle();
 }, { once: true });
 
-const [[, , inventory], [, , progress]] = state;
+const [player, [, , progress]] = state;
+const [, , inventory] = player;
 
 addEventListener(WORDS[26], ({ detail }: CustomEventInit<number[]>) => {
   const toEquip = repeat(4, -1);
@@ -83,6 +89,8 @@ addEventListener(WORDS[26], ({ detail }: CustomEventInit<number[]>) => {
 
     item[1] = toEquip[item[0][2]] == index;
   });
+
+  updatePlayerSnapshots(player);
 });
 
 addEventListener(WORDS[9], ({ detail }: CustomEventInit<number[]>) => {

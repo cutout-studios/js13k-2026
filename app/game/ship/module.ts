@@ -22,6 +22,7 @@ import {
   XOObject,
   XYZ,
 } from "~/3D";
+import { length } from "~/alias";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat } from "~/common";
 
@@ -51,6 +52,7 @@ export const createShip = (
         advanceShip(ship, tickLength);
         doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
       }]] as ActionSchedule<Ship>,
+      shipWeapons
     ],
   ] = GameOptions[optionsIndex];
 
@@ -59,9 +61,9 @@ export const createShip = (
       ...shapes.map((args) => createObject(...args, paint(value))),
     ),
     repeat(3, 0) as XYZ,
-    [createWeapon(optionsIndex, level, 0)],
+    doTimes(length(shipWeapons), (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level)),
     createActionSequencer(shipSchedule),
-    repeat(5, 0) as Resources,
+    repeat(6, 0) as Resources,
     levelRollOverrides(
       SHIP_BASE_PROPERTIES,
       shipOverrides,
@@ -69,7 +71,7 @@ export const createShip = (
     ) as ShipSnapshot,
     optionsIndex,
   ];
-};
+}
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,

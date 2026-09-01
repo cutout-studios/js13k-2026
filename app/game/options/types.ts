@@ -31,7 +31,7 @@ type ShipOptions = [
   shape: [orientation: XOOrientation, geometry: XOGeometry][],
   overrides: BaseStatOverride[],
   schedule: ActionSchedule<Ship> | undefined,
-  weapon: [
+  weapons: [
     overrides: BaseStatOverride[],
     schedule?: ActionSchedule<Ship>,
     mount?: XOOrientation,
@@ -39,7 +39,7 @@ type ShipOptions = [
       geometry?: XOGeometry,
       schedule?: ActionSchedule<Bullet>,
     ],
-  ],
+  ][],
   countBand: Band,
 ];
 

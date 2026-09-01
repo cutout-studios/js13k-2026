@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { doTimes, repeat } from "~/common";
+import { doTimes } from "~/common";
 import { Player } from "./types.ts";
 
 export const updatePlayerSnapshots = (
-  [ship, [shieldLevels, fuelLevels = 0, , armorLevels = 0], inventory]: Player,
+  [ship, , inventory]: Player,
 ) => {
   const [, , weapons, , , _snapshot] = ship;
   const _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
@@ -35,14 +35,15 @@ export const updatePlayerSnapshots = (
     });
   });
 
-  const levels = [
-    armorLevels,
-    ...repeat(3, fuelLevels),
-    ...repeat(2, shieldLevels),
-  ];
+  // TODO: restore when levels are implemented
+  // const levels = [
+  //   armorLevels,
+  //   ...repeat(3, fuelLevels),
+  //   ...repeat(2, shieldLevels),
+  // ];
 
-  doTimes(
-    [0, 4, 7, 8, 15, 16],
-    (id, index) => _snapshot[id] *= _snapshot[11] ** levels[index],
-  );
+  // doTimes(
+  //   [0, 4, 7, 8, 15, 16],
+  //   (id, index) => _snapshot[id] *= _snapshot[11] ** levels[index],
+  // );
 };
