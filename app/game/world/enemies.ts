@@ -18,10 +18,12 @@ import { setOrigin, XYZ } from "~/3D";
 import { length, max, min, round } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
-import { logShip } from "../../log.ts";
+
+// import { logShip } from "../../log.ts";
 import { createDeck, drawCard } from "../decks.ts";
 import GameOptions from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
+
 import {
   ENEMY_PLACEMENT_SPREAD,
   ENEMY_Z_PLANE,
@@ -68,7 +70,7 @@ const _drawEnemyGroup = (
       -ENEMY_Z_PLANE,
     ] as XYZ);
 
-    logShip(ship, "#" + count);
+    // logShip(ship, "#" + count);
 
     return ship;
   });

@@ -27,6 +27,7 @@ import {
   XYZ_LENGTH,
 } from "~/3D";
 import { _, length, max, min, random } from "~/alias";
+import { getPanFromCoordinates } from "~/audio";
 import { createActionSequencer } from "~/clock";
 import {
   doTimes,
@@ -38,7 +39,7 @@ import {
 } from "~/common";
 import { range } from "~/random";
 
-import { logDamage } from "../log.ts";
+// import { logDamage } from "../log.ts";
 
 import { createItem } from "./player/items.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
@@ -106,12 +107,15 @@ export const updateGame = (
           bullets[1],
           doTimes(enemyShips, ([object]) => object),
           (_, shipIndex) => {
-            hitSound();
-            logDamage(enemyShips[shipIndex], "WHITE", () => {
-              enemyShips[shipIndex][4][0] += random() < critChance
-                ? bulletDamage * critDamage
-                : bulletDamage;
-            });
+            hitSound(getPanFromCoordinates(enemyShips[shipIndex][0][0], 5));
+            enemyShips[shipIndex][4][0] += random() < critChance
+              ? bulletDamage * critDamage
+              : bulletDamage;
+            // logDamage(enemyShips[shipIndex], "WHITE", () => {
+            //   enemyShips[shipIndex][4][0] += random() < critChance
+            //     ? bulletDamage * critDamage
+            //     : bulletDamage;
+            // });
           },
         ),
       ),
@@ -126,7 +130,7 @@ export const updateGame = (
           ,
           [[, , bullets, , [, critChance, critDamage, bulletDamage]]],
         ],
-        enemyShipIndex,
+        // enemyShipIndex,
       ) => {
         spliceTable(
           bullets,
@@ -134,15 +138,18 @@ export const updateGame = (
             bullets[1],
             [playerShipObject],
             () => {
-              logDamage(
-                playerShip,
-                "#" + enemyShipIndex,
-                () => {
-                  playerShip[4][0] += random() < critChance
-                    ? bulletDamage * critDamage
-                    : bulletDamage;
-                },
-              );
+              playerShip[4][0] += random() < critChance
+                ? bulletDamage * critDamage
+                : bulletDamage;
+              // logDamage(
+              //   playerShip,
+              //   "#" + enemyShipIndex,
+              //   () => {
+              //     playerShip[4][0] += random() < critChance
+              //       ? bulletDamage * critDamage
+              //       : bulletDamage;
+              //   },
+              // );
             },
           ),
         );
@@ -179,7 +186,7 @@ export const updateGame = (
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[15]) return [];
-          explosionSound();
+          explosionSound(getPanFromCoordinates(coordinates, 5));
 
           if (random() < snapshot[10]) {
             const item = createItem(optionsIndex, _, progress[0]);
@@ -212,7 +219,7 @@ export const updateGame = (
     damage[3] ??= 0, damage[3]++;
     damage[4] = true;
     if (damage[3] >= _snapshot[0]) {
-      alert("MISSION " + (winCollection.size == 6) ? "COMPLETE" : "FAILED");
+      alert("MISSION " + (winCollection.size == 6 ? "COMPLETE" : "FAILED"));
       location.reload();
     }
   }

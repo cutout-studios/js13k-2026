@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-export {
-  NOISE_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
-export { getPanFromCoordinates } from "./pan.ts";
+import { readOrigin } from "~/3D";
+import { max, min } from "~/alias";
+
+export const getPanFromCoordinates = (
+  coordinates: Float32Array,
+  yBound: number,
+) => min(1, max(-1, readOrigin(coordinates)[1] / yBound));

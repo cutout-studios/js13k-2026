@@ -52,7 +52,7 @@ export const createShip = (
         advanceShip(ship, tickLength);
         doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
       }]] as ActionSchedule<Ship>,
-      shipWeapons
+      shipWeapons,
     ],
   ] = GameOptions[optionsIndex];
 
@@ -61,7 +61,10 @@ export const createShip = (
       ...shapes.map((args) => createObject(...args, paint(value))),
     ),
     repeat(3, 0) as XYZ,
-    doTimes(length(shipWeapons), (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level)),
+    doTimes(
+      length(shipWeapons),
+      (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level),
+    ),
     createActionSequencer(shipSchedule),
     repeat(6, 0) as Resources,
     levelRollOverrides(
@@ -71,7 +74,7 @@ export const createShip = (
     ) as ShipSnapshot,
     optionsIndex,
   ];
-}
+};
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,

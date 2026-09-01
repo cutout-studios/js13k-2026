@@ -30,7 +30,7 @@ import { combineItems } from "./game/player/items.ts";
 import { updatePlayerSnapshots } from "./game/player/stats.ts";
 import { WORDS } from "./game/ship/constants.ts";
 import { updateGame } from "./game/update.ts";
-import { logShip } from "./log.ts";
+// import { logShip } from "./log.ts";
 
 document.head.append(createElement("style", {
   // minified from ./styles.css
@@ -47,7 +47,7 @@ onload = async () => {
     (element) => document.body.appendChild(element),
   );
 
-  logShip(state[0][0]);
+  // logShip(state[0][0]);
 
   startClock((tickLength) => {
     if (!started) {

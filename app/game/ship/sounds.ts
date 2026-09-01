@@ -22,7 +22,7 @@ import {
   TRIANGLE_BUFFER,
 } from "~/audio";
 
-export const weaponSound = createSound(
+export const bulletSound = createSound(
   [SINE_BUFFER, [
     [[1, [.17, .193]]], // 75-85Hz
     [[0, .2], .004],

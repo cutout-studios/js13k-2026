@@ -101,11 +101,17 @@ export const createItem = (
     typeID,
     colorID,
     rank,
-    doTimes((typeID <= 1 ? rank - 1 : rank) + baseModifierCount, () => {
-      const [, propertyID, type, valueBand] = drawCard(modifierDeck);
+    doTimes(
+      min(
+        modifierDeck.length,
+        (typeID <= 1 ? rank - 1 : rank) + baseModifierCount,
+      ),
+      () => {
+        const [, propertyID, type, valueBand] = drawCard(modifierDeck);
 
-      return [propertyID, type, levelRoll(valueBand, rank, 2)];
-    }),
+        return [propertyID, type, levelRoll(valueBand, rank, 2)];
+      },
+    ),
     range(...baseMass),
     (typeID < 2)
       ? [

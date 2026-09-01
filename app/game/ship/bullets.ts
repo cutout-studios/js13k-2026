@@ -29,11 +29,13 @@ import {
   subtractXYZ,
   XOGeometry,
 } from "~/3D";
+import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, spliceTable } from "~/common";
 
 import GameOptions, { BULLET_SPEED } from "../options/module.ts";
 
+import { bulletSound } from "./sounds.ts";
 import { Bullet, Ship } from "./types.ts";
 
 export const createBullet = (
@@ -81,11 +83,18 @@ export const createBullet = (
         origin,
       ),
     ),
-    object = createObject([origin], bulletGeometry, paint(value));
+    object = createObject([origin], bulletGeometry as XOGeometry, paint(value));
 
   aimObject(object, addXYZ(origin, heading));
 
-  return [object, heading, createActionSequencer(bulletSchedule), snapshot[4]];
+  bulletSound(getPanFromCoordinates(object[0], 5));
+
+  return [
+    object,
+    heading,
+    createActionSequencer(bulletSchedule as ActionSchedule<Bullet>),
+    snapshot[4],
+  ];
 };
 
 export const moveBullet = (

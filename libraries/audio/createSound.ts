@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { readOrigin } from "~/3D";
+import { max, min } from "~/alias";
 import { doTimes } from "~/common";
 import { range } from "~/random";
 
@@ -49,3 +51,8 @@ export const createSound = (...definitions: SoundDefinition[]) => {
       source.stop(time);
     });
 };
+
+export const getPanFromCoordinates = (
+  coordinates: Float32Array,
+  yBound: number,
+) => min(1, max(-1, readOrigin(coordinates)[1] / yBound));

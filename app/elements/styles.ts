@@ -41,41 +41,50 @@ export const RELATIVE: Style = { position: "relative" };
 export const ABSOLUTE: Style = { position: "absolute" };
 export const FIXED: Style = { position: "fixed" };
 
-export const OVERLAY: Style[] = [INERT, CLEAR, { position: "absolute", inset: "0" }];
+export const OVERLAY: Style[] = [INERT, CLEAR, {
+  position: "absolute",
+  inset: "0",
+}];
 
-const _unit = (value: number | string) => typeof value == "number" ? px(value) : value;
+const _unit = (value: number | string) =>
+  typeof value == "number" ? px(value) : value;
 
 export const SIZING = (
-	width: number | string = pct(1),
-	height: number | string = width,
+  width: number | string = pct(1),
+  height: number | string = width,
 ): Style => ({ width: _unit(width), height: _unit(height) });
 
 export const MAX_SIZE = (
-	width: number | string,
-	height: number | string = width,
+  width: number | string,
+  height: number | string = width,
 ): Style => ({ maxWidth: _unit(width), maxHeight: _unit(height) });
-  
+
 export const LAYOUT = (
-	columns = ["auto"],
-	rows = ["auto"],
-	gap = 1,
-	padding = gap,
+  columns = ["auto"],
+  rows = ["auto"],
+  gap = 1,
+  padding = gap,
 ): Style => ({
-	display: "grid",
-	grid: `${join(rows)} / ${join(columns)}`,
-	gap: rem(gap),
-	padding: rem(padding),
-	justifyItems: "center",
+  display: "grid",
+  grid: `${join(rows)} / ${join(columns)}`,
+  gap: rem(gap),
+  padding: rem(padding),
+  justifyItems: "center",
 });
 
-export const TILT = (sign: number): Style => ({ transform: `rotate(${15 * sign}deg)` });
+export const TILT = (sign: number): Style => ({
+  transform: `rotate(${15 * sign}deg)`,
+});
 
 export const CONTENT = (gap = 0.5): Style => ({
-	display: "inline-flex",
-	alignItems: "center",
-	gap: rem(gap),
+  display: "inline-flex",
+  alignItems: "center",
+  gap: rem(gap),
 });
 
-export const AT = (gridArea: string, placeSelf = "center"): Style => ({ gridArea, placeSelf });
+export const AT = (gridArea: string, placeSelf = "center"): Style => ({
+  gridArea,
+  placeSelf,
+});
 
 export const DEFAULT = [PRIMARY];

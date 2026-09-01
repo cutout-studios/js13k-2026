@@ -2,13 +2,9 @@
 
 ## MVP TODOs
 
-- misc
-  - remaining UI: highlight color (?)
-  - pan audio based on source location
-  - show default items in inventory
-  
-- wire remaining stats
-- spin counter
+- remaining UI: highlight color (?)
+
+- spin counter, wire remaining stats
 - enemy behaviors
 
 ## Core Polish

@@ -23,7 +23,6 @@ import GameOptions from "../options/module.ts";
 import { WEAPON_BASE_PROPERTIES } from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 import { createBullet } from "./bullets.ts";
-import { weaponSound } from "./sounds.ts";
 import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
 
 export const createWeapon = (
@@ -66,7 +65,6 @@ export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   if (ship[6] == 0 && fuelUsed > shipSnapshot[4]) return;
 
   damages[1] = fuelUsed;
-  weaponSound();
   doTimes(count, () => {
     const bullet = createBullet(ship, weaponIndex);
     bullets.push(bullet);

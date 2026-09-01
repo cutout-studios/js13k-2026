@@ -15,7 +15,7 @@
  */
 
 import { _ } from "~/alias";
-import { repeat, doTimes } from "~/common";
+import { doTimes, repeat } from "~/common";
 import { createElement, createTextNode } from "~/dom";
 
 import { WORDS } from "../game/ship/constants.ts";
@@ -33,7 +33,7 @@ export const title = createElement(
     "MISSION: DARKWHITE",
     `WHAT WAS DIVIDED YOU MUST ${WORDS[9]}`,
     "CLICK TO BEGIN",
-  ], text => createElement(createTextNode(text))),
+  ], (text) => createElement(createTextNode(text))),
 );
 
 export const hideTitle = () => {

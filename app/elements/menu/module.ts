@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-import { createCamera, createRenderTarget, GPURenderTarget } from "~/3D";
+import {
+  adjustObject,
+  createCamera,
+  createRenderTarget,
+  GPURenderTarget,
+  setOrigin,
+  XYZ,
+} from "~/3D";
 import { join, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat } from "~/common";
 import { createElement, createTextNode, updateStyles } from "~/dom";
 import { oneOf } from "~/random";
+
 import GameOptions from "../../game/options/module.ts";
+import { createItem } from "../../game/player/items.ts";
 import { Item } from "../../game/player/types.ts";
 import { WORDS } from "../../game/ship/constants.ts";
 import { Game } from "../../game/types.ts";
+
 import { portrait } from "../portrait.ts";
 import {
-  px,
   ABSOLUTE,
   AT,
   BORDER,
@@ -34,16 +43,18 @@ import {
   HELP,
   HIDDEN,
   INERT,
+  LAYOUT,
   MAX_SIZE,
   pct,
   POINTER,
+  px,
   RELATIVE,
+  rem,
   SECONDARY,
   SHOWN,
   SIZING,
-  LAYOUT,
-  rem,
 } from "../styles.ts";
+
 import { itemPopover, updateItemPopover } from "./itemPopover.ts";
 
 let hoveredCellIndex = -1, restorePreviewItem: Item | undefined;
@@ -57,7 +68,8 @@ const CELL_SIDE = 128,
     doTimes(_HALF_HEX, ([x, y]) => [pct(x), pct(y)]),
     doTimes(_HALF_HEX, ([x, y]) => [pct(1 - x), pct(1 - y)]),
   ),
-  place = (element: HTMLElement, gridArea: string) => updateStyles(element, { gridArea }),
+  place = (element: HTMLElement, gridArea: string) =>
+    updateStyles(element, { gridArea }),
   createCellWindow = (index: number) =>
     createElement(
       "canvas",
@@ -184,46 +196,65 @@ const CELL_SIDE = 128,
   ]);
 
 export const menu = createElement(
-  "dialog",
-  [MAX_SIZE("min-content", "90svh"), {
-    margin: "auto",
-    padding: "0",
-    border: "0",
-    overflow: "auto",
-  }],
-  {
-    oncancel: preventDefault,
-    onmousemove: ({ clientX, clientY }: MouseEvent) => {
-      const { width, height } = itemPopover.getBoundingClientRect();
+    "dialog",
+    [MAX_SIZE("min-content", "90svh"), {
+      margin: "auto",
+      padding: "0",
+      border: "0",
+      overflow: "auto",
+    }],
+    {
+      oncancel: preventDefault,
+      onmousemove: ({ clientX, clientY }: MouseEvent) => {
+        const { width, height } = itemPopover.getBoundingClientRect();
 
-      updateStyles(itemPopover, {
-        top: px(clientY + height > innerHeight ? clientY - height : clientY),
-        left: px(clientX + width > innerWidth ? clientX - width : clientX),
-      });
+        updateStyles(itemPopover, {
+          top: px(clientY + height > innerHeight ? clientY - height : clientY),
+          left: px(clientX + width > innerWidth ? clientX - width : clientX),
+        });
+      },
     },
-  },
-  form,
-  itemPopover,
-) as HTMLDialogElement;
+    form,
+    itemPopover,
+  ) as HTMLDialogElement,
+  equippedItems = doTimes(4, (typeID: number) => {
+    const item = createItem(0, typeID, 1, 1);
+
+    setOrigin(item[0][0], [0, 0, -1.5]);
+    item[1] = createActionSequencer([[
+      (item, tickLength) => {
+        adjustObject(item[0], [undefined, [
+          repeat(3, tickLength) as XYZ,
+          tickLength,
+        ]]);
+      },
+    ]]);
+
+    return item;
+  });
 
 let renderTargets: GPURenderTarget[];
 
 export const openMenu = ([[, , inventory], [, , , winCollection]]: Game) => {
   menu.showModal();
   renderTargets ||= doTimes(canvasCells, createRenderTarget);
-  
+
   doTimes(winCollectionElements, (element, index) =>
     winCollection.has(index) &&
     (element.style.background = "#" + GameOptions[index][1].toString(16)));
-  
-    menuCamera([[portrait]], renderTargets[0]);
+
+  menuCamera([[portrait]], renderTargets[0]);
 
   doTimes(inventory, ([item, equipped], index) => {
     menuCamera([[item[0]]], renderTargets[index + INVENTORY_OFFSET]);
-    if (equipped) {
-      menuCamera([[item[0]]], renderTargets[item[2] + EQUIP_OFFSET]);
-    }
+    if (equipped) equippedItems[item[2]] = item;
   });
+
+  doTimes(
+    equippedItems,
+    (item, index) =>
+      menuCamera([[item[0]]], renderTargets[index + EQUIP_OFFSET]),
+  );
 };
 
 export const updateMenu = (
@@ -231,14 +262,14 @@ export const updateMenu = (
   tickLength: number,
 ) => {
   restorePreviewSequence(inventory, tickLength);
-  
-  const entry = inventory[hoveredCellIndex - INVENTORY_OFFSET];
-  if (!entry) return updateStyles(itemPopover, HIDDEN);
-  
-  updateItemPopover(entry[0]);
+
+  const [item, equipped] = inventory[hoveredCellIndex - INVENTORY_OFFSET] ??
+    [equippedItems[hoveredCellIndex - EQUIP_OFFSET], true];
+  if (!item) return updateStyles(itemPopover, HIDDEN);
+
+  updateItemPopover(item);
   updateStyles(itemPopover, SHOWN);
-  
-  const [item, equipped] = entry;
+
   item[1](item, tickLength);
 
   menuCamera([[item[0]]], renderTargets[hoveredCellIndex]);
