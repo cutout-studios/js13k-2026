@@ -16,7 +16,7 @@
 
 import { addEventListener } from "~/alias";
 import { startClock } from "~/clock";
-import { keyboard } from "~/controller";
+import { bind } from "~/controller";
 
 import { camera } from "./camera.ts";
 import { menu, title } from "./elements/handles.ts";
@@ -26,24 +26,8 @@ import { resetMenu, updateMenu } from "./elements/menu.ts";
 import GameState, { getSceneObjects } from "./game/module.ts";
 import { updateGame } from "./game/update.ts";
 
-const bind = (keyCode: string, onDown: () => void, onUp?: () => void) => {
-  let wasDown = keyboard.has(keyCode);
-
-  return () => {
-    const isDown = keyboard.has(keyCode);
-
-    if (wasDown && !isDown) onDown();
-    if (!wasDown && isDown) onUp?.();
-
-    wasDown = isDown;
-  };
-};
-
-const handleEscape = bind(
-    "Escape",
-    () => menu.open ? menu.close() : (menu.showModal(), resetMenu()),
-  ),
-  handleSpace = bind("Space", () => console.log("Space!"));
+const handleEscape = bind("Escape", () => menu.open ? menu.close() : (menu.showModal(), resetMenu())),
+      handleSpace = bind("Space", () => console.log("Space!"));
 
 addEventListener("mousedown", () => {
   GameState[2] = true;
@@ -51,7 +35,7 @@ addEventListener("mousedown", () => {
 });
 
 startClock((tickLength) => {
-  if (!GameState[2]) {
+  if (!GameState[2]) { // hasn't started yet
     const ship = GameState[0][0];
     ship[3](ship, tickLength);
     updateHUD(GameState, tickLength);

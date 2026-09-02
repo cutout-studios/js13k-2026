@@ -82,8 +82,9 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
   );
 }]];
 
+
 export const spinSchedule = [[() => {
   // pull in direction of motion, spin
-}], [() => {
+}, /* spin duration */], [() => {
   // restore regular control schedule
 }]];
