@@ -22,7 +22,7 @@ import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
 import startingWorld from "./world/module.ts";
 
-export default [startingPlayer, startingWorld] as Game;
+export default [startingPlayer, startingWorld, false] as Game;
 
 export const getSceneObjects = (
   [[playerShip], [activeEnemies, droppedItems]]: Game,

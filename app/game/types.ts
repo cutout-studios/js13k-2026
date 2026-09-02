@@ -17,4 +17,4 @@
 import { Player } from "./player/types.ts";
 import { World } from "./world/types.ts";
 
-export type Game = [Player, World];
+export type Game = [Player, World, hasStarted: boolean];

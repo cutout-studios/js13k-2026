@@ -14,29 +14,6 @@
  * limitations under the License.
  */
 
-html,
-body,
-body * {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  font-family: ui-monospace;
-  font-size: 16px;
-  color: white;
-  list-style-type: none;
-}
+import { createCamera } from "~/3D";
 
-body {
-  position: relative;
-  width: 100vw;
-  height: 100svh;
-}
-
-dialog::backdrop {
-  background: #000c;
-}
-
-/* TEMP */
-:checked + canvas {
-  border-color: yellow;
-}
+export const camera = createCamera();

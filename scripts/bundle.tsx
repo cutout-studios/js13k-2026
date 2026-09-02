@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { rawText } from "@cutout/jsx/projections";
-
 import * as esbuild from "esbuild";
 import { minify } from "esbuild-minify-templates";
+import { minify as minifyHtml } from "html-minifier-next";
 
 import { InputAction, InputType, Packer } from "roadroller";
 
@@ -27,7 +26,7 @@ const ESTIMATED_RECLAIMABLE_BYTES = 150;
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
 
-const BUNDLE_ENTRYPOINT = `./${APP_DIR}/module.ts`;
+const BUNDLE_ENTRYPOINT = `./${APP_DIR}/index.html`;
 const BUNDLE_OUTPUT_FILE = "index.html";
 const BUNDLE_OUTPUT_COMPRESSED_FILE = `${BUNDLE_OUTPUT_FILE}.zip`;
 const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}`;
@@ -41,7 +40,7 @@ Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 await bundle();
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
 
-await bundle({ minify: false, sourcemap: "inline" });
+// await bundle({ minify: false, sourcemap: "inline" });
 
 await new Deno.Command("open", {
   args: [BUNDLE_OUTPUT_FILEPATH],
@@ -64,10 +63,24 @@ async function bundle(
   }
 
   const { outputFiles } = _result;
-  const [sourceData] = outputFiles!;
 
-  let code = sourceData.text(),
-    appOutputText = rawText(<script>{code}</script>);
+  const htmlFile = outputFiles!.find((f) => f.path.endsWith(".html"))!;
+  const jsFile = outputFiles!.find((f) => f.path.endsWith(".js"))!;
+
+  const htmlText = await minifyHtml(htmlFile.text(), {
+    collapseWhitespace: true,
+    removeComments: true,
+    removeAttributeQuotes: true,
+    removeOptionalTags: true,
+    minifyCSS: true,
+    minifyJS: false,
+  });
+
+  let code = jsFile.text(),
+    appOutputText = htmlText.replace(
+      /<script[^>]*><\/script>/,
+      () => `<script type=module>${code}</script>`,
+    );
   if (options.minify) {
     code = minify(code).toString();
 
@@ -83,24 +96,25 @@ async function bundle(
 
     console.log(`%cMinifed Source:\n%c${code}`, "color: blue;", "color: gray;");
 
+    code = code = htmlText.replace(
+      /<script[^>]*><\/script>/,
+      () => `<script type=module>${code}</script>`,
+    );
+
     const packer = new Packer([
       {
         data: code,
-        type: "js" as InputType,
-        action: "eval" as InputAction,
+        type: "text" as InputType,
+        action: "write" as InputAction,
       },
     ], { allowFreeVars: true });
     // await packer.optimize(2); // TODO
-    await packer.optimize();
+    await packer.optimize(1);
 
     const { firstLine, secondLine } = packer.makeDecoder();
 
-    appOutputText = rawText(
-      <script>
-        {firstLine}
-        {secondLine}
-      </script>,
-    );
+    appOutputText =
+      `<meta charset=utf-8><script>${firstLine}\n${secondLine}</script>`;
   }
 
   Deno.writeTextFileSync(
