@@ -15,20 +15,20 @@
  */
 
 import {
-  adjustObject,
   createObject,
   createPaintMaterialWithPalette as paint,
+  setOrigin,
   XOGeometry,
-  XOObject,
   XOOrientation,
-  XYZ,
+  Z_AXIS,
 } from "~/3D";
-import { _, cos, length, min, random, sin, TAU } from "~/alias";
-import { Action, createActionSequencer } from "~/clock";
-import { doTimes, flat, repeat } from "~/common";
+import { _, length, min } from "~/alias";
+import { createActionSequencer } from "~/clock";
+import { doTimes, flat } from "~/common";
 
 import { bell, oneOf, range } from "~/random";
 
+import { createPull, orbit } from "../actions.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
 import GameOptions from "../options/module.ts";
 
@@ -45,23 +45,6 @@ const _itemDeck = createDeck(4),
 
 const [[, , [ITEM_GEOMETRY]]] = GameOptions;
 
-// TEMP
-const _tempMeanderActionFactory = (
-  driftAmount = 0.0005,
-  driftSpeed = 0.25,
-): Action<[XOObject]> => {
-  const phase = random() * TAU;
-
-  return ([object], tickLength) => {
-    return adjustObject(object, [
-      [
-        ...doTimes([sin, cos], (f) => f(tickLength + phase) * driftAmount),
-        driftSpeed * tickLength,
-      ] as XYZ,
-    ]);
-  };
-};
-
 export const createItem = (
   colorID: number,
   typeID: number = drawCard(_itemDeck),
@@ -69,20 +52,20 @@ export const createItem = (
   rank: number = _itemRankRoll(level),
 ): Item => {
   const [, value, , [[
-    baseMass,
-    baseModifierCount,
-    baseBulletCount,
-    baseBulletRate,
-    baseBulletDamage,
-  ], modifiers]] = GameOptions[colorID];
-  const modifierDeck = [] as ModifierOptions[];
+      baseMass,
+      baseModifierCount,
+      baseBulletCount,
+      baseBulletRate,
+      baseBulletDamage,
+    ], modifiers]] = GameOptions[colorID],
+    modifierDeck = [] as ModifierOptions[],
+    pull = createPull(Z_AXIS, () => 0.25, 0.005);
+
   doTimes(modifiers, (modifier) => {
     if (modifier[0] == typeID || modifier[0] == 0) {
       insertCard(modifierDeck, modifier);
     }
   });
-
-  const meander = _tempMeanderActionFactory();
 
   return [
     createObject(
@@ -90,13 +73,7 @@ export const createItem = (
       paint(value),
     ),
     createActionSequencer([[
-      ([object], tickLength) => {
-        meander([object], tickLength, 0, 0);
-        adjustObject(object, [undefined, [
-          repeat(3, tickLength) as XYZ,
-          tickLength,
-        ]]);
-      },
+      ([object], ...args) => (pull(object, ...args), orbit(object, ...args)),
     ]]),
     typeID,
     colorID,
@@ -134,4 +111,15 @@ export const combineItems = (
     level,
     min(3, min(...doTimes(items, ([, , , , rank]) => rank)) + 1),
   );
+};
+
+// specifically used to set at item inside the equip menu frame
+export const setItemInFrame = (item: Item) => {
+  setOrigin(item[0][0], [0, 0, -1.5]);
+
+  item[1] = createActionSequencer([[
+    ([object], ...args) => orbit(object, ...args),
+  ]]);
+
+  return item;
 };

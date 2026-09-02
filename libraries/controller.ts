@@ -27,3 +27,20 @@ onpointerdown = onpointerup = onpointermove = (
 // suppress undesired browser behavior
 onblur = () => keyboard.clear();
 oncontextmenu = () => false;
+
+export const bind = (
+  keyCode: string,
+  onDown: () => void,
+  onUp?: () => void,
+) => {
+  let wasDown = keyboard.has(keyCode);
+
+  return () => {
+    const isDown = keyboard.has(keyCode);
+
+    if (wasDown && !isDown) onDown();
+    if (!wasDown && isDown) onUp?.();
+
+    wasDown = isDown;
+  };
+};

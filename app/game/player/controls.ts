@@ -81,3 +81,9 @@ export const controlSchedule: ActionSchedule<Ship> = [[(ship, tickLength) => {
       pointer && pointer[1] >> index & 1 && weapon[3](ship, tickLength),
   );
 }]];
+
+export const spinSchedule = [[() => {
+  // pull in direction of motion, spin
+}], [() => {
+  // restore regular control schedule
+}]];

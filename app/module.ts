@@ -26,12 +26,30 @@ import { resetMenu, updateMenu } from "./elements/menu.ts";
 import GameState, { getSceneObjects } from "./game/module.ts";
 import { updateGame } from "./game/update.ts";
 
+const bind = (keyCode: string, onDown: () => void, onUp?: () => void) => {
+  let wasDown = keyboard.has(keyCode);
+
+  return () => {
+    const isDown = keyboard.has(keyCode);
+
+    if (wasDown && !isDown) onDown();
+    if (!wasDown && isDown) onUp?.();
+
+    wasDown = isDown;
+  };
+};
+
+const handleEscape = bind(
+    "Escape",
+    () => menu.open ? menu.close() : (menu.showModal(), resetMenu()),
+  ),
+  handleSpace = bind("Space", () => console.log("Space!"));
+
 addEventListener("mousedown", () => {
   GameState[2] = true;
   title.style.opacity = "0";
 });
 
-let escapeWasDown = false;
 startClock((tickLength) => {
   if (!GameState[2]) {
     const ship = GameState[0][0];
@@ -39,13 +57,12 @@ startClock((tickLength) => {
     updateHUD(GameState, tickLength);
     return camera(getSceneObjects(GameState), mainCanvas);
   }
-  const escapeIsDown = keyboard.has("Escape");
-  if (escapeIsDown && !escapeWasDown) {
-    menu.open ? menu.close() : (menu.showModal(), resetMenu());
-  }
-  escapeWasDown = escapeIsDown;
+
+  handleEscape(), handleSpace();
+
   if (menu.open) return updateMenu(tickLength);
-  updateGame(GameState, tickLength);
-  updateHUD(GameState, tickLength);
+
+  updateGame(GameState, tickLength), updateHUD(GameState, tickLength);
+
   camera(getSceneObjects(GameState), mainCanvas);
 });

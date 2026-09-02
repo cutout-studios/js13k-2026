@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  adjustObject,
-  createRenderTarget,
-  GPURenderTarget,
-  setOrigin,
-  XYZ,
-} from "~/3D";
+import { createRenderTarget, GPURenderTarget } from "~/3D";
 import { join, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, repeat, spliceTable } from "~/common";
@@ -30,7 +24,11 @@ import { oneOf } from "~/random";
 import { camera } from "../camera.ts";
 import GameState from "../game/module.ts";
 import GameOptions from "../game/options/module.ts";
-import { combineItems, createItem } from "../game/player/items.ts";
+import {
+  combineItems,
+  createItem,
+  setItemInFrame,
+} from "../game/player/items.ts";
 import { updatePlayerSnapshots } from "../game/player/stats.ts";
 import { Item } from "../game/player/types.ts";
 import { PARTS, PROPERTY_NAMES, WORDS } from "../game/ship/constants.ts";
@@ -73,19 +71,10 @@ const EQUIP_OFFSET = 2,
       );
     }, 0.5],
   ]),
-  equippedItems = doTimes(4, (typeID: number) => {
-    const item = createItem(0, typeID, 1, 1);
-    setOrigin(item[0][0], [0, 0, -1.5]);
-    item[1] = createActionSequencer([[
-      (item, tickLength) => {
-        adjustObject(item[0], [undefined, [
-          repeat(3, tickLength) as XYZ,
-          tickLength,
-        ]]);
-      },
-    ]]);
-    return item;
-  }),
+  equippedItems = doTimes(
+    4,
+    (typeID: number) => setItemInFrame(createItem(0, typeID, 1, 1)),
+  ),
   updateItemPopover = (
     [, , _typeID, _colorID, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
   ) => {

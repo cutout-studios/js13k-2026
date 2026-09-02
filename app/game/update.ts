@@ -16,7 +16,6 @@
 
 import {
   addXYZ,
-  adjustObject,
   getCollisionPairs,
   readOrigin,
   scaleXYZ,
@@ -28,7 +27,6 @@ import {
 } from "~/3D";
 import { _, length, max, min, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
-import { createActionSequencer } from "~/clock";
 import {
   doTimes,
   flat,
@@ -41,7 +39,7 @@ import { range } from "~/random";
 
 // import { logDamage } from "../log.ts";
 
-import { createItem } from "./player/items.ts";
+import { createItem, setItemInFrame } from "./player/items.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
 import { Ship } from "./ship/types.ts";
 import { Game } from "./types.ts";
@@ -160,21 +158,16 @@ export const updateGame = (
   // pick up dropped items
   spliceTable(
     [droppedItems],
-    _resolveCollisions(droppedItems.map(([object]) => object), [
-      playerShipObject,
-    ], (itemIndex) => {
-      setOrigin(droppedItems[itemIndex][0][0], [0, 0, -1.5]);
-      droppedItems[itemIndex][1] = createActionSequencer([[
-        (item, tickLength) => {
-          adjustObject(item[0], [undefined, [
-            repeat(3, tickLength) as XYZ,
-            tickLength,
-          ]]);
-        },
-      ]]);
-
-      inventory.push([droppedItems[itemIndex]]);
-    }),
+    _resolveCollisions(
+      droppedItems.map(([object]) => object),
+      [
+        playerShipObject,
+      ],
+      (
+        itemIndex,
+      ) => (setItemInFrame(droppedItems[itemIndex]),
+        inventory.push([droppedItems[itemIndex]])),
+    ),
   );
 
   // clean up dead enemies
@@ -215,6 +208,7 @@ export const updateGame = (
 
   // if shield is depleted, reduce armor by one, trigger temporary invulnerability
   if (damage[0] >= _snapshot[15]) {
+    explosionSound();
     damage[0] = _snapshot[15];
     damage[3] ??= 0, damage[3]++;
     damage[4] = true;

@@ -34,23 +34,22 @@ export const [
   base,
 ] = doTimes(
   ["c", "f", "s", "r", "d", "w", "m", "o", "p", "t", "a", "b", "k"],
-	(char) => document.getElementById(char),
+  (char) => document.getElementById(char),
 ) as [
-	HTMLCanvasElement,
-	HTMLMeterElement,
-	HTMLMeterElement,
-	HTMLMeterElement,
-	HTMLElement,
-	HTMLElement,
-	HTMLDialogElement,
-	HTMLFormElement,
-	HTMLElement,
-	HTMLElement,
-	HTMLElement,
-	HTMLElement,
-	HTMLElement
+  HTMLCanvasElement,
+  HTMLMeterElement,
+  HTMLMeterElement,
+  HTMLMeterElement,
+  HTMLElement,
+  HTMLElement,
+  HTMLDialogElement,
+  HTMLFormElement,
+  HTMLElement,
+  HTMLElement,
+  HTMLElement,
+  HTMLElement,
+  HTMLElement,
 ];
-
 
 export const canvasCells = arrayFrom(
   document.querySelectorAll<HTMLCanvasElement>("#o canvas"),
