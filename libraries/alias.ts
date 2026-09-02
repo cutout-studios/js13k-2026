@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-export const { document } = globalThis;
 export const {
   abs,
   random,

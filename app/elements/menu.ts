@@ -143,7 +143,7 @@ menu.oncancel = preventDefault;
 menu.onmouseover = ({ target }) =>
   hoveredCellIndex = canvasCells.indexOf(target as HTMLCanvasElement);
 
-menu.onmousemove = menu.onmouseenter = ({ clientX, clientY }: MouseEvent) => {
+menu.onmouseenter = menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
   const { width, height } = itemPopover.getBoundingClientRect();
   updateStyles(itemPopover, {
     top: (clientY + height > innerHeight ? clientY - height : clientY) + "px",

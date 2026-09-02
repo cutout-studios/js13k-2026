@@ -15,23 +15,42 @@
  */
 
 /// <reference lib="dom" />
-import { arrayFrom, document } from "~/alias";
+import { arrayFrom } from "~/alias";
+import { doTimes } from "~/common";
 
-const $ = (id: string) => document.getElementById(id)!;
+export const [
+  mainCanvas,
+  fuelMeter,
+  shieldMeter,
+  armorMeter,
+  distanceCounter,
+  waveCounter,
+  menu,
+  form,
+  itemPopover,
+  title,
+  header,
+  modifiers,
+  base,
+] = doTimes(
+  ["c", "f", "s", "r", "d", "w", "m", "o", "p", "t", "a", "b", "k"],
+	(char) => document.getElementById(char),
+) as [
+	HTMLCanvasElement,
+	HTMLMeterElement,
+	HTMLMeterElement,
+	HTMLMeterElement,
+	HTMLElement,
+	HTMLElement,
+	HTMLDialogElement,
+	HTMLFormElement,
+	HTMLElement,
+	HTMLElement,
+	HTMLElement,
+	HTMLElement,
+	HTMLElement
+];
 
-export const mainCanvas = $("c") as HTMLCanvasElement,
-  fuelMeter = $("f"),
-  shieldMeter = $("s"),
-  armorMeter = $("r"),
-  distanceCounter = $("d"),
-  waveCounter = $("w"),
-  menu = $("m") as HTMLDialogElement,
-  form = $("o") as HTMLFormElement,
-  itemPopover = $("p"),
-  title = $("t"),
-  header = $("a"),
-  modifiers = $("b"),
-  base = $("k");
 
 export const canvasCells = arrayFrom(
   document.querySelectorAll<HTMLCanvasElement>("#o canvas"),

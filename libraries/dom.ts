@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { document } from "~/alias";
 import { flat } from "~/common";
 import { doTimes } from "~/common";
 
