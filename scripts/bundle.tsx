@@ -59,7 +59,7 @@ async function bundle(
     write: false,
   });
 
-  if (_result.errors.length) {;
+  if (_result.errors.length) {
     console.error({ errors: _result.errors });
   }
 
@@ -89,9 +89,13 @@ async function bundle(
 
     jsCode = result.code;
 
-    console.log(`%cMinifed JavaScript:\n%c${jsCode}`, "color: blue;", "color: gray;");
+    console.log(
+      `%cMinifed JavaScript:\n%c${jsCode}`,
+      "color: blue;",
+      "color: gray;",
+    );
 
-    jsCode = htmlText + `<script type=module>${jsCode}</script>`
+    jsCode = htmlText + `<script type=module>${jsCode}</script>`;
     const packer = new Packer([
       {
         data: jsCode,
