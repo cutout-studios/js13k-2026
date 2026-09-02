@@ -15,28 +15,23 @@
  */
 
 /// <reference lib="dom" />
-import { arrayFrom } from "~/alias";
+import { arrayFrom, document } from "~/alias";
 
-const _ = self as never as Record<
-  string,
-  HTMLElement & HTMLCanvasElement & HTMLDialogElement & HTMLFormElement
->;
+const byId = (id: string) => document.getElementById(id)!;
 
-export const {
-  a: header,
-  b: modifiers,
-  c: mainCanvas,
-  d: distanceCounter,
-  f: fuelMeter,
-  k: base,
-  m: menu,
-  o: form,
-  p: itemPopover,
-  r: armorMeter,
-  s: shieldMeter,
-  t: title,
-  w: waveCounter,
-} = _;
+export const mainCanvas = byId("c") as HTMLCanvasElement,
+	fuelMeter = byId("f"),
+	shieldMeter = byId("s"),
+	armorMeter = byId("r"),
+	distanceCounter = byId("d"),
+	waveCounter = byId("w"),
+	menu = byId("m") as HTMLDialogElement,
+	form = byId("o") as HTMLFormElement,
+	itemPopover = byId("p"),
+	title = byId("t"),
+	header = byId("a"),
+	modifiers = byId("b"),
+	base = byId("k");
 
 export const canvasCells = arrayFrom(
   document.querySelectorAll<HTMLCanvasElement>("#o canvas"),

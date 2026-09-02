@@ -46,6 +46,8 @@ const _getCanvasDepth = (canvas: HTMLCanvasElement): GPUTexture => {
 export const createRenderTarget = (
   canvas: HTMLCanvasElement,
 ): GPURenderTarget => {
+  console.log(canvas, canvas instanceof HTMLCanvasElement, canvas.tagName);
+
   [canvas.width, canvas.height] = [
     canvas.clientWidth * devicePixelRatio,
     canvas.clientHeight * devicePixelRatio,

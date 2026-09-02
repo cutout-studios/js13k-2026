@@ -26,7 +26,8 @@ const ESTIMATED_RECLAIMABLE_BYTES = 150;
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
 
-const BUNDLE_ENTRYPOINT = `./${APP_DIR}/index.html`;
+const JS_ENTRYPOINT = `./${APP_DIR}/module.ts`;
+const HTML_ENTRYPOINT = `./${APP_DIR}/index.html`;
 const BUNDLE_OUTPUT_FILE = "index.html";
 const BUNDLE_OUTPUT_COMPRESSED_FILE = `${BUNDLE_OUTPUT_FILE}.zip`;
 const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}`;
@@ -48,7 +49,7 @@ await new Deno.Command("open", {
 
 async function bundle(
   options: Partial<Deno.bundle.Options> = { minify: true },
-  entrypoint = BUNDLE_ENTRYPOINT,
+  entrypoint = JS_ENTRYPOINT,
 ) {
   const _result = await Deno.bundle({
     ...options,
@@ -58,16 +59,13 @@ async function bundle(
     write: false,
   });
 
-  if (_result.errors.length) {
+  if (_result.errors.length) {;
     console.error({ errors: _result.errors });
   }
 
-  const { outputFiles } = _result;
+  const { outputFiles: [jsFile] = [] } = _result;
 
-  const htmlFile = outputFiles!.find((f) => f.path.endsWith(".html"))!;
-  const jsFile = outputFiles!.find((f) => f.path.endsWith(".js"))!;
-
-  const htmlText = await minifyHtml(htmlFile.text(), {
+  const htmlText = await minifyHtml(Deno.readTextFileSync(HTML_ENTRYPOINT), {
     collapseWhitespace: true,
     removeComments: true,
     removeAttributeQuotes: true,
@@ -76,15 +74,12 @@ async function bundle(
     minifyJS: false,
   });
 
-  let code = jsFile.text(),
-    appOutputText = htmlText.replace(
-      /<script[^>]*><\/script>/,
-      () => `<script type=module>${code}</script>`,
-    );
+  let jsCode = jsFile.text(),
+    appOutputText = htmlText + `<script type=module>${jsCode}</script>`;
   if (options.minify) {
-    code = minify(code).toString();
+    jsCode = minify(jsCode).toString();
 
-    const result = await esbuild.transform(code, {
+    const result = await esbuild.transform(jsCode, {
       minify: true,
       mangleProps: new RegExp(
         `^(${PROPS_TO_MANGLE.join("|")})$`,
@@ -92,18 +87,14 @@ async function bundle(
       legalComments: "none",
     });
 
-    code = result.code;
+    jsCode = result.code;
 
-    console.log(`%cMinifed Source:\n%c${code}`, "color: blue;", "color: gray;");
+    console.log(`%cMinifed JavaScript:\n%c${jsCode}`, "color: blue;", "color: gray;");
 
-    code = code = htmlText.replace(
-      /<script[^>]*><\/script>/,
-      () => `<script type=module>${code}</script>`,
-    );
-
+    jsCode = htmlText + `<script type=module>${jsCode}</script>`
     const packer = new Packer([
       {
-        data: code,
+        data: jsCode,
         type: "text" as InputType,
         action: "write" as InputAction,
       },

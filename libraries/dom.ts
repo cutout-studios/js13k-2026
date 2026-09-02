@@ -17,7 +17,6 @@
 import { document } from "~/alias";
 import { flat } from "~/common";
 import { doTimes } from "~/common";
-import { DEFAULT } from "../app/elements/styles.ts";
 
 export type Style = Partial<CSSStyleProperties>;
 
@@ -32,7 +31,7 @@ export const createElement = (
 ) => {
   const children = [] as Node[];
 
-  let tag = "div", styles = DEFAULT, attributes = {};
+  let tag = "div", styles = [] as CSSStyleProperties[], attributes = {};
   doTimes(parameters, (param) => {
     if (typeof param == "string") return tag = param;
     if (param instanceof Node) return children.push(param);
