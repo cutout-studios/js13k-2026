@@ -17,21 +17,21 @@
 /// <reference lib="dom" />
 import { arrayFrom, document } from "~/alias";
 
-const byId = (id: string) => document.getElementById(id)!;
+const $ = (id: string) => document.getElementById(id)!;
 
-export const mainCanvas = byId("c") as HTMLCanvasElement,
-	fuelMeter = byId("f"),
-	shieldMeter = byId("s"),
-	armorMeter = byId("r"),
-	distanceCounter = byId("d"),
-	waveCounter = byId("w"),
-	menu = byId("m") as HTMLDialogElement,
-	form = byId("o") as HTMLFormElement,
-	itemPopover = byId("p"),
-	title = byId("t"),
-	header = byId("a"),
-	modifiers = byId("b"),
-	base = byId("k");
+export const mainCanvas = $("c") as HTMLCanvasElement,
+	fuelMeter = $("f"),
+	shieldMeter = $("s"),
+	armorMeter = $("r"),
+	distanceCounter = $("d"),
+	waveCounter = $("w"),
+	menu = $("m") as HTMLDialogElement,
+	form = $("o") as HTMLFormElement,
+	itemPopover = $("p"),
+	title = $("t"),
+	header = $("a"),
+	modifiers = $("b"),
+	base = $("k");
 
 export const canvasCells = arrayFrom(
   document.querySelectorAll<HTMLCanvasElement>("#o canvas"),

@@ -41,7 +41,7 @@ startClock((tickLength) => {
   }
   const escapeIsDown = keyboard.has("Escape");
   if (escapeIsDown && !escapeWasDown) {
-    menu.open ? menu.close() : (resetMenu(), menu.showModal());
+    menu.open ? menu.close() : (menu.showModal(), resetMenu());
   }
   escapeWasDown = escapeIsDown;
   if (menu.open) return updateMenu(tickLength);

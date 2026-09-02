@@ -47,7 +47,9 @@ import {
 } from "./handles.ts";
 import { portrait } from "./portrait.ts";
 
-let hoveredCellIndex = -1, restorePreviewItem: Item | undefined;
+let hoveredCellIndex = -1,
+  restorePreviewItem: Item | undefined,
+  renderTargets: GPURenderTarget[];
 
 const EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
@@ -84,10 +86,6 @@ const EQUIP_OFFSET = 2,
     ]]);
     return item;
   }),
-  renderTargets: GPURenderTarget[] = doTimes(
-    canvasCells,
-    createRenderTarget,
-  ),
   updateItemPopover = (
     [, , _typeID, _colorID, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
   ) => {
@@ -145,7 +143,7 @@ menu.oncancel = preventDefault;
 menu.onmouseover = ({ target }) =>
   hoveredCellIndex = canvasCells.indexOf(target as HTMLCanvasElement);
 
-menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
+menu.onmousemove = menu.onmouseenter = ({ clientX, clientY }: MouseEvent) => {
   const { width, height } = itemPopover.getBoundingClientRect();
   updateStyles(itemPopover, {
     top: (clientY + height > innerHeight ? clientY - height : clientY) + "px",
@@ -154,6 +152,7 @@ menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
 };
 
 export const resetMenu = () => {
+  renderTargets ||= doTimes(canvasCells, createRenderTarget);
   doTimes(winCollectionElements, (element, index) =>
     winCollection.has(index) &&
     (element.style.background = "#" + GameOptions[index][1].toString(16)));

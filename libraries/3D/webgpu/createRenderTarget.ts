@@ -44,45 +44,39 @@ const _getCanvasDepth = (canvas: HTMLCanvasElement): GPUTexture => {
 };
 
 export const createRenderTarget = (
-  canvas: HTMLCanvasElement,
+	canvas: HTMLCanvasElement,
 ): GPURenderTarget => {
-  console.log(canvas, canvas instanceof HTMLCanvasElement, canvas.tagName);
-
-  [canvas.width, canvas.height] = [
-    canvas.clientWidth * devicePixelRatio,
-    canvas.clientHeight * devicePixelRatio,
-  ];
+	[canvas.width, canvas.height] = [
+		canvas.clientWidth * devicePixelRatio,
+		canvas.clientHeight * devicePixelRatio,
+	];
 
   const context = _getCanvasContext(canvas),
-    depth = _getCanvasDepth(canvas),
-    colorAttachment = {
-      clearValue: [0, 0, 0, 1],
-      loadOp: "clear",
-      storeOp: "store", // 'view' is set in the render call
-    } as unknown as GPURenderPassColorAttachment,
-    descriptor: GPURenderPassDescriptor = {
-      colorAttachments: [colorAttachment],
-      depthStencilAttachment: {
-        view: depth,
-        depthClearValue: 1,
-        depthLoadOp: "clear",
-        depthStoreOp: "store",
-      },
-    };
-
-  return [
-    canvas.width / canvas.height,
-    descriptor,
-    (action) => {
-      colorAttachment.view = context.getCurrentTexture().createView();
-
-      const encoder = device.createCommandEncoder(),
-        pass = encoder.beginRenderPass(descriptor);
-
-      action(pass);
-
-      pass.end();
-      device.queue.submit([encoder.finish()]);
-    },
-  ];
+		colorAttachment = {
+			clearValue: [0, 0, 0, 1],
+			loadOp: "clear",
+			storeOp: "store",
+		} as unknown as GPURenderPassColorAttachment,
+		depthStencilAttachment = {
+			depthClearValue: 1,
+			depthLoadOp: "clear",
+			depthStoreOp: "store",
+		} as unknown as GPURenderPassDepthStencilAttachment,
+		descriptor: GPURenderPassDescriptor = {
+			colorAttachments: [colorAttachment],
+			depthStencilAttachment,
+		};
+	return [
+		canvas.width / canvas.height,
+		descriptor,
+		(action) => {
+			colorAttachment.view = context.getCurrentTexture().createView();
+			depthStencilAttachment.view = _getCanvasDepth(canvas).createView();
+			const encoder = device.createCommandEncoder(),
+				pass = encoder.beginRenderPass(descriptor);
+			action(pass);
+			pass.end();
+			device.queue.submit([encoder.finish()]);
+		},
+	];
 };
