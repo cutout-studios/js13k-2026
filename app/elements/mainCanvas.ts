@@ -16,36 +16,21 @@
 
 /// <reference lib="dom" />
 
-import {
-  CAMERA_MAGNIFICATION_RATIO,
-  createCamera,
-  createRenderTarget,
-  XOObject,
-  XYZ,
-} from "~/3D";
-import { createElement } from "~/dom";
+import { CAMERA_MAGNIFICATION_RATIO, createRenderTarget, XYZ } from "~/3D";
+import { mainCanvas as mainCanvasElement } from "./handles.ts";
 
-import { DEPTH_LIMIT } from "./constants.ts";
-import { SIZING } from "./styles.ts";
-
-export const mainCanvas = createElement("canvas", [SIZING(), {
-    cursor: "crosshair",
-  }]) as HTMLCanvasElement,
-  camera = createCamera();
-
-export const renderMain = (objects: XOObject[][]) =>
-  camera(objects, createRenderTarget(mainCanvas as HTMLCanvasElement));
+export let mainCanvas = createRenderTarget(mainCanvasElement);
+onresize = () => mainCanvas = createRenderTarget(mainCanvasElement);
 
 export const mapClientXY = (
   [clientX, clientY]: [number, number],
-  distance = DEPTH_LIMIT,
 ): XYZ => {
-  const { clientWidth, clientHeight, offsetLeft, offsetTop } = mainCanvas;
-
-  const scale = distance / (clientHeight * CAMERA_MAGNIFICATION_RATIO);
+  const { clientWidth, clientHeight, offsetLeft, offsetTop } =
+      mainCanvasElement,
+    scale = 300 / (clientHeight * CAMERA_MAGNIFICATION_RATIO);
   return [
     (2 * (clientX - offsetLeft) - clientWidth) * scale,
     (clientHeight - 2 * (clientY - offsetTop)) * scale,
-    -distance,
+    -300,
   ];
 };

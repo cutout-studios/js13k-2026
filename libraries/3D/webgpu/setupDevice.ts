@@ -14,44 +14,24 @@
  * limitations under the License.
  */
 
-export let device: GPUDevice,
-  format: GPUTextureFormat,
-  coordinatesLayout: GPUBindGroupLayout,
-  materialsLayout: GPUBindGroupLayout,
-  pipelineLayout: GPUPipelineLayout;
+const gpu = navigator.gpu;
 
-export const setupDevice = async () => {
-  const gpu = navigator.gpu;
-  const adapter = await gpu?.requestAdapter();
-  const found = await adapter?.requestDevice();
+export const format = gpu.getPreferredCanvasFormat();
 
-  if (!found) return;
+export const device = await (await gpu.requestAdapter())!.requestDevice();
 
-  device = found;
-  format = gpu.getPreferredCanvasFormat();
-
-  coordinatesLayout = device.createBindGroupLayout({
+const storage = (visibility: number) =>
+  device.createBindGroupLayout({
     entries: [{
       binding: 0,
-      visibility: GPUShaderStage.VERTEX,
+      visibility,
       buffer: { type: "read-only-storage" },
     }],
   });
 
-  materialsLayout = device.createBindGroupLayout({
-    entries: [{
-      binding: 0,
-      visibility: GPUShaderStage.FRAGMENT,
-      buffer: { type: "read-only-storage" },
-    }],
-  });
+export const coordinatesLayout = storage(1);
+export const materialsLayout = storage(2);
 
-  pipelineLayout = device.createPipelineLayout({
-    bindGroupLayouts: [coordinatesLayout, materialsLayout],
-  });
-
-  // device.addEventListener(
-  //   "uncapturederror",
-  //   ({ error }) => console.error(error),
-  // );
-};
+export const pipelineLayout = device.createPipelineLayout({
+  bindGroupLayouts: [coordinatesLayout, materialsLayout],
+});

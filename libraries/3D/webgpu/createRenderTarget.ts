@@ -52,33 +52,29 @@ export const createRenderTarget = (
   ];
 
   const context = _getCanvasContext(canvas),
-    depth = _getCanvasDepth(canvas),
     colorAttachment = {
       clearValue: [0, 0, 0, 1],
       loadOp: "clear",
-      storeOp: "store", // 'view' is set in the render call
+      storeOp: "store",
     } as unknown as GPURenderPassColorAttachment,
+    depthStencilAttachment = {
+      depthClearValue: 1,
+      depthLoadOp: "clear",
+      depthStoreOp: "store",
+    } as unknown as GPURenderPassDepthStencilAttachment,
     descriptor: GPURenderPassDescriptor = {
       colorAttachments: [colorAttachment],
-      depthStencilAttachment: {
-        view: depth,
-        depthClearValue: 1,
-        depthLoadOp: "clear",
-        depthStoreOp: "store",
-      },
+      depthStencilAttachment,
     };
-
   return [
     canvas.width / canvas.height,
     descriptor,
     (action) => {
       colorAttachment.view = context.getCurrentTexture().createView();
-
+      depthStencilAttachment.view = _getCanvasDepth(canvas).createView();
       const encoder = device.createCommandEncoder(),
         pass = encoder.beginRenderPass(descriptor);
-
       action(pass);
-
       pass.end();
       device.queue.submit([encoder.finish()]);
     },

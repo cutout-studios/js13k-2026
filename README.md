@@ -2,8 +2,6 @@
 
 ## MVP TODOs
 
-- remaining UI: highlight color (?)
-
 - spin counter, wire remaining stats
 - enemy behaviors
 

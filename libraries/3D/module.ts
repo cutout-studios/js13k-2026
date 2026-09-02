@@ -32,7 +32,6 @@ export {
   Z_AXIS,
 } from "./constants.ts";
 
-export { setupDevice } from "./webgpu/setupDevice.ts";
 export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
 export {
   adjustObject,

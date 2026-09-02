@@ -1,0 +1,281 @@
+<meta charset=utf-8>
+<style>
+html,
+body,
+body * {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  font-family: ui-monospace;
+  font-size: 16px;
+  color: #fff;
+  list-style-type: none;
+}
+body {
+  position: relative;
+  width: 100vw;
+  height: 100svh;
+}
+dialog::backdrop {
+  background: #000c;
+}
+canvas {
+  width: 128px;
+  height: 128px;
+  border: .1rem solid #fff;
+  cursor: pointer;
+  margin: auto;
+}
+#c {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  cursor: crosshair;
+}
+:checked + canvas {
+  border-color: #ff0;
+}
+meter {
+  flex: 1;
+}
+.i {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+#h {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: transparent;
+  display: grid;
+  justify-items: center;
+  grid: min-content 1fr min-content/repeat(3,1fr);
+  gap: 1rem;
+  padding: 1rem;
+}
+#f {
+  grid-area: 1/1;
+  place-self: start start;
+  transform: rotate(-15deg);
+  transform-origin: 100% 100%;
+}
+#s {
+  grid-area: 1/2;
+  place-self: start center;
+  width: 100%;
+}
+#r {
+  grid-area: 1/3;
+  place-self: start end;
+  transform: rotate(15deg);
+  transform-origin: 0 100%;
+}
+#d {
+  grid-area: 2/1;
+  place-self: end start;
+  transform: rotate(15deg);
+  transform-origin: 100% 0;
+}
+#w {
+  grid-area: 2/3;
+  place-self: end end;
+  transform: rotate(-15deg);
+  transform-origin: 0 0;
+}
+#l {
+  grid-area: 3/1/4/4;
+  place-self: end center;
+  gap: 1rem;
+  opacity: .5;
+}
+#m {
+  max-width: min-content;
+  max-height: 90svh;
+  margin: auto;
+  border: 0;
+  overflow: auto;
+  background: #000;
+}
+#o {
+  display: grid;
+  justify-items: center;
+  grid: auto min-content/repeat(3,auto);
+  gap: 3rem;
+  padding: 3rem;
+}
+#n {
+  grid-area: 1/3;
+  place-self: start;
+  display: grid;
+  grid: repeat(2,auto)/auto;
+  gap: 2rem;
+}
+#g {
+  grid-area: 1/2;
+  place-self: start;
+  display: grid;
+  grid: repeat(3,auto)/repeat(2,auto);
+  gap: .33rem;
+}
+#g :nth-child(1) {
+  grid-area: 2/1;
+}
+#g :nth-child(2) {
+  grid-area: 2/2;
+}
+#g :nth-child(3) {
+  grid-area: 1/1/2/3;
+}
+#g :nth-child(4) {
+  grid-area: 3/1/4/3;
+}
+#v {
+  grid-area: 1/1/3/2;
+  place-self: start;
+  display: grid;
+  grid: repeat(4,auto)/repeat(3,auto);
+  gap: .33rem;
+}
+#v label {
+  display: inline-flex;
+  cursor: pointer;
+}
+#v input {
+  visibility: hidden;
+  position: absolute;
+}
+#x {
+  display: grid;
+  place-items: center;
+  width: 256px;
+  height: 204px;
+  background: #fff;
+  color: #000;
+  cursor: help;
+  clip-path: polygon(0 50%,30% 100%,70% 100%,100% 50%,70% 0,30% 0);
+}
+#y {
+  position: relative;
+  width: fit-content;
+}
+#y i {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: .1rem solid #fff;
+  border-radius: 100%;
+  pointer-events: none;
+  transform: translate(-50%,-50%);
+  background: #000;
+}
+#t {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45svh;
+  display: grid;
+  grid: repeat(3,min-content)/auto;
+  align-content: center;
+  justify-items: center;
+  gap: 1rem;
+  pointer-events: none;
+  background: linear-gradient(transparent,#000 45%);
+  transition: opacity .24s;
+}
+button {
+  cursor: pointer;
+  padding: 1rem;
+  border: .1rem solid #fff;
+}
+button:hover {
+  color: #ff0;
+  border-color: #ff0;
+}
+#e {
+  grid-area: 2/2;
+  background: #000;
+}
+#z {
+  grid-area: 2/3;
+  background: #000;
+}
+#p {
+  position: fixed;
+  visibility: hidden;
+  border: .1rem solid #fff;
+  background: #000;
+  pointer-events: none;
+  max-width: fit-content;
+}
+#a {
+  background: #fff;
+  color: #000;
+  text-align: center;
+  padding: .3rem;
+}
+#k {
+  text-align: center;
+  margin: .3rem;
+}
+#b {
+  text-align: center;
+}
+</style>
+<canvas id=c></canvas>
+<div id=h>
+  <div id=f class=i><label>FL</label></div>
+  <div id=s class=i><label>SLD</label></div>
+  <div id=r class=i><label>HL</label></div>
+  <div id=d></div>
+  <div id=w></div>
+  <div id=l class=i>
+    <div class=i>[ESC]: SPREAD</div>
+    <div class=i>[WASD]: SPD</div>
+    <div class=i>[SPACE]: CNTR</div>
+    <div class=i>[CLICK]: STRAFE</div>
+  </div>
+</div>
+<dialog id=m>
+  <form id=o>
+    <div id=n>
+      <canvas></canvas>
+      <div id=y>
+				<div id=x><canvas></canvas></div>
+				<i style=left:0;top:50%></i><i style=left:30%;top:100%></i><i style=left:70%;top:100%></i><i style=left:100%;top:50%></i><i style=left:70%;top:0></i><i style=left:30%;top:0></i>
+			</div>
+    </div>
+    <div id=g>
+      <canvas></canvas>
+      <canvas></canvas>
+      <canvas></canvas>
+      <canvas></canvas>
+    </div>
+    <div id=v>
+      <label><input type=checkbox name=i value=0><canvas></canvas></label>
+      <label><input type=checkbox name=i value=1><canvas></canvas></label>
+      <label><input type=checkbox name=i value=2><canvas></canvas></label>
+      <label><input type=checkbox name=i value=3><canvas></canvas></label>
+      <label><input type=checkbox name=i value=4><canvas></canvas></label>
+      <label><input type=checkbox name=i value=5><canvas></canvas></label>
+      <label><input type=checkbox name=i value=6><canvas></canvas></label>
+      <label><input type=checkbox name=i value=7><canvas></canvas></label>
+      <label><input type=checkbox name=i value=8><canvas></canvas></label>
+      <label><input type=checkbox name=i value=9><canvas></canvas></label>
+      <label><input type=checkbox name=i value=10><canvas></canvas></label>
+      <label><input type=checkbox name=i value=11><canvas></canvas></label>
+    </div>
+    <button id=e>EQUIP</button>
+    <button id=z value=1>RESTORE</button>
+  </form>
+  <div id=p>
+    <div id=a></div>
+    <div id=k></div>
+    <div id=b></div>
+  </div>
+</dialog>
+<div id=t>
+  <div>MISSION: DARKWHITE</div>
+  <div>WHAT WAS DIVIDED YOU MUST RESTORE</div>
+  <div>CLICK TO BEGIN</div>
+</div>
