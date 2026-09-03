@@ -17,7 +17,7 @@
 import { setOrigin, XYZ } from "~/3D";
 import { length, max, min, round } from "~/alias";
 import { doTimes } from "~/common";
-import { range } from "~/random";
+import { rollBand } from "~/random";
 
 // import { logShip } from "../../log.ts";
 import { createDeck, drawCard } from "../decks.ts";
@@ -66,7 +66,7 @@ const _drawEnemyGroup = (
     const ship = createShip(optionsIndex, level);
 
     ship[0][0] = setOrigin(ship[0][0], [
-      ...doTimes(2, () => range(-spawnQuadrantSize, spawnQuadrantSize)),
+      ...doTimes(2, () => rollBand([-spawnQuadrantSize, spawnQuadrantSize])),
       -ENEMY_Z_PLANE,
     ] as XYZ);
 

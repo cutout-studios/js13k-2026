@@ -1,9 +1,11 @@
 import { createCoordinates, setOrigin, XYZ } from "~/3D";
 import { _ } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
-import { ActionSchedule, createActionSequencer, createApproach } from "~/clock";
+import { ActionSchedule, createActionSequencer } from "~/clock";
 import { createPull, createRoll } from "../actions.ts";
 import { Ship } from "./types.ts";
+
+const smoothstep = (x: number) => x * x * (3 - 2 * x);
 
 export const createSpinSequence = (
   [, , , originalSequence, , _snapshot]: Ship,
@@ -14,11 +16,13 @@ export const createSpinSequence = (
       (getPanFromCoordinates(setOrigin(createCoordinates(), direction), 1) > 0)
         ? 1
         : -1,
-    rollPull = createPull(direction, (obj) => {
-      obj.value = _snapshot[20] * 1.3;
-    }), // TODO: s-curve?
-    roll = createRoll(1.2 * spinSign, createApproach()),
-    rollRecovery = createRoll(-.2 * spinSign, createApproach()),
+    rollPull = createPull(
+      direction,
+      _snapshot[20] * 1.3,
+      smoothstep,
+    ),
+    roll = createRoll(1.2 * spinSign, smoothstep),
+    rollRecovery = createRoll(-.2 * spinSign, smoothstep),
     rollTime = totalTime * (1.2 / 1.4),
     rollRecoveryTime = totalTime * (.2 / 1.4);
 

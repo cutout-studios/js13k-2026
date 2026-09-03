@@ -26,7 +26,7 @@ import { _, length, min } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, flat } from "~/common";
 
-import { bell, oneOf, range } from "~/random";
+import { bell, oneOf, rollBand } from "~/random";
 
 import { createPull, orbit } from "../actions.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
@@ -59,9 +59,7 @@ export const createItem = (
       baseBulletDamage,
     ], modifiers]] = GameOptions[colorID],
     modifierDeck = [] as ModifierOptions[],
-    pull = createPull(Z_AXIS, ($) => {
-      $.value = 0.25;
-    }, 0.005);
+    pull = createPull(Z_AXIS, 0.25, () => 1, 0.005);
 
   doTimes(modifiers, (modifier) => {
     if (modifier[0] == typeID || modifier[0] == 0) {
@@ -91,7 +89,7 @@ export const createItem = (
         return [propertyID, type, levelRoll(valueBand, rank, 2)];
       },
     ),
-    range(...baseMass),
+    rollBand(baseMass),
     (typeID < 2)
       ? [
         baseBulletCount,

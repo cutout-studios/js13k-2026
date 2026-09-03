@@ -35,7 +35,7 @@ import {
   SECONDS_TO_MS,
   spliceTable,
 } from "~/common";
-import { range } from "~/random";
+import { rollBand } from "~/random";
 
 // import { logDamage } from "../log.ts";
 
@@ -81,7 +81,7 @@ export const updateGame = (
       playerOrigin,
       doTimes(
         XYZ_LENGTH,
-        () => range(-ENEMY_AIM_SPREAD, ENEMY_AIM_SPREAD),
+        () => rollBand([-ENEMY_AIM_SPREAD, ENEMY_AIM_SPREAD]),
       ) as XYZ,
     );
 

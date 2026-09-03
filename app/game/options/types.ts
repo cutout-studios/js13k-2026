@@ -16,7 +16,7 @@
 
 import { XOGeometry, XOOrientation } from "~/3D";
 import { ActionSchedule } from "~/clock";
-import { Band } from "~/random";
+import { Band } from "~/common";
 
 import { Bullet, Ship } from "../ship/types.ts";
 

@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
-import { createApproach } from "./actions.ts";
-import { createActionSequencer } from "./createActionSequencer.ts";
-import { Action } from "./types.ts";
+import { Band, interpolate } from "~/common";
 
 type Envelope = (tickLength: number, released?: boolean) => number;
 
@@ -25,20 +22,24 @@ export const createEnvelope = (
   attackTime: number,
   releaseTime: number,
 ): Envelope => {
-  const [attackSequence, releaseSequence] = doTimes(
-    [[
-      [createApproach(), attackTime],
-    ], [[
-      createApproach(0),
-      releaseTime,
-    ]]] as [Action<{ value: number }>, number][][],
-    (schedule) => createActionSequencer(schedule),
-  );
+  let band: Band = [0, 1],
+    currentValue = 0,
+    elapsedTime = 0,
+    totalTime = attackTime,
+    hasReleased = false;
 
-  const $ = { value: 0 };
   return (tickLength, released) => {
-    released ? releaseSequence($, tickLength) : attackSequence($, tickLength);
+    elapsedTime += tickLength;
 
-    return $.value;
+    if (released && !hasReleased) {
+      hasReleased = true;
+      totalTime = releaseTime;
+      elapsedTime = 0;
+      band = [currentValue, 0];
+    }
+
+    currentValue = interpolate(band, elapsedTime / totalTime);
+
+    return currentValue;
   };
 };

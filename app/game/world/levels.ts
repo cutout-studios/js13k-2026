@@ -15,9 +15,9 @@
  */
 
 import { atan, PI, round, sqrt } from "~/alias";
-import { doTimes, flat } from "~/common";
+import { Band, doTimes, flat } from "~/common";
 
-import { Band, range } from "~/random";
+import { rollBand } from "~/random";
 import { GAME_DIFFICULTY_FALLOFF, WAVES_PER_LEVEL_BAND } from "./constants.ts";
 
 export const levelCurve = (
@@ -31,7 +31,7 @@ export const levelRoll = (
   falloff = GAME_DIFFICULTY_FALLOFF,
 ) => {
   const span = end - start, curve = levelCurve(level, falloff);
-  return range(start + span * curve, start + span * sqrt(curve));
+  return rollBand([start + span * curve, start + span * sqrt(curve)]);
 };
 
 export const levelRollOverrides = (

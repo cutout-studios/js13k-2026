@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Band } from "~/random";
+import { Band } from "~/common";
 
 export const GAME_DIFFICULTY_FALLOFF = 0.135;
 

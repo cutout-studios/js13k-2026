@@ -2,7 +2,7 @@
 
 ## MVP TODOs
 
-- spin counter, wire remaining stats
+- wire remaining stats
 - enemy behaviors
 
 ## Core Polish

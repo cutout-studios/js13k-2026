@@ -16,6 +16,8 @@
 
 import { arrayFrom, max } from "~/alias";
 
+export type Band = readonly [min: number, max: number];
+
 export const SECONDS_TO_MS = 1000;
 export const MINUTES_TO_SECONDS = 60;
 
@@ -92,3 +94,6 @@ export const spliceTable = (
       doTimes(table, (column: unknown[]) => column.splice(index, 1));
     },
   );
+
+export const interpolate = ([hi, lo]: Band, amount: number) =>
+  lo + (hi - lo) * amount;

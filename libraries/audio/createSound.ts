@@ -15,7 +15,7 @@
  */
 
 import { doTimes } from "~/common";
-import { range } from "~/random";
+import { rollBand } from "~/random";
 
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
@@ -41,7 +41,7 @@ export const createSound = (...definitions: SoundDefinition[]) => {
       doTimes(schedule, ([[knobID, value], duration = 0]) => {
         time += duration;
         knobs[knobID].linearRampToValueAtTime(
-          typeof value == "number" ? value : range(...value),
+          typeof value == "number" ? value : rollBand(value),
           time,
         );
       });
