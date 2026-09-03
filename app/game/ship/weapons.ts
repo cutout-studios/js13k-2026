@@ -52,16 +52,12 @@ export const createWeapon = (
   ];
 };
 
-// TEMP: fuel consumption
-const FUEL_PER_SHOT = 1.5;
-
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   const [, , weapons, , damages, shipSnapshot] = ship,
     [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex],
     [count] = snapshot,
-    fuelUsed = (damages[1] || 0) + FUEL_PER_SHOT;
+    fuelUsed = shipSnapshot[13] * shipSnapshot[5];
 
-  // TEMP: fuel consumption
   if (ship[6] == 0 && fuelUsed > shipSnapshot[4]) return;
 
   damages[1] = fuelUsed;

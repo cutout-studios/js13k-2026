@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-// TODO: strip before shipping
 import { readOrigin } from "~/3D";
 import { join } from "~/alias";
 import { doTimes, flat } from "~/common";

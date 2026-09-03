@@ -16,6 +16,8 @@
 
 import {
   addXYZ,
+  aimObject,
+  createObject,
   getCollisionPairs,
   readOrigin,
   scaleXYZ,
@@ -25,7 +27,7 @@ import {
   XYZ,
   XYZ_LENGTH,
 } from "~/3D";
-import { _, length, max, min, random } from "~/alias";
+import { _, length, max, min, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
 import {
   doTimes,
@@ -41,10 +43,11 @@ import { rollBand } from "~/random";
 
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
-import { Ship } from "./ship/types.ts";
+import { Ship, Weapon } from "./ship/types.ts";
 import { Game } from "./types.ts";
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
+import { createActionSequencer } from "~/clock";
 
 const _resolveCollisions = (
   sourceObjects: XOObject[],
@@ -71,9 +74,17 @@ export const updateGame = (
 ): void => {
   const [activeEnemyGroups, droppedItems, progress, winCollection] = world,
     [playerShip, , inventory] = player,
-    [playerShipObject, , playerWeapons, , damage, _snapshot] = playerShip,
+    [
+      playerShipObject,
+      ,
+      playerWeapons,
+      ,
+      playerResourceStatus,
+      playerSnapshot,
+    ] = playerShip,
     enemyShips = flatDoTimes(activeEnemyGroups, ([ships]) => ships) as Ship[],
-    playerOrigin = readOrigin(playerShipObject[0]);
+    playerOrigin = readOrigin(playerShipObject[0]),
+    counteredBullets: Weapon[] = [];
 
   // TEMP: aim enemies at the player
   doTimes(enemyShips, (ship) => {
@@ -94,10 +105,11 @@ export const updateGame = (
   // -- update everything in the game
   doTimes(flat([playerShip], enemyShips), (ship) => ship[3](ship, tickLength));
   doTimes(droppedItems, (drop) => drop[1](drop, tickLength));
+  doTimes(counteredBullets, () => {});
 
   // -- handle collisions
   doTimes(
-    playerWeapons,
+    flat(playerWeapons, counteredBullets),
     ([, , bullets, , [, critChance, critDamage, bulletDamage]]) =>
       spliceTable(
         bullets,
@@ -106,48 +118,57 @@ export const updateGame = (
           doTimes(enemyShips, ([object]) => object),
           (_, shipIndex) => {
             hitSound(getPanFromCoordinates(enemyShips[shipIndex][0][0], 5));
-            enemyShips[shipIndex][4][0] += random() < critChance
-              ? bulletDamage * critDamage
-              : bulletDamage;
-            // logDamage(enemyShips[shipIndex], "WHITE", () => {
-            //   enemyShips[shipIndex][4][0] += random() < critChance
-            //     ? bulletDamage * critDamage
-            //     : bulletDamage;
-            // });
+            enemyShips[shipIndex][4][0] +=
+              (random() < critChance
+                ? bulletDamage * critDamage
+                : bulletDamage) * (playerSnapshot[14] * playerShip[4][0]);
           },
         ),
       ),
   );
 
-  if (!damage[4]) { // skip enemy bullets while the player is invulnerable
+  if (!playerResourceStatus[4]) { // skip enemy bullets while the player is invulnerable
     doTimes(
       enemyShips,
       (
         [
-          ,
+          enemyShipObject,
           ,
           [[, , bullets, , [, critChance, critDamage, bulletDamage]]],
         ],
-        // enemyShipIndex,
       ) => {
         spliceTable(
           bullets,
           _resolveCollisions(
             bullets[1],
             [playerShipObject],
-            () => {
-              playerShip[4][0] += random() < critChance
+            (bulletIndex) => {
+              const baseDamage = random() < critChance
                 ? bulletDamage * critDamage
                 : bulletDamage;
-              // logDamage(
-              //   playerShip,
-              //   "#" + enemyShipIndex,
-              //   () => {
-              //     playerShip[4][0] += random() < critChance
-              //       ? bulletDamage * critDamage
-              //       : bulletDamage;
-              //   },
-              // );
+
+              if (playerResourceStatus[6]) {
+                const bullet = bullets[0][bulletIndex],
+                  newHeading = readOrigin(enemyShipObject[0]);
+                bullet[1] = newHeading;
+                aimObject(bullet[0], newHeading);
+
+                return counteredBullets.push(
+                  [
+                    createObject(),
+                    [0, 0, 0] as XYZ,
+                    [[bullet], [bullet[0]]],
+                    createActionSequencer([[NO_OP]]),
+                    [0, 0, 0, baseDamage * playerSnapshot[17], 0, 0, 0],
+                  ] as Weapon,
+                );
+              }
+
+              const totalDamage = baseDamage * playerSnapshot[2];
+
+              playerShip[4][0] += totalDamage * (1 - playerSnapshot[3]);
+              playerShip[4][1] ??= 0;
+              playerShip[4][1] += totalDamage * playerSnapshot[3];
             },
           ),
         );
@@ -204,35 +225,45 @@ export const updateGame = (
 
   // -- update player resources
   // recharge shield
-  damage[0] = max(0, damage[0] - _snapshot[16] * tickLength);
+  playerResourceStatus[0] = max(
+    0,
+    playerResourceStatus[0] - playerSnapshot[16] * tickLength,
+  );
 
   // if shield is depleted, reduce armor by one, trigger temporary invulnerability
-  if (damage[0] >= _snapshot[15]) {
+  if (playerResourceStatus[0] >= playerSnapshot[15]) {
     explosionSound();
-    damage[0] = _snapshot[15];
-    damage[3] ??= 0, damage[3]++;
-    damage[4] = true;
-    if (damage[3] >= _snapshot[0]) {
+    playerResourceStatus[0] = playerSnapshot[15];
+    playerResourceStatus[3] ??= 0;
+    (random() > playerSnapshot[1]) && playerResourceStatus[3]++;
+    playerResourceStatus[4] = true;
+    if (playerResourceStatus[3] >= playerSnapshot[0]) {
       alert("MISSION " + (winCollection.size == 6 ? "COMPLETE" : "FAILED"));
       location.reload();
     }
   }
 
   // remove temporary invulnerability once shields are restored
-  if (damage[0] <= 0) damage[4] = false;
+  if (playerResourceStatus[0] <= 0) playerResourceStatus[4] = false;
 
   // recharge fuel
-  damage[1] ??= 0, damage[1] = max(0, damage[1] - _snapshot[7] * tickLength);
+  playerResourceStatus[1] ??= 0,
+    playerResourceStatus[1] = max(
+      0,
+      playerResourceStatus[1] - playerSnapshot[7] * tickLength,
+    );
 
   // eject fuel if depleted
-  if (damage[1] >= _snapshot[4] && !damage[5]) {
-    damage[1] = _snapshot[4];
-    damage[5] = true;
+  if (
+    playerResourceStatus[1] >= playerSnapshot[4] && !playerResourceStatus[5]
+  ) {
+    playerResourceStatus[1] = playerSnapshot[4];
+    playerResourceStatus[5] = true;
     setTimeout(() => {
-      damage[2] ??= 0, damage[2]++;
-      damage[1] = 0;
-      damage[5] = false;
-    }, _snapshot[6] * SECONDS_TO_MS);
+      playerResourceStatus[2] ??= 0, playerResourceStatus[2]++;
+      playerResourceStatus[1] = 0;
+      playerResourceStatus[5] = false;
+    }, playerSnapshot[6] * SECONDS_TO_MS);
   }
 
   if (length(activeEnemyGroups)) return;
@@ -242,7 +273,11 @@ export const updateGame = (
     progress[1] = 1;
     progress[0]++;
     progress[2] = getWavesInLevel(progress[0]);
-    [damage[0], damage[1], damage[2]] = repeat(3, 0);
+    [
+      playerResourceStatus[0],
+      playerResourceStatus[1],
+      playerResourceStatus[2],
+    ] = repeat(3, 0);
   } else { // stay in the current level
     progress[1]++;
   }

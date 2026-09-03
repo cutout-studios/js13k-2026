@@ -107,7 +107,7 @@ form.onsubmit = (event: SubmitEvent) => {
   const detail = getFormValues();
   if ((event.submitter as HTMLButtonElement).value) {
     const item = combineItems(
-      progress[0],
+      progress[0] * GameState[0][0][5][9],
       ...doTimes(detail, (index) => inventory[index][0]),
     );
     if (item) {
