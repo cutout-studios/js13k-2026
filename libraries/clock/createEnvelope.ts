@@ -15,7 +15,7 @@
  */
 
 import { doTimes } from "~/common";
-import { approachFactory } from "./approachFactory.ts";
+import { createApproach } from "./actions.ts";
 import { createActionSequencer } from "./createActionSequencer.ts";
 import { Action } from "./types.ts";
 
@@ -27,20 +27,18 @@ export const createEnvelope = (
 ): Envelope => {
   const [attackSequence, releaseSequence] = doTimes(
     [[
-      [approachFactory(), attackTime],
+      [createApproach(), attackTime],
     ], [[
-      approachFactory(0),
+      createApproach(0),
       releaseTime,
     ]]] as [Action<{ value: number }>, number][][],
     (schedule) => createActionSequencer(schedule),
   );
 
-  const valueObject = { value: 0 };
+  const $ = { value: 0 };
   return (tickLength, released) => {
-    released
-      ? releaseSequence(valueObject, tickLength)
-      : attackSequence(valueObject, tickLength);
+    released ? releaseSequence($, tickLength) : attackSequence($, tickLength);
 
-    return valueObject.value;
+    return $.value;
   };
 };

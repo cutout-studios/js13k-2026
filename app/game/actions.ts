@@ -22,32 +22,52 @@ import {
   XOObject,
   XYZ,
   XYZ_LENGTH,
+  Z_AXIS,
 } from "~/3D";
 import { Action } from "~/clock";
 import { doTimes, repeat } from "~/common";
 import { range } from "~/random";
-
-export const createPull = (
-  direction: XYZ,
-  speed: (tickLength: number) => number,
-  jitter = 0,
-): Action<XOObject> =>
-(object: XOObject, tickLength: number) => {
-  adjustObject(object, [
-    scaleXYZ(
-      normalizeXYZ(
-        addXYZ(
-          direction,
-          doTimes(XYZ_LENGTH, () => range(jitter, -jitter)) as XYZ,
-        ),
-      ),
-      speed(tickLength),
-    ),
-  ]);
-};
 
 export const orbit: Action<XOObject> = (object: XOObject, tickLength) =>
   adjustObject(object, [undefined, [
     repeat(3, tickLength) as XYZ,
     tickLength,
   ]]);
+
+export const createPull = (
+  direction: XYZ,
+  // number should be <-inf, +inf>
+  speed: Action<{ value: number }>,
+  jitter = 0,
+): Action<XOObject> => {
+  const $ = { value: 1 };
+
+  return ((object: XOObject, tickLength: number, ...rest) => {
+    speed($, tickLength, ...rest);
+
+    adjustObject(object, [
+      scaleXYZ(
+        normalizeXYZ(
+          addXYZ(
+            direction,
+            doTimes(XYZ_LENGTH, () => range(jitter, -jitter)) as XYZ,
+          ),
+        ),
+        $.value,
+      ),
+    ]);
+  });
+};
+
+export const createRoll = (
+  rotations: number,
+  // number should be <0, 1>
+  curve: Action<{ value: number }>,
+): Action<XOObject> =>
+(object: XOObject, tickLength, ...rest) => {
+  const $ = { value: 0 };
+
+  curve($, tickLength, ...rest);
+
+  adjustObject(object, [undefined, [Z_AXIS, $.value * rotations]]);
+};

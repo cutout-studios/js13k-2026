@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export { approachFactory } from "./approachFactory.ts";
+export { createApproach } from "./actions.ts";
 export { createActionSequencer } from "./createActionSequencer.ts";
 export { createEnvelope } from "./createEnvelope.ts";
 export { startClock } from "./startClock.ts";

@@ -14,33 +14,43 @@
  * limitations under the License.
  */
 
-export const keyboard = new Set<string>();
-
-onkeydown = ({ code }) => keyboard.add(code);
-onkeyup = ({ code }) => keyboard.delete(code);
-
-export let pointer: [[x: number, y: number], buttons: number] | undefined;
-onpointerdown = onpointerup = onpointermove = (
-  { clientX, clientY, buttons },
-) => pointer = [[clientX, clientY], buttons];
-
-// suppress undesired browser behavior
-onblur = () => keyboard.clear();
+const keys = new Set<string>();
+onkeydown = ({ code }) => keys.add(code);
+onkeyup = ({ code }) => keys.delete(code);
+onblur = () => keys.clear();
 oncontextmenu = () => false;
 
-export const bind = (
-  keyCode: string,
-  onDown: () => void,
-  onUp?: () => void,
+onpointerdown =
+  onpointerup =
+    ({ buttons }) => ({/* TODO: handle buttons */});
+
+export const bindButton = (
+  code: string,
+  onDown?: (tickLength: number) => void,
+  onHold?: (tickLength: number) => void,
+  onUp?: (tickLength: number) => void,
+  onFree?: (tickLength: number) => void,
 ) => {
-  let wasDown = keyboard.has(keyCode);
+  let wasDown = keys.has(code);
 
-  return () => {
-    const isDown = keyboard.has(keyCode);
+  return (tickLength: number) => {
+    const isDown = keys.has(code);
 
-    if (wasDown && !isDown) onDown();
-    if (!wasDown && isDown) onUp?.();
+    if (wasDown && !isDown) onDown?.(tickLength);
+    if (wasDown && isDown) onHold?.(tickLength);
+    if (!wasDown && isDown) onUp?.(tickLength);
+    if (!wasDown && !isDown) onFree?.(tickLength);
 
     wasDown = isDown;
   };
 };
+
+let pointerX: number, pointerY: number;
+onpointermove = (
+  { clientX, clientY },
+) => (pointerX = clientX, pointerY = clientY);
+
+export const bindPointer = (
+  onTick: (tickLength: number, x: number, y: number) => void,
+) =>
+(tickLength: number) => onTick(tickLength, pointerX, pointerY);

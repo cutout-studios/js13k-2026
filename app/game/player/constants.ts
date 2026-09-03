@@ -17,6 +17,5 @@
 export const PLAYER_Z_PLANE = 5;
 export const PLAYER_INVENTORY_SIZE = 12;
 
-export const STRAFE_KEYS = ["KeyD", "KeyA", "KeyW", "KeyS"];
 export const STRAFE_ATTACK_TIME = 0.3;
 export const STRAFE_RELEASE_TIME = 0.35;

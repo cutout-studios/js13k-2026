@@ -18,9 +18,9 @@ import { min } from "~/alias";
 
 import { Action } from "./types.ts";
 
-export const approachFactory =
+// TODO: I'm not convinced we need this
+export const createApproach =
   (target: number = 1): Action<{ value: number }> =>
-  (valueObject, tickLength, _, duration) => {
-    valueObject.value += (target - valueObject.value) *
-      min(1, tickLength / duration);
+  ($, tickLength, _, duration) => {
+    $.value += (target - $.value) * min(1, tickLength / duration);
   };

@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
-import { _ } from "~/alias";
-import { controlSchedule } from "../player/controls.ts";
+import { _, NO_OP } from "~/alias";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
@@ -81,7 +80,7 @@ export default [
         createPrism([0.03, 0.03, 0.04], 8),
       ]]],
       [],
-      controlSchedule,
+      [[NO_OP]],
       [[[], _, [0.34, 0, -0.26]], [[], _, [-0.34, 0, -0.26]]],
       [1, 1],
     ],
