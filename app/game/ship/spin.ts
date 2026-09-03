@@ -10,13 +10,12 @@ export const createSpinSequence = (
   direction: XYZ,
 ) => {
   const totalTime = _snapshot[19],
-    speed = _snapshot[20],
     spinSign =
       (getPanFromCoordinates(setOrigin(createCoordinates(), direction), 1) > 0)
         ? 1
         : -1,
     rollPull = createPull(direction, (obj) => {
-      obj.value = speed * 1.3;
+      obj.value = _snapshot[20] * 1.3;
     }), // TODO: s-curve?
     roll = createRoll(1.2 * spinSign, createApproach()),
     rollRecovery = createRoll(-.2 * spinSign, createApproach()),

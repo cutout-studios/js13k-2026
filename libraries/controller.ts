@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { doTimes } from "~/common";
+
 const keys = new Set<string>();
 onkeydown = ({ code }) => keys.add(code);
 onkeyup = ({ code }) => keys.delete(code);
@@ -22,7 +24,12 @@ oncontextmenu = () => false;
 
 onpointerdown =
   onpointerup =
-    ({ buttons }) => ({/* TODO: handle buttons */});
+    ({ buttons }) =>
+      doTimes(
+        ["LClick", "RClick"],
+        (code: string, index: number) =>
+          keys[buttons & (1 << index) ? "add" : "delete"](code),
+      );
 
 export const bindButton = (
   code: string,

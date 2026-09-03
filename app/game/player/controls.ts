@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import { adjustObject, aimObject, scaleXYZ, XYZ } from "~/3D";
-import { _, hypot, max } from "~/alias";
+import {
+  adjustObject,
+  aimObject,
+  normalizeXYZ,
+  readOrigin,
+  scaleXYZ,
+  setOrigin,
+  XYZ,
+} from "~/3D";
+import { _, hypot, max, min } from "~/alias";
 import { createEnvelope } from "~/clock";
 import { doTimes } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
@@ -37,9 +45,9 @@ export const checkMousePointer = bindPointer(
   (tickLength: number, x: number, y: number) => {
     playerShip[1] = [
       playerShip[1][0] -
-      ((playerShip[1][0] - x) / tickLength * playerShip[5][21]),
+      ((playerShip[1][0] - x) / (tickLength * playerShip[5][21])),
       playerShip[1][1] -
-      ((playerShip[1][1] - y) / tickLength * playerShip[5][21]),
+      ((playerShip[1][1] - y) / (tickLength * playerShip[5][21])),
       playerShip[1][2],
     ] as XYZ;
   },
@@ -101,9 +109,14 @@ export const applyInputToPlayerShip = (tickLength: number) => {
   strafeVector[1] += wEnvelope(0) - sEnvelope(0);
 
   adjustObject(playerShip[0], [scaleXYZ(
-    strafeVector, // TODO: apply handling
-    (playerShip[5][20] * tickLength) / max(1, hypot(...strafeVector)),
+    strafeVector,
+    (playerShip[5][20] * (playerShip[4][6] ? playerShip[5][18] : 1) *
+      tickLength) / hypot(...normalizeXYZ(strafeVector)),
   )]);
 
   aimObject(playerShip[0], playerShip[1]);
+
+  // clamp ship to camera bounds
+  const [x, y, z] = readOrigin(playerShip[0][0]);
+  setOrigin(playerShip[0][0], [min(5, max(-5, x)), min(5, max(-5, y)), z]);
 };
