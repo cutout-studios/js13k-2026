@@ -29,12 +29,12 @@ export type Ship = [
 
 export type Resources = [
   shield: number,
-  fuel?: number,
-  fuelSegments?: number,
-  armor?: number,
-  invulnerable?: boolean,
-  ejectingFuel?: boolean,
-  countering?: boolean,
+  fuel: number,
+  fuelSegments: number,
+  armor: number,
+  invulnerable: 0 | 1,
+  ejectingFuel: 0 | 1,
+  countering: 0 | 1,
 ];
 
 export type ShipSnapshot = [
@@ -84,7 +84,7 @@ export type WeaponSnapshot = [
   bulletLifetime: number,
   bulletRate: number,
   // 6
-  bulletSpread: number, // TODO - medium
+  bulletSpread: number,
 ];
 
 export type Bullet = [

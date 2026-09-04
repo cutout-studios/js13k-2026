@@ -30,12 +30,12 @@ export const createSpinSequence = (
     [([object, , , , resources], t, e, d) => {
       rollPull(object, t, e, totalTime);
       roll(object, t, e, d);
-      resources[6] = true;
+      resources[6] = 1;
     }, rollTime],
     [([object, , , , resources], t, e, d) => {
       rollPull(object, t, e + rollTime, totalTime);
       rollRecovery(object, t, e, d);
-      resources[6] = false;
+      resources[6] = 0;
     }, rollRecoveryTime],
     [
       (ship) => ship[3] = originalSequence,

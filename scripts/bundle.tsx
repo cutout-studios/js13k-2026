@@ -108,8 +108,8 @@ async function bundle(
 
     const { firstLine, secondLine } = packer.makeDecoder();
 
-    appOutputText =
-      `<meta charset=utf-8><script>${firstLine}\n${secondLine}</script>`;
+    appOutputText = `<script>${firstLine}\n${secondLine}</script>`;
+    // `<meta charset=utf-8><script>${firstLine}\n${secondLine}</script>`;
   }
 
   Deno.writeTextFileSync(

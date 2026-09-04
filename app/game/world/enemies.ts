@@ -19,7 +19,6 @@ import { length, max, min, round } from "~/alias";
 import { doTimes } from "~/common";
 import { rollBand } from "~/random";
 
-// import { logShip } from "../../log.ts";
 import { createDeck, drawCard } from "../decks.ts";
 import GameOptions from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
@@ -69,8 +68,6 @@ const _drawEnemyGroup = (
       ...doTimes(2, () => rollBand([-spawnQuadrantSize, spawnQuadrantSize])),
       -ENEMY_Z_PLANE,
     ] as XYZ);
-
-    // logShip(ship, "#" + count);
 
     return ship;
   });

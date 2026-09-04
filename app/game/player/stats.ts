@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { min } from "~/alias";
+import { length, min } from "~/alias";
 import { doTimes, repeat } from "~/common";
 import { Player } from "./types.ts";
 
 export const updatePlayerSnapshots = (
-  [ship, [armorLevels, fuelLevels = 0, shieldLevels = 0], inventory]: Player,
+  [ship, [armorLevels, fuelLevels, _, shieldLevels], inventory]: Player,
 ) => {
   const [, , weapons, , , _snapshot] = ship;
   const _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
@@ -41,20 +41,32 @@ export const updatePlayerSnapshots = (
     });
   });
 
-  [ // TODO: need tiebreaker - is this by reference?
-    armorLevels,
-    fuelLevels,
-    shieldLevels,
-  ][
-    [armorLevels, fuelLevels, shieldLevels].indexOf(
+  let levels = [armorLevels, fuelLevels, shieldLevels];
+
+  const minLevelIndicies = levels.reduce((arr, val) => {
+    val == min(...levels) && arr.push(val);
+    return arr;
+  }, [] as number[]);
+
+  if (length(minLevelIndicies) < 3) {
+    doTimes(
+      levels,
+      (_, index) =>
+        minLevelIndicies.includes(index) &&
+        (levels[index] *= _snapshot[12] / length(minLevelIndicies)),
+    );
+  }
+
+  levels[
+    levels.indexOf(
       min(armorLevels, fuelLevels, shieldLevels),
     )
   ] *= _snapshot[12];
 
-  const levels = [
-    armorLevels,
-    ...repeat(3, fuelLevels),
-    ...repeat(2, shieldLevels),
+  levels = [
+    levels[0],
+    ...repeat(3, levels[1]),
+    ...repeat(2, levels[2]),
   ];
 
   doTimes(

@@ -32,8 +32,30 @@ export const [
   header,
   modifiers,
   base,
+  levelLabel,
+  levelArmor,
+  levelFuel,
+  levelShield,
 ] = doTimes(
-  ["c", "f", "s", "r", "d", "w", "m", "o", "p", "t", "a", "b", "k"],
+  [
+    "c",
+    "f",
+    "s",
+    "r",
+    "d",
+    "w",
+    "m",
+    "o",
+    "p",
+    "t",
+    "a",
+    "b",
+    "k",
+    "j",
+    "q",
+    "u",
+    "aa",
+  ],
   (char) => document.getElementById(char),
 ) as [
   HTMLCanvasElement,
@@ -49,6 +71,10 @@ export const [
   HTMLElement,
   HTMLElement,
   HTMLElement,
+  HTMLElement,
+  HTMLInputElement,
+  HTMLInputElement,
+  HTMLInputElement,
 ];
 
 export const canvasCells = arrayFrom(

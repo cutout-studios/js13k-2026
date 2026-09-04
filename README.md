@@ -2,7 +2,6 @@
 
 ## MVP TODOs
 
-- wire remaining stats
 - enemy behaviors
 
 ## Core Polish

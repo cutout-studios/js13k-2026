@@ -29,6 +29,7 @@ import {
 } from "~/3D";
 import { _, length, max, min, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
+import { createActionSequencer } from "~/clock";
 import {
   doTimes,
   flat,
@@ -39,15 +40,12 @@ import {
 } from "~/common";
 import { rollBand } from "~/random";
 
-// import { logDamage } from "../log.ts";
-
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
 import { Ship, Weapon } from "./ship/types.ts";
 import { Game } from "./types.ts";
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
-import { createActionSequencer } from "~/clock";
 
 const _resolveCollisions = (
   sourceObjects: XOObject[],
@@ -153,13 +151,16 @@ export const updateGame = (
                 bullet[1] = newHeading;
                 aimObject(bullet[0], newHeading);
 
+                const fauxSnapshot = repeat(7, 0);
+                fauxSnapshot[3] = baseDamage * playerSnapshot[17];
+
                 return counteredBullets.push(
                   [
                     createObject(),
-                    [0, 0, 0] as XYZ,
+                    repeat(3, 0) as XYZ,
                     [[bullet], [bullet[0]]],
                     createActionSequencer([[NO_OP]]),
-                    [0, 0, 0, baseDamage * playerSnapshot[17], 0, 0, 0],
+                    fauxSnapshot,
                   ] as Weapon,
                 );
               }
@@ -167,7 +168,6 @@ export const updateGame = (
               const totalDamage = baseDamage * playerSnapshot[2];
 
               playerShip[4][0] += totalDamage * (1 - playerSnapshot[3]);
-              playerShip[4][1] ??= 0;
               playerShip[4][1] += totalDamage * playerSnapshot[3];
             },
           ),
@@ -234,9 +234,8 @@ export const updateGame = (
   if (playerResourceStatus[0] >= playerSnapshot[15]) {
     explosionSound();
     playerResourceStatus[0] = playerSnapshot[15];
-    playerResourceStatus[3] ??= 0;
     (random() > playerSnapshot[1]) && playerResourceStatus[3]++;
-    playerResourceStatus[4] = true;
+    playerResourceStatus[4] = 1;
     if (playerResourceStatus[3] >= playerSnapshot[0]) {
       alert("MISSION " + (winCollection.size == 6 ? "COMPLETE" : "FAILED"));
       location.reload();
@@ -244,25 +243,23 @@ export const updateGame = (
   }
 
   // remove temporary invulnerability once shields are restored
-  if (playerResourceStatus[0] <= 0) playerResourceStatus[4] = false;
+  if (playerResourceStatus[0] <= 0) playerResourceStatus[4] = 0;
 
   // recharge fuel
-  playerResourceStatus[1] ??= 0,
-    playerResourceStatus[1] = max(
-      0,
-      playerResourceStatus[1] - playerSnapshot[7] * tickLength,
-    );
+  playerResourceStatus[1] = max(
+    0,
+    playerResourceStatus[1] - playerSnapshot[7] * tickLength,
+  );
 
   // eject fuel if depleted
   if (
     playerResourceStatus[1] >= playerSnapshot[4] && !playerResourceStatus[5]
   ) {
     playerResourceStatus[1] = playerSnapshot[4];
-    playerResourceStatus[5] = true;
+    playerResourceStatus[5] = 1;
     setTimeout(() => {
-      playerResourceStatus[2] ??= 0, playerResourceStatus[2]++;
-      playerResourceStatus[1] = 0;
-      playerResourceStatus[5] = false;
+      playerResourceStatus[2]++;
+      playerResourceStatus[1] = playerResourceStatus[5] = 0;
     }, playerSnapshot[6] * SECONDS_TO_MS);
   }
 
@@ -273,11 +270,10 @@ export const updateGame = (
     progress[1] = 1;
     progress[0]++;
     progress[2] = getWavesInLevel(progress[0]);
-    [
-      playerResourceStatus[0],
-      playerResourceStatus[1],
-      playerResourceStatus[2],
-    ] = repeat(3, 0);
+    playerResourceStatus[0] =
+      playerResourceStatus[1] =
+      playerResourceStatus[2] =
+        0;
   } else { // stay in the current level
     progress[1]++;
   }

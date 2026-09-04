@@ -39,6 +39,10 @@ import {
   form,
   header,
   itemPopover,
+  levelArmor,
+  levelFuel,
+  levelLabel,
+  levelShield,
   menu,
   modifiers,
   winCollectionElements,
@@ -105,23 +109,39 @@ const EQUIP_OFFSET = 2,
 form.onsubmit = (event: SubmitEvent) => {
   preventDefault(event);
   const detail = getFormValues();
-  if ((event.submitter as HTMLButtonElement).value) {
-    const item = combineItems(
-      progress[0] * GameState[0][0][5][9],
-      ...doTimes(detail, (index) => inventory[index][0]),
-    );
-    if (item) {
-      spliceTable([inventory], detail);
-      inventory.push([item]);
+  switch ((event.submitter as HTMLButtonElement).value) {
+    case "1": {
+      if (detail[0] + detail[1] + detail[2] == GameState[1][2][0]) {
+        GameState[0][1][0] = detail[0];
+        GameState[0][1][1] = detail[1];
+        GameState[0][1][3] = detail[2];
+      }
+      break;
     }
-  } else {
-    const toEquip = repeat(4, -1);
-    doTimes(detail, (index) => toEquip[inventory[index][0][2]] = index);
-    doTimes(inventory, (item, index) => {
-      if (toEquip[item[0][2]] == -1) return;
-      item[1] = toEquip[item[0][2]] == index;
-    });
-    updatePlayerSnapshots(player);
+    case "2": {
+      const toEquip = repeat(4, -1);
+      doTimes(
+        detail.splice(3),
+        (index) => toEquip[inventory[index][0][2]] = index,
+      );
+      doTimes(inventory, (item, index) => {
+        if (toEquip[item[0][2]] == -1) return;
+        item[1] = toEquip[item[0][2]] == index;
+      });
+      updatePlayerSnapshots(player);
+      break;
+    }
+    case "3": {
+      const item = combineItems(
+        progress[0] * GameState[0][0][5][9],
+        ...doTimes(detail.splice(3), (index) => inventory[index][0]),
+      );
+      if (item) {
+        spliceTable([inventory], detail.splice(3));
+        inventory.push([item]);
+      }
+      break;
+    }
   }
   form.reset();
   resetMenu();
@@ -154,6 +174,13 @@ export const resetMenu = () => {
     equippedItems,
     (item, index) => camera([[item[0]]], renderTargets[index + EQUIP_OFFSET]),
   );
+
+  levelLabel.innerText = `LVL USED: ${GameState[1][2][0]} / ${
+    GameState[0][1][0] + GameState[0][1][1] + GameState[0][1][2]
+  }`;
+  levelArmor.value = levelArmor.min = GameState[0][1][0] + "";
+  levelFuel.value = levelFuel.min = GameState[0][1][1] + "";
+  levelShield.value = levelShield.min = GameState[0][1][2] + "";
 };
 
 export const updateMenu = (tickLength: number) => {

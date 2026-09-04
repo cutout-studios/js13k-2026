@@ -17,10 +17,10 @@
 import {
   addXYZ,
   aimObject,
+  createCoordinates,
   createObject,
   createPaintMaterialWithPalette as paint,
   createPrism,
-  createRotation,
   localize,
   normalizeXYZ,
   readOrigin,
@@ -32,6 +32,7 @@ import {
 import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, spliceTable } from "~/common";
+import { rollBand } from "~/random";
 
 import GameOptions, { BULLET_SPEED } from "../options/module.ts";
 
@@ -72,26 +73,38 @@ export const createBullet = (
         ],
       ],
     ] = GameOptions[optionsIndex],
-    [[mountCoordinates], localHeading, , , snapshot] = weapons[weaponIndex],
-    coordinates = localize(mountCoordinates, shipCoordinates),
-    origin = readOrigin(coordinates),
-    heading = normalizeXYZ(
-      subtractXYZ(
-        readOrigin(
-          localize(setOrigin(createRotation(), localHeading), coordinates),
-        ),
-        origin,
+    [[mountCoordinates], [headingX, headingY, headingZ], , , snapshot] =
+      weapons[weaponIndex],
+    globalCoordinates = localize(mountCoordinates, shipCoordinates),
+    globalOrigin = readOrigin(globalCoordinates),
+    globalHeading = readOrigin(
+      localize(
+        setOrigin(createCoordinates(), [
+          headingX - rollBand([-snapshot[6], snapshot[6]]),
+          headingY - rollBand([-snapshot[6], snapshot[6]]),
+          headingZ,
+        ]),
+        globalCoordinates,
       ),
     ),
-    object = createObject([origin], bulletGeometry as XOGeometry, paint(value));
+    bulletHeading = normalizeXYZ(
+      subtractXYZ(
+        globalHeading,
+        globalOrigin,
+      ),
+    ),
+    bulletObject = createObject(
+      [globalOrigin],
+      bulletGeometry as XOGeometry,
+      paint(value),
+    );
 
-  aimObject(object, addXYZ(origin, heading));
-
-  bulletSound(getPanFromCoordinates(object[0], 5));
+  aimObject(bulletObject, addXYZ(globalOrigin, bulletHeading));
+  bulletSound(getPanFromCoordinates(bulletObject[0], 5));
 
   return [
-    object,
-    heading,
+    bulletObject,
+    bulletHeading,
     createActionSequencer(bulletSchedule as ActionSchedule<Bullet>),
     snapshot[4],
   ];
