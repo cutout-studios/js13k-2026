@@ -37,19 +37,26 @@ import {
 } from "./game/player/controls.ts";
 import { updateGame } from "./game/update.ts";
 
-startClock((tickLength) => {
+const checkKeyboard = (tickLength: number) =>
   doTimes([
     checkWKey,
     checkAKey,
     checkSKey,
     checkDKey,
     checkSpaceBar,
-    checkMousePointer,
-    checkLMouseButton,
   ], (f) => f(tickLength));
+const checkMouse = (tickLength: number) =>
+  doTimes(
+    [checkMousePointer, checkLMouseButton, checkRMouseButton],
+    (f) => f(tickLength),
+  );
+
+startClock((tickLength) => {
+  checkKeyboard(tickLength);
 
   // game hasn't started yet
   if (!GameState[2]) {
+    checkMouse(tickLength);
     applyInputToPlayerShip(tickLength);
     updateHUD(GameState, tickLength);
     return camera(getSceneObjects(GameState), mainCanvas);
@@ -60,7 +67,7 @@ startClock((tickLength) => {
   if (menu.open) return updateMenu(tickLength);
 
   // game has started
-  checkRMouseButton(tickLength);
+  checkMouse(tickLength);
   applyInputToPlayerShip(tickLength);
   updateGame(GameState, tickLength), updateHUD(GameState, tickLength);
   camera(getSceneObjects(GameState), mainCanvas);

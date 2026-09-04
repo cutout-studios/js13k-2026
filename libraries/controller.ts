@@ -43,16 +43,16 @@ export const bindButton = (
   return (tickLength: number) => {
     const isDown = keys.has(code);
 
-    if (wasDown && !isDown) onDown?.(tickLength);
+    if (!wasDown && isDown) onDown?.(tickLength);
     if (wasDown && isDown) onHold?.(tickLength);
-    if (!wasDown && isDown) onUp?.(tickLength);
+    if (wasDown && !isDown) onUp?.(tickLength);
     if (!wasDown && !isDown) onFree?.(tickLength);
 
     wasDown = isDown;
   };
 };
 
-let pointerX: number, pointerY: number;
+let pointerX = 0, pointerY = 0;
 onpointermove = (
   { clientX, clientY },
 ) => (pointerX = clientX, pointerY = clientY);

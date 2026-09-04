@@ -41,6 +41,7 @@ import {
 import { rollBand } from "~/random";
 
 import { createItem, setItemInFrame } from "./player/items.ts";
+import { updateBullets } from "./ship/bullets.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
 import { Ship, Weapon } from "./ship/types.ts";
 import { Game } from "./types.ts";
@@ -81,8 +82,7 @@ export const updateGame = (
       playerSnapshot,
     ] = playerShip,
     enemyShips = flatDoTimes(activeEnemyGroups, ([ships]) => ships) as Ship[],
-    playerOrigin = readOrigin(playerShipObject[0]),
-    counteredBullets: Weapon[] = [];
+    playerOrigin = readOrigin(playerShipObject[0]);
 
   // TEMP: aim enemies at the player
   doTimes(enemyShips, (ship) => {
@@ -103,11 +103,12 @@ export const updateGame = (
   // -- update everything in the game
   doTimes(flat([playerShip], enemyShips), (ship) => ship[3](ship, tickLength));
   doTimes(droppedItems, (drop) => drop[1](drop, tickLength));
-  doTimes(counteredBullets, () => {});
+
+  updateBullets(playerShip, tickLength);
 
   // -- handle collisions
   doTimes(
-    flat(playerWeapons, counteredBullets),
+    playerWeapons,
     ([, , bullets, , [, critChance, critDamage, bulletDamage]]) =>
       spliceTable(
         bullets,
@@ -154,7 +155,7 @@ export const updateGame = (
                 const fauxSnapshot = repeat(7, 0);
                 fauxSnapshot[3] = baseDamage * playerSnapshot[17];
 
-                return counteredBullets.push(
+                return playerWeapons.push(
                   [
                     createObject(),
                     repeat(3, 0) as XYZ,
@@ -190,6 +191,8 @@ export const updateGame = (
         inventory.push([droppedItems[itemIndex]])),
     ),
   );
+
+  // TODO: clean up missed items && empty player weapons (not first two)
 
   // clean up dead enemies
   // WARNING: mutates in place, so enemyShips are stale below here

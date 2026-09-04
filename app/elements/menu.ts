@@ -111,7 +111,7 @@ form.onsubmit = (event: SubmitEvent) => {
   const detail = getFormValues();
   switch ((event.submitter as HTMLButtonElement).value) {
     case "1": {
-      if (detail[0] + detail[1] + detail[2] == GameState[1][2][0]) {
+      if (detail[0] + detail[1] + detail[2] == (GameState[1][2][0] - 1)) {
         GameState[0][1][0] = detail[0];
         GameState[0][1][1] = detail[1];
         GameState[0][1][3] = detail[2];
@@ -175,7 +175,7 @@ export const resetMenu = () => {
     (item, index) => camera([[item[0]]], renderTargets[index + EQUIP_OFFSET]),
   );
 
-  levelLabel.innerText = `LVL USED: ${GameState[1][2][0]} / ${
+  levelLabel.innerText = `LVLS USED: ${GameState[1][2][0] - 1} / ${
     GameState[0][1][0] + GameState[0][1][1] + GameState[0][1][2]
   }`;
   levelArmor.value = levelArmor.min = GameState[0][1][0] + "";

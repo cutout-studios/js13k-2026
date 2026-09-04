@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { max, min } from "~/alias";
 import { Band, interpolate } from "~/common";
 
 type Envelope = (tickLength: number, released?: boolean) => number;
@@ -26,19 +27,24 @@ export const createEnvelope = (
     currentValue = 0,
     elapsedTime = 0,
     totalTime = attackTime,
-    hasReleased = false;
+    wasReleased = false;
 
   return (tickLength, released) => {
     elapsedTime += tickLength;
 
-    if (released && !hasReleased) {
-      hasReleased = true;
+    if (released && !wasReleased) {
+      wasReleased = true;
       totalTime = releaseTime;
       elapsedTime = 0;
       band = [currentValue, 0];
+    } else if (wasReleased && !released) {
+      wasReleased = false;
+      totalTime = attackTime;
+      elapsedTime = 0;
+      band = [currentValue, 1];
     }
 
-    currentValue = interpolate(band, elapsedTime / totalTime);
+    currentValue = interpolate(band, max(0, min(1, elapsedTime / totalTime)));
 
     return currentValue;
   };

@@ -51,10 +51,10 @@ export const [
     "a",
     "b",
     "k",
-    "j",
-    "q",
-    "u",
-    "aa",
+    "ab",
+    "ac",
+    "ad",
+    "ae",
   ],
   (char) => document.getElementById(char),
 ) as [
@@ -75,6 +75,7 @@ export const [
   HTMLInputElement,
   HTMLInputElement,
   HTMLInputElement,
+  HTMLElement,
 ];
 
 export const canvasCells = arrayFrom(

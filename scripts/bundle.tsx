@@ -41,11 +41,11 @@ Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 await bundle();
 logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
 
-// await bundle({ minify: false, sourcemap: "inline" });
+await bundle({ minify: false, sourcemap: "inline" });
 
-// await new Deno.Command("open", {
-//   args: [BUNDLE_OUTPUT_FILEPATH],
-// }).output();
+await new Deno.Command("open", {
+  args: [BUNDLE_OUTPUT_FILEPATH],
+}).output();
 
 async function bundle(
   options: Partial<Deno.bundle.Options> = { minify: true },
@@ -103,13 +103,12 @@ async function bundle(
         action: "write" as InputAction,
       },
     ], { allowFreeVars: true });
-    await packer.optimize(2); // TODO
-    // await packer.optimize(1);
+    // await packer.optimize(2); // TODO
+    await packer.optimize(1);
 
     const { firstLine, secondLine } = packer.makeDecoder();
 
     appOutputText = `<script>${firstLine}\n${secondLine}</script>`;
-    // `<meta charset=utf-8><script>${firstLine}\n${secondLine}</script>`;
   }
 
   Deno.writeTextFileSync(

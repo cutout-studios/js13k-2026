@@ -21,7 +21,7 @@ export const WORDS =
   "HL SAVE DMG TAKEN TO FL AMT COST TIME RESTORE ITEM RATE LVL MIN RESOURCE M RESOLVE SLD CNTR AIM SPD STRAFE BLT CRIT SPREAD EQUIP"
     .split(" ");
 
-export const PROPERTY_NAMES = doTimes(
+export const PROPERTY_NAMES = doTimes( // TODO: AIMSPD -> AIMTIME
   "0 01 23 245 56 57 58 59 5 96 ab c6 de f g h h9 i2 ij ik lk jk m6 mn mn2 m2 m8 mb mo"
     .split(" "),
   (code: string) =>

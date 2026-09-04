@@ -32,15 +32,15 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   1, // Item Drop Rate
   1.2, // Level Quality
   0, // Lowest Resource
-  1, // Mass
+  4, // Mass
   0, // Resolve
   40, // Shield
   5, // Shield Regen
   1, // Spin Damage
   0.1, // Spin Handling
-  1.5, // Spin Time
+  0.7, // Spin Time
   2.4, // Strafe Speed
-  0.8, // Tracking Speed
+  1.7, // Aim Time
 ];
 
 export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
@@ -50,7 +50,7 @@ export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
   1, // Bullet Damage
   1, // Bullet Lifetime
   8, // Bullet Rate
-  1, // Bullet Spread
+  0, // Bullet Spread
 ];
 
 export const BULLET_SPEED = 12;

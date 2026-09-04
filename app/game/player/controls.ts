@@ -17,10 +17,10 @@
 import {
   adjustObject,
   aimObject,
-  normalizeXYZ,
   readOrigin,
   scaleXYZ,
   setOrigin,
+  subtractXYZ,
   XYZ,
 } from "~/3D";
 import { _, hypot, max, min } from "~/alias";
@@ -29,6 +29,7 @@ import { doTimes } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
 
 import { menu, title } from "../../elements/handles.ts";
+import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
 import GameState from "../module.ts";
 import { createSpinSequence } from "../ship/spin.ts";
@@ -43,13 +44,13 @@ const [[playerShip]] = GameState,
 
 export const checkMousePointer = bindPointer(
   (tickLength: number, x: number, y: number) => {
-    playerShip[1] = [
-      playerShip[1][0] -
-      ((playerShip[1][0] - x) / (tickLength * playerShip[5][21])),
-      playerShip[1][1] -
-      ((playerShip[1][1] - y) / (tickLength * playerShip[5][21])),
-      playerShip[1][2],
-    ] as XYZ;
+    [x, y] = scaleXYZ(
+      subtractXYZ(mapClientXYToZPlane(x, y), playerShip[1]),
+      tickLength / playerShip[5][21],
+    );
+
+    playerShip[1][0] += x;
+    playerShip[1][1] += y;
   },
 );
 
@@ -66,36 +67,41 @@ export const checkRMouseButton = bindButton(
 
 export const checkWKey = bindButton(
   "KeyW",
-  _,
   wEnvelope,
-  _,
+  wEnvelope,
+  (t) => wEnvelope(t, true),
   (t) => wEnvelope(t, true),
 );
 export const checkAKey = bindButton(
   "KeyA",
-  _,
   aEnvelope,
-  _,
+  aEnvelope,
+  (t) => aEnvelope(t, true),
   (t) => aEnvelope(t, true),
 );
 export const checkSKey = bindButton(
   "KeyS",
-  _,
   sEnvelope,
-  _,
+  sEnvelope,
+  (t) => sEnvelope(t, true),
   (t) => sEnvelope(t, true),
 );
 export const checkDKey = bindButton(
   "KeyD",
-  _,
   dEnvelope,
-  _,
+  dEnvelope,
+  (t) => dEnvelope(t, true),
   (t) => dEnvelope(t, true),
 );
 
 export const checkSpaceBar = bindButton(
   "Space",
-  () => playerShip[3] = createSpinSequence(playerShip, strafeVector),
+  () =>
+    playerShip[3] = createSpinSequence(playerShip, [
+      aEnvelope(0) - dEnvelope(0),
+      sEnvelope(0) - wEnvelope(0),
+      0,
+    ]),
 );
 
 export const checkEscapeKey = bindButton(
@@ -103,16 +109,18 @@ export const checkEscapeKey = bindButton(
   () => menu.open ? menu.close() : (menu.showModal(), resetMenu()),
 );
 
-const strafeVector = [0, 0, 0] as XYZ;
 export const applyInputToPlayerShip = (tickLength: number) => {
-  strafeVector[0] += aEnvelope(0) - dEnvelope(0);
-  strafeVector[1] += wEnvelope(0) - sEnvelope(0);
+  const strafeX = aEnvelope(0) - dEnvelope(0),
+    strafeY = sEnvelope(0) - wEnvelope(0),
+    strafeRadius = hypot(strafeX, strafeY);
 
-  adjustObject(playerShip[0], [scaleXYZ(
-    strafeVector,
-    (playerShip[5][20] * (playerShip[4][6] ? playerShip[5][18] : 1) *
-      tickLength) / hypot(...normalizeXYZ(strafeVector)),
-  )]);
+  if (strafeRadius) {
+    adjustObject(playerShip[0], [scaleXYZ(
+      [strafeX, strafeY, 0],
+      (playerShip[5][20] * (playerShip[4][6] ? playerShip[5][18] : 1) *
+        tickLength) / strafeRadius,
+    )]);
+  }
 
   aimObject(playerShip[0], playerShip[1]);
 

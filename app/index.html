@@ -38,9 +38,13 @@ input[type=number] {
   cursor: pointer;
   padding: 1rem;
   border: .1rem solid #fff;
+  background: #000;
+  text-align: center;
 }
 button:hover,
-input[type=number]:hover {
+input[type=number]:hover,
+button:focus,
+input[type=number]:focus {
   color: #ff0;
   border-color: #ff0;
 }
@@ -112,7 +116,7 @@ input[type=number]:hover {
 #o {
   display: grid;
   justify-items: center;
-  grid: auto min-content/repeat(3,auto);
+  grid: auto min-content/repeat(4,auto);
   gap: 3rem;
   padding: 3rem;
 }
@@ -223,16 +227,28 @@ input[type=number]:hover {
 #b {
   text-align: center;
 }
-#e {
+#ab {
+  margin-bottom: 1rem;
+}
+#aa {
   display: grid;
   grid: auto / min-content auto;
   gap: .33rem;
+  border-left: .1rem solid #fff;
+  padding-left: 1rem;
+  place-self: center;
 }
-#e label {
+#aa label {
   place-self: center start;
+  margin-right: 0.5rem;
 }
-#e button {
-  grid-area: 4/1/5/3;
+#ab {
+  grid-area: 1/1/2/3;
+  place-self: center;
+}
+#aa button {
+  margin-top: 1rem;
+  grid-area: 5/1/6/3;
   place-self: center;
 }
 </style>
@@ -253,20 +269,20 @@ input[type=number]:hover {
 <dialog id=m>
   <form id=o>
     <!-- TODO -->
-    <div id=e>
-      <div id=j>LVL USED: 0 / 0</div>
+    <div id=aa>
+      <div id=ab>LVLS USED: 0 / 0</div>
       <label>FL</label>
-      <input id=q type=number value=0 min=0 name=i>
+      <input id=ac type=number value=0 min=0 name=i>
       <label>SLD</label>
-      <input id=u type=number value=0 min=0 name=i>
+      <input id=ad type=number value=0 min=0 name=i>
       <label>HL</label>
-      <input id=aa type=number value=0 min=0 name=i>
+      <input id=ae type=number value=0 min=0 name=i>
       <button value=1>LVL ↑</button>
     </div>
     <div id=n>
       <canvas></canvas>
       <div id=y>
-				<div id=x><canvas></canvas></div>
+				<div id=x><canvas style="cursor:help;"></canvas></div>
 				<i style=left:0;top:50%></i><i style=left:30%;top:100%></i><i style=left:70%;top:100%></i><i style=left:100%;top:50%></i><i style=left:70%;top:0></i><i style=left:30%;top:0></i>
 			</div>
     </div>
@@ -304,3 +320,5 @@ input[type=number]:hover {
   <div>WHAT WAS DIVIDED YOU MUST RESTORE</div>
   <div>CLICK TO BEGIN</div>
 </div>
+<div id=debug
+  style="position: fixed; z-index: 500; bottom: 1rem; left: 1rem">DEBUG</div>
