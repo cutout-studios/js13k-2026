@@ -109,21 +109,22 @@ export const updateGame = (
   // -- handle collisions
   doTimes(
     playerWeapons,
-    ([, , bullets, , [, critChance, critDamage, bulletDamage]]) =>
-      spliceTable(
+    ([, , bullets, , [, critChance, critDamage, bulletDamage]]) => {
+      return spliceTable(
         bullets,
         _resolveCollisions(
           bullets[1],
           doTimes(enemyShips, ([object]) => object),
           (_, shipIndex) => {
-            hitSound(getPanFromCoordinates(enemyShips[shipIndex][0][0], 5));
+            hitSound(getPanFromCoordinates(enemyShips[shipIndex][0][0], 2.1));
             enemyShips[shipIndex][4][0] +=
               (random() < critChance
                 ? bulletDamage * critDamage
-                : bulletDamage) * (playerSnapshot[14] * playerShip[4][0]);
+                : bulletDamage) * (playerSnapshot[14] * (1 + playerShip[4][0]));
           },
         ),
-      ),
+      );
+    }
   );
 
   if (!playerResourceStatus[4]) { // skip enemy bullets while the player is invulnerable
@@ -147,6 +148,7 @@ export const updateGame = (
                 : bulletDamage;
 
               if (playerResourceStatus[6]) {
+                hitSound(getPanFromCoordinates(playerShipObject[0], 2.1));
                 const bullet = bullets[0][bulletIndex],
                   newHeading = readOrigin(enemyShipObject[0]);
                 bullet[1] = newHeading;
@@ -155,15 +157,17 @@ export const updateGame = (
                 const fauxSnapshot = repeat(7, 0);
                 fauxSnapshot[3] = baseDamage * playerSnapshot[17];
 
-                return playerWeapons.push(
+                playerWeapons.push(
                   [
                     createObject(),
-                    repeat(3, 0) as XYZ,
+                    newHeading,
                     [[bullet], [bullet[0]]],
                     createActionSequencer([[NO_OP]]),
                     fauxSnapshot,
                   ] as Weapon,
                 );
+
+                return;
               }
 
               const totalDamage = baseDamage * playerSnapshot[2];
@@ -203,7 +207,7 @@ export const updateGame = (
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[15]) return [];
-          explosionSound(getPanFromCoordinates(coordinates, 5));
+          explosionSound(getPanFromCoordinates(coordinates, 2.1));
 
           if (random() < snapshot[10]) {
             const item = createItem(optionsIndex, _, progress[0]);

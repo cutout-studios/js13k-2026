@@ -96,12 +96,12 @@ export const checkDKey = bindButton(
 
 export const checkSpaceBar = bindButton(
   "Space",
-  () =>
-    playerShip[3] = createSpinSequence(playerShip, [
-      strafe[3] - strafe[1],
-      strafe[0] - strafe[2],
-      0,
-    ]),
+  () => {
+    if (!playerShip[4][6] && (playerShip[5][4] - playerShip[4][1]) > playerShip[5][13]) {
+      playerShip[4][1] += playerShip[5][13]
+      playerShip[3] = createSpinSequence(playerShip);
+    }
+  }
 );
 
 export const checkEscapeKey = bindButton(
@@ -113,11 +113,7 @@ export const applyInputToPlayerShip = (tickLength: number) => {
   const strafeX = strafe[3] - strafe[1],
     strafeY = strafe[0] - strafe[2];
 
-  adjustObject(playerShip[0], [scaleXYZ(
-    [strafeX, strafeY, 0],
-    playerShip[5][20] * (playerShip[4][6] ? playerShip[5][18] : 1) *
-    tickLength,
-  )]);
+  adjustObject(playerShip[0], [scaleXYZ([strafeX, strafeY, 0], playerShip[5][20] * tickLength)]);
 
   aimObject(playerShip[0], playerShip[1]);
 

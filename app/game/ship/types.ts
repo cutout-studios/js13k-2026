@@ -43,8 +43,8 @@ export type ShipSnapshot = [
   armorSave: number,
   damageTaken: number,
   damageTakenFromFuel: number,
-  fuel: number,
-  fuelCost: number,
+  fuel: number, // WIP
+  fuelCost: number, // WIP
   // 6-10
   fuelEjectDelay: number,
   fuelRegen: number,
@@ -60,7 +60,7 @@ export type ShipSnapshot = [
   // 16-20
   shieldRegen: number,
   spinDamage: number,
-  spinHandling: number,
+  spinHandling: number, // TODO
   spinTime: number,
   strafeSpeed: number,
   // 21

@@ -33,12 +33,12 @@ export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
   1.2, // Level Quality
   0, // Lowest Resource
   4, // Mass
-  0, // Resolve
+  1, // Resolve
   40, // Shield
   5, // Shield Regen
   1, // Spin Damage
   0.1, // Spin Handling
-  0.7, // Spin Time
+  0.35, // Spin Time
   2.4, // Strafe Speed
   1.7, // Aim Time
 ];
@@ -53,7 +53,7 @@ export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
   0, // Bullet Spread
 ];
 
-export const BULLET_SPEED = 12;
+export const BULLET_SPEED = 3;
 
 const GREEN_PRONG = [
     0.12,
@@ -152,7 +152,10 @@ export default [
       [[16, [80, 200]], [18, [10, 25]], [14, [40, 100]], [4, [20, 40]]],
       _,
       [[
-        [[1, [0.02, 0.05]], [2, [1.5, 2.2]], [3, [4, 16]], [4, [15, 32]]],
+        [[1, [0.02, 0.05]], [2, [1.5, 2.2]], [3, [4, 16]], [4, [15, 32]], [5, [
+          .8,
+          1.5,
+        ]]],
       ]],
       [1, 3],
     ],

@@ -24,6 +24,7 @@ import {
   XYZ_LENGTH,
   Z_AXIS,
 } from "~/3D";
+import { TAU } from "~/alias";
 import { Action } from "~/clock";
 import { doTimes, repeat } from "~/common";
 import { rollBand } from "~/random";
@@ -62,5 +63,5 @@ export const createRoll = (
 (object: XOObject, _, elapsedTime, duration) =>
   adjustObject(object, [undefined, [
     Z_AXIS,
-    curve(elapsedTime / duration) * rotations,
+    curve(elapsedTime / duration) * rotations * TAU,
   ]]);

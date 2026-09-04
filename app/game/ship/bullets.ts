@@ -135,7 +135,7 @@ export const updateBullets = (ship: Ship, tickLength: number) =>
       (
         bullet: Bullet,
         index: number,
-      ) => (bullet[2](bullet, tickLength) && bulletsToCull.push(index)),
+      ) => bullet[2](bullet, tickLength) && bulletsToCull.push(index),
     );
 
     spliceTable(bullets, bulletsToCull);
