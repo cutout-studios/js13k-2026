@@ -21,9 +21,8 @@ import {
   scaleXYZ,
   setOrigin,
   subtractXYZ,
-  XYZ,
 } from "~/3D";
-import { _, hypot, max, min } from "~/alias";
+import { _, max, min } from "~/alias";
 import { createEnvelope } from "~/clock";
 import { doTimes } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
@@ -119,10 +118,6 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     playerShip[5][20] * (playerShip[4][6] ? playerShip[5][18] : 1) *
     tickLength,
   )]);
-
-  document.getElementById("debug")!.innerText = JSON.stringify(
-    readOrigin(playerShip[0][0]),
-  );
 
   aimObject(playerShip[0], playerShip[1]);
 
