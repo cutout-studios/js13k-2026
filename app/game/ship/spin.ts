@@ -18,7 +18,7 @@ export const createSpinSequence = (
         : -1,
     rollPull = createPull(
       direction,
-      _snapshot[20] * 1.3,
+      0.1,
       smoothstep,
     ),
     roll = createRoll(1.2 * spinSign, smoothstep),

@@ -48,7 +48,7 @@ const checkKeyboard = (tickLength: number) =>
 const checkMouse = (tickLength: number) =>
   doTimes(
     [checkMousePointer, checkLMouseButton, checkRMouseButton],
-    (f) => f(tickLength),
+    (f) => f(tickLength), 
   );
 
 startClock((tickLength) => {
@@ -58,6 +58,7 @@ startClock((tickLength) => {
   if (!GameState[2]) {
     checkMouse(tickLength);
     applyInputToPlayerShip(tickLength);
+    GameState[0][0][3](GameState[0][0], tickLength);
     updateHUD(GameState, tickLength);
     return camera(getSceneObjects(GameState), mainCanvas);
   }

@@ -65,41 +65,42 @@ export const checkRMouseButton = bindButton(
   (t) => playerShip[2][1][3](playerShip, t),
 );
 
+const strafe = [0, 0, 0, 0];
 export const checkWKey = bindButton(
   "KeyW",
-  wEnvelope,
-  wEnvelope,
-  (t) => wEnvelope(t, true),
-  (t) => wEnvelope(t, true),
+  (t) => strafe[0] = wEnvelope(t, true),
+  (t) => strafe[0] = wEnvelope(t, true),
+  (t) => strafe[0] = wEnvelope(t),
+  (t) => strafe[0] = wEnvelope(t),
 );
 export const checkAKey = bindButton(
   "KeyA",
-  aEnvelope,
-  aEnvelope,
-  (t) => aEnvelope(t, true),
-  (t) => aEnvelope(t, true),
+  (t) => strafe[1] = aEnvelope(t, true),
+  (t) => strafe[1] = aEnvelope(t, true),
+  (t) => strafe[1] = aEnvelope(t),
+  (t) => strafe[1] = aEnvelope(t),
 );
 export const checkSKey = bindButton(
   "KeyS",
-  sEnvelope,
-  sEnvelope,
-  (t) => sEnvelope(t, true),
-  (t) => sEnvelope(t, true),
+  (t) => strafe[2] = sEnvelope(t, true),
+  (t) => strafe[2] = sEnvelope(t, true),
+  (t) => strafe[2] = sEnvelope(t),
+  (t) => strafe[2] = sEnvelope(t),
 );
 export const checkDKey = bindButton(
   "KeyD",
-  dEnvelope,
-  dEnvelope,
-  (t) => dEnvelope(t, true),
-  (t) => dEnvelope(t, true),
+  (t) => strafe[3] = dEnvelope(t, true),
+  (t) => strafe[3] = dEnvelope(t, true),
+  (t) => strafe[3] = dEnvelope(t),
+  (t) => strafe[3] = dEnvelope(t),
 );
 
 export const checkSpaceBar = bindButton(
   "Space",
   () =>
     playerShip[3] = createSpinSequence(playerShip, [
-      aEnvelope(0) - dEnvelope(0),
-      sEnvelope(0) - wEnvelope(0),
+      strafe[3] - strafe[1],
+      strafe[0] - strafe[2],
       0,
     ]),
 );
@@ -110,21 +111,26 @@ export const checkEscapeKey = bindButton(
 );
 
 export const applyInputToPlayerShip = (tickLength: number) => {
-  const strafeX = aEnvelope(0) - dEnvelope(0),
-    strafeY = sEnvelope(0) - wEnvelope(0),
-    strafeRadius = hypot(strafeX, strafeY);
+  const strafeX = strafe[3] - strafe[1],
+    strafeY = strafe[0] - strafe[2];
 
-  if (strafeRadius) {
-    adjustObject(playerShip[0], [scaleXYZ(
-      [strafeX, strafeY, 0],
-      (playerShip[5][20] * (playerShip[4][6] ? playerShip[5][18] : 1) *
-        tickLength) / strafeRadius,
-    )]);
-  }
+  adjustObject(playerShip[0], [scaleXYZ(
+    [strafeX, strafeY, 0],
+    playerShip[5][20] * (playerShip[4][6] ? playerShip[5][18] : 1) *
+    tickLength,
+  )]);
+
+  document.getElementById("debug")!.innerText = JSON.stringify(
+    readOrigin(playerShip[0][0]),
+  );
 
   aimObject(playerShip[0], playerShip[1]);
 
   // clamp ship to camera bounds
   const [x, y, z] = readOrigin(playerShip[0][0]);
-  setOrigin(playerShip[0][0], [min(5, max(-5, x)), min(5, max(-5, y)), z]);
+  setOrigin(playerShip[0][0], [
+    min(2.8, max(-2.8, x)),
+    min(2.1, max(-2.1, y)),
+    z,
+  ]);
 };
