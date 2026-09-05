@@ -45,13 +45,13 @@ export type ShipSnapshot = [
   rezSave: number,
   damageTaken: number,
   damageTakenFromGas: number,
-  gas: number,
+  gasCanSize: number,
   gasCost: number,
 
   // 6-10
   gasEjectDelay: number,
   gasRegen: number,
-  gasSegments: number,
+  gasCans: number,
   itemMixtureQuality: number,
   itemDropRate: number,
 

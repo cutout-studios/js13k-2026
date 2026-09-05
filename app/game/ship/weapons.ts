@@ -23,6 +23,7 @@ import GameOptions from "../options/module.ts";
 import { BASE_PROPERTIES } from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 import { createBullet } from "./bullets.ts";
+import { consumeFuel } from "./module.ts";
 import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
 
 export const createWeapon = (
@@ -53,15 +54,14 @@ export const createWeapon = (
 };
 
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
-  const [, , weapons, , damages, shipSnapshot] = ship,
-    [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex],
-    [count] = snapshot,
-    gasUsed = shipSnapshot[13] * shipSnapshot[5];
+  const [, , weapons, , , shipSnapshot] = ship,
+    [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex];
 
-  if (ship[6] == 0 && gasUsed > shipSnapshot[4]) return;
+  if (
+    !ship[6] && !consumeFuel(shipSnapshot[13] * shipSnapshot[5], ship)
+  ) return;
 
-  damages[1] = gasUsed;
-  doTimes(count, () => {
+  doTimes(snapshot[0], () => {
     const bullet = createBullet(ship, weaponIndex);
     bullets.push(bullet);
     instanceGroup.push(bullet[0]);

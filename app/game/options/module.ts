@@ -26,19 +26,19 @@ export const FIELD_X_BOUND = 2.8;
 export const FIELD_Y_BOUND = 2.1;
 
 export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
-  2, // Armor
+  2, // Rez
 
   // 1-5
-  0, // Armor Save
+  0, // Rez Save
   1, // Damage Taken
-  0, // Damage Taken From Fuel
-  15, // Fuel
-  0.30, // Fuel Cost
+  0, // Damage Taken From Gas
+  15, // Gas
+  0.30, // Gas Cost
 
   // 6-10
-  0, // Fuel Eject Delay
-  5, // Fuel Regen
-  2, // Fuel Segments
+  0, // Gas Eject Delay
+  5, // Gas Regen
+  2, // Gas Segments
   1, // Item Mixture Quality
   0.05, // Item Drop Rate
 
@@ -47,12 +47,12 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   1, // Lowest Resource
   4, // Mass
   1, // Resolve
-  40, // Shield
+  40, // HP
 
   // 16-20
-  3, // Shield Regen
+  3, // Regen
   1, // Spin Damage
-  0.1, // Spin Handling - TODO
+  0.1, // Spin Handling (?)
   0.35, // Spin Time
   2.4, // Strafe Speed
 

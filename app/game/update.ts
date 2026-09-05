@@ -35,7 +35,6 @@ import {
   flat,
   flatDoTimes,
   repeat,
-  SECONDS_TO_MS,
   spliceTable,
   spread,
 } from "~/common";
@@ -256,18 +255,6 @@ export const updateGame = (
     0,
     playerResourceStatus[1] - playerSnapshot[7] * tickLength,
   );
-
-  // eject gas when depleted
-  if (
-    playerResourceStatus[1] >= playerSnapshot[4] && !playerResourceStatus[5]
-  ) {
-    playerResourceStatus[1] = playerSnapshot[4];
-    playerResourceStatus[5] = 1;
-    setTimeout(() => {
-      playerResourceStatus[2]++;
-      playerResourceStatus[1] = playerResourceStatus[5] = 0;
-    }, playerSnapshot[6] * SECONDS_TO_MS);
-  }
 
   if (length(activeEnemyGroups)) return;
 

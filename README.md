@@ -2,8 +2,6 @@
 
 ## MVP TODOs
 
-- gas consumption calc helper
-- default kg calculation: +1 KG per empty slot
 - debug through equip/restore/level-up stuff
 
 - enemy behaviors
@@ -11,6 +9,8 @@
   - swoop + fire: red + green
   - fade in/out: purple
   - spin + bomb: yellow
+
+- eject gas canister
 
 ## Core Polish
 

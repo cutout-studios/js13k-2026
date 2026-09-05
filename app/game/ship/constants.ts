@@ -23,7 +23,7 @@ export const PROPERTY_NAMES = [
   "DMGTOGAS",
   "GASVOL",
   "GASCOST",
-  "GASTIME",
+  "GASTIME (TODO)",
   "GASRESTORE",
   "GAS",
   "RESTOREAMT",

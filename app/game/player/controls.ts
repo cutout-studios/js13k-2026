@@ -32,11 +32,14 @@ import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
 import GameState from "../module.ts";
 import { FIELD_X_BOUND, FIELD_Y_BOUND } from "../options/module.ts";
+import { consumeFuel } from "../ship/module.ts";
 import { createSpinSequence } from "../ship/spin.ts";
 
 import { STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME } from "./constants.ts";
 
 const [[playerShip]] = GameState,
+  [playerShipObject, heading, [leftWeapon, rightWeapon], , , snapshot] =
+    playerShip,
   [wEnvelope, aEnvelope, sEnvelope, dEnvelope] = doTimes(
     4,
     () => createEnvelope(STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME),
@@ -45,24 +48,24 @@ const [[playerShip]] = GameState,
 export const checkMousePointer = bindPointer(
   (tickLength: number, x: number, y: number) => {
     [x, y] = scaleXYZ(
-      subtractXYZ(mapClientXYToZPlane(x, y), playerShip[1]),
-      tickLength / playerShip[5][21],
+      subtractXYZ(mapClientXYToZPlane(x, y), heading),
+      tickLength / snapshot[21],
     );
 
-    playerShip[1][0] += x;
-    playerShip[1][1] += y;
+    heading[0] += x;
+    heading[1] += y;
   },
 );
 
 export const checkLMouseButton = bindButton("LClick", () => {
   GameState[2] = true;
   title.style.opacity = "0";
-}, (t) => playerShip[2][0][3](playerShip, t));
+}, (t) => leftWeapon[3](playerShip, t));
 
 export const checkRMouseButton = bindButton(
   "RClick",
   _,
-  (t) => playerShip[2][1][3](playerShip, t),
+  (t) => rightWeapon[3](playerShip, t),
 );
 
 const strafe = [0, 0, 0, 0];
@@ -97,15 +100,9 @@ export const checkDKey = bindButton(
 
 export const checkSpaceBar = bindButton(
   "Space",
-  () => {
-    if (
-      !playerShip[4][6] &&
-      (playerShip[5][4] - playerShip[4][1]) > playerShip[5][13]
-    ) {
-      playerShip[4][1] += playerShip[5][13];
-      playerShip[3] = createSpinSequence(playerShip);
-    }
-  },
+  () =>
+    consumeFuel(snapshot[13], playerShip) &&
+    (playerShip[3] = createSpinSequence(playerShip)),
 );
 
 export const checkEscapeKey = bindButton(
@@ -118,14 +115,14 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     strafeY = strafe[0] - strafe[2];
 
   adjustObject(playerShip[0], [
-    scaleXYZ([strafeX, strafeY, 0], playerShip[5][20] * tickLength),
+    scaleXYZ([strafeX, strafeY, 0], snapshot[20] * tickLength),
   ]);
 
-  aimObject(playerShip[0], playerShip[1]);
+  aimObject(playerShipObject, heading);
 
   // clamp ship to camera bounds
-  const [x, y, z] = readOrigin(playerShip[0][0]);
-  setOrigin(playerShip[0][0], [
+  const [x, y, z] = readOrigin(playerShipObject[0]);
+  setOrigin(playerShipObject[0], [
     clamp(x, spread(FIELD_X_BOUND)),
     clamp(y, spread(FIELD_Y_BOUND)),
     z,

@@ -24,10 +24,12 @@ export const updatePlayerSnapshots = (
   const [, , weapons, , , _snapshot] = ship;
   const _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
 
-  _snapshot[13] = doTimes(
+  const equipList = doTimes(
     inventory,
     ([[, , , , , , kg], equipped]) => equipped ? kg : 0,
-  ).reduce((sum, kg) => sum + kg, 0);
+  );
+
+  _snapshot[13] = equipList.reduce((sum, kg) => sum + kg, 4 - equipList.length); // +1kg for each empty equip slot
 
   doTimes(inventory, ([[, , , , , modifiers], equipped]) => {
     if (!equipped) return;

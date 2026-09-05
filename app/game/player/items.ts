@@ -59,7 +59,7 @@ export const createItem = (
       baseBulletDamage,
     ], modifiers]] = GameOptions[colorID],
     modifierDeck = [] as ModifierOptions[],
-    pull = createPull(Z_AXIS, 0.25, () => 1, 0.005);
+    pull = createPull(Z_AXIS, 0.08, () => 1, 0.02);
 
   doTimes(modifiers, (modifier) => {
     if (modifier[0] == typeID || modifier[0] == 0) {

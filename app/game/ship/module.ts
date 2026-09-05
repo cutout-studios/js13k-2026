@@ -22,7 +22,7 @@ import {
   XOObject,
   XYZ,
 } from "~/3D";
-import { length } from "~/alias";
+import { floor, length } from "~/alias";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat } from "~/common";
 
@@ -78,9 +78,20 @@ export const createShip = (
 
 // export const createFlinchSequencer = () => {};
 
-// export const consumeFuel = (amount: number, ship: Ship): boolean => {
-//   return false;
-// }
+export const consumeFuel = (
+  amount: number,
+  [, , , , resources, snapshot]: Ship,
+): boolean => {
+  const gasConsumed = amount + resources[2] + resources[3] * snapshot[8];
+  const gasTotal = snapshot[4] * snapshot[8];
+
+  if (gasConsumed >= gasTotal) return false;
+
+  resources[2] = gasConsumed % snapshot[8];
+  resources[3] = floor(gasConsumed / snapshot[8]);
+
+  return true;
+};
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,
