@@ -14,25 +14,68 @@
  * limitations under the License.
  */
 
-import { length, min } from "~/alias";
-import { doTimes, repeat } from "~/common";
-import { Player } from "./types.ts";
+import {
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  flattenObjects,
+  localize,
+  XOObject,
+} from "~/3D";
+import { length, min, round } from "~/alias";
+import { doTimes, flatDoTimes, repeat } from "~/common";
 
-export const updatePlayerSnapshots = (
+import GameOptions, { BASE_PROPERTIES } from "../options/module.ts";
+import { WeaponSnapshot } from "../ship/types.ts";
+
+import { Item, Player } from "./types.ts";
+
+export const updatePlayerEquipmentSnapshots = (
   [ship, [rezLevels, gasLevels, _, hpLevels], inventory]: Player,
 ) => {
-  const [, , weapons, , , _snapshot] = ship,
-    _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
-
-  const equipList = doTimes(
+  const [, , weapons, , , _snapshot] = ship;
+  const equipList: Item[] = flatDoTimes(
     inventory,
-    ([[, , , , , , kg], equipped]) => equipped ? kg : 0,
+    ([item, equipped]) => equipped ? [item] : [],
   );
 
-  _snapshot[13] = equipList.reduce((sum, kg) => sum + kg, 4 - equipList.length); // +1kg for each empty equip slot
+  _snapshot[13] = equipList.reduce(
+    (sum: number, item: Item) => sum + item[6],
+    4 - equipList.length, // +1kg for each empty equip slot
+  );
 
-  doTimes(inventory, ([[, , , , , modifiers], equipped]) => {
-    if (!equipped) return;
+  const _weaponsSnapshots: number[][] = [],
+    shipObjects: XOObject[] = doTimes(
+      GameOptions[0][2][0],
+      (itemGeo) => createObject(...itemGeo, paint(0xFFFFFF)),
+    );
+
+  doTimes(
+    equipList,
+    ([, , typeID, colorID, , , , [amount = 1, rate = 8, damage = 1] = []]) => {
+      shipObjects[typeID] = createObject(
+        ...GameOptions[0][2][0][typeID],
+        paint(GameOptions[colorID][1]),
+      );
+
+      if (typeID > 1) return;
+
+      weapons[typeID][4] = BASE_PROPERTIES.slice(22) as WeaponSnapshot;
+
+      weapons[typeID][4][0] = amount;
+      weapons[typeID][4][3] = damage;
+      weapons[typeID][4][5] = rate;
+
+      _weaponsSnapshots.push(weapons[typeID][4]);
+    },
+  );
+
+  const newShipObject = flattenObjects(...shipObjects);
+
+  newShipObject[0] = localize(newShipObject[0], ship[0][0]);
+
+  ship[0] = newShipObject;
+
+  doTimes(equipList, ([, , , , , modifiers]) => {
     doTimes(modifiers, ([statID, operator, value]) => {
       doTimes(
         (statID > 21 ? _weaponsSnapshots : [_snapshot]) as number[][],
@@ -75,4 +118,8 @@ export const updatePlayerSnapshots = (
     [0, 4, 7, 8, 15, 16],
     (id, index) => _snapshot[id] *= _snapshot[11] ** levels[index],
   );
+
+  // these values need to be ints
+  _snapshot[0] = round(_snapshot[0]);
+  _snapshot[4] = round(_snapshot[4]);
 };

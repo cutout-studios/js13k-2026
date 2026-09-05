@@ -29,7 +29,7 @@ import {
   createItem,
   setItemInFrame,
 } from "../game/player/items.ts";
-import { updatePlayerSnapshots } from "../game/player/stats.ts";
+import { updatePlayerEquipmentSnapshots } from "../game/player/stats.ts";
 import { Item } from "../game/player/types.ts";
 import { PARTS, PROPERTY_NAMES } from "../game/ship/constants.ts";
 
@@ -136,7 +136,7 @@ form.onsubmit = (event: SubmitEvent) => {
         if (toEquip[item[0][2]] == -1) return;
         item[1] = toEquip[item[0][2]] == index;
       });
-      updatePlayerSnapshots(player);
+      updatePlayerEquipmentSnapshots(player);
       break;
     }
     case "3": {
@@ -164,8 +164,13 @@ menu.oncancel = preventDefault;
 menu.onmouseover = ({ target }) =>
   hoveredCellIndex = canvasCells.indexOf(target as HTMLCanvasElement);
 
+const CUSOR_SPACING = 32;
 menu.onmouseenter = menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
-  const { width, height } = itemPopover.getBoundingClientRect();
+  let { width, height } = itemPopover.getBoundingClientRect();
+
+  width += CUSOR_SPACING;
+  height += CUSOR_SPACING;
+
   updateStyles(itemPopover, {
     top: (clientY + height > innerHeight ? clientY - height : clientY) + "px",
     left: (clientX + width > innerWidth ? clientX - width : clientX) + "px",

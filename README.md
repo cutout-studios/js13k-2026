@@ -2,26 +2,19 @@
 
 ## MVP TODOs
 
-- Player snapshot update
-  - Apply weapons
-  - Truncate updated rez/can numbers
-
-- Debug through menu functionality
-  - Equip doesn't change ship colors
-  - Test level-up
-
 - Tiny cleanup
-  - Move tooltip slightly so you can see it fully from outside the cursor
   - Ship points up on load (some weird input bug)
-  - Clean up missed items & empty player weapons
+
+- Confirm level-up menu works
 
 - Enemies come in from the side, rather than just showing up suddenly.
-- Place basic stars in the background, so we don't have to look at nothing.
+- Place basic stars in the background, just so we don't have to look at nothing.
 
 ## Core Improvements
 
 - Implement gas canister eject delay (+ lil' animation?)
 - Implement KG flinch
+- Enemy bullets start slower, then accelerate
 - Add color-specific enemy behaviors
   - swoop + fire: red + green
   - fade in/out: purple
@@ -45,7 +38,7 @@
 ## Misc. Compression Ideas:
 
 - inline one-off functions
-- forgo spread for just individual index access
+- remove destructuring in favor of repeated individual index access
 
 ### The Big One (~150B)
 

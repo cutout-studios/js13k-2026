@@ -234,6 +234,29 @@ export const updateGame = (
     ),
   );
 
+  // clean up countered bullets
+  spliceTable(
+    playerWeapons,
+    flatDoTimes(
+      playerWeapons,
+      ([, , [bullets]], index) => {
+        if (index < 2) return [];
+
+        return length(bullets) ? [] : [index];
+      },
+    ),
+  );
+
+  // clean up items that have floated off screen
+  spliceTable(
+    droppedItems,
+    flatDoTimes(
+      droppedItems,
+      ([[itemCoordinates]], index) =>
+        readOrigin(itemCoordinates)[2] < 0 ? [] : [index],
+    ),
+  );
+
   // -- update player resources
   // restore hp
   playerResourceStatus[0] = max(
