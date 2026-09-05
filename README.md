@@ -20,7 +20,7 @@
 
 - Implement gas canister eject delay (+ lil' animation?)
 - Implement KG flinch
-- add color-specific enemy behaviors
+- Add color-specific enemy behaviors
   - swoop + fire: red + green
   - fade in/out: purple
     - switch to box collider? (for oblong bullets/ships)
@@ -36,7 +36,7 @@
   - map controls to virtual analog stick
   - implement spin handling
 - Add thrusters: main + direction-based, explosion effects
-- Implement boost mechanic
+- Boost mechanic?
 - Music
 
 ## Misc. Compression Ideas:

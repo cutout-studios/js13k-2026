@@ -21,8 +21,8 @@ import { Player } from "./types.ts";
 export const updatePlayerSnapshots = (
   [ship, [rezLevels, gasLevels, _, hpLevels], inventory]: Player,
 ) => {
-  const [, , weapons, , , _snapshot] = ship;
-  const _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
+  const [, , weapons, , , _snapshot] = ship,
+    _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
 
   const equipList = doTimes(
     inventory,
