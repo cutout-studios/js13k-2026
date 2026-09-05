@@ -40,6 +40,7 @@ import {
 } from "~/common";
 import { rollBand } from "~/random";
 
+import { FIELD_X_BOUND } from "./options/module.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { updateBullets } from "./ship/bullets.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
@@ -116,7 +117,9 @@ export const updateGame = (
           bullets[1],
           doTimes(enemyShips, ([object]) => object),
           (_, shipIndex) => {
-            hitSound(getPanFromCoordinates(enemyShips[shipIndex][0][0], 2.1));
+            hitSound(
+              getPanFromCoordinates(enemyShips[shipIndex][0][0], FIELD_X_BOUND),
+            );
             enemyShips[shipIndex][4][0] +=
               (random() < critChance
                 ? bulletDamage * critDamage
@@ -148,7 +151,9 @@ export const updateGame = (
                 : bulletDamage;
 
               if (playerResourceStatus[6]) {
-                hitSound(getPanFromCoordinates(playerShipObject[0], 2.1));
+                hitSound(
+                  getPanFromCoordinates(playerShipObject[0], FIELD_X_BOUND),
+                );
                 const bullet = bullets[0][bulletIndex],
                   newHeading = readOrigin(enemyShipObject[0]);
                 bullet[1] = newHeading;
@@ -205,9 +210,10 @@ export const updateGame = (
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[15]) return [];
-          explosionSound(getPanFromCoordinates(coordinates, 2.1));
+          explosionSound(getPanFromCoordinates(coordinates, FIELD_X_BOUND));
 
           if (random() < snapshot[10]) {
+            // if (1) { // always drop, for debugging
             const item = createItem(optionsIndex, _, progress[0]);
             setOrigin(item[0][0], readOrigin(coordinates));
             droppedItems.push(item);

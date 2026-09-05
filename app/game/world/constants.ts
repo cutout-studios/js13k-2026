@@ -16,7 +16,7 @@
 
 import { Band } from "~/common";
 
-export const GAME_DIFFICULTY_FALLOFF = 0.135;
+export const DIFFICULTY_HALFLIFE = 8;
 
 export const ENEMY_PLACEMENT_SPREAD = 5;
 

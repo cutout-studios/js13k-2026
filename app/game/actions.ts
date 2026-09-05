@@ -41,14 +41,19 @@ export const createPull = (
   curve: (value: number) => number = () => 1,
   jitter = 0,
 ): Action<XOObject> => {
+  let jitterVector = doTimes(XYZ_LENGTH, () => rollBand(spread(jitter))) as XYZ;
+
   return ((object: XOObject, _, elapsedTime: number, duration: number) => {
+    jitterVector = addXYZ(
+      jitterVector,
+      doTimes(XYZ_LENGTH, () => rollBand(spread(jitter))) as XYZ,
+    );
+
     adjustObject(object, [
       scaleXYZ(
-        normalizeXYZ(
-          addXYZ(
-            direction,
-            doTimes(XYZ_LENGTH, () => rollBand(spread(jitter))) as XYZ,
-          ),
+        addXYZ(
+          normalizeXYZ(direction),
+          jitterVector,
         ),
         speed * curve(elapsedTime / duration),
       ),

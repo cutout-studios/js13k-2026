@@ -101,7 +101,7 @@ export const checkDKey = bindButton(
 export const checkSpaceBar = bindButton(
   "Space",
   () =>
-    consumeFuel(snapshot[13], playerShip) &&
+    (!GameState[2] || consumeFuel(snapshot[13], playerShip)) &&
     (playerShip[3] = createSpinSequence(playerShip)),
 );
 

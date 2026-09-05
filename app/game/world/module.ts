@@ -26,7 +26,7 @@ export default [
   [],
 
   // progress
-  [1, 1, getWavesInLevel(1)],
+  [1, 0, getWavesInLevel(1)],
 
   // collection
   new Set(),

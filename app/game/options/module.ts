@@ -18,7 +18,7 @@ import { _, NO_OP } from "~/alias";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
-export const BULLET_SPEED = 3;
+export const BULLET_SPEED = 8;
 
 export const PLAYER_Z_PLANE = 5;
 export const ENEMY_Z_PLANE = 8;
@@ -227,12 +227,12 @@ export default [
       [[10, [0.05, 0.08]], [13, [6, 28]], [15, [3, 108]], [20, [2.4, 3.5]]],
       _,
       [[
-        [[0, [2, 2]], [3, [3, 18]], [5, [2, 3.5]], [6, [0.02, 0.06]]],
+        [[0, [2, 2]], [3, [2, 18]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
       ]],
       [3, 6],
     ],
     [
-      [[2, 4], 0, 2, [2, 4, 5], [3, 12]],
+      [[2, 4], 0, 2, [2, 4], [2, 12]],
       [
         [0, 25, "x", [1.25, 3.5]], // Bullet Damage
         [0, 27, "x", [1.2, 3]], // Bullet Rate

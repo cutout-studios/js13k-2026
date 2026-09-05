@@ -30,7 +30,7 @@ ship[1] = [0, 0, -ENEMY_Z_PLANE];
 
 export default [
   ship,
-  repeat(6, 0) as Resources,
+  repeat(8, 0) as Resources,
 
   // inventory
   [],

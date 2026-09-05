@@ -55,7 +55,7 @@ let hoveredCellIndex = -1,
 
 const EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
-  [player, [, , [currentLevel], winCollection]] = GameState,
+  [player, [, , progress, winCollection]] = GameState,
   [playerShip, playerLevels, inventory] = player,
   getFormValues = () => doTimes(new FormData(form).getAll("i"), Number),
   restorePreviewSequence = createActionSequencer<
@@ -88,11 +88,12 @@ const EQUIP_OFFSET = 2,
       PARTS[_typeID],
     ]);
 
-    const properties = ["KG", _baseMass];
+    const properties = ["KG", _baseMass.toFixed(1)];
     if (_baseWeapon) {
       doTimes(
         _baseWeapon,
-        (value, index) => properties.push(["AMT", "RATE", "DMG"][index], value),
+        (value, index) =>
+          properties.push(["AMT", "RATE", "DMG"][index], value.toFixed(1)),
       );
     }
     base.innerText = join(properties);
@@ -101,7 +102,7 @@ const EQUIP_OFFSET = 2,
       doTimes(
         _modifiers,
         ([id, type, value]) =>
-          `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
+          `${type}${value.toFixed(1)} ${PROPERTY_NAMES[id]}`,
       ),
       "<br>",
     );
@@ -112,7 +113,7 @@ form.onsubmit = (event: SubmitEvent) => {
   const detail = getFormValues();
   switch ((event.submitter as HTMLButtonElement).value) {
     case "1": {
-      if (detail[0] + detail[1] + detail[2] == (currentLevel - 1)) {
+      if (detail[0] + detail[1] + detail[2] == (progress[0] - 1)) {
         playerLevels[0] = detail[0];
         playerLevels[1] = detail[1];
         playerLevels[3] = detail[2];
@@ -134,7 +135,7 @@ form.onsubmit = (event: SubmitEvent) => {
     }
     case "3": {
       const item = combineItems(
-        currentLevel * playerShip[5][9],
+        progress[0] * playerShip[5][9],
         ...doTimes(detail.splice(3), (index) => inventory[index][0]),
       );
       if (item) {
@@ -178,7 +179,7 @@ export const resetMenu = () => {
 
   levelLabel.innerText = `LVLS USED: ${
     playerLevels[0] + playerLevels[1] + playerLevels[2]
-  } / ${currentLevel - 1}`;
+  } / ${progress[0] - 1}`;
   levelArmor.value = levelArmor.min = playerLevels[0] + "";
   levelFuel.value = levelFuel.min = playerLevels[1] + "";
   levelShield.value = levelShield.min = playerLevels[2] + "";

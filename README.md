@@ -3,6 +3,9 @@
 ## MVP TODOs
 
 - debug through equip/restore/level-up stuff
+  - equip doesn't trigger
+  - restore prematurely shows preview even when nothing is selected
+  - level up should un-disable when there's points to spend
 
 - enemy behaviors
   - meander + fire: pink + blue
@@ -10,7 +13,7 @@
   - fade in/out: purple
   - spin + bomb: yellow
 
-- eject gas canister
+- gas canister eject delay
 
 ## Core Polish
 

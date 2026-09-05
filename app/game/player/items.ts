@@ -59,7 +59,7 @@ export const createItem = (
       baseBulletDamage,
     ], modifiers]] = GameOptions[colorID],
     modifierDeck = [] as ModifierOptions[],
-    pull = createPull(Z_AXIS, 0.08, () => 1, 0.02);
+    pull = createPull(Z_AXIS, 0.01, () => 1, 0.07);
 
   doTimes(modifiers, (modifier) => {
     if (modifier[0] == typeID || modifier[0] == 0) {
@@ -86,7 +86,7 @@ export const createItem = (
       () => {
         const [, propertyID, type, valueBand] = drawCard(modifierDeck);
 
-        return [propertyID, type, levelRoll(valueBand, rank, 2)];
+        return [propertyID, type, levelRoll(valueBand, rank - 1, 1.5)];
       },
     ),
     rollBand(baseMass),

@@ -82,13 +82,12 @@ export const consumeFuel = (
   amount: number,
   [, , , , resources, snapshot]: Ship,
 ): boolean => {
-  const gasConsumed = amount + resources[2] + resources[3] * snapshot[8];
-  const gasTotal = snapshot[4] * snapshot[8];
+  const gasConsumed = amount + resources[1] + resources[2] * snapshot[4];
 
-  if (gasConsumed >= gasTotal) return false;
+  if (gasConsumed >= snapshot[4] * snapshot[8]) return false;
 
-  resources[2] = gasConsumed % snapshot[8];
-  resources[3] = floor(gasConsumed / snapshot[8]);
+  resources[1] = gasConsumed % snapshot[4];
+  resources[2] = floor(gasConsumed / snapshot[4]);
 
   return true;
 };

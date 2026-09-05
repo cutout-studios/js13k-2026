@@ -102,5 +102,6 @@ export const spread = (
   amount: number = 1,
   center = 0,
 ): Band => [center - amount, center + amount];
-export const clamp = (value: number, [hi, lo]: Band): number =>
+
+export const clamp = (value: number, [lo, hi]: Band): number =>
   min(hi, max(lo, value));
