@@ -236,7 +236,7 @@ export const updateGame = (
 
   // clean up countered bullets
   spliceTable(
-    playerWeapons,
+    [playerWeapons],
     flatDoTimes(
       playerWeapons,
       ([, , [bullets]], index) => {

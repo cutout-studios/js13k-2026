@@ -21,7 +21,6 @@ import { minify as minifyHtml } from "html-minifier-next";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
-const ESTIMATED_RECLAIMABLE_BYTES = 150;
 
 const APP_DIR = "app";
 const OUTPUT_DIR = ".output";
@@ -136,10 +135,8 @@ function logSize(filePath: string, customMessage?: string) {
 
   console.log(
     `%c${customMessage ?? filePath}: %c${size} / ${JS13K_LIMIT} %c(~${
-      (((size - ESTIMATED_RECLAIMABLE_BYTES) / JS13K_LIMIT) * 100).toFixed(0)
-    }%: ${
-      JS13K_LIMIT - size + ESTIMATED_RECLAIMABLE_BYTES
-    } bytes remaining if ~${ESTIMATED_RECLAIMABLE_BYTES} reclaimed)`,
+      ((size / JS13K_LIMIT) * 100).toFixed(0)
+    }%: ${JS13K_LIMIT - size} bytes remaining)`,
     "color: grey;",
     "color: cyan;",
     "color: white;",

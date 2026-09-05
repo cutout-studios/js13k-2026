@@ -124,6 +124,7 @@ form.onsubmit = (event: SubmitEvent) => {
         playerLevels[1] = levels[1];
         playerLevels[3] = levels[2];
       }
+      updatePlayerEquipmentSnapshots(player);
       break;
     }
     case "2": {
@@ -193,11 +194,11 @@ export const resetMenu = () => {
   );
 
   levelLabel.innerText = `LVLS USED: ${
-    playerLevels[0] + playerLevels[1] + playerLevels[2]
+    playerLevels[0] + playerLevels[1] + playerLevels[3]
   } / ${progress[0] - 1}`;
-  levelRez.value = levelRez.min = playerLevels[0] + "";
+  levelHP.value = levelHP.min = playerLevels[0] + "";
   levelGas.value = levelGas.min = playerLevels[1] + "";
-  levelHP.value = levelHP.min = playerLevels[2] + "";
+  levelRez.value = levelRez.min = playerLevels[3] + "";
 };
 
 export const updateMenu = (tickLength: number) => {
@@ -211,7 +212,7 @@ export const updateMenu = (tickLength: number) => {
     [levelRez, levelGas, levelHP, levelButton],
     (element: HTMLInputElement | HTMLButtonElement) =>
       element.disabled =
-        (playerLevels[0] + playerLevels[1] + playerLevels[2]) ==
+        (playerLevels[0] + playerLevels[1] + playerLevels[3]) ==
           (progress[0] - 1),
   );
 
