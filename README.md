@@ -2,19 +2,21 @@
 
 ## MVP TODOs
 
-- player snapshot update
-  - apply weapons
-  - truncate updated rez/can numbers
+- Player snapshot update
+  - Apply weapons
+  - Truncate updated rez/can numbers
 
-- debug through menu functionality
-  - equip doesn't change ship colors
-  - test level-up
+- Debug through menu functionality
+  - Equip doesn't change ship colors
+  - Test level-up
 
-- move tooltip slightly so you can see it fully from outside the cursor
-- ship points up on load (some weird input bug)
-- clean up missed items & empty player weapons
+- Tiny cleanup
+  - Move tooltip slightly so you can see it fully from outside the cursor
+  - Ship points up on load (some weird input bug)
+  - Clean up missed items & empty player weapons
 
-- enemies meander in from the side, rather than just showing up suddenly
+- Enemies come in from the side, rather than just showing up suddenly.
+- Place basic stars in the background, so we don't have to look at nothing.
 
 ## Core Improvements
 
@@ -26,10 +28,11 @@
     - switch to box collider? (for oblong bullets/ships)
   - spin + bomb: yellow
 - Key UI: lots of sound effects. Use RX + spectral analysis to reverse-engineer.
-- Place background stars/nebula
-- Tune config
+- Improve the main shader to add dimensionality.
+- Add FX to background stars, nebula.
+- Tune game settings.
 
-### Likely to land in a "director's cut"
+### Likely to land in a "director's cut", if any
 
 - Improve spin counter
   - slightly more expressive (directional, over-spin animation)
