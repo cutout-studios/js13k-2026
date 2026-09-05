@@ -14,21 +14,36 @@
  * limitations under the License.
  */
 
-import { join } from "~/alias";
-import { doTimes } from "~/common";
-
-export const WORDS =
-  "HL SAVE DMG TAKEN TO FL AMT COST TIME RESTORE ITEM RATE LVL MIN RESOURCE M RESOLVE SLD CNTR AIM SPD STRAFE BLT CRIT SPREAD EQUIP"
-    .split(" ");
-
-export const PROPERTY_NAMES = doTimes( // TODO: AIMSPD -> AIMTIME
-  "0 01 23 245 56 57 58 59 5 96 ab c6 de f g h h9 i2 ij ik lk jk m6 mn mn2 m2 m8 mb mo"
-    .split(" "),
-  (code: string) =>
-    join(
-      doTimes(Array.from(code), (char: string) => WORDS[parseInt(char, 36)]),
-      "",
-    ),
-);
-
 export const PARTS = ["WING (L)", "WING (R)", "BODY", "ENGINE"];
+
+export const PROPERTY_NAMES = [
+  "REZ",
+  "REZSAVE",
+  "DMGTAKEN",
+  "DMGTOGAS",
+  "GASVOL",
+  "GASCOST",
+  "GASTIME",
+  "GASRESTORE",
+  "GAS",
+  "RESTOREAMT",
+  "ITEMRATE",
+  "LVLAMT",
+  "MINRESOURCE",
+  "KG",
+  "RESOLVE",
+  "HP",
+  "HPRESTORE",
+  "CNTRDMG",
+  "CNTRSPD (TODO)",
+  "CNTRTIME",
+  "STRAFESPD",
+  "AIMSPD",
+  "BLTAMT",
+  "BLTCRIT",
+  "BLTCRITDMG",
+  "BLTDMG",
+  "BLTTIME",
+  "BLTRATE",
+  "BLTSPREAD",
+];

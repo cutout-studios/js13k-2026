@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { arrayFrom, max } from "~/alias";
+import { arrayFrom, max, min } from "~/alias";
 
 export type Band = readonly [min: number, max: number];
 
@@ -97,3 +97,10 @@ export const spliceTable = (
 
 export const interpolate = ([hi, lo]: Band, amount: number) =>
   lo + (hi - lo) * amount;
+
+export const spread = (
+  amount: number = 1,
+  center = 0,
+): Band => [center - amount, center + amount];
+export const clamp = (value: number, [hi, lo]: Band): number =>
+  min(hi, max(lo, value));

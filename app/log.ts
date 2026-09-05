@@ -22,10 +22,10 @@ import { PROPERTY_NAMES } from "./game/ship/constants.ts";
 import { Resources, Ship, ShipSnapshot } from "./game/ship/types.ts";
 
 const RESOURCE_NAMES = [
-    "shield",
-    "fuel",
-    "segments",
-    "armor",
+    "hp",
+    "gas",
+    "cans",
+    "rez",
     "invulnerable",
     "ejecting",
   ],
@@ -38,19 +38,19 @@ const RESOURCE_NAMES = [
     ),
   resources = (
     [
-      shieldDamage,
-      fuelDamage = 0,
-      segmentDamage = 0,
-      armorDamage = 0,
+      damage,
+      gasDamage = 0,
+      canDamage = 0,
+      rez = 0,
       invulnerableFlag,
       ejectingFlag,
     ]: Resources,
     s: ShipSnapshot,
   ) => ({
-    shield: { now: s[15] - shieldDamage, max: s[15] },
-    fuel: { now: s[4] - fuelDamage, max: s[4] },
-    segments: { now: s[8] - segmentDamage, max: s[8] },
-    armor: { now: s[0] - armorDamage, max: s[0] },
+    hp: { now: s[15] - damage, max: s[15] },
+    gas: { now: s[4] - gasDamage, max: s[4] },
+    cans: { now: s[8] - canDamage, max: s[8] },
+    rez: { now: s[0] - rez, max: s[0] },
     invulnerable: { now: +(invulnerableFlag ?? false), max: 1 },
     ejecting: { now: +(ejectingFlag ?? false), max: 1 },
   });
@@ -87,7 +87,7 @@ export const logDamage = (target: Ship, source: string, apply: () => void) => {
     `%c${source} → ${GameOptions[target[6]][0]}`,
     "color:#F4AD32",
     Object.fromEntries(deltas),
-    `shield ${snapshot[15] - target[4][0]}/${snapshot[15]}`,
-    `armor ${snapshot[0] - (target[4][3] ?? 0)}/${snapshot[0]}`,
+    `hp ${snapshot[15] - target[4][0]}/${snapshot[15]}`,
+    `rez ${snapshot[0] - (target[4][3] ?? 0)}/${snapshot[0]}`,
   );
 };

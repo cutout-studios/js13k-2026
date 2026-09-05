@@ -36,5 +36,5 @@ export type Item = [
   rank: number,
   modifiers: [propertyID: number, type: "+" | "x", value: number][],
   baseMass: number,
-  baseWeapon?: [bulletCount: number, bulletRate: number, bulletDamage: number],
+  baseWeapon?: [bulletAmount: number, bulletRate: number, bulletDamage: number],
 ];

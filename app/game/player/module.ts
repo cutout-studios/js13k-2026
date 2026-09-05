@@ -17,10 +17,9 @@
 import { setOrigin } from "~/3D";
 import { repeat } from "~/common";
 
+import { ENEMY_Z_PLANE, PLAYER_Z_PLANE } from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 import { Resources } from "../ship/types.ts";
-import { ENEMY_Z_PLANE } from "../world/constants.ts";
-import { PLAYER_Z_PLANE } from "./constants.ts";
 import { Player } from "./types.ts";
 
 const ship = createShip(0);

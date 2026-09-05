@@ -37,6 +37,7 @@ import {
   repeat,
   SECONDS_TO_MS,
   spliceTable,
+  spread,
 } from "~/common";
 import { rollBand } from "~/random";
 
@@ -66,7 +67,6 @@ const _resolveCollisions = (
   return sourceHits;
 };
 
-const ENEMY_AIM_SPREAD = 1.5;
 export const updateGame = (
   [player, world]: Game,
   tickLength: number,
@@ -85,12 +85,13 @@ export const updateGame = (
     playerOrigin = readOrigin(playerShipObject[0]);
 
   // TEMP: aim enemies at the player
+  const ENEMY_AIM_SPREAD = 1.5;
   doTimes(enemyShips, (ship) => {
     const target = addXYZ(
       playerOrigin,
       doTimes(
         XYZ_LENGTH,
-        () => rollBand([-ENEMY_AIM_SPREAD, ENEMY_AIM_SPREAD]),
+        () => rollBand(spread(ENEMY_AIM_SPREAD)),
       ) as XYZ,
     );
 
@@ -124,7 +125,7 @@ export const updateGame = (
           },
         ),
       );
-    }
+    },
   );
 
   if (!playerResourceStatus[4]) { // skip enemy bullets while the player is invulnerable
@@ -196,8 +197,6 @@ export const updateGame = (
     ),
   );
 
-  // TODO: clean up missed items && empty player weapons (not first two)
-
   // clean up dead enemies
   // WARNING: mutates in place, so enemyShips are stale below here
   doTimes(activeEnemyGroups, ([ships]) => {
@@ -231,13 +230,13 @@ export const updateGame = (
   );
 
   // -- update player resources
-  // recharge shield
+  // restore hp
   playerResourceStatus[0] = max(
     0,
     playerResourceStatus[0] - playerSnapshot[16] * tickLength,
   );
 
-  // if shield is depleted, reduce armor by one, trigger temporary invulnerability
+  // if hp is depleted, reduce rez by one, trigger temporary invulnerability
   if (playerResourceStatus[0] >= playerSnapshot[15]) {
     explosionSound();
     playerResourceStatus[0] = playerSnapshot[15];
@@ -249,16 +248,16 @@ export const updateGame = (
     }
   }
 
-  // remove temporary invulnerability once shields are restored
+  // remove temporary invulnerability once hp is fully restored
   if (playerResourceStatus[0] <= 0) playerResourceStatus[4] = 0;
 
-  // recharge fuel
+  // refill gas
   playerResourceStatus[1] = max(
     0,
     playerResourceStatus[1] - playerSnapshot[7] * tickLength,
   );
 
-  // eject fuel if depleted
+  // eject gas when depleted
   if (
     playerResourceStatus[1] >= playerSnapshot[4] && !playerResourceStatus[5]
   ) {

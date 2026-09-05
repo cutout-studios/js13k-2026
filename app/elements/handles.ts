@@ -20,9 +20,9 @@ import { doTimes } from "~/common";
 
 export const [
   mainCanvas,
-  fuelMeter,
-  shieldMeter,
-  armorMeter,
+  gasMeter,
+  hpMeter,
+  rezMeter,
   distanceCounter,
   waveCounter,
   menu,

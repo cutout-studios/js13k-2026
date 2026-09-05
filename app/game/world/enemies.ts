@@ -16,16 +16,15 @@
 
 import { setOrigin, XYZ } from "~/3D";
 import { length, max, min, round } from "~/alias";
-import { doTimes } from "~/common";
+import { doTimes, spread } from "~/common";
 import { rollBand } from "~/random";
 
 import { createDeck, drawCard } from "../decks.ts";
-import GameOptions from "../options/module.ts";
+import GameOptions, { ENEMY_Z_PLANE } from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 
 import {
   ENEMY_PLACEMENT_SPREAD,
-  ENEMY_Z_PLANE,
   GROUPS_PER_WAVE_BAND,
   WAVE_CURVE,
   WAVE_PACING,
@@ -65,7 +64,7 @@ const _drawEnemyGroup = (
     const ship = createShip(optionsIndex, level);
 
     ship[0][0] = setOrigin(ship[0][0], [
-      ...doTimes(2, () => rollBand([-spawnQuadrantSize, spawnQuadrantSize])),
+      ...doTimes(2, () => rollBand(spread(spawnQuadrantSize))),
       -ENEMY_Z_PLANE,
     ] as XYZ);
 

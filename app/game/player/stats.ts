@@ -19,15 +19,15 @@ import { doTimes, repeat } from "~/common";
 import { Player } from "./types.ts";
 
 export const updatePlayerSnapshots = (
-  [ship, [armorLevels, fuelLevels, _, shieldLevels], inventory]: Player,
+  [ship, [rezLevels, gasLevels, _, hpLevels], inventory]: Player,
 ) => {
   const [, , weapons, , , _snapshot] = ship;
   const _weaponsSnapshots = doTimes(weapons, ([, , , , _s]) => _s);
 
   _snapshot[13] = doTimes(
     inventory,
-    ([[, , , , , , mass], equipped]) => equipped ? mass : 0,
-  ).reduce((sum, mass) => sum + mass, 0);
+    ([[, , , , , , kg], equipped]) => equipped ? kg : 0,
+  ).reduce((sum, kg) => sum + kg, 0);
 
   doTimes(inventory, ([[, , , , , modifiers], equipped]) => {
     if (!equipped) return;
@@ -41,7 +41,7 @@ export const updatePlayerSnapshots = (
     });
   });
 
-  let levels = [armorLevels, fuelLevels, shieldLevels];
+  let levels = [rezLevels, gasLevels, hpLevels];
 
   const minLevelIndicies = levels.reduce((arr, val) => {
     val == min(...levels) && arr.push(val);
@@ -59,7 +59,7 @@ export const updatePlayerSnapshots = (
 
   levels[
     levels.indexOf(
-      min(armorLevels, fuelLevels, shieldLevels),
+      min(rezLevels, gasLevels, hpLevels),
     )
   ] *= _snapshot[12];
 

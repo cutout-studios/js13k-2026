@@ -28,41 +28,47 @@ export type Ship = [
 ];
 
 export type Resources = [
-  shield: number,
-  fuel: number,
-  fuelSegments: number,
-  armor: number,
+  hp: number,
+  gas: number,
+  gasSegments: number,
+  rez: number,
   invulnerable: 0 | 1,
-  ejectingFuel: 0 | 1,
+  ejecting: 0 | 1,
   countering: 0 | 1,
+  flinching: 0 | 1,
 ];
 
 export type ShipSnapshot = [
-  armor: number,
+  rez: number,
+
   // 1-5
-  armorSave: number,
+  rezSave: number,
   damageTaken: number,
-  damageTakenFromFuel: number,
-  fuel: number, // WIP
-  fuelCost: number, // WIP
+  damageTakenFromGas: number,
+  gas: number,
+  gasCost: number,
+
   // 6-10
-  fuelEjectDelay: number,
-  fuelRegen: number,
-  fuelSegments: number,
+  gasEjectDelay: number,
+  gasRegen: number,
+  gasSegments: number,
   itemMixtureQuality: number,
   itemDropRate: number,
+
   // 11-15
   levelQuality: number,
   lowestResource: number,
-  mass: number,
+  kg: number,
   resolve: number,
-  shield: number,
+  hp: number,
+
   // 16-20
-  shieldRegen: number,
+  regen: number,
   spinDamage: number,
-  spinHandling: number, // TODO
+  spinHandling: number,
   spinTime: number,
   strafeSpeed: number,
+
   // 21
   aimSpeed: number,
 ];
@@ -76,13 +82,16 @@ export type Weapon = [
 ];
 
 export type WeaponSnapshot = [
+  // 0
   bulletCount: number,
+
   // 1-5
   bulletCritChance: number,
   bulletCritDamage: number,
   bulletDamage: number,
   bulletLifetime: number,
   bulletRate: number,
+
   // 6
   bulletSpread: number,
 ];

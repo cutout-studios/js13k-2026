@@ -2,17 +2,41 @@
 
 ## MVP TODOs
 
+- gas consumption calc helper
+- default kg calculation: +1 KG per empty slot
+- debug through equip/restore/level-up stuff
+
 - enemy behaviors
+  - meander + fire: pink + blue
+  - swoop + fire: red + green
+  - fade in/out: purple
+  - spin + bomb: yellow
 
 ## Core Polish
 
-- Tune and balance controls/stats
-- Leverage bulk object placement + movement utilities from enemy behaviors to:
-  - Place background stars/nebula
-  - Do various particle effects.
+- Tune config
+
+- kg flinch
 - Lots of sound effects. Use RX + spectral analysis to reverse-engineer.
 
+- improve spin animation
+- spin handling? what does it even mean now?
+  - map controls to virtual analog stick, might make it make sense
+
+- switch to box collider? (for oblong bullets/ships)
+
+- Clean up missed items && empty player weapons
+
+- Leverage bulk object placement + movement utilities from enemy behaviors to:
+  - Place background stars/nebula
+  - Do various particle effects. Thrusters, explosions
+
+- Boost mechanic
+
 ## Misc. Compression Ideas:
+
+- inline one-off functions
+- forgo spread for just individual index access
 
 ### The Big One (~150B)
 

@@ -17,7 +17,7 @@
 /// <reference lib="dom" />
 
 import { CAMERA_MAGNIFICATION_RATIO, createRenderTarget, XYZ } from "~/3D";
-import { ENEMY_Z_PLANE } from "../game/world/constants.ts";
+import { ENEMY_Z_PLANE } from "../game/options/module.ts";
 import { mainCanvas as mainCanvasElement } from "./handles.ts";
 
 export let mainCanvas = createRenderTarget(mainCanvasElement);

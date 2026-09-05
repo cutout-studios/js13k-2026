@@ -26,7 +26,7 @@ import { length } from "~/alias";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat } from "~/common";
 
-import { SHIP_BASE_PROPERTIES } from "../options/module.ts";
+import { BASE_PROPERTIES } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 import { updateBullets } from "./bullets.ts";
@@ -66,15 +66,21 @@ export const createShip = (
       (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level),
     ),
     createActionSequencer(shipSchedule),
-    repeat(7, 0) as Resources,
+    repeat(8, 0) as Resources,
     levelRollOverrides(
-      SHIP_BASE_PROPERTIES,
+      BASE_PROPERTIES,
       shipOverrides,
       level,
     ) as ShipSnapshot,
     optionsIndex,
   ];
 };
+
+// export const createFlinchSequencer = () => {};
+
+// export const consumeFuel = (amount: number, ship: Ship): boolean => {
+//   return false;
+// }
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,

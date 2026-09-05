@@ -31,7 +31,7 @@ import {
 } from "~/3D";
 import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
-import { doTimes, spliceTable } from "~/common";
+import { doTimes, spliceTable, spread } from "~/common";
 import { rollBand } from "~/random";
 
 import GameOptions, { BULLET_SPEED } from "../options/module.ts";
@@ -80,8 +80,8 @@ export const createBullet = (
     globalHeading = readOrigin(
       localize(
         setOrigin(createCoordinates(), [
-          headingX - rollBand([-snapshot[6], snapshot[6]]),
-          headingY - rollBand([-snapshot[6], snapshot[6]]),
+          headingX - rollBand(spread(snapshot[6])),
+          headingY - rollBand(spread(snapshot[6])),
           headingZ,
         ]),
         globalCoordinates,

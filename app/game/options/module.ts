@@ -18,42 +18,60 @@ import { _, NO_OP } from "~/alias";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
-export const SHIP_BASE_PROPERTIES: ShipSnapshot = [
+export const BULLET_SPEED = 3;
+
+export const PLAYER_Z_PLANE = 5;
+export const ENEMY_Z_PLANE = 8;
+export const FIELD_X_BOUND = 2.8;
+export const FIELD_Y_BOUND = 2.1;
+
+export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   2, // Armor
+
+  // 1-5
   0, // Armor Save
   1, // Damage Taken
   0, // Damage Taken From Fuel
-  20, // Fuel
-  0.1, // Fuel Cost
+  15, // Fuel
+  0.30, // Fuel Cost
+
+  // 6-10
   0, // Fuel Eject Delay
-  7, // Fuel Regen
+  5, // Fuel Regen
   2, // Fuel Segments
   1, // Item Mixture Quality
-  1, // Item Drop Rate
+  0.05, // Item Drop Rate
+
+  // 11-15
   1.2, // Level Quality
-  0, // Lowest Resource
+  1, // Lowest Resource
   4, // Mass
   1, // Resolve
   40, // Shield
-  5, // Shield Regen
+
+  // 16-20
+  3, // Shield Regen
   1, // Spin Damage
-  0.1, // Spin Handling
+  0.1, // Spin Handling - TODO
   0.35, // Spin Time
   2.4, // Strafe Speed
-  1.7, // Aim Time
-];
 
-export const WEAPON_BASE_PROPERTIES: WeaponSnapshot = [
+  // 21
+  1.7, // Aim Time
+
+  // WPN 0   (22)
   1, // Bullet Count
+
+  // WPN 1-5 (23-27)
   0.05, // Bullet Crit Chance
-  1, // Bullet Crit Damage
+  2, // Bullet Crit Damage
   1, // Bullet Damage
   1, // Bullet Lifetime
   8, // Bullet Rate
+
+  // WPN 6   (28)
   0, // Bullet Spread
 ];
-
-export const BULLET_SPEED = 3;
 
 const GREEN_PRONG = [
     0.12,
@@ -85,7 +103,7 @@ export default [
       [1, 1],
     ],
     [
-      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [[1, 1], 0, 1, [8, 8], [1, 1]],
       [],
     ],
   ],
@@ -93,48 +111,53 @@ export default [
     "PURPLE",
     0x8434D4,
     [
-      [[[], [0.5, createPyramid([0.25, 0.25, 0.125])]]],
-      [[16, [7, 60]], [18, [0, 0]], [14, [4, 20]], [4, [18, 25]]],
+      [[[], [0.5, createPyramid([0.25, 0.25, 0.125])]]], // shape
+      [[10, [0.06, 0.1]], [13, [0, 0]], [15, [6, 70]], [20, [0, 0]]], // base overrides
       _,
       [[
-        [[1, [0.10, 0.25]], [2, [2.0, 3.0]], [3, [5, 80]], [5, [1.5, 3]]],
+        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [5, [0.2, 0.3]]], // wpn overrides
       ]],
       [3, 5],
     ],
     [
-      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [[1, 3], 0, 1, [0.2, 0.8], [10, 100]],
       [
-        [0, 11, "x", [1, 1.5]], // Item Quality
-        [0, 12, "x", [1, 1.5]], // Level Quality
-        [0, 24, "+", [0, 0.1]], // Bullet Crit Chance
-        [0, 25, "x", [1.5, 3]], // Bullet Crit Damage
+        [0, 10, "+", [0.02, 0.2]], // Item Drop rate
+        [0, 11, "x", [1.05, 2.5]], // Level Quality
+        [0, 23, "+", [0.005, 0.2]], // Bullet Crit Chance
+        [0, 24, "x", [1.1, 5]], // Bullet Crit Damage
       ],
     ],
   ],
-  [ // green: fuel/speed
+  [ // green: gas/speed
     "GREEN",
     0xA0DD27,
     [
       [
-        [[], [0.2, createSphere(0.20, 24)]],
-        [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
-        [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
+        [
+          [[], [0.2, createSphere(0.20, 24)]],
+          [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
+          [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
+        ],
+        [[13, [7, 20]], [15, [4, 20]], [20, [3, 5]]],
+        _,
+        [[
+          [[3, [1, 5]], [5, [12, 21]], [6, [0.5, 4]]],
+          _,
+          _,
+          [[0.03, createSphere(0.03)]],
+        ]],
+        [4, 7],
       ],
-      [[16, [5, 40]], [18, [60, 100]], [14, [4, 20]], [4, [10, 20]]],
-      _,
-      [[
-        [[1, [0.02, 0.05]], [2, [2.0, 3.0]], [3, [1, 5]]],
-      ]],
-      [4, 7],
-    ],
-    [
-      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
       [
-        [0, 6, "x", [1, 1.5]], // Fuel Cost
-        [0, 18, "x", [1, 1.5]], // Speed
-        [0, 27, "x", [1, 1.5]], // Bullet Lifetime
-        [2, 3, "+", [0, 0.1]], // Damage Taken From Fuel
-        [3, 21, "x", [1, 1.5]], // Spin Time
+        [[2, 5], 0, 1, [12, 21], [1, 7]],
+        [
+          [0, 5, "x", [0.95, 0.2]], // Gas Cost
+          [0, 20, "x", [1.05, 2.3]], // Speed
+          [0, 26, "x", [1.1, 4]], // Bullet Lifetime
+          [2, 3, "+", [0.02, 0.3]], // Damage Taken From Gas
+          [3, 19, "+", [0.03, 0.2]], // Spin Time
+        ],
       ],
     ],
   ],
@@ -149,24 +172,21 @@ export default [
           createPrism([0.09, 0.09, 0.03], 16),
         ]],
       ],
-      [[16, [80, 200]], [18, [10, 25]], [14, [40, 100]], [4, [20, 40]]],
+      [[10, [0.15, 0.23]], [13, [18, 200]], [15, [24, 270]], [20, [0.3, 0.6]]],
       _,
       [[
-        [[1, [0.02, 0.05]], [2, [1.5, 2.2]], [3, [4, 16]], [4, [15, 32]], [5, [
-          .8,
-          1.5,
-        ]]],
+        [[3, [7, 27]], [5, [.7, 1.2]]],
       ]],
       [1, 3],
     ],
     [
-      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [[8, 30], 1, 1, [0.7, 1.2], [3, 8]],
       [
-        [0, 16, "x", [1, 1.5]], // Shield
-        [0, 2, "x", [1, 1.5]], // Damage Taken
-        [0, 14, "x", [1, 1.5]], // Mass
-        [2, 0, "+", [0, 2]], // Armor
-        [3, 7, "x", [1, 1.5]], // Fuel Eject Delay
+        [0, 15, "x", [1.1, 2.5]], // Shield
+        [0, 2, "x", [0.98, 0.7]], // Damage Taken
+        [0, 13, "x", [1.1, 2]], // Mass
+        [2, 0, "+", [1, 4]], // Armor
+        [3, 7, "+", [0.15, 0.5]], // Fuel Eject Delay
       ],
     ],
   ],
@@ -175,24 +195,24 @@ export default [
     0xD4349F,
     [
       [[[], [0.4, createSphere(0.10, 20)]]],
-      [[16, [1, 25]], [18, [30, 75]], [14, [4, 20]], [4, [2, 8]]],
+      [[10, [0.03, 0.05]], [13, [1, 5]], [15, [1, 12]]],
       _,
       [[
-        [[0, [9, 9]], [1, [0.02, 0.05]], [2, [1.2, 1.6]], [3, [2, 16]], [5, [
-          0.7,
-          1.5,
-        ]], [6, [0.05, 0.12]]],
+        [[3, [1, 8]], [5, [0.7, 1.5]], [6, [0.05, 0.12]]],
+        _,
+        _,
+        [[0.03, createSphere(0.03)]],
       ]],
       [9, 16],
     ],
     [
-      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [[0.5, 2], 0, 9, [0.3, 0.9], [1, 4]],
       [
-        [0, 10, "x", [1, 1.5]], // Item Mixture Quality
-        [0, 23, "+", [0, 2]], // Bullet Count
-        [0, 1, "+", [0, 0.1]], // Armor Save
-        [2, 17, "x", [1, 1.5]], // Shield Regen
-        [3, 8, "x", [1, 1.5]], // Fuel Regen
+        [0, 9, "x", [1.1, 2.2]], // Item Mixture Quality
+        [0, 22, "+", [1, 3]], // Bullet Count
+        [0, 1, "+", [0.05, 0.3]], // Armor Save
+        [2, 16, "x", [1.1, 2]], // Shield Regen
+        [3, 7, "x", [1.2, 2.2]], // Fuel Regen
       ],
     ],
   ],
@@ -204,24 +224,21 @@ export default [
         0.46,
         createPyramid([0.11, 0.09, 0.4], 3),
       ]]],
-      [[16, [7, 60]], [18, [30, 75]], [14, [12, 25]], [4, [10, 20]]],
+      [[10, [0.05, 0.08]], [13, [6, 28]], [15, [3, 108]], [20, [2.4, 3.5]]],
       _,
       [[
-        [[0, [2, 2]], [1, [0.05, 0.12]], [2, [1.5, 2.2]], [3, [6, 35]], [5, [
-          0.7,
-          1.5,
-        ]], [6, [0.02, 0.06]]],
+        [[0, [2, 2]], [3, [3, 18]], [5, [2, 3.5]], [6, [0.02, 0.06]]],
       ]],
       [3, 6],
     ],
     [
-      [[1, 1], 2, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [[2, 4], 0, 2, [2, 4, 5], [3, 12]],
       [
-        [0, 26, "x", [1, 1.5]], // Bullet Damage
-        [0, 28, "x", [1, 1.5]], // Bullet Rate
-        [0, 5, "x", [1, 1.5]], // Fuel
-        [2, 22, "x", [1, 1.5]], // Tracking Speed
-        [3, 20, "x", [1, 1.5]], // Spin Handling
+        [0, 25, "x", [1.25, 3.5]], // Bullet Damage
+        [0, 27, "x", [1.2, 3]], // Bullet Rate
+        [0, 4, "+", [3, 15]], // Gas
+        [2, 21, "+", [-0.02, -1]], // Aim Time
+        [3, 18, "x", [1.1, 2.5]], // Spin Handling - TODO
       ],
     ],
   ],
@@ -235,21 +252,24 @@ export default [
         [[[0.52, 0.02, 0], [Z_AXIS, 0.65]], YELLOW_ARM],
         [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], YELLOW_ARM],
       ],
-      [[16, [8, 120]], [18, [60, 100]], [14, [12, 25]], [4, [10, 20]]],
+      [[10, [0.07, 0.12]], [13, [7, 13]], [15, [8, 87]], [20, [1.5, 3]]],
       _,
       [[
-        [[1, [0.05, 0.12]], [3, [5, 16]], [5, [1.5, 3]], [6, [0.10, 0.30]]],
+        [[3, [5, 16]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
+        _,
+        _,
+        [[0.1, createSphere(0.1)]],
       ]],
-      [2, 5],
+      [2, 4],
     ],
     [
-      [[1, 1], 1, 1, [1, 1], [1, 1]], // PLACEHOLDER
+      [[3, 7], 0, 1, [0.4, 1], [7, 23]],
       [
-        [0, 13, "x", [1, 1.5]], // Lowest Resource
-        [0, 15, "+", [0, 0.1]], // Resolve
-        [0, 29, "x", [1, 1.5]], // Bullet Spread
-        [2, 21, "x", [1, 1.5]], // Spin Time
-        [3, 19, "x", [1, 1.5]], // Spin Damage
+        [0, 12, "x", [1.1, 6]], // Lowest Resource
+        [0, 14, "+", [0.07, 0.22]], // Resolve
+        [0, 28, "x", [1, 1.5]], // Bullet Spread
+        [2, 19, "x", [1.05, 1.25]], // Spin Time
+        [3, 17, "x", [1.5, 5]], // Spin Damage
       ],
     ],
   ],

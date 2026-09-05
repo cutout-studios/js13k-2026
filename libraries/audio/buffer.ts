@@ -15,7 +15,7 @@
  */
 
 import { abs, PI, round, sin } from "~/alias";
-import { doTimes } from "~/common";
+import { doTimes, spread } from "~/common";
 import { rollBand } from "~/random";
 
 import { api } from "./api.ts";
@@ -39,4 +39,4 @@ const _renderCycle = (
 export const SINE_BUFFER = _renderCycle((p) => sin(p * PI * 2));
 export const SQUARE_BUFFER = _renderCycle((p) => p < 0.5 ? 1 : -1);
 export const TRIANGLE_BUFFER = _renderCycle((p) => abs(p - 0.5) * 4 - 1);
-export const NOISE_BUFFER = _renderCycle(() => rollBand([1, -1]), 400);
+export const NOISE_BUFFER = _renderCycle(() => rollBand(spread()), 400);

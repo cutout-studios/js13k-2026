@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-export const PLAYER_Z_PLANE = 5;
 export const PLAYER_INVENTORY_SIZE = 12;
 
 export const STRAFE_ATTACK_TIME = 0.3;

@@ -31,7 +31,7 @@ import {
 } from "../game/player/items.ts";
 import { updatePlayerSnapshots } from "../game/player/stats.ts";
 import { Item } from "../game/player/types.ts";
-import { PARTS, PROPERTY_NAMES, WORDS } from "../game/ship/constants.ts";
+import { PARTS, PROPERTY_NAMES } from "../game/ship/constants.ts";
 
 import {
   base,
@@ -55,8 +55,8 @@ let hoveredCellIndex = -1,
 
 const EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
-  [player, [, , progress, winCollection]] = GameState,
-  [, , inventory] = player,
+  [player, [, , [currentLevel], winCollection]] = GameState,
+  [playerShip, playerLevels, inventory] = player,
   getFormValues = () => doTimes(new FormData(form).getAll("i"), Number),
   restorePreviewSequence = createActionSequencer<
     [item: Item, equipped?: boolean | undefined][]
@@ -87,6 +87,16 @@ const EQUIP_OFFSET = 2,
       GameOptions[_colorID][0],
       PARTS[_typeID],
     ]);
+
+    const properties = ["KG", _baseMass];
+    if (_baseWeapon) {
+      doTimes(
+        _baseWeapon,
+        (value, index) => properties.push(["AMT", "RATE", "DMG"][index], value),
+      );
+    }
+    base.innerText = join(properties);
+
     modifiers.innerHTML = join(
       doTimes(
         _modifiers,
@@ -95,15 +105,6 @@ const EQUIP_OFFSET = 2,
       ),
       "<br>",
     );
-    const properties = [WORDS[15], _baseMass];
-    if (_baseWeapon) {
-      doTimes(
-        _baseWeapon,
-        (value, index) =>
-          properties.push([WORDS[6], WORDS[11], WORDS[2]][index], value),
-      );
-    }
-    base.innerText = join(properties);
   };
 
 form.onsubmit = (event: SubmitEvent) => {
@@ -111,10 +112,10 @@ form.onsubmit = (event: SubmitEvent) => {
   const detail = getFormValues();
   switch ((event.submitter as HTMLButtonElement).value) {
     case "1": {
-      if (detail[0] + detail[1] + detail[2] == (GameState[1][2][0] - 1)) {
-        GameState[0][1][0] = detail[0];
-        GameState[0][1][1] = detail[1];
-        GameState[0][1][3] = detail[2];
+      if (detail[0] + detail[1] + detail[2] == (currentLevel - 1)) {
+        playerLevels[0] = detail[0];
+        playerLevels[1] = detail[1];
+        playerLevels[3] = detail[2];
       }
       break;
     }
@@ -133,7 +134,7 @@ form.onsubmit = (event: SubmitEvent) => {
     }
     case "3": {
       const item = combineItems(
-        progress[0] * GameState[0][0][5][9],
+        currentLevel * playerShip[5][9],
         ...doTimes(detail.splice(3), (index) => inventory[index][0]),
       );
       if (item) {
@@ -175,12 +176,12 @@ export const resetMenu = () => {
     (item, index) => camera([[item[0]]], renderTargets[index + EQUIP_OFFSET]),
   );
 
-  levelLabel.innerText = `LVLS USED: ${GameState[1][2][0] - 1} / ${
-    GameState[0][1][0] + GameState[0][1][1] + GameState[0][1][2]
-  }`;
-  levelArmor.value = levelArmor.min = GameState[0][1][0] + "";
-  levelFuel.value = levelFuel.min = GameState[0][1][1] + "";
-  levelShield.value = levelShield.min = GameState[0][1][2] + "";
+  levelLabel.innerText = `LVLS USED: ${
+    playerLevels[0] + playerLevels[1] + playerLevels[2]
+  } / ${currentLevel - 1}`;
+  levelArmor.value = levelArmor.min = playerLevels[0] + "";
+  levelFuel.value = levelFuel.min = playerLevels[1] + "";
+  levelShield.value = levelShield.min = playerLevels[2] + "";
 };
 
 export const updateMenu = (tickLength: number) => {

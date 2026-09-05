@@ -15,9 +15,9 @@
  */
 
 import { readOrigin } from "~/3D";
-import { max, min } from "~/alias";
+import { clamp, spread } from "~/common";
 
 export const getPanFromCoordinates = (
   coordinates: Float32Array,
   yBound: number,
-) => min(1, max(-1, readOrigin(coordinates)[1] / yBound));
+) => clamp(readOrigin(coordinates)[1] / yBound, spread());

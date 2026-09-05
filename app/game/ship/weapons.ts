@@ -20,7 +20,7 @@ import { createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
 
 import GameOptions from "../options/module.ts";
-import { WEAPON_BASE_PROPERTIES } from "../options/module.ts";
+import { BASE_PROPERTIES } from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 import { createBullet } from "./bullets.ts";
 import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
@@ -33,7 +33,7 @@ export const createWeapon = (
   const [, , [, , , weapons]] = GameOptions[optionsIndex],
     [overrides, schedule, mount = [0, 0, 0] as XYZ] = weapons[weaponIndex],
     snapshot = levelRollOverrides(
-      WEAPON_BASE_PROPERTIES,
+      BASE_PROPERTIES.slice(22),
       overrides,
       level,
     ) as WeaponSnapshot;
@@ -56,11 +56,11 @@ export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   const [, , weapons, , damages, shipSnapshot] = ship,
     [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex],
     [count] = snapshot,
-    fuelUsed = shipSnapshot[13] * shipSnapshot[5];
+    gasUsed = shipSnapshot[13] * shipSnapshot[5];
 
-  if (ship[6] == 0 && fuelUsed > shipSnapshot[4]) return;
+  if (ship[6] == 0 && gasUsed > shipSnapshot[4]) return;
 
-  damages[1] = fuelUsed;
+  damages[1] = gasUsed;
   doTimes(count, () => {
     const bullet = createBullet(ship, weaponIndex);
     bullets.push(bullet);

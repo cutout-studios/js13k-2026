@@ -48,7 +48,7 @@ const checkKeyboard = (tickLength: number) =>
 const checkMouse = (tickLength: number) =>
   doTimes(
     [checkMousePointer, checkLMouseButton, checkRMouseButton],
-    (f) => f(tickLength), 
+    (f) => f(tickLength),
   );
 
 startClock((tickLength) => {

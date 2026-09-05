@@ -19,10 +19,10 @@ import { doTimes, SECONDS_TO_MS } from "~/common";
 import { createElement } from "~/dom";
 import { Game } from "../game/types.ts";
 import {
-  armorMeter,
   distanceCounter,
-  fuelMeter,
-  shieldMeter,
+  gasMeter,
+  hpMeter,
+  rezMeter,
   waveCounter,
 } from "./handles.ts";
 
@@ -41,9 +41,9 @@ const _meterUpdate = (element: HTMLElement) => {
       );
     };
   },
-  fuelUpdate = _meterUpdate(fuelMeter),
-  shieldUpdate = _meterUpdate(shieldMeter),
-  armorUpdate = _meterUpdate(armorMeter);
+  gasUpdate = _meterUpdate(gasMeter),
+  hpUpdate = _meterUpdate(hpMeter),
+  rezUpdate = _meterUpdate(rezMeter);
 
 let gameDuration = 0;
 
@@ -54,7 +54,7 @@ export const updateHUD = (
       ,
       ,
       ,
-      [shieldDamage, fuelDamage = 0, fuelSegmentDamage = 0, armorDamage = 0],
+      [damage, gasUsed = 0, cansUsed = 0, rez = 0],
       _snapshot,
     ]],
     [, , [stage, wave, lastWave]],
@@ -67,18 +67,18 @@ export const updateHUD = (
     "0",
   );
   waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
-  armorUpdate(
-    doTimes(_snapshot[0], (index: number) => [1, +(index >= armorDamage)]),
+  rezUpdate(
+    doTimes(_snapshot[0], (index: number) => [1, +(index >= rez)]),
   );
-  shieldUpdate([[_snapshot[15], _snapshot[15] - shieldDamage]]);
-  fuelUpdate(
+  hpUpdate([[_snapshot[15], _snapshot[15] - damage]]);
+  gasUpdate(
     doTimes(_snapshot[8], (index: number) => [
       _snapshot[4],
-      (_snapshot[8] - 1 - index) < fuelSegmentDamage
+      (_snapshot[8] - 1 - index) < cansUsed
         ? 0
-        : (_snapshot[8] - 1 - index) > fuelSegmentDamage
+        : (_snapshot[8] - 1 - index) > cansUsed
         ? _snapshot[4]
-        : _snapshot[4] - fuelDamage,
+        : _snapshot[4] - gasUsed,
     ]),
   );
 };

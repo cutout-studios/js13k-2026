@@ -22,15 +22,16 @@ import {
   setOrigin,
   subtractXYZ,
 } from "~/3D";
-import { _, max, min } from "~/alias";
+import { _ } from "~/alias";
 import { createEnvelope } from "~/clock";
-import { doTimes } from "~/common";
+import { clamp, doTimes, spread } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
 
 import { menu, title } from "../../elements/handles.ts";
 import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
 import GameState from "../module.ts";
+import { FIELD_X_BOUND, FIELD_Y_BOUND } from "../options/module.ts";
 import { createSpinSequence } from "../ship/spin.ts";
 
 import { STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME } from "./constants.ts";
@@ -97,11 +98,14 @@ export const checkDKey = bindButton(
 export const checkSpaceBar = bindButton(
   "Space",
   () => {
-    if (!playerShip[4][6] && (playerShip[5][4] - playerShip[4][1]) > playerShip[5][13]) {
-      playerShip[4][1] += playerShip[5][13]
+    if (
+      !playerShip[4][6] &&
+      (playerShip[5][4] - playerShip[4][1]) > playerShip[5][13]
+    ) {
+      playerShip[4][1] += playerShip[5][13];
       playerShip[3] = createSpinSequence(playerShip);
     }
-  }
+  },
 );
 
 export const checkEscapeKey = bindButton(
@@ -113,15 +117,17 @@ export const applyInputToPlayerShip = (tickLength: number) => {
   const strafeX = strafe[3] - strafe[1],
     strafeY = strafe[0] - strafe[2];
 
-  adjustObject(playerShip[0], [scaleXYZ([strafeX, strafeY, 0], playerShip[5][20] * tickLength)]);
+  adjustObject(playerShip[0], [
+    scaleXYZ([strafeX, strafeY, 0], playerShip[5][20] * tickLength),
+  ]);
 
   aimObject(playerShip[0], playerShip[1]);
 
   // clamp ship to camera bounds
   const [x, y, z] = readOrigin(playerShip[0][0]);
   setOrigin(playerShip[0][0], [
-    min(2.8, max(-2.8, x)),
-    min(2.1, max(-2.1, y)),
+    clamp(x, spread(FIELD_X_BOUND)),
+    clamp(y, spread(FIELD_Y_BOUND)),
     z,
   ]);
 };

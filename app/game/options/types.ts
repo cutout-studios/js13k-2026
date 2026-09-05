@@ -47,8 +47,8 @@ export type BaseStatOverride = [statID: number, band: Band];
 
 export type ItemOptions = [
   base: [
-    mass: Band,
-    modifiers: number,
+    kg: Band,
+    baseModifiers: number,
     bulletCount: number,
     bulletRate: Band,
     bulletDamage: Band,

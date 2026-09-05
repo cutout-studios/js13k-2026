@@ -251,12 +251,19 @@ input[type=number]:focus {
   grid-area: 5/1/6/3;
   place-self: center;
 }
+
+.disabled *,
+.disabled *:hover,
+.disabled *:focus {
+  color: #999 !important;
+  border-color: #999 !important;
+}
 </style>
 <canvas id=c></canvas>
 <div id=h>
-  <div id=f class=i><label>FL</label></div>
-  <div id=s class=i><label>SLD</label></div>
-  <div id=r class=i><label>HL</label></div>
+  <div id=f class=i><label>GAS</label></div>
+  <div id=s class=i><label>HP</label></div>
+  <div id=r class=i><label>REZ</label></div>
   <div id=d></div>
   <div id=w></div>
   <div id=l class=i>
@@ -268,16 +275,15 @@ input[type=number]:focus {
 </div>
 <dialog id=m>
   <form id=o>
-    <!-- TODO -->
-    <div id=aa>
+    <div id=aa class=disabled>
       <div id=ab>LVLS USED: 0 / 0</div>
-      <label>FL</label>
+      <label>GAS</label>
       <input id=ac type=number value=0 min=0 name=i>
-      <label>SLD</label>
+      <label>HP</label>
       <input id=ad type=number value=0 min=0 name=i>
-      <label>HL</label>
+      <label>REZ</label>
       <input id=ae type=number value=0 min=0 name=i>
-      <button value=1>LVL ↑</button>
+      <button value=1 disabled>LVL ↑</button>
     </div>
     <div id=n>
       <canvas></canvas>

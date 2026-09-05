@@ -18,7 +18,6 @@ import { Band } from "~/common";
 
 export const GAME_DIFFICULTY_FALLOFF = 0.135;
 
-export const ENEMY_Z_PLANE = 8;
 export const ENEMY_PLACEMENT_SPREAD = 5;
 
 export const WAVE_CURVE = 7.5;

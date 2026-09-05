@@ -26,7 +26,7 @@ import {
 } from "~/3D";
 import { TAU } from "~/alias";
 import { Action } from "~/clock";
-import { doTimes, repeat } from "~/common";
+import { doTimes, repeat, spread } from "~/common";
 import { rollBand } from "~/random";
 
 export const orbit: Action<XOObject> = (object: XOObject, tickLength) =>
@@ -47,7 +47,7 @@ export const createPull = (
         normalizeXYZ(
           addXYZ(
             direction,
-            doTimes(XYZ_LENGTH, () => rollBand([jitter, -jitter])) as XYZ,
+            doTimes(XYZ_LENGTH, () => rollBand(spread(jitter))) as XYZ,
           ),
         ),
         speed * curve(elapsedTime / duration),
