@@ -2,11 +2,9 @@
 
 ## MVP TODOs
 
-- Tiny cleanup
-  - Ship points up on load (some weird input bug)
+- Fininsh level-up menu - fix misindex, regen snaps
 
-- Confirm level-up menu works
-
+- Break out "placement function"
 - Enemies come in from the side, rather than just showing up suddenly.
 - Place basic stars in the background, just so we don't have to look at nothing.
 

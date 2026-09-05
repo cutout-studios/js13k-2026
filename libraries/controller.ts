@@ -52,7 +52,7 @@ export const bindButton = (
   };
 };
 
-let pointerX = 0, pointerY = 0;
+let pointerX: number, pointerY: number;
 onpointermove = (
   { clientX, clientY },
 ) => (pointerX = clientX, pointerY = clientY);
@@ -60,4 +60,6 @@ onpointermove = (
 export const bindPointer = (
   onTick: (tickLength: number, x: number, y: number) => void,
 ) =>
-(tickLength: number) => onTick(tickLength, pointerX, pointerY);
+(tickLength: number) =>
+  (pointerX != undefined && pointerY != undefined) &&
+  onTick(tickLength, pointerX, pointerY);
