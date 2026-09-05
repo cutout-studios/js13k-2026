@@ -15,7 +15,7 @@
  */
 
 import { createRenderTarget, GPURenderTarget } from "~/3D";
-import { join, preventDefault } from "~/alias";
+import { join, length, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, repeat, spliceTable } from "~/common";
 import { updateStyles } from "~/dom";
@@ -36,15 +36,18 @@ import { PARTS, PROPERTY_NAMES } from "../game/ship/constants.ts";
 import {
   base,
   canvasCells,
+  equipButton,
   form,
   header,
   itemPopover,
-  levelArmor,
-  levelFuel,
+  levelButton,
+  levelGas,
+  levelHP,
   levelLabel,
-  levelShield,
+  levelRez,
   menu,
   modifiers,
+  restoreButton,
   winCollectionElements,
 } from "./handles.ts";
 import { portrait } from "./portrait.ts";
@@ -57,13 +60,16 @@ const EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
   [player, [, , progress, winCollection]] = GameState,
   [playerShip, playerLevels, inventory] = player,
-  getFormValues = () => doTimes(new FormData(form).getAll("i"), Number),
+  getFormValues = () => [
+    doTimes(new FormData(form).getAll("i"), Number),
+    doTimes(new FormData(form).getAll("l"), Number),
+  ],
   restorePreviewSequence = createActionSequencer<
     [item: Item, equipped?: boolean | undefined][]
   >([
     [(inventory) => {
       restorePreviewItem = oneOf(doTimes(
-        getFormValues(),
+        getFormValues()[0],
         (value) => inventory[value]?.[0],
       ));
     }],
@@ -110,20 +116,20 @@ const EQUIP_OFFSET = 2,
 
 form.onsubmit = (event: SubmitEvent) => {
   preventDefault(event);
-  const detail = getFormValues();
+  const [detail, levels] = getFormValues();
   switch ((event.submitter as HTMLButtonElement).value) {
     case "1": {
-      if (detail[0] + detail[1] + detail[2] == (progress[0] - 1)) {
-        playerLevels[0] = detail[0];
-        playerLevels[1] = detail[1];
-        playerLevels[3] = detail[2];
+      if (levels[0] + levels[1] + levels[2] == (progress[0] - 1)) {
+        playerLevels[0] = levels[0];
+        playerLevels[1] = levels[1];
+        playerLevels[3] = levels[2];
       }
       break;
     }
     case "2": {
       const toEquip = repeat(4, -1);
       doTimes(
-        detail.splice(3),
+        detail,
         (index) => toEquip[inventory[index][0][2]] = index,
       );
       doTimes(inventory, (item, index) => {
@@ -136,10 +142,14 @@ form.onsubmit = (event: SubmitEvent) => {
     case "3": {
       const item = combineItems(
         progress[0] * playerShip[5][9],
-        ...doTimes(detail.splice(3), (index) => inventory[index][0]),
+        ...doTimes(detail, (index) => inventory[index][0]),
       );
       if (item) {
-        spliceTable([inventory], detail.splice(3));
+        spliceTable([inventory], detail);
+        doTimes(
+          detail,
+          (index) => camera([[]], renderTargets[index + INVENTORY_OFFSET]),
+        );
         inventory.push([item]);
       }
       break;
@@ -180,13 +190,26 @@ export const resetMenu = () => {
   levelLabel.innerText = `LVLS USED: ${
     playerLevels[0] + playerLevels[1] + playerLevels[2]
   } / ${progress[0] - 1}`;
-  levelArmor.value = levelArmor.min = playerLevels[0] + "";
-  levelFuel.value = levelFuel.min = playerLevels[1] + "";
-  levelShield.value = levelShield.min = playerLevels[2] + "";
+  levelRez.value = levelRez.min = playerLevels[0] + "";
+  levelGas.value = levelGas.min = playerLevels[1] + "";
+  levelHP.value = levelHP.min = playerLevels[2] + "";
 };
 
 export const updateMenu = (tickLength: number) => {
-  restorePreviewSequence(inventory, tickLength);
+  equipButton.disabled = !length(getFormValues()[0]);
+  restoreButton.disabled = length(getFormValues()[0]) < 2;
+
+  if (!restoreButton.disabled) restorePreviewSequence(inventory, tickLength);
+  else camera([], renderTargets[1]);
+
+  doTimes(
+    [levelRez, levelGas, levelHP, levelButton],
+    (element: HTMLInputElement | HTMLButtonElement) =>
+      element.disabled =
+        (playerLevels[0] + playerLevels[1] + playerLevels[2]) ==
+          (progress[0] - 1),
+  );
+
   const [item, equipped] = inventory[hoveredCellIndex - INVENTORY_OFFSET] ??
     [equippedItems[hoveredCellIndex - EQUIP_OFFSET], true];
   if (!item) return updateStyles(itemPopover, { visibility: "hidden" });

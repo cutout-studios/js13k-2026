@@ -2,39 +2,42 @@
 
 ## MVP TODOs
 
-- debug through equip/restore/level-up stuff
-  - equip doesn't trigger
-  - restore prematurely shows preview even when nothing is selected
-  - level up should un-disable when there's points to spend
+- player snapshot update
+  - apply weapons
+  - truncate updated rez/can numbers
 
-- enemy behaviors
-  - meander + fire: pink + blue
+- debug through menu functionality
+  - equip doesn't change ship colors
+  - test level-up
+
+- move tooltip slightly so you can see it fully from outside the cursor
+- ship points up on load (some weird input bug)
+- clean up missed items & empty player weapons
+
+- enemies meander in from the side, rather than just showing up suddenly
+
+## Core Improvements
+
+- Implement gas canister eject delay (+ lil' animation?)
+- Implement KG flinch
+- add color-specific enemy behaviors
   - swoop + fire: red + green
   - fade in/out: purple
+    - switch to box collider? (for oblong bullets/ships)
   - spin + bomb: yellow
-
-- gas canister eject delay
-
-## Core Polish
-
+- Key UI: lots of sound effects. Use RX + spectral analysis to reverse-engineer.
+- Place background stars/nebula
 - Tune config
 
-- kg flinch
-- Lots of sound effects. Use RX + spectral analysis to reverse-engineer.
+### Likely to land in a "director's cut"
 
-- improve spin animation
-- spin handling? what does it even mean now?
-  - map controls to virtual analog stick, might make it make sense
-
-- switch to box collider? (for oblong bullets/ships)
-
-- Clean up missed items && empty player weapons
-
-- Leverage bulk object placement + movement utilities from enemy behaviors to:
-  - Place background stars/nebula
-  - Do various particle effects. Thrusters, explosions
-
-- Boost mechanic
+- Improve spin counter
+  - slightly more expressive (directional, over-spin animation)
+  - map controls to virtual analog stick
+  - implement spin handling
+- Add thrusters: main + direction-based, explosion effects
+- Implement boost mechanic
+- Music
 
 ## Misc. Compression Ideas:
 

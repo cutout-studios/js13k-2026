@@ -220,7 +220,8 @@ input[type=number]:focus {
   text-align: center;
   padding: .3rem;
 }
-#k, #b {
+#k,
+#b {
   padding: 0 .3rem;
   margin: .3rem;
   text-align: center;
@@ -232,7 +233,6 @@ input[type=number]:focus {
   display: grid;
   grid: auto / min-content auto;
   gap: .33rem;
-  border-left: .1rem solid #fff;
   padding-left: 1rem;
   place-self: center;
 }
@@ -250,11 +250,12 @@ input[type=number]:focus {
   place-self: center;
 }
 
-.disabled *,
-.disabled *:hover,
-.disabled *:focus {
+:disabled,
+:disabled:hover,
+:disabled:focus {
   color: #999 !important;
   border-color: #999 !important;
+  cursor: not-allowed;
 }
 </style>
 <canvas id=c></canvas>
@@ -273,20 +274,20 @@ input[type=number]:focus {
 </div>
 <dialog id=m>
   <form id=o>
-    <div id=aa class=disabled>
+    <div id=aa>
       <div id=ab>LVLS USED: 0 / 0</div>
-      <label>GAS</label>
-      <input id=ac type=number value=0 min=0 name=i>
       <label>HP</label>
-      <input id=ad type=number value=0 min=0 name=i>
+      <input id=ad type=number value=0 min=0 name=l disabled>
+      <label>GAS</label>
+      <input id=ac type=number value=0 min=0 name=l disabled>
       <label>REZ</label>
-      <input id=ae type=number value=0 min=0 name=i>
-      <button value=1 disabled>LVL ↑</button>
+      <input id=ae type=number value=0 min=0 name=l disabled>
+      <button id=af value=1 disabled>LVL ↑</button>
     </div>
     <div id=n>
       <canvas></canvas>
       <div id=y>
-				<div id=x><canvas style="cursor:help;"></canvas></div>
+				<div id=x><canvas style="cursor:help; background:#000;"></canvas></div>
 				<i style=left:0;top:50%></i><i style=left:30%;top:100%></i><i style=left:70%;top:100%></i><i style=left:100%;top:50%></i><i style=left:70%;top:0></i><i style=left:30%;top:0></i>
 			</div>
     </div>

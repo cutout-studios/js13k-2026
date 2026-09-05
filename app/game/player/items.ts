@@ -103,15 +103,13 @@ export const createItem = (
 export const combineItems = (
   level: number,
   ...items: Item[]
-): Item | undefined => {
-  if (length(items) < 3) return;
-  return createItem(
+): Item | undefined =>
+  setItemInFrame(createItem(
     oneOf(doTimes(items, ([, , , colorID]) => colorID)),
     oneOf(doTimes(items, ([, , typeID]) => typeID)),
     level,
     min(3, min(...doTimes(items, ([, , , , rank]) => rank)) + 1),
-  );
-};
+  ));
 
 // specifically used to set at item inside the equip menu frame
 export const setItemInFrame = (item: Item) => {
