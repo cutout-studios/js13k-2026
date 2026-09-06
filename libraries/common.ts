@@ -95,7 +95,7 @@ export const spliceTable = (
     },
   );
 
-export const interpolate = ([hi, lo]: Band, amount: number) =>
+export const interpolate = ([lo, hi]: Band, amount: number) =>
   lo + (hi - lo) * amount;
 
 export const spread = (

@@ -39,11 +39,15 @@ const starGeometry = createSphere(0.1),
     () => createObject(_, [0.1, starGeometry], starPaint),
   );
 
-scatterObjects([
-  spread(FIELD_X_BOUND * 60),
-  spread(FIELD_Y_BOUND * 60),
-  spread(10, -300),
-], ...backgroundStars);
+scatterObjects(
+  [
+    spread(FIELD_X_BOUND * 60),
+    spread(FIELD_Y_BOUND * 60),
+    spread(10, -300),
+  ],
+  false,
+  ...backgroundStars,
+);
 
 export const getSceneObjects = (
   [[playerShip], [activeEnemies, droppedItems]]: Game,

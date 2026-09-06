@@ -15,7 +15,7 @@
  */
 
 import { atan, PI, round, sqrt } from "~/alias";
-import { Band, doTimes, flat } from "~/common";
+import { Band, doTimes, flat, interpolate } from "~/common";
 
 import { rollBand } from "~/random";
 import { DIFFICULTY_HALFLIFE, WAVES_PER_LEVEL_BAND } from "./constants.ts";
@@ -26,13 +26,14 @@ export const levelCurve = (
 ) => (2 * atan(level / halflife)) / PI;
 
 export const levelRoll = (
-  [start, end]: Band,
+  band: Band,
   level: number,
   halflife = DIFFICULTY_HALFLIFE,
-) => {
-  const span = end - start, curve = levelCurve(level, halflife);
-  return rollBand([start + span * curve, start + span * sqrt(curve)]);
-};
+) =>
+  rollBand([
+    interpolate(band, levelCurve(level, halflife)),
+    interpolate(band, sqrt(levelCurve(level, halflife))),
+  ]);
 
 export const levelRollOverrides = (
   base: number[],

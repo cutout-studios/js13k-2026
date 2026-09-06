@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-import { doTimes } from "~/common";
-
 const keys = new Set<string>();
 onkeydown = ({ code }) => keys.add(code);
 onkeyup = ({ code }) => keys.delete(code);
 onblur = () => keys.clear();
 oncontextmenu = () => false;
 
-onpointerdown =
-  onpointerup =
-    ({ buttons }) =>
-      doTimes(
-        ["LClick", "RClick"],
-        (code: string, index: number) =>
-          keys[buttons & (1 << index) ? "add" : "delete"](code),
-      );
+onmousedown = ({ button }) => {
+  if (button === 0) keys.add("LClick");
+  if (button === 2) keys.add("RClick");
+};
+
+onmouseup = ({ button }) => {
+  if (button === 0) keys.delete("LClick");
+  if (button === 2) keys.delete("RClick");
+};
 
 export const bindButton = (
   code: string,

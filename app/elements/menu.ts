@@ -152,6 +152,7 @@ form.onsubmit = (event: SubmitEvent) => {
           (index) => camera([[]], renderTargets[index + INVENTORY_OFFSET]),
         );
         inventory.push([item]);
+        if (item[4] == 3) winCollection.add(item[3]);
       }
       break;
     }
@@ -165,24 +166,29 @@ menu.oncancel = preventDefault;
 menu.onmouseover = ({ target }) =>
   hoveredCellIndex = canvasCells.indexOf(target as HTMLCanvasElement);
 
-const CUSOR_SPACING = 32;
+const CURSOR_SPACING = 20;
 menu.onmouseenter = menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
-  let { width, height } = itemPopover.getBoundingClientRect();
+  const { width, height } = itemPopover.getBoundingClientRect();
 
-  width += CUSOR_SPACING;
-  height += CUSOR_SPACING;
+  let x = clientX + CURSOR_SPACING, y = clientY + CURSOR_SPACING;
+
+  if (x + width > innerWidth) x = clientX - width - CURSOR_SPACING;
+  if (y + height > innerHeight) y = clientY - height - CURSOR_SPACING;
 
   updateStyles(itemPopover, {
-    top: (clientY + height > innerHeight ? clientY - height : clientY) + "px",
-    left: (clientX + width > innerWidth ? clientX - width : clientX) + "px",
+    top: y + "px",
+    left: x + "px",
   });
 };
 
 export const resetMenu = () => {
   renderTargets ||= doTimes(canvasCells, createRenderTarget);
-  doTimes(winCollectionElements, (element, index) =>
-    winCollection.has(index) &&
-    (element.style.background = "#" + GameOptions[index][1].toString(16)));
+  doTimes(
+    winCollectionElements,
+    (element, index) =>
+      winCollection.has(index - 1) &&
+      (element.style.background = "#" + GameOptions[index][1].toString(16)),
+  );
   camera([[portrait(GameState[1][3].size)]], renderTargets[0]);
   doTimes(inventory, ([item, equipped], index) => {
     camera([[item[0]]], renderTargets[index + INVENTORY_OFFSET]);

@@ -137,6 +137,7 @@ export const getCollisionPairs = (
 
 export const scatterObjects = (
   boxDimensions: [Band, Band, Band],
+  cantOverlap: boolean,
   ...objects: XOObject[]
 ) => {
   const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
@@ -168,11 +169,8 @@ export const scatterObjects = (
 
     placedObjects.push(objectToPlace);
 
-    // TODO: expensive computationally, but cheap solution.
-    // => restore if needed for enemy ships: but I doubt it.
-
-    // if (length(getCollisionPairs(objects, placedObjects)[0])) {
-    //   objects.push(placedObjects.pop()!);
-    // }
+    if (cantOverlap && length(getCollisionPairs(objects, placedObjects)[0])) {
+      objects.push(placedObjects.pop()!);
+    }
   }
 };

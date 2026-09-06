@@ -58,15 +58,15 @@ _Currently have ~2kB of space remaining._
 ## Misc. Compression Ideas
 
 - Strip all guards/errors/debug checks (scatterObjects)
-- Inline one-off functions (~200 bytes)
-  - `createRoll()` – app/game/actions.ts (used 1x) – ~100-130 bytes
+- Inline one-off functions (~100 bytes)
   - `smoothstep()` – app/game/ship/spin.ts (used 1x) – ~20-30 bytes
   - `_resolveCollisions()` – app/game/update.ts (used 2x) – ~60-80 bytes
   - `_drawEnemyGroup()` – app/game/world/enemies.ts (used 1x) – ~50-70 bytes
   - `_itemRankRoll()` – app/game/player/items.ts (used 1x) – ~30-40 bytes
   - `_parseHex()` – libraries/3D/materials/paint.ts (used 1x) – ~35-45 bytes
   - `_getVertex()` – libraries/3D/geometry.ts (used 2x) – ~40-60 bytes
-  - `_getCanvasDepth()` – libraries/3D/webgpu/createRenderTarget.ts (used 1x) – ~60-80 bytes
+  - `_getCanvasDepth()` – libraries/3D/webgpu/createRenderTarget.ts (used 1x) –
+    ~60-80 bytes
 
 ### Considered, but likely not worth it (break in case of emergency)
 

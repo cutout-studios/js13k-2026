@@ -33,7 +33,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   1, // Damage Taken
   0, // Damage Taken From Gas
   15, // Gas
-  0.30, // Gas Cost
+  0.1, // Gas Cost
 
   // 6-10
   0, // Gas Eject Delay
@@ -141,7 +141,7 @@ export default [
       [[13, [7, 20]], [15, [4, 20]], [20, [3, 5]]],
       _,
       [[
-        [[3, [1, 5]], [5, [12, 21]], [6, [0.5, 4]]],
+        [[3, [1, 5]], [5, [12, 21]]],
         _,
         _,
         [[0.03, createSphere(0.03)]],

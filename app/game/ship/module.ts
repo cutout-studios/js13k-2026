@@ -28,11 +28,7 @@ import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat, spread } from "~/common";
 
 import { createPull } from "../actions.ts";
-import {
-  BASE_PROPERTIES,
-  ENEMY_Z_PLANE,
-  FIELD_X_BOUND,
-} from "../options/module.ts";
+import { BASE_PROPERTIES, FIELD_X_BOUND } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
@@ -43,7 +39,8 @@ import { createWeapon } from "./weapons.ts";
 const pullTracker = new WeakMap(),
   [pullLeft, pullRight] = doTimes(
     spread(FIELD_X_BOUND) as [lo: number, hi: number],
-    (bound) => createPull([bound, 0, ENEMY_Z_PLANE], 1, () => 1, 0.7),
+    (bound) =>
+      createPull([bound, 0, 0], 0.01, () => 1, [[0, 0.02], [0, 0.005], [0, 0]]),
   );
 
 export const createShip = (
@@ -71,7 +68,9 @@ export const createShip = (
 
         aimObject(ship[0], ship[1]);
 
-        doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
+        if (horizontalPosition < 1 && horizontalPosition > -1) {
+          doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
+        }
         updateBullets(ship, tickLength);
       }]] as ActionSchedule<Ship>,
       shipWeapons,

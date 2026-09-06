@@ -42,23 +42,29 @@ export const rollEnemies = (wave: number, level: number) =>
         ),
       ),
     ),
-    () => _drawEnemyGroup(drawCard(_enemyDeck) + 1, level),
+    (index: number) =>
+      _drawEnemyGroup(drawCard(_enemyDeck) + 1, level, index % 2 ? 1 : -1),
   );
 
 const _enemyDeck = createDeck(length(GameOptions.slice(1)));
 const _drawEnemyGroup = (
   optionsIndex: number,
   level: number,
+  side: number = -1,
 ): EnemyGroup => {
   const count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
     ships = doTimes(count, () => createShip(optionsIndex, level)),
     shipObjects = doTimes(ships, (ship) => ship[0]);
 
-  scatterObjects([
-    spread(FIELD_X_BOUND),
-    spread(FIELD_Y_BOUND),
-    spread(1, ENEMY_Z_PLANE),
-  ], ...shipObjects);
+  scatterObjects(
+    [
+      spread(FIELD_X_BOUND, 2 * side * FIELD_X_BOUND),
+      spread(FIELD_Y_BOUND),
+      spread(0.5, -ENEMY_Z_PLANE),
+    ],
+    true,
+    ...shipObjects,
+  );
 
   return [ships, shipObjects];
 };

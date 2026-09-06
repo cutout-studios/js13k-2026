@@ -21,12 +21,11 @@ import {
   scaleXYZ,
   XOObject,
   XYZ,
-  XYZ_LENGTH,
   Z_AXIS,
 } from "~/3D";
 import { TAU } from "~/alias";
 import { Action } from "~/clock";
-import { doTimes, repeat, spread } from "~/common";
+import { Band, doTimes, repeat } from "~/common";
 import { rollBand } from "~/random";
 
 export const orbit: Action<XOObject> = (object: XOObject, tickLength) =>
@@ -39,27 +38,20 @@ export const createPull = (
   direction: XYZ,
   speed: number,
   curve: (value: number) => number = () => 1,
-  jitter = 0,
-): Action<XOObject> => {
-  let jitterVector = doTimes(XYZ_LENGTH, () => rollBand(spread(jitter))) as XYZ;
-
-  return ((object: XOObject, _, elapsedTime: number, duration: number) => {
-    jitterVector = addXYZ(
-      jitterVector,
-      doTimes(XYZ_LENGTH, () => rollBand(spread(jitter))) as XYZ,
-    );
-
-    adjustObject(object, [
-      scaleXYZ(
-        addXYZ(
-          normalizeXYZ(direction),
-          jitterVector,
-        ),
-        speed * curve(elapsedTime / duration),
+  jitter: [Band, Band, Band] = [[0, 0], [0, 0], [0, 0]],
+): Action<
+  XOObject
+> => ((object: XOObject, _, elapsedTime: number, duration: number) => {
+  adjustObject(object, [
+    scaleXYZ(
+      addXYZ(
+        normalizeXYZ(direction),
+        doTimes(jitter, (band) => rollBand(band)) as XYZ,
       ),
-    ]);
-  });
-};
+      speed * curve(elapsedTime / duration),
+    ),
+  ]);
+});
 
 export const createRoll = (
   rotations: number,
