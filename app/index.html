@@ -1,5 +1,8 @@
 <meta charset=utf-8>
 <style>
+html {
+  background: #000;
+}
 html,
 body,
 body * {
@@ -10,7 +13,6 @@ body * {
   font-family: ui-monospace;
   font-size: 16px;
   color: #fff;
-  list-style-type: none;
 }
 body {
   position: relative;
@@ -48,6 +50,13 @@ input[type=number]:focus {
   color: #ff0;
   border-color: #ff0;
 }
+:disabled,
+:disabled:hover,
+:disabled:focus {
+  color: #999 !important;
+  border-color: #999 !important;
+  cursor: not-allowed;
+}
 .i {
   display: inline-flex;
   align-items: center;
@@ -72,7 +81,7 @@ input[type=number]:focus {
 }
 #f {
   grid-area: 1/1;
-  place-self: start start;
+  place-self: start;
   transform: rotate(-15deg);
   transform-origin: 100% 100%;
 }
@@ -95,7 +104,7 @@ input[type=number]:focus {
 }
 #w {
   grid-area: 2/3;
-  place-self: end end;
+  place-self: end;
   transform: rotate(-15deg);
   transform-origin: 0 0;
 }
@@ -248,14 +257,6 @@ input[type=number]:focus {
   margin-top: 1rem;
   grid-area: 5/1/6/3;
   place-self: center;
-}
-
-:disabled,
-:disabled:hover,
-:disabled:focus {
-  color: #999 !important;
-  border-color: #999 !important;
-  cursor: not-allowed;
 }
 </style>
 <canvas id=c></canvas>

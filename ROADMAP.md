@@ -58,16 +58,21 @@ _Currently have ~2kB of space remaining._
 ## Misc. Compression Ideas
 
 - Strip all guards/errors/debug checks (scatterObjects)
-- Inline one-off functions
+- Inline one-off functions (~200 bytes)
+  - `createRoll()` – app/game/actions.ts (used 1x) – ~100-130 bytes
+  - `smoothstep()` – app/game/ship/spin.ts (used 1x) – ~20-30 bytes
+  - `_resolveCollisions()` – app/game/update.ts (used 2x) – ~60-80 bytes
+  - `_drawEnemyGroup()` – app/game/world/enemies.ts (used 1x) – ~50-70 bytes
+  - `_itemRankRoll()` – app/game/player/items.ts (used 1x) – ~30-40 bytes
+  - `_parseHex()` – libraries/3D/materials/paint.ts (used 1x) – ~35-45 bytes
+  - `_getVertex()` – libraries/3D/geometry.ts (used 2x) – ~40-60 bytes
+  - `_getCanvasDepth()` – libraries/3D/webgpu/createRenderTarget.ts (used 1x) – ~60-80 bytes
+
+### Considered, but likely not worth it (break in case of emergency)
+
 - Remove destructuring in favor of repeated individual index access
-
-### The Big One
-
 - Quantize all values (out of 256)... then...
-- **Convert all game data (e.g. content definitions) into CSVs.** Then write a
-  small compiler that bitepacks each CSV by column into an ASCII string.
-
-### _Very_ small, likely net neutral
-
+  - **Convert all game data (e.g. content definitions) into CSVs.** Then write a
+    small compiler that bitepacks each CSV by column into an ASCII string.
 - Audio 'connect' and GPU tuple aliai
 - "winding" or "gray" iterator that goes xx, xy, yy, yx

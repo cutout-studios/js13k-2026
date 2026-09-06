@@ -32,15 +32,17 @@ import startingWorld from "./world/module.ts";
 
 export default [startingPlayer, startingWorld, false] as Game;
 
-const backgroundStars = doTimes(
-  200,
-  () => createObject(_, [0, createSphere(0.1)], paint(0xFFFFFF)),
-);
+const starGeometry = createSphere(0.1),
+  starPaint = paint(0xFFFFFF),
+  backgroundStars = doTimes(
+    200,
+    () => createObject(_, [0.1, starGeometry], starPaint),
+  );
 
 scatterObjects([
-  spread(FIELD_X_BOUND * 2),
-  spread(FIELD_Y_BOUND * 2),
-  spread(10, 300),
+  spread(FIELD_X_BOUND * 60),
+  spread(FIELD_Y_BOUND * 60),
+  spread(10, -300),
 ], ...backgroundStars);
 
 export const getSceneObjects = (

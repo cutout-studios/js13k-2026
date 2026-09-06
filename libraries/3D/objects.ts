@@ -136,7 +136,7 @@ export const getCollisionPairs = (
 };
 
 export const scatterObjects = (
-  boxDimensions: [bo: Band, yBand: Band, zBand: Band],
+  boxDimensions: [Band, Band, Band],
   ...objects: XOObject[]
 ) => {
   const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
@@ -154,7 +154,7 @@ export const scatterObjects = (
   if (
     // objects won't fit
     min(...scatterBoxDimensions) < maxObjectDiameter ||
-    scatterBoxVolume < totalObjectVolume * 2
+    scatterBoxVolume < totalObjectVolume * 3
   ) throw new Error("Objects won't fit!");
 
   const placedObjects: XOObject[] = [];
@@ -168,8 +168,11 @@ export const scatterObjects = (
 
     placedObjects.push(objectToPlace);
 
-    if (length(getCollisionPairs(objects, placedObjects))) {
-      objects.push(placedObjects.pop()!);
-    }
+    // TODO: expensive computationally, but cheap solution.
+    // => restore if needed for enemy ships: but I doubt it.
+
+    // if (length(getCollisionPairs(objects, placedObjects)[0])) {
+    //   objects.push(placedObjects.pop()!);
+    // }
   }
 };
