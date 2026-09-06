@@ -40,10 +40,11 @@ import { updateBullets } from "./bullets.ts";
 import { Resources, Ship, ShipSnapshot } from "./types.ts";
 import { createWeapon } from "./weapons.ts";
 
-const pullTracker = new WeakMap(), [pullLeft, pullRight] = doTimes(
-  spread(FIELD_X_BOUND) as [lo: number, hi: number],
-  (bound) => createPull([bound, 0, ENEMY_Z_PLANE], 1, () => 1, 0.7),
-);
+const pullTracker = new WeakMap(),
+  [pullLeft, pullRight] = doTimes(
+    spread(FIELD_X_BOUND) as [lo: number, hi: number],
+    (bound) => createPull([bound, 0, ENEMY_Z_PLANE], 1, () => 1, 0.7),
+  );
 
 export const createShip = (
   optionsIndex: number,
@@ -56,7 +57,10 @@ export const createShip = (
       shapes,
       shipOverrides,
       shipSchedule = [[(ship: Ship, tickLength: number, ...args) => {
-        const horizontalPosition = getPanFromCoordinates(ship[0][0], FIELD_X_BOUND);
+        const horizontalPosition = getPanFromCoordinates(
+          ship[0][0],
+          FIELD_X_BOUND,
+        );
         if (horizontalPosition == -1 || !pullTracker.has(ship)) {
           pullTracker.set(ship, pullRight);
         } else if (horizontalPosition == 1) {

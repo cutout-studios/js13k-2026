@@ -139,7 +139,6 @@ export const scatterObjects = (
   boxDimensions: [bo: Band, yBand: Band, zBand: Band],
   ...objects: XOObject[]
 ) => {
-  // TODO: strip this before release - infinite loop guard
   const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
     scatterBoxVolume = scatterBoxDimensions.reduce(
       (product, value) => product * value,

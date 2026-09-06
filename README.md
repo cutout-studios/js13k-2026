@@ -2,44 +2,52 @@
 
 ## MVP TODOs
 
-- Enemies come in from the side, rather than just showing up suddenly.
-
 - Debug loop: play with mouse at until death. Start over on each bug
   encountered.
 
-- Countered bullets... why they go the way they go?
+- Countered bullets... why they go the way they go? I suspect the "object
+  center" is maybe not the geometric center.
 
 ## Core Improvements
 
-- Implement gas canister eject delay (+ lil' animation?)
-- Implement KG flinch
-- Enemy bullets start slower, then accelerate
+### UX
+- Lots of distinct sound effects. Use RX + spectral analysis to reverse-engineer:
+  - Item pickup
+  - Menu sounds - select, confirm, success
+  - Different damage, weapons, "explosion" sounds for player
 
+### Gameplay
+- Enemy bullets start slower, then accelerate
 - Add color-specific enemy behaviors
   - swoop + fire: red + green
   - fade in/out: purple
     - switch to box collider? (for oblong bullets/ships)
   - spin + bomb: yellow
-
-- Key UI: lots of sound effects. Use RX + spectral analysis to reverse-engineer.
-
-- Improve the main shader to add dimensionality.
-- Add FX (chromatic abberation) to background stars, nebula.
-
+- Implement gas canister eject delay (+ lil' animation?)
+- Implement KG flinch
 - Continue to tune game settings.
+
+### Aesthetics
+- Improve the flat-looking shader. Add opacity for a faux glow effect.
+- Add FX (chromatic abberation) to background stars, nebula.
 
 ### Likely to land in a "director's cut", if any
 
+#### Gameplay
+- Boost mechanic? Skip waves you don't like at the expense of one gas canister.
 - Improve spin counter
-  - slightly more expressive (directional, over-spin animation)
   - map controls to virtual analog stick
   - implement spin handling
+
+#### Aesthetics
 - Add thrusters: main + direction-based, explosion effects
-- Boost mechanic?
+- More expressive spin-counter animation: directional, over-spin
 - Music
+
 
 ## Misc. Compression Ideas
 
+- Strip all guards/errors/debug checks (scatterObjects)
 - Inline one-off functions
 - Remove destructuring in favor of repeated individual index access
 

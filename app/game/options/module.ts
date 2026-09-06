@@ -236,7 +236,7 @@ export default [
         [0, 27, "x", [1.2, 3]], // Bullet Rate
         [0, 4, "+", [3, 15]], // Gas
         [2, 21, "+", [-0.02, -1]], // Aim Time
-        [3, 18, "x", [1.1, 2.5]], // Spin Handling - TODO
+        [3, 18, "x", [1.1, 2.5]], // Spin Handling
       ],
     ],
   ],
