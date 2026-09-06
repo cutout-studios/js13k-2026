@@ -23,20 +23,27 @@ import {
   XYZ,
 } from "~/3D";
 import { floor, length } from "~/alias";
+import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
-import { doTimes, flat, repeat } from "~/common";
+import { doTimes, flat, repeat, spread } from "~/common";
 
-import { BASE_PROPERTIES } from "../options/module.ts";
+import { createPull } from "../actions.ts";
+import {
+  BASE_PROPERTIES,
+  ENEMY_Z_PLANE,
+  FIELD_X_BOUND,
+} from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
+
 import { updateBullets } from "./bullets.ts";
 import { Resources, Ship, ShipSnapshot } from "./types.ts";
 import { createWeapon } from "./weapons.ts";
 
-export const advanceShip = (ship: Ship, tickLength: number) => {
-  aimObject(ship[0], ship[1]);
-  updateBullets(ship, tickLength);
-};
+const pullTracker = new WeakMap(), [pullLeft, pullRight] = doTimes(
+  spread(FIELD_X_BOUND) as [lo: number, hi: number],
+  (bound) => createPull([bound, 0, ENEMY_Z_PLANE], 1, () => 1, 0.7),
+);
 
 export const createShip = (
   optionsIndex: number,
@@ -48,9 +55,20 @@ export const createShip = (
     [
       shapes,
       shipOverrides,
-      shipSchedule = [[(ship: Ship, tickLength: number) => {
-        advanceShip(ship, tickLength);
+      shipSchedule = [[(ship: Ship, tickLength: number, ...args) => {
+        const horizontalPosition = getPanFromCoordinates(ship[0][0], FIELD_X_BOUND);
+        if (horizontalPosition == -1 || !pullTracker.has(ship)) {
+          pullTracker.set(ship, pullRight);
+        } else if (horizontalPosition == 1) {
+          pullTracker.set(ship, pullLeft);
+        }
+
+        pullTracker.get(ship)!(ship[0], tickLength, ...args);
+
+        aimObject(ship[0], ship[1]);
+
         doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
+        updateBullets(ship, tickLength);
       }]] as ActionSchedule<Ship>,
       shipWeapons,
     ],

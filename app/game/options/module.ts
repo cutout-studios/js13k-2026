@@ -98,7 +98,7 @@ export default [
         createPrism([0.03, 0.03, 0.04], 8),
       ]]],
       [],
-      [[NO_OP]],
+      [[NO_OP]], // clear default sequencer
       [[[], _, [0.34, 0, -0.26]], [[], _, [-0.34, 0, -0.26]]],
       [1, 1],
     ],

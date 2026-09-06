@@ -19,5 +19,5 @@ import { clamp, spread } from "~/common";
 
 export const getPanFromCoordinates = (
   coordinates: Float32Array,
-  yBound: number,
-) => clamp(readOrigin(coordinates)[1] / yBound, spread());
+  xBound: number,
+) => clamp(readOrigin(coordinates)[1] / xBound, spread());

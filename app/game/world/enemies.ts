@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-import { setOrigin, XYZ } from "~/3D";
+import { scatterObjects } from "~/3D";
 import { length, max, min, round } from "~/alias";
 import { doTimes, spread } from "~/common";
-import { rollBand } from "~/random";
 
 import { createDeck, drawCard } from "../decks.ts";
-import GameOptions, { ENEMY_Z_PLANE } from "../options/module.ts";
+import GameOptions, {
+  ENEMY_Z_PLANE,
+  FIELD_X_BOUND,
+  FIELD_Y_BOUND,
+} from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 
-import {
-  ENEMY_PLACEMENT_SPREAD,
-  GROUPS_PER_WAVE_BAND,
-  WAVE_CURVE,
-  WAVE_PACING,
-} from "./constants.ts";
+import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
 import { EnemyGroup } from "./types.ts";
 
@@ -52,27 +50,15 @@ const _drawEnemyGroup = (
   optionsIndex: number,
   level: number,
 ): EnemyGroup => {
-  const [, , [shapes, , , , countBand]] = GameOptions[optionsIndex];
-  const count = round(levelRoll(countBand, level)),
-    spawnQuadrantSize = min(
-      3.5,
-      (max(...doTimes(shapes, ([, [scale]]) => scale)) * count *
-        ENEMY_PLACEMENT_SPREAD) / 2,
-    );
+  const count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
+    ships = doTimes(count, () => createShip(optionsIndex, level)),
+    shipObjects = doTimes(ships, (ship) => ship[0]);
 
-  const ships = doTimes(count, () => {
-    const ship = createShip(optionsIndex, level);
+  scatterObjects([
+    spread(FIELD_X_BOUND),
+    spread(FIELD_Y_BOUND),
+    spread(1, ENEMY_Z_PLANE),
+  ], ...shipObjects);
 
-    ship[0][0] = setOrigin(ship[0][0], [
-      ...doTimes(2, () => rollBand(spread(spawnQuadrantSize))),
-      -ENEMY_Z_PLANE,
-    ] as XYZ);
-
-    return ship;
-  });
-
-  return [
-    ships,
-    doTimes(ships, ([object]) => object),
-  ];
+  return [ships, shipObjects];
 };

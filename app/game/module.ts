@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-import { XOObject } from "~/3D";
-import { doTimes, flat, flatDoTimes } from "~/common";
+import {
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  createSphere,
+  scatterObjects,
+  XOObject,
+} from "~/3D";
+import { _ } from "~/alias";
+import { doTimes, flat, flatDoTimes, spread } from "~/common";
 
+import { FIELD_X_BOUND, FIELD_Y_BOUND } from "./options/module.ts";
 import startingPlayer from "./player/module.ts";
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
@@ -24,11 +32,23 @@ import startingWorld from "./world/module.ts";
 
 export default [startingPlayer, startingWorld, false] as Game;
 
+const backgroundStars = doTimes(
+  200,
+  () => createObject(_, [0, createSphere(0.1)], paint(0xFFFFFF)),
+);
+
+scatterObjects([
+  spread(FIELD_X_BOUND * 2),
+  spread(FIELD_Y_BOUND * 2),
+  spread(10, 300),
+], ...backgroundStars);
+
 export const getSceneObjects = (
   [[playerShip], [activeEnemies, droppedItems]]: Game,
 ): XOObject[][] => {
   const [hull, ...rest] = getShipObjects(playerShip);
   return flat(
+    [backgroundStars],
     playerShip[4][4] && (Date.now() / 80 | 0) % 2 ? [] : [hull],
     rest,
     flatDoTimes(

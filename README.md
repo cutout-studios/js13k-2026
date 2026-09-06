@@ -2,14 +2,12 @@
 
 ## MVP TODOs
 
-- Break out "placement function"
 - Enemies come in from the side, rather than just showing up suddenly.
-- Place basic stars in the background, just so we don't have to look at nothing.
 
-- Finish win condition - tweak portrait, gets more saturated
+- Debug loop: play with mouse at until death. Start over on each bug
+  encountered.
+
 - Countered bullets... why they go the way they go?
-
-- Play with mouse at least once until death
 
 ## Core Improvements
 

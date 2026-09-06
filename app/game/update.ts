@@ -15,30 +15,17 @@
  */
 
 import {
-  addXYZ,
   aimObject,
   createObject,
   getCollisionPairs,
   readOrigin,
-  scaleXYZ,
   setOrigin,
-  subtractXYZ,
   XOObject,
-  XYZ,
-  XYZ_LENGTH,
 } from "~/3D";
-import { _, length, max, min, NO_OP, random } from "~/alias";
+import { _, length, max, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
 import { createActionSequencer } from "~/clock";
-import {
-  doTimes,
-  flat,
-  flatDoTimes,
-  repeat,
-  spliceTable,
-  spread,
-} from "~/common";
-import { rollBand } from "~/random";
+import { doTimes, flat, flatDoTimes, repeat, spliceTable } from "~/common";
 
 import { FIELD_X_BOUND } from "./options/module.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
@@ -81,25 +68,7 @@ export const updateGame = (
       playerResourceStatus,
       playerSnapshot,
     ] = playerShip,
-    enemyShips = flatDoTimes(activeEnemyGroups, ([ships]) => ships) as Ship[],
-    playerOrigin = readOrigin(playerShipObject[0]);
-
-  // TEMP: aim enemies at the player
-  const ENEMY_AIM_SPREAD = 1.5;
-  doTimes(enemyShips, (ship) => {
-    const target = addXYZ(
-      playerOrigin,
-      doTimes(
-        XYZ_LENGTH,
-        () => rollBand(spread(ENEMY_AIM_SPREAD)),
-      ) as XYZ,
-    );
-
-    ship[1] = addXYZ(
-      ship[1],
-      scaleXYZ(subtractXYZ(target, ship[1]), min(1, ship[5][21] * tickLength)),
-    );
-  });
+    enemyShips = flatDoTimes(activeEnemyGroups, ([ships]) => ships) as Ship[];
 
   // -- update everything in the game
   doTimes(flat([playerShip], enemyShips), (ship) => ship[3](ship, tickLength));

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { F32, hypot, length, max } from "~/alias";
-import { doTimes, flatDoTimes, repeat } from "~/common";
+import { F32, hypot, length, max, min, PI } from "~/alias";
+import { Band, doTimes, flatDoTimes, repeat } from "~/common";
+import { rollBand } from "~/random";
 import {
   COORDINATE_SIDE_LENGTH,
   RGBA_LENGTH,
@@ -132,4 +133,44 @@ export const getCollisionPairs = (
   });
 
   return [leftResult, rightResult];
+};
+
+export const scatterObjects = (
+  boxDimensions: [bo: Band, yBand: Band, zBand: Band],
+  ...objects: XOObject[]
+) => {
+  // TODO: strip this before release - infinite loop guard
+  const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
+    scatterBoxVolume = scatterBoxDimensions.reduce(
+      (product, value) => product * value,
+      1,
+    );
+
+  let maxObjectDiameter = -Infinity, totalObjectVolume = 0;
+  doTimes(objects, ([, [radius]]) => {
+    maxObjectDiameter = max(maxObjectDiameter, radius * 2);
+    totalObjectVolume += (4 * PI / 3) * radius ** 3;
+  });
+
+  if (
+    // objects won't fit
+    min(...scatterBoxDimensions) < maxObjectDiameter ||
+    scatterBoxVolume < totalObjectVolume * 2
+  ) throw new Error("Objects won't fit!");
+
+  const placedObjects: XOObject[] = [];
+  while (length(objects)) {
+    const objectToPlace = objects.pop()!;
+
+    setOrigin(
+      objectToPlace[0],
+      doTimes(boxDimensions, (band) => rollBand(band)) as XYZ,
+    );
+
+    placedObjects.push(objectToPlace);
+
+    if (length(getCollisionPairs(objects, placedObjects))) {
+      objects.push(placedObjects.pop()!);
+    }
+  }
 };

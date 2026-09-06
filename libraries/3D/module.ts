@@ -39,6 +39,7 @@ export {
   createObject,
   flattenObjects,
   getCollisionPairs,
+  scatterObjects,
 } from "./objects.ts";
 export { createCamera } from "./camera.ts";
 export {
