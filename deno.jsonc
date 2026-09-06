@@ -29,7 +29,7 @@
   },
   "tasks": {
     "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=app,libraries ./scripts/bundle.tsx",
-    "bundle:shader": "deno --allow-read --allow-write wgsl-plus --minify ./libraries/3D/materials/paint.wgsl -o ./libraries/3D/materials/paint.wgsl.ts",
+    "bundle:shaders": "deno --allow-read --allow-write wgsl-plus --minify ./libraries/3D/materials/paint.wgsl -o ./libraries/3D/materials/paint.wgsl.ts",
     "clean": "rm -rf .output",
     "setup": "bash ./scripts/setup.sh"
   }
