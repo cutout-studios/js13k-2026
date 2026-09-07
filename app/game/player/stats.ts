@@ -76,21 +76,23 @@ export const updatePlayerEquipmentSnapshots = (
   });
 
   doTimes(
-    equippedItems,
-    ([, , typeID, colorID]) => {
-      equippedItemObjects[typeID] = createObject(
-        ...GameOptions[0][2][0][typeID],
+    _weaponsSnapshots,
+    (snap, index) => {
+      const colorID = equippedItems[index]?.[3] ?? 0;
+
+      equippedItemObjects[index] = createObject(
+        ...GameOptions[0][2][0][index],
         paint(GameOptions[colorID][1]),
       );
 
-      if (typeID > 1) return;
+      console.log(GameOptions[0][2][3][index][2]);
 
-      ship[2][typeID] = createWeapon(
+      ship[2][index] = createWeapon(
         colorID,
-        typeID,
+        index,
         1,
-        GameOptions[0][2][3][typeID][2],
-        _weaponsSnapshots[typeID],
+        GameOptions[0][2][3][index][2],
+        snap
       );
     },
   );

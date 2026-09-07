@@ -66,7 +66,7 @@ export const updateHUD = (
     16,
     "0",
   );
-  waveCounter.innerText = `${stage}, ${wave} / ${lastWave}`;
+  waveCounter.innerText = `${stage}, ${wave - 1} / ${lastWave}`;
   rezUpdate(
     doTimes(_snapshot[0], (index: number) => [1, +(index >= rez)]),
   );

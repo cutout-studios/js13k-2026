@@ -65,7 +65,7 @@ export const checkLMouseButton = bindButton("LClick", () => {
 export const checkRMouseButton = bindButton(
   "RClick",
   _,
-  (t) => rightWeapon[3](playerShip, t),
+  (t) => rightWeapon[3](playerShip, t)
 );
 
 const strafe = [0, 0, 0, 0];

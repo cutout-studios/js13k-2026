@@ -261,10 +261,7 @@ export const updateGame = (
     progress[1] = 1;
     progress[0]++;
     progress[2] = getWavesInLevel(progress[0]);
-    playerResourceStatus[0] =
-      playerResourceStatus[1] =
-      playerResourceStatus[2] =
-        0;
+    doTimes(8, (index: number) => playerResourceStatus[index] = 0);
   } else { // stay in the current level
     progress[1]++;
   }

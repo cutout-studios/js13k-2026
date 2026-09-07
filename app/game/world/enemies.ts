@@ -58,9 +58,9 @@ const _drawEnemyGroup = (
 
   scatterObjects(
     [
-      spread(ENEMY_X_BOUND, 2 * side * ENEMY_X_BOUND),
+      spread(ENEMY_X_BOUND, 1.5 * side * ENEMY_X_BOUND),
       spread(ENEMY_Y_BOUND),
-      spread(0.5, -ENEMY_Z_PLANE),
+      spread(1, -ENEMY_Z_PLANE),
     ],
     true,
     ...shipObjects,
