@@ -27,6 +27,7 @@ _Currently have ~2kB of space remaining._
   - fade in/out: purple
     - switch to box collider? (for oblong bullets/ships)
   - spin + bomb: yellow
+- Player gets a small boost of speed when they spin.
 - Implement gas canister eject delay (+ lil' animation?)
 - Implement KG flinch
 - Continue to tune game settings.
