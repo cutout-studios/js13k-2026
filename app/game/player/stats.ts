@@ -22,69 +22,82 @@ import {
   XOObject,
 } from "~/3D";
 import { length, min, round } from "~/alias";
-import { doTimes, flatDoTimes, repeat } from "~/common";
+import { doTimes, flat, flatDoTimes, repeat } from "~/common";
 
 import GameOptions, { BASE_PROPERTIES } from "../options/module.ts";
-import { WeaponSnapshot } from "../ship/types.ts";
+import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
+import { createWeapon } from "../ship/weapons.ts";
 
 import { Item, Player } from "./types.ts";
 
 export const updatePlayerEquipmentSnapshots = (
   [ship, [rezLevels, gasLevels, _, hpLevels], inventory]: Player,
 ) => {
-  const [, , weapons, , , _snapshot] = ship;
-  const equipList: Item[] = flatDoTimes(
-    inventory,
-    ([item, equipped]) => equipped ? [item] : [],
-  );
+  const _shipSnapshot = flat(BASE_PROPERTIES) as ShipSnapshot,
+    equippedItems: Item[] = flatDoTimes(
+      inventory,
+      ([item, equipped]) => equipped ? [item] : [],
+    ),
+    _weaponsSnapshots = doTimes(
+      2,
+      (index: number) => {
+        const item = equippedItems[index];
 
-  _snapshot[13] = equipList.reduce(
-    (sum: number, item: Item) => sum + item[6],
-    4 - equipList.length, // +1kg for each empty equip slot
-  );
+        if (!item) return BASE_PROPERTIES.slice(22);
 
-  const _weaponsSnapshots: number[][] = [],
-    shipObjects: XOObject[] = doTimes(
+        const _snapshot = createWeapon(item[2], index)[4];
+
+        _snapshot[0] = item[7]![0];
+        _snapshot[5] = item[7]![1];
+        _snapshot[3] = item[7]![2];
+
+        return _snapshot;
+      },
+    ) as [WeaponSnapshot, WeaponSnapshot],
+    equippedItemObjects: XOObject[] = doTimes(
       GameOptions[0][2][0],
-      (itemGeo) => createObject(...itemGeo, paint(0xFFFFFF)),
+      (geometry) => createObject(...geometry, paint(0xFFFFFF)),
     );
 
-  doTimes(
-    equipList,
-    ([, , typeID, colorID, , , , [amount = 1, rate = 8, damage = 1] = []]) => {
-      shipObjects[typeID] = createObject(
-        ...GameOptions[0][2][0][typeID],
-        paint(GameOptions[colorID][1]),
-      );
-
-      if (typeID > 1) return;
-
-      weapons[typeID][4] = BASE_PROPERTIES.slice(22) as WeaponSnapshot;
-
-      weapons[typeID][4][0] = amount;
-      weapons[typeID][4][3] = damage;
-      weapons[typeID][4][5] = rate;
-
-      _weaponsSnapshots.push(weapons[typeID][4]);
-    },
+  _shipSnapshot[13] = equippedItems.reduce(
+    (sum: number, item: Item) => sum + item[6],
+    4 - equippedItems.length, // +1kg for each empty equip slot
   );
 
-  const newShipObject = flattenObjects(...shipObjects);
-
-  newShipObject[0] = localize(newShipObject[0], ship[0][0]);
-
-  ship[0] = newShipObject;
-
-  doTimes(equipList, ([, , , , , modifiers]) => {
+  doTimes(equippedItems, ([, , , , , modifiers]) => {
     doTimes(modifiers, ([statID, operator, value]) => {
       doTimes(
-        (statID > 21 ? _weaponsSnapshots : [_snapshot]) as number[][],
+        (statID > 21 ? _weaponsSnapshots : [_shipSnapshot]) as number[][],
         (target) => {
           operator == "x" ? target[statID] *= value : target[statID] += value;
         },
       );
     });
   });
+
+  doTimes(
+    equippedItems,
+    ([, , typeID, colorID]) => {
+      equippedItemObjects[typeID] = createObject(
+        ...GameOptions[0][2][0][typeID],
+        paint(GameOptions[colorID][1]),
+      );
+
+      if (typeID > 1) return;
+
+      ship[2][typeID] = createWeapon(
+        colorID,
+        typeID,
+        1,
+        GameOptions[0][2][3][typeID][2],
+        _weaponsSnapshots[typeID],
+      );
+    },
+  );
+
+  const newShipObject = flattenObjects(...equippedItemObjects);
+  newShipObject[0] = localize(newShipObject[0], ship[0][0]);
+  ship[0] = newShipObject;
 
   let levels = [rezLevels, gasLevels, hpLevels];
 
@@ -98,7 +111,7 @@ export const updatePlayerEquipmentSnapshots = (
       levels,
       (_, index) =>
         minLevelIndicies.includes(index) &&
-        (levels[index] *= _snapshot[12] / length(minLevelIndicies)),
+        (levels[index] *= _shipSnapshot[12] / length(minLevelIndicies)),
     );
   }
 
@@ -106,7 +119,7 @@ export const updatePlayerEquipmentSnapshots = (
     levels.indexOf(
       min(rezLevels, gasLevels, hpLevels),
     )
-  ] *= _snapshot[12];
+  ] *= _shipSnapshot[12];
 
   levels = [
     levels[0],
@@ -116,10 +129,10 @@ export const updatePlayerEquipmentSnapshots = (
 
   doTimes(
     [0, 4, 7, 8, 15, 16],
-    (id, index) => _snapshot[id] *= _snapshot[11] ** levels[index],
+    (id, index) => _shipSnapshot[id] *= _shipSnapshot[11] ** levels[index],
   );
 
   // these values need to be ints
-  _snapshot[0] = round(_snapshot[0]);
-  _snapshot[4] = round(_snapshot[4]);
+  _shipSnapshot[0] = round(_shipSnapshot[0]);
+  _shipSnapshot[4] = round(_shipSnapshot[4]);
 };

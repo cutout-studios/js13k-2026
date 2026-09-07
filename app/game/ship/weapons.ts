@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createObject, XOOrientation, XYZ, Z_AXIS } from "~/3D";
+import { createObject, XOOrientation, Z_AXIS } from "~/3D";
 import { NO_OP } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
@@ -30,28 +30,24 @@ export const createWeapon = (
   optionsIndex: number,
   weaponIndex = 0,
   level = 1,
-): Weapon => {
-  const [, , [, , , weapons]] = GameOptions[optionsIndex],
-    [overrides, schedule, mount = [0, 0, 0] as XYZ] = weapons[weaponIndex],
-    snapshot = levelRollOverrides(
-      BASE_PROPERTIES.slice(22),
-      overrides,
-      level,
-    ) as WeaponSnapshot;
-
-  return [
-    createObject([mount] as XOOrientation),
-    Z_AXIS,
-    [[], []],
-    createActionSequencer(
-      schedule ?? [
-        [fireWeapon(weaponIndex)],
-        [NO_OP, 1 / snapshot[5]],
-      ],
-    ),
-    snapshot,
-  ];
-};
+  mount = GameOptions[optionsIndex][2][3][0][2],
+  snapshot = levelRollOverrides(
+    BASE_PROPERTIES.slice(22),
+    GameOptions[optionsIndex][2][3][0][0],
+    level,
+  ) as WeaponSnapshot,
+): Weapon => [
+  createObject([mount] as XOOrientation),
+  Z_AXIS,
+  [[], []],
+  createActionSequencer(
+    GameOptions[optionsIndex][2][3][0][1] ?? [
+      [fireWeapon(weaponIndex)],
+      [NO_OP, 1 / snapshot[5]],
+    ],
+  ),
+  snapshot,
+];
 
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   const [, , weapons, , , shipSnapshot] = ship,

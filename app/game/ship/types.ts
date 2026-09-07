@@ -83,7 +83,7 @@ export type Weapon = [
 
 export type WeaponSnapshot = [
   // 0
-  bulletCount: number,
+  bulletAmount: number,
 
   // 1-5
   bulletCritChance: number,

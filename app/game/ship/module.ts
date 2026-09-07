@@ -31,7 +31,11 @@ import { doTimes, flat, repeat, spread } from "~/common";
 
 import { createPull } from "../actions.ts";
 import GameState from "../module.ts";
-import { BASE_PROPERTIES, ENEMY_X_BOUND, PLAYER_X_BOUND } from "../options/module.ts";
+import {
+  BASE_PROPERTIES,
+  ENEMY_X_BOUND,
+  PLAYER_X_BOUND,
+} from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 

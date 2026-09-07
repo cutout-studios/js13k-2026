@@ -24,7 +24,11 @@ import {
 import { _ } from "~/alias";
 import { doTimes, flat, flatDoTimes, spread } from "~/common";
 
-import { PLAYER_X_BOUND, PLAYER_Y_BOUND, PLAYER_Z_PLANE } from "./options/module.ts";
+import {
+  PLAYER_X_BOUND,
+  PLAYER_Y_BOUND,
+  PLAYER_Z_PLANE,
+} from "./options/module.ts";
 import startingPlayer from "./player/module.ts";
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
@@ -32,7 +36,8 @@ import startingWorld from "./world/module.ts";
 
 export default [startingPlayer, startingWorld, false] as Game;
 
-const STAR_Z_PLANE = 300, starGeometry = createSphere(0.1),
+const STAR_Z_PLANE = 300,
+  starGeometry = createSphere(0.1),
   starPaint = paint(0xFFFFFF),
   backgroundStars = doTimes(
     200,
