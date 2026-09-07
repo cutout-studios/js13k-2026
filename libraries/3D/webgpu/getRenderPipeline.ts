@@ -24,10 +24,11 @@ import {
 import { XOMaterial } from "../types.ts";
 import { device, format, pipelineLayout } from "./setupDevice.ts";
 
+let label = 0;
 export const getRenderPipeline = memo((
   [code]: XOMaterial,
 ): GPURenderPipeline => {
-  const module = device.createShaderModule({ code });
+  const module = device.createShaderModule({ code, label: label++ + "" });
 
   return device.createRenderPipeline({
     layout: pipelineLayout,

@@ -1,10 +1,8 @@
 # js13k 2026 - MISSION: DARKWHITE
 
 > [!WARNING]
-> This game is a **WIP submission** for [JS13k 2026](www.js13kgames.com). I
-> develop initially on `Safari` because I know if I can get something working
-> there, I can most likely get it working anywhere. So, the game currently only
-> works in `Safari`. Also, this is a `Mouse + Keyboard`-only game on `Desktop`.
+> This game is a **WIP submission** for [JS13k 2026](www.js13kgames.com). T
+> his is a `Mouse + Keyboard`-only game on `Desktop`.
 > Game controllers not yet supported, mobile would likely be too complex to
 > attempt with this ([necessary](./RETRO.md)) level of debt.
 

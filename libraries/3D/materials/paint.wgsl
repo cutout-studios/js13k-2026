@@ -1,6 +1,6 @@
 struct VertexOutput {
   @builtin(position) position: vec4f,
-  @location(0) triangleIndex: u32,
+  @location(0) @interpolate(flat) triangleIndex: u32,
 }
 
 @group(0) @binding(0)
