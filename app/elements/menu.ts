@@ -154,7 +154,7 @@ form.onsubmit = (event: SubmitEvent) => {
           (index) => camera([[]], renderTargets[index + INVENTORY_OFFSET]),
         );
         inventory.push([item]);
-        if (item[4] == 3) winCollection.add(item[3]);
+        if (item[4] == 2) winCollection.add(item[3]);
         updatePlayerEquipmentSnapshots(player);
       }
       break;

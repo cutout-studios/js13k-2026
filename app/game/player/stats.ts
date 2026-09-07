@@ -57,7 +57,7 @@ export const updatePlayerEquipmentSnapshots = (
     ) as [WeaponSnapshot, WeaponSnapshot],
     equippedItemObjects: XOObject[] = doTimes(
       GameOptions[0][2][0],
-      (geometry) => createObject(...geometry, paint(0xFFFFFF)),
+      (geometry) => createObject(...geometry, paint(0xFFFFFFFF)),
     );
 
   _shipSnapshot[13] = equippedItems.reduce(

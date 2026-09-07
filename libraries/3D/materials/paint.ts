@@ -26,10 +26,10 @@ export const create = (
 
 export const createPalette = (...paints: number[]) =>
   new F32(flatDoTimes(paints, (hex: number): RGBA => [
+    ((hex >> 24) & 255) / 255,
     ((hex >> 16) & 255) / 255,
     ((hex >> 8) & 255) / 255,
     (hex & 255) / 255,
-    1,
   ]));
 
 export const createWithPalette = (...paints: number[]) =>

@@ -2,23 +2,15 @@
 
 _Currently have ~2kB of space remaining._
 
-## Known Issues
-
-- Countered bullets... don't go exactly where I tell them to go? I suspect the
-  "object center" is maybe not the geometric center.
-
 ## Core Improvements
 
 ### UX
 
-- Enemy bullets start slower, then accelerate
-  - Other ways to further clarify the enemy/player plane(s) (?)
 - Lots of distinct sound effects. Use RX + spectral analysis to
   reverse-engineer:
   - Item pickup
   - Menu sounds - select, confirm, success
   - Different damage, weapons, "explosion" sounds for player
-- Short wiki explaining how the game works (external link to this repo)
 
 ### Gameplay
 
@@ -27,17 +19,21 @@ _Currently have ~2kB of space remaining._
   - fade in/out: purple
     - switch to box collider? (for oblong bullets/ships)
   - spin + bomb: yellow
-- Player gets a small boost of speed when they spin.
+
 - Implement gas canister eject delay (+ lil' animation?)
 - Implement KG flinch
+
 - Continue to tune game settings.
 
 ### Aesthetics
 
-- Improve the flat-looking shader. Add opacity support for a faux-glow effect.
 - Add FX (chromatic abberation) to background stars, nebula.
 
 ### Likely to land in a "director's cut", if any
+
+#### UX
+
+- Short wiki explaining how the game works (external link to this repo)
 
 #### Gameplay
 

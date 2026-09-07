@@ -18,8 +18,10 @@ import {
   aimObject,
   createObject,
   getCollisionPairs,
+  normalizeXYZ,
   readOrigin,
   setOrigin,
+  subtractXYZ,
 } from "~/3D";
 import { _, length, max, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
@@ -106,9 +108,12 @@ export const updateGame = (
               getPanFromCoordinates(playerShipObject[0], PLAYER_X_BOUND),
             );
             const bullet = bullets[0][bulletIndex],
-              newHeading = readOrigin(enemyShipObject[0]);
-            bullet[1] = newHeading;
-            aimObject(bullet[0], newHeading);
+              targetPosition = readOrigin(enemyShipObject[0]);
+
+            bullet[1] = normalizeXYZ(
+              subtractXYZ(targetPosition, readOrigin(bullet[0][0])),
+            );
+            aimObject(bullet[0], targetPosition);
 
             const fauxSnapshot = repeat(7, 0);
             fauxSnapshot[3] = baseDamage * playerSnapshot[17];
@@ -116,7 +121,7 @@ export const updateGame = (
             playerWeapons.push(
               [
                 createObject(),
-                newHeading,
+                [0, 0, 0],
                 [[bullet], [bullet[0]]],
                 createActionSequencer([[NO_OP]]),
                 fauxSnapshot,
@@ -147,7 +152,7 @@ export const updateGame = (
   doTimes(pickedUpIndicies, (itemIndex: number) => {
     setItemInFrame(droppedItems[itemIndex]);
     inventory.push([droppedItems[itemIndex]]);
-    if (droppedItems[itemIndex][4] == 3) {
+    if (droppedItems[itemIndex][4] == 2) {
       winCollection.add(droppedItems[itemIndex][3]);
     }
   });

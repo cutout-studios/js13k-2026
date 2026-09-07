@@ -38,7 +38,7 @@ const PORTRAIT_OFFSET = 81,
         return round(255 * color);
       };
 
-    return (f(0) << 16) | (f(8) << 8) | f(4);
+    return (f(0) << 24) | (f(8) << 16) | (f(4) << 8) | 255;
   };
 
 export const portrait = (progress: number) =>

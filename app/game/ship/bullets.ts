@@ -29,12 +29,17 @@ import {
   subtractXYZ,
   XOGeometry,
 } from "~/3D";
+import { min } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, spliceTable } from "~/common";
 import { rollSpread } from "~/random";
 
-import GameOptions, { BULLET_SPEED } from "../options/module.ts";
+import GameOptions, {
+  BULLET_ALPHA,
+  BULLET_SPEED,
+  ENEMY_BULLET_RAMP_TIME,
+} from "../options/module.ts";
 
 import { bulletSound } from "./sounds.ts";
 import { Bullet, Ship } from "./types.ts";
@@ -47,6 +52,10 @@ export const createBullet = (
       [shipCoordinates],
       ,
       weapons,
+      ,
+      ,
+      ,
+      shipOptionsIndex,
     ] = ship,
     [
       [mountCoordinates],
@@ -71,9 +80,33 @@ export const createBullet = (
             [
               bulletGeometry = [
                 0.06,
-                createPrism([0.008, 0.008, 0.18], 4),
+                createPrism([0.006, 0.006, 0.12], 12),
+                0.12,
               ] as XOGeometry,
-              bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
+              bulletSchedule = [[
+                (
+                  [[coordinates], heading, , lifetime]: Bullet,
+                  tickLength: number,
+                  elapsedTime: number,
+                ) => {
+                  if (elapsedTime >= lifetime) return true;
+
+                  setOrigin(
+                    coordinates,
+                    addXYZ(
+                      readOrigin(coordinates),
+                      scaleXYZ(
+                        heading,
+                        tickLength * BULLET_SPEED *
+                          (shipOptionsIndex
+                            ? (elapsedTime: number) =>
+                              min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
+                            : () => 1)(elapsedTime),
+                      ),
+                    ),
+                  );
+                },
+              ]] as ActionSchedule<Bullet>,
             ] = [],
           ],
         ],
@@ -100,7 +133,7 @@ export const createBullet = (
     bulletObject = createObject(
       [globalOrigin],
       bulletGeometry as XOGeometry,
-      paint(value),
+      paint((value & 0xFFFFFF00) | BULLET_ALPHA),
     );
 
   aimObject(bulletObject, addXYZ(globalOrigin, bulletHeading));
@@ -112,22 +145,6 @@ export const createBullet = (
     createActionSequencer(bulletSchedule as ActionSchedule<Bullet>),
     snapshot[4],
   ];
-};
-
-export const moveBullet = (
-  [[coordinates], heading, , lifetime]: Bullet,
-  tickLength: number,
-  elapsedTime: number,
-) => {
-  if (elapsedTime >= lifetime) return true;
-
-  setOrigin(
-    coordinates,
-    addXYZ(
-      readOrigin(coordinates),
-      scaleXYZ(heading, tickLength * BULLET_SPEED),
-    ),
-  );
 };
 
 export const updateBullets = (ship: Ship, tickLength: number) =>

@@ -19,6 +19,8 @@ import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
 export const BULLET_SPEED = 8;
+export const BULLET_ALPHA = 0xBF;
+export const ENEMY_BULLET_RAMP_TIME = 0.3;
 
 export const PLAYER_Z_PLANE = 5;
 export const PLAYER_X_BOUND = 2.8;
@@ -68,7 +70,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0.05, // Bullet Crit Chance
   2, // Bullet Crit Damage
   1, // Bullet Damage
-  1, // Bullet Lifetime
+  1.5, // Bullet Lifetime
   8, // Bullet Rate
 
   // WPN 6   (28)
@@ -84,7 +86,7 @@ const GREEN_PRONG = [
 export default [
   [ // player
     "WHITE",
-    0xFFFFFF,
+    0xFFFFFFFF,
     [
       [[[[0.2, 0, -0.22], [[0, 1, 0], 1.9]], [
         0.3,
@@ -111,7 +113,7 @@ export default [
   ],
   [ // purple: crit/glass
     "PURPLE",
-    0x8434D4,
+    0x8434D4FF,
     [
       [[[], [0.5, createPyramid([0.25, 0.25, 0.125])]]], // shape
       [[10, [0.06, 0.1]], [13, [0, 0]], [15, [6, 70]], [20, [0, 0]]], // base overrides
@@ -133,7 +135,7 @@ export default [
   ],
   [ // green: gas/speed
     "GREEN",
-    0xA0DD27,
+    0xA0DD27FF,
     [
       [
         [[], [0.2, createSphere(0.20, 24)]],
@@ -146,7 +148,7 @@ export default [
         [[3, [1, 5]], [5, [12, 21]]],
         _,
         _,
-        [[0.03, createSphere(0.03)]],
+        [[0.015, createSphere(0.015)]],
       ]],
       [4, 7],
     ],
@@ -163,7 +165,7 @@ export default [
   ],
   [ // blue: tank
     "BLUE",
-    0x29A9D4,
+    0x29A9D4FF,
     [
       [
         [[], [0.52, createSphere(0.52, 32)]],
@@ -192,7 +194,7 @@ export default [
   ],
   [ // pink: swarm/shotgun
     "PINK",
-    0xD4349F,
+    0xD4349FFF,
     [
       [[[], [0.4, createSphere(0.10, 20)]]],
       [[10, [0.05, 0.08]], [13, [1, 5]], [15, [1, 12]]],
@@ -218,7 +220,7 @@ export default [
   ],
   [ // red: gunner
     "RED",
-    0xEE3030,
+    0xEE3030FF,
     [
       [[[_, [Z_AXIS, -1.61]], [
         0.46,
@@ -228,6 +230,13 @@ export default [
       _,
       [[
         [[0, [2, 2]], [3, [2, 18]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
+        _,
+        _,
+        [[
+          0.06,
+          createPyramid([0.008, 0.008, 0.1], 4),
+          0.1,
+        ]],
       ]],
       [3, 6],
     ],
@@ -244,7 +253,7 @@ export default [
   ],
   [ // yellow: spread/spin
     "YELLOW",
-    0xF4AD32,
+    0xF4AD32FF,
     [
       [
         [[[0.19, -0.04, 0], [Z_AXIS, -0.3]], YELLOW_ARM],

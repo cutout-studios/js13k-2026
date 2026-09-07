@@ -17,7 +17,9 @@ fn main(@location(0) localPosition: vec3f, @builtin(vertex_index) vertexIndex: u
 @fragment
 fn paintedLambert(@builtin(position) fragment: vec4f, @location(0) @interpolate(flat) triangleIndex: u32) -> @location(0) vec4f {
   let slope = vec2f(dpdx(fragment.w), dpdy(fragment.w)) * (600 / fragment.w);
-  let brightness = inverseSqrt(dot(slope, slope) + 1);
+  let facing = inverseSqrt(dot(slope, slope) + 1);
+  let rim = pow(1 - facing, 2) * 0.8;
+  let paint = colorPalette[triangleIndex % arrayLength(&colorPalette)];
 
-  return vec4f(colorPalette[triangleIndex % arrayLength(&colorPalette)].rgb * brightness, 1);
+  return vec4f(paint.rgb * facing + rim, paint.a);
 }

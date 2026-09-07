@@ -38,7 +38,7 @@ export default [startingPlayer, startingWorld, false] as Game;
 
 const STAR_Z_PLANE = 300,
   starGeometry = createSphere(0.1),
-  starPaint = paint(0xFFFFFF),
+  starPaint = paint(0xFFFFFFFF),
   backgroundStars = doTimes(
     200,
     () => createObject(_, [0.1, starGeometry], starPaint),
