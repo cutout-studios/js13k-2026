@@ -30,7 +30,7 @@ import {
   subtractXYZ,
   XOGeometry,
 } from "~/3D";
-import { min } from "~/alias";
+import { max, min, round } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, spliceTable } from "~/common";
@@ -113,11 +113,14 @@ export const createBullet = (
     ] = GameOptions[optionsIndex],
     globalCoordinates = localize(mountCoordinates, shipCoordinates),
     globalOrigin = readOrigin(globalCoordinates),
+    effectiveSpread = round(snapshot[0]) > 1
+      ? max(snapshot[6], 0.01)
+      : snapshot[6],
     globalHeading = readOrigin(
       localize(
         setOrigin(createCoordinates(), [
-          -rollSpread(snapshot[6]),
-          -rollSpread(snapshot[6]),
+          -rollSpread(effectiveSpread),
+          -rollSpread(effectiveSpread),
           1,
         ]),
         globalCoordinates,

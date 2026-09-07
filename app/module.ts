@@ -22,7 +22,10 @@ import { menu } from "./elements/handles.ts";
 import { updateHUD } from "./elements/hud.ts";
 import { mainCanvas } from "./elements/mainCanvas.ts";
 import { updateMenu } from "./elements/menu.ts";
-import GameState, { getSceneObjects } from "./game/module.ts";
+import GameState, {
+  getSceneObjects,
+  updateBackgroundStars,
+} from "./game/module.ts";
 import {
   applyInputToPlayerShip,
   checkAKey,
@@ -53,6 +56,7 @@ const checkMouse = (tickLength: number) =>
 
 startClock((tickLength) => {
   checkKeyboard(tickLength);
+  updateBackgroundStars(tickLength);
 
   // game hasn't started yet
   if (!GameState[2]) {

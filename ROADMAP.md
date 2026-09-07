@@ -1,6 +1,6 @@
 # TODOs
 
-_Currently have ~2kB of space remaining._
+_Currently have ~1.5kB of space remaining._
 
 ## Core Improvements
 
@@ -9,6 +9,7 @@ _Currently have ~2kB of space remaining._
 - Lots of distinct sound effects. Use RX + spectral analysis to
   reverse-engineer:
   - Item pickup
+  - Level complete
   - Menu sounds - select, confirm, success
   - Different damage, weapons, "explosion" sounds for player
 
