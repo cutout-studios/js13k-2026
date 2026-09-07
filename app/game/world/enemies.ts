@@ -20,9 +20,9 @@ import { doTimes, spread } from "~/common";
 
 import { createDeck, drawCard } from "../decks.ts";
 import GameOptions, {
+  ENEMY_X_BOUND,
+  ENEMY_Y_BOUND,
   ENEMY_Z_PLANE,
-  FIELD_X_BOUND,
-  FIELD_Y_BOUND,
 } from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 
@@ -58,8 +58,8 @@ const _drawEnemyGroup = (
 
   scatterObjects(
     [
-      spread(FIELD_X_BOUND, 2 * side * FIELD_X_BOUND),
-      spread(FIELD_Y_BOUND),
+      spread(ENEMY_X_BOUND, 2 * side * ENEMY_X_BOUND),
+      spread(ENEMY_Y_BOUND),
       spread(0.5, -ENEMY_Z_PLANE),
     ],
     true,

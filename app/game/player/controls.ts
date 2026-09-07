@@ -31,7 +31,7 @@ import { menu, title } from "../../elements/handles.ts";
 import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
 import GameState from "../module.ts";
-import { FIELD_X_BOUND, FIELD_Y_BOUND } from "../options/module.ts";
+import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/module.ts";
 import { consumeFuel } from "../ship/module.ts";
 import { createSpinSequence } from "../ship/spin.ts";
 
@@ -123,8 +123,8 @@ export const applyInputToPlayerShip = (tickLength: number) => {
   // clamp ship to camera bounds
   const [x, y, z] = readOrigin(playerShipObject[0]);
   setOrigin(playerShipObject[0], [
-    clamp(x, spread(FIELD_X_BOUND)),
-    clamp(y, spread(FIELD_Y_BOUND)),
+    clamp(x, spread(PLAYER_X_BOUND)),
+    clamp(y, spread(PLAYER_Y_BOUND)),
     z,
   ]);
 };

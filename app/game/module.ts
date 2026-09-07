@@ -24,7 +24,7 @@ import {
 import { _ } from "~/alias";
 import { doTimes, flat, flatDoTimes, spread } from "~/common";
 
-import { FIELD_X_BOUND, FIELD_Y_BOUND } from "./options/module.ts";
+import { PLAYER_X_BOUND, PLAYER_Y_BOUND, PLAYER_Z_PLANE } from "./options/module.ts";
 import startingPlayer from "./player/module.ts";
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
@@ -32,18 +32,17 @@ import startingWorld from "./world/module.ts";
 
 export default [startingPlayer, startingWorld, false] as Game;
 
-const starGeometry = createSphere(0.1),
+const STAR_Z_PLANE = 300, starGeometry = createSphere(0.1),
   starPaint = paint(0xFFFFFF),
   backgroundStars = doTimes(
     200,
     () => createObject(_, [0.1, starGeometry], starPaint),
   );
-
 scatterObjects(
   [
-    spread(FIELD_X_BOUND * 60),
-    spread(FIELD_Y_BOUND * 60),
-    spread(10, -300),
+    spread(PLAYER_X_BOUND * (STAR_Z_PLANE / PLAYER_Z_PLANE)),
+    spread(PLAYER_Y_BOUND * (STAR_Z_PLANE / PLAYER_Z_PLANE)),
+    spread(10, -STAR_Z_PLANE),
   ],
   false,
   ...backgroundStars,

@@ -19,7 +19,7 @@ import {
   createPaintMaterialWithPalette as paint,
   XYZ,
 } from "~/3D";
-import { length, min, round } from "~/alias";
+import { length, max, min, round } from "~/alias";
 import { doTimes, flat, interpolate, repeat } from "~/common";
 
 const PORTRAIT_OFFSET = 81,
@@ -30,21 +30,19 @@ const PORTRAIT_OFFSET = 81,
   PORTRAIT_DATA =
     `CZ_Zd^CZd^ZaCZZaPkCZPkDeGJ-C0:DePkHq@lHqBwZad^PkGJCZ6NGJ6N-C@6C-T3@6T3R;R;T3u4R;u4r;;tBw6~Pkd^g_Pkg__gPk_gWjg_d^_ZGJUG_ZCZGJ_ZR;r;gRDeHq@l@lBw;tWj_g]rGJ0:@6gRg__ZUGgR_ZGJ@6R;R;gRUGGJR;UG0:$1$#$#C-@6~#y=u4~#u4T3$#@#C-0:$#@6~#~:y=@#~#T3C-@#T3`,
   _hsl = (h: number, s: number, l: number) => {
-    const a = s * min(l, 1 - l) / 100,
+    const a = (s / 100) * min(l / 100, 1 - l / 100),
       f = (n: number) => {
         const k = (n + h / 30) % 12,
-          color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+          color = l / 100 - a * max(min(k - 3, 9 - k, 1), -1);
 
         return round(255 * color);
       };
 
-    return (f(0) * 16 ** 4) + (f(8) * 16 ** 2) + f(0);
+    return (f(0) << 16) | (f(8) << 8) | f(4);
   };
 
-export const portrait = (progress: number) => {
-  const saturation = interpolate([0, 6], progress);
-
-  return createObject(
+export const portrait = (progress: number) =>
+  createObject(
     [PORTRAIT_POSITION],
     [
       0,
@@ -58,13 +56,12 @@ export const portrait = (progress: number) => {
     ],
     paint(
       ...flat(
-        repeat(5, _hsl(255, 20 * saturation, .8)),
-        repeat(9, _hsl(225, 32 * saturation, .93)),
-        repeat(8, _hsl(259, 16 * saturation, .63)),
-        repeat(9, _hsl(261, 12 * saturation, .45)),
-        repeat(4, _hsl(217, 25 * saturation, .65)),
-        repeat(5, _hsl(218, 17 * saturation, .43)),
+        repeat(5, _hsl(270, interpolate([0, 20], progress), 8)),
+        repeat(9, _hsl(220, interpolate([0, 60], progress), 93)),
+        repeat(8, _hsl(265, interpolate([0, 18], progress), 63)),
+        repeat(9, _hsl(270, interpolate([0, 12], progress), 45)),
+        repeat(4, _hsl(217, interpolate([0, 27], progress), 65)),
+        repeat(5, _hsl(217, interpolate([0, 18], progress), 43)),
       ),
     ),
   );
-};

@@ -27,7 +27,7 @@ import { getPanFromCoordinates } from "~/audio";
 import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, repeat, spliceTable } from "~/common";
 
-import { FIELD_X_BOUND } from "./options/module.ts";
+import { ENEMY_X_BOUND, PLAYER_X_BOUND } from "./options/module.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { updateBullets } from "./ship/bullets.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
@@ -87,7 +87,7 @@ export const updateGame = (
           doTimes(enemyShips, ([object]) => object),
           (_, shipIndex) => {
             hitSound(
-              getPanFromCoordinates(enemyShips[shipIndex][0][0], FIELD_X_BOUND),
+              getPanFromCoordinates(enemyShips[shipIndex][0][0], ENEMY_X_BOUND),
             );
             enemyShips[shipIndex][4][0] +=
               (random() < critChance
@@ -121,7 +121,7 @@ export const updateGame = (
 
               if (playerResourceStatus[6]) {
                 hitSound(
-                  getPanFromCoordinates(playerShipObject[0], FIELD_X_BOUND),
+                  getPanFromCoordinates(playerShipObject[0], PLAYER_X_BOUND),
                 );
                 const bullet = bullets[0][bulletIndex],
                   newHeading = readOrigin(enemyShipObject[0]);
@@ -179,7 +179,7 @@ export const updateGame = (
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[15]) return [];
-          explosionSound(getPanFromCoordinates(coordinates, FIELD_X_BOUND));
+          explosionSound(getPanFromCoordinates(coordinates, ENEMY_X_BOUND));
 
           if (random() < snapshot[10]) {
             // if (1) { // always drop, for debugging

@@ -186,10 +186,10 @@ export const resetMenu = () => {
   doTimes(
     winCollectionElements,
     (element, index) =>
-      winCollection.has(index - 1) &&
-      (element.style.background = "#" + GameOptions[index][1].toString(16)),
+      winCollection.has(index + 1) &&
+      (element.style.background = "#" + GameOptions[index + 1][1].toString(16)),
   );
-  camera([[portrait(GameState[1][3].size)]], renderTargets[0]);
+  camera([[portrait(GameState[1][3].size / 6)]], renderTargets[0]);
   doTimes(inventory, ([item, equipped], index) => {
     camera([[item[0]]], renderTargets[index + INVENTORY_OFFSET]);
     if (equipped) equippedItems[item[2]] = item;

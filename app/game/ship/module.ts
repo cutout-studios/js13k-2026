@@ -19,16 +19,19 @@ import {
   createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
+  readOrigin,
+  scaleXYZ,
+  subtractXYZ,
   XOObject,
   XYZ,
 } from "~/3D";
 import { floor, length } from "~/alias";
-import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat, spread } from "~/common";
 
 import { createPull } from "../actions.ts";
-import { BASE_PROPERTIES, FIELD_X_BOUND } from "../options/module.ts";
+import GameState from "../module.ts";
+import { BASE_PROPERTIES, ENEMY_X_BOUND, PLAYER_X_BOUND } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
@@ -38,7 +41,7 @@ import { createWeapon } from "./weapons.ts";
 
 const pullTracker = new WeakMap(),
   [pullLeft, pullRight] = doTimes(
-    spread(FIELD_X_BOUND) as [lo: number, hi: number],
+    spread(PLAYER_X_BOUND) as [lo: number, hi: number],
     (bound) =>
       createPull([bound, 0, 0], 0.01, () => 1, [[0, 0.02], [0, 0.005], [0, 0]]),
   );
@@ -54,21 +57,27 @@ export const createShip = (
       shapes,
       shipOverrides,
       shipSchedule = [[(ship: Ship, tickLength: number, ...args) => {
-        const horizontalPosition = getPanFromCoordinates(
-          ship[0][0],
-          FIELD_X_BOUND,
-        );
-        if (horizontalPosition == -1 || !pullTracker.has(ship)) {
-          pullTracker.set(ship, pullRight);
-        } else if (horizontalPosition == 1) {
+        const shipX = readOrigin(ship[0][0])[0];
+
+        if (shipX > ENEMY_X_BOUND || !pullTracker.has(ship)) {
           pullTracker.set(ship, pullLeft);
+        } else if (shipX < -ENEMY_X_BOUND) {
+          pullTracker.set(ship, pullRight);
         }
 
         pullTracker.get(ship)!(ship[0], tickLength, ...args);
 
+        const [x, y] = scaleXYZ(
+          subtractXYZ(readOrigin(GameState[0][0][0][0]), ship[1]),
+          tickLength / ship[5][21],
+        );
+
+        ship[1][0] += x;
+        ship[1][1] += y;
+
         aimObject(ship[0], ship[1]);
 
-        if (horizontalPosition < 1 && horizontalPosition > -1) {
+        if (shipX < ENEMY_X_BOUND && shipX > -ENEMY_X_BOUND) {
           doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
         }
         updateBullets(ship, tickLength);
