@@ -108,7 +108,7 @@ const EQUIP_OFFSET = 2,
       doTimes(
         _modifiers,
         ([id, type, value]) =>
-          `${type}${value.toFixed(1)} ${PROPERTY_NAMES[id]}`,
+          `${type}${value.toFixed(2)} ${PROPERTY_NAMES[id]}`,
       ),
       "<br>",
     );

@@ -47,11 +47,15 @@ export const createBullet = (
       [shipCoordinates],
       ,
       weapons,
-      ,
-      ,
-      ,
-      optionsIndex,
     ] = ship,
+    [
+      [mountCoordinates],
+      [headingX, headingY, headingZ],
+      ,
+      ,
+      snapshot,
+      optionsIndex,
+    ] = weapons[weaponIndex],
     [
       ,
       value,
@@ -60,21 +64,21 @@ export const createBullet = (
         ,
         ,
         [
-          ,
-          ,
-          ,
           [
-            bulletGeometry = [
-              0.06,
-              createPrism([0.008, 0.008, 0.18], 4),
-            ] as XOGeometry,
-            bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
-          ] = [],
+            ,
+            ,
+            ,
+            [
+              bulletGeometry = [
+                0.06,
+                createPrism([0.008, 0.008, 0.18], 4),
+              ] as XOGeometry,
+              bulletSchedule = [[moveBullet]] as ActionSchedule<Bullet>,
+            ] = [],
+          ],
         ],
       ],
     ] = GameOptions[optionsIndex],
-    [[mountCoordinates], [headingX, headingY, headingZ], , , snapshot] =
-      weapons[weaponIndex],
     globalCoordinates = localize(mountCoordinates, shipCoordinates),
     globalOrigin = readOrigin(globalCoordinates),
     globalHeading = readOrigin(

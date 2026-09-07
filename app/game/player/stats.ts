@@ -18,7 +18,6 @@ import {
   createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
-  localize,
   XOObject,
 } from "~/3D";
 import { length, min, round } from "~/alias";
@@ -45,7 +44,7 @@ export const updatePlayerEquipmentSnapshots = (
 
         if (!item) return BASE_PROPERTIES.slice(22);
 
-        const _snapshot = createWeapon(item[2], index)[4];
+        const _snapshot = createWeapon(item[3], index)[4];
 
         _snapshot[0] = item[7]![0];
         _snapshot[5] = item[7]![1];
@@ -66,10 +65,15 @@ export const updatePlayerEquipmentSnapshots = (
 
   doTimes(equippedItems, ([, , , , , modifiers]) => {
     doTimes(modifiers, ([statID, operator, value]) => {
+      const isWeaponStat = statID > 21,
+        targetID = isWeaponStat ? statID - 22 : statID;
+
       doTimes(
-        (statID > 21 ? _weaponsSnapshots : [_shipSnapshot]) as number[][],
+        (isWeaponStat ? _weaponsSnapshots : [_shipSnapshot]) as number[][],
         (target) => {
-          operator == "x" ? target[statID] *= value : target[statID] += value;
+          operator == "x"
+            ? target[targetID] *= value
+            : target[targetID] += value;
         },
       );
     });
@@ -85,8 +89,6 @@ export const updatePlayerEquipmentSnapshots = (
         paint(GameOptions[colorID][1]),
       );
 
-      console.log(GameOptions[0][2][3][index][2]);
-
       ship[2][index] = createWeapon(
         colorID,
         index,
@@ -97,9 +99,9 @@ export const updatePlayerEquipmentSnapshots = (
     },
   );
 
-  const newShipObject = flattenObjects(...equippedItemObjects);
-  newShipObject[0] = localize(newShipObject[0], ship[0][0]);
-  ship[0] = newShipObject;
+  const [, newGeometry, newMaterial] = flattenObjects(...equippedItemObjects);
+  ship[0][1] = newGeometry;
+  ship[0][2] = newMaterial;
 
   let levels = [rezLevels, gasLevels, hpLevels];
 

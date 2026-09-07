@@ -79,6 +79,7 @@ export type Weapon = [
   bullets: BulletGroup,
   sequence: ActionSequencer<Ship>,
   _snapshot: WeaponSnapshot,
+  _optionsIndex: number,
 ];
 
 export type WeaponSnapshot = [

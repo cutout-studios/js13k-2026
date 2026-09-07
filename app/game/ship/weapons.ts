@@ -47,6 +47,7 @@ export const createWeapon = (
     ],
   ),
   snapshot,
+  optionsIndex,
 ];
 
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
