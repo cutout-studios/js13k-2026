@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { F32, hypot, length, max, min, PI } from "~/alias";
-import { Band, doTimes, flatDoTimes, repeat } from "~/common";
+import { abs, F32, hypot, length, max /* min, PI */ } from "~/alias";
+import { Band, clamp, doTimes, flatDoTimes, repeat } from "~/common";
 import { rollBand } from "~/random";
 import {
   COORDINATE_SIDE_LENGTH,
@@ -29,6 +29,7 @@ import {
   createRotation,
   localize,
   POSITION_INDEX,
+  readHeading,
   readOrigin,
   setOrigin,
 } from "./coordinates.ts";
@@ -40,7 +41,7 @@ import type {
   XOOrientation,
   XYZ,
 } from "./types.ts";
-import { cross, normalize, subtract } from "./xyz.ts";
+import { add, cross, dot, normalize, scale, subtract } from "./xyz.ts";
 
 export const createObject = (
   [position, rotation]: XOOrientation = [],
@@ -65,9 +66,9 @@ export const adjustObject = (
   if (rotation) object[0] = localize(createRotation(rotation), object[0]);
 };
 
-export const aimObject = (object: XOObject, heading: XYZ) => {
+export const aimObject = (object: XOObject, aim: XYZ) => {
   const origin = readOrigin(object[0]),
-    zAxis = normalize(subtract(heading, origin)),
+    zAxis = normalize(subtract(aim, origin)),
     right = normalize(cross(Y_AXIS, zAxis));
   object[0] = createCoordinates(right, cross(zAxis, right), zAxis, origin);
 };
@@ -97,6 +98,15 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
         0,
       ),
       vertices as XYZ[],
+      objects.reduce(
+        (halfLength, [coordinates, [, , partHalfLength = 0]]) =>
+          max(
+            halfLength,
+            abs(readOrigin(coordinates)[2]) +
+              partHalfLength * abs(readHeading(coordinates)[2]),
+          ),
+        0,
+      ),
     ],
     createPaintMaterial(
       new F32(
@@ -113,18 +123,85 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
   ];
 };
 
+const _getCapsule = ([coordinates, [radius, , halfLength = 0]]: XOObject) => {
+  const origin = readOrigin(coordinates),
+    offset = scale(readHeading(coordinates), halfLength);
+
+  return [radius, subtract(origin, offset), add(origin, offset)] as const;
+};
+
+// TODO: this may be able to be further compacted.
+// closest distance between two line segments (Ericson, "Real-Time Collision
+// Detection" 5.1.9). leftT/rightT land in [0, 1] and mark where along each
+// segment the two segments come nearest to each other.
+const _segmentDistance = (
+  leftStart: XYZ,
+  leftEnd: XYZ,
+  rightStart: XYZ,
+  rightEnd: XYZ,
+) => {
+  const leftDirection = subtract(leftEnd, leftStart),
+    rightDirection = subtract(rightEnd, rightStart),
+    startOffset = subtract(leftStart, rightStart),
+    leftLengthSquared = dot(leftDirection, leftDirection),
+    rightLengthSquared = dot(rightDirection, rightDirection),
+    rightDotOffset = dot(rightDirection, startOffset),
+    leftDotOffset = dot(leftDirection, startOffset);
+
+  let leftT = 0, rightT = 0;
+  if (leftLengthSquared || rightLengthSquared) {
+    if (!leftLengthSquared) {
+      // left is just a point; slide along the right segment only
+      rightT = clamp(rightDotOffset / rightLengthSquared);
+    } else if (!rightLengthSquared) {
+      // right is just a point; slide along the left segment only
+      leftT = clamp(-leftDotOffset / leftLengthSquared);
+    } else {
+      const crossTerm = dot(leftDirection, rightDirection),
+        denominator = leftLengthSquared * rightLengthSquared -
+          crossTerm * crossTerm;
+
+      leftT = denominator
+        ? clamp(
+          (crossTerm * rightDotOffset - leftDotOffset * rightLengthSquared) /
+            denominator,
+        )
+        : 0;
+      rightT = (crossTerm * leftT + rightDotOffset) / rightLengthSquared;
+
+      if (rightT < 0) {
+        rightT = 0;
+        leftT = clamp(-leftDotOffset / leftLengthSquared);
+      } else if (rightT > 1) {
+        rightT = 1;
+        leftT = clamp((crossTerm - leftDotOffset) / leftLengthSquared);
+      }
+    }
+  }
+
+  return hypot(
+    ...subtract(
+      add(leftStart, scale(leftDirection, leftT)),
+      add(rightStart, scale(rightDirection, rightT)),
+    ),
+  );
+};
+
 export const getCollisionPairs = (
   leftGroup: XOObject[],
   rightGroup: XOObject[],
 ) => {
-  const leftResult = [] as number[], rightResult = [] as number[];
+  const leftResult = [] as number[],
+    rightResult = [] as number[],
+    leftCapsules = leftGroup.map(_getCapsule),
+    rightCapsules = rightGroup.map(_getCapsule);
 
-  doTimes(leftGroup, ([leftCoords, [leftRadius]]: XOObject, leftIndex) => {
+  doTimes(leftCapsules, ([leftRadius, leftStart, leftEnd], leftIndex) => {
     doTimes(
-      rightGroup,
-      ([rightCoords, [rightRadius]]: XOObject, rightIndex) => {
+      rightCapsules,
+      ([rightRadius, rightStart, rightEnd], rightIndex) => {
         if (
-          hypot(...subtract(readOrigin(leftCoords), readOrigin(rightCoords))) >=
+          _segmentDistance(leftStart, leftEnd, rightStart, rightEnd) >=
             leftRadius + rightRadius
         ) return;
         leftResult.push(leftIndex), rightResult.push(rightIndex);
@@ -140,8 +217,8 @@ export const scatterObjects = (
   cantOverlap: boolean,
   ...objects: XOObject[]
 ) => {
-  // guard against objects that can't fit in the scatter box - stripped for
-  // size once game balance is tuned; uncomment to debug scatter configs
+  // guard against objects that can't fit in the scatter box -
+  // uncomment to debug scatter configs
   // const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
   //   scatterBoxVolume = scatterBoxDimensions.reduce(
   //     (product, value) => product * value,

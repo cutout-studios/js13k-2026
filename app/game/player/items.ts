@@ -75,16 +75,16 @@ export const createItem = (
   // leave their drop uncatchable - steer it back toward the field as it drifts in.
   // the Y correction is jittered, with the jitter's size fixed from how far outside
   // the field the item started, so a wilder drop wobbles more on its way back
-  const homeToField = (object: XOObject) => {
+  const homeToField = (object: XOObject, tickLength: number) => {
     const [x, y] = readOrigin(object[0]),
       yOvershoot = y - clamp(y, spread(PLAYER_Y_BOUND));
 
     yJitterAmount ??= abs(yOvershoot);
 
     adjustObject(object, [[
-      (clamp(x, spread(PLAYER_X_BOUND)) - x) * FIELD_HOME_RATE,
-      -yOvershoot * FIELD_HOME_RATE +
-      rollSpread(yJitterAmount * FIELD_HOME_RATE),
+      (clamp(x, spread(PLAYER_X_BOUND)) - x) * FIELD_HOME_RATE * tickLength,
+      (-yOvershoot * FIELD_HOME_RATE +
+        rollSpread(yJitterAmount * FIELD_HOME_RATE)) * tickLength,
       0,
     ]]);
   };
@@ -101,8 +101,10 @@ export const createItem = (
       paint(value),
     ),
     createActionSequencer([[
-      ([object], ...args) => (
-        pull(object, ...args), homeToField(object), orbit(object, ...args)
+      ([object], tickLength: number, ...args) => (
+        pull(object, tickLength, ...args),
+          homeToField(object, tickLength),
+          orbit(object, tickLength, ...args)
       ),
     ]]),
     typeID,

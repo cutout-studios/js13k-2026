@@ -19,6 +19,7 @@ import {
   createPaintMaterialWithPalette as paint,
   createSphere,
   scatterObjects,
+  XOGeometry,
   XOObject,
 } from "~/3D";
 import { _ } from "~/alias";
@@ -41,7 +42,7 @@ const STAR_Z_PLANE = 300,
   starPaint = paint(0xFFFFFFFF),
   backgroundStars = doTimes(
     200,
-    () => createObject(_, [0.1, starGeometry], starPaint),
+    () => createObject(_, flat([0.1], starGeometry) as XOGeometry, starPaint),
   );
 scatterObjects(
   [

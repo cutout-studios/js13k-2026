@@ -46,7 +46,7 @@ export const updatePlayerEquipmentSnapshots = (
 
         if (!item) return BASE_PROPERTIES.slice(22);
 
-        const _snapshot = createWeapon(item[3], index)[4];
+        const _snapshot = createWeapon(item[3], index)[3];
 
         _snapshot[0] = item[7]![0];
         _snapshot[5] = item[7]![1];

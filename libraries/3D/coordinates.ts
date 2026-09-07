@@ -59,10 +59,16 @@ export const localize = (fromChild: Float32Array, toParent: Float32Array) => {
 };
 
 export const POSITION_INDEX = 12;
+const HEADING_INDEX = 8;
 
 export const readOrigin = (coordinates: Float32Array): XYZ =>
   flat(
     coordinates.subarray(POSITION_INDEX, POSITION_INDEX + XYZ_LENGTH),
+  ) as XYZ;
+
+export const readHeading = (coordinates: Float32Array): XYZ =>
+  flat(
+    coordinates.subarray(HEADING_INDEX, HEADING_INDEX + XYZ_LENGTH),
   ) as XYZ;
 
 export const setOrigin = (

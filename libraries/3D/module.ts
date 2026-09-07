@@ -46,6 +46,7 @@ export {
   createCoordinates,
   createRotation,
   localize,
+  readHeading,
   readOrigin,
   setOrigin,
 } from "./coordinates.ts";

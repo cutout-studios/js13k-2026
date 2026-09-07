@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createPrism, createPyramid, createSphere, X_AXIS, Z_AXIS } from "~/3D";
+import {
+  createPrism,
+  createPyramid,
+  createSphere,
+  X_AXIS,
+  XOGeometry,
+  XYZ,
+  Z_AXIS,
+} from "~/3D";
 import { _, NO_OP } from "~/alias";
+import { flat } from "~/common";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
+
+const _geometry = (radius: number, mesh: [XYZ[], number]): XOGeometry =>
+  flat([radius], mesh) as XOGeometry;
 
 export const BULLET_SPEED = 8;
 export const BULLET_ALPHA = 0xBF;
@@ -77,30 +89,39 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0, // Bullet Spread
 ];
 
-const GREEN_PRONG = [
-    0.12,
-    createPyramid([0.065, 0.065, 0.095], 12),
-  ],
-  YELLOW_ARM = [0.32, createPrism([0.2, 0.012, 0.15])];
+const GREEN_PRONG = _geometry(0.12, createPyramid([0.065, 0.065, 0.095], 12)),
+  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15]));
 
 export default [
   [ // player
     "WHITE",
     0xFFFFFFFF,
     [
-      [[[[0.2, 0, -0.22], [[0, 1, 0], 1.9]], [
-        0.3,
-        createPyramid([0.1, 0.02, 0.2], 4),
-      ]], [[[-0.2, 0, -0.22], [[0, 1, 0], -1.9]], [
-        0.3,
-        createPyramid([0.1, 0.02, 0.2], 4),
-      ]], [[_, [Z_AXIS, -1.57]], [
-        0.44,
-        createPyramid([0.05, 0.15, 0.27], 6),
-      ]], [[[0, 0, -0.28], _], [
-        0.17,
-        createPrism([0.03, 0.03, 0.04], 8),
-      ]]],
+      [[
+        [[0.2, 0, -0.22], [[0, 1, 0], 1.9]],
+        _geometry(
+          0.3,
+          createPyramid([0.1, 0.02, 0.2], 4),
+        ),
+      ], [
+        [[-0.2, 0, -0.22], [[0, 1, 0], -1.9]],
+        _geometry(
+          0.3,
+          createPyramid([0.1, 0.02, 0.2], 4),
+        ),
+      ], [
+        [_, [Z_AXIS, -1.57]],
+        _geometry(
+          0.44,
+          createPyramid([0.05, 0.15, 0.27], 6),
+        ),
+      ], [
+        [[0, 0, -0.28], _],
+        _geometry(
+          0.17,
+          createPrism([0.03, 0.03, 0.04], 8),
+        ),
+      ]],
       [],
       [[NO_OP]], // clear default sequencer
       [[[], _, [0.3, 0, -0.26]], [[], _, [-0.3, 0, -0.26]]],
@@ -115,7 +136,7 @@ export default [
     "PURPLE",
     0x8434D4FF,
     [
-      [[[], [0.5, createPyramid([0.25, 0.25, 0.125])]]], // shape
+      [[[], _geometry(0.5, createPyramid([0.25, 0.25, 0.125]))]], // shape
       [[10, [0.06, 0.1]], [13, [0, 0]], [15, [6, 70]], [20, [0, 0]]], // base overrides
       _,
       [[
@@ -138,7 +159,7 @@ export default [
     0xA0DD27FF,
     [
       [
-        [[], [0.2, createSphere(0.20, 24)]],
+        [[], _geometry(0.2, createSphere(0.20, 24))],
         [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
         [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
       ],
@@ -148,7 +169,7 @@ export default [
         [[3, [1, 5]], [5, [12, 21]]],
         _,
         _,
-        [[0.015, createSphere(0.015)]],
+        [_geometry(0.015, createSphere(0.015))],
       ]],
       [4, 7],
     ],
@@ -168,11 +189,14 @@ export default [
     0x29A9D4FF,
     [
       [
-        [[], [0.52, createSphere(0.52, 32)]],
-        [[[0, -0.30, 0.42], [X_AXIS, 0.57]], [
-          0.1,
-          createPrism([0.09, 0.09, 0.03], 16),
-        ]],
+        [[], _geometry(0.52, createSphere(0.52, 32))],
+        [
+          [[0, -0.30, 0.42], [X_AXIS, 0.57]],
+          _geometry(
+            0.1,
+            createPrism([0.09, 0.09, 0.03], 16),
+          ),
+        ],
       ],
       [[10, [0.15, 0.23]], [13, [35, 400]], [15, [24, 270]], [20, [0.3, 0.6]]],
       _,
@@ -196,14 +220,14 @@ export default [
     "PINK",
     0xD4349FFF,
     [
-      [[[], [0.4, createSphere(0.10, 20)]]],
+      [[[], _geometry(0.4, createSphere(0.10, 20))]],
       [[10, [0.05, 0.08]], [13, [1, 5]], [15, [1, 12]]],
       _,
       [[
         [[3, [1, 8]], [5, [0.7, 1.5]], [6, [0.05, 0.12]]],
         _,
         _,
-        [[0.03, createSphere(0.03)]],
+        [_geometry(0.03, createSphere(0.03))],
       ]],
       [9, 16],
     ],
@@ -222,21 +246,20 @@ export default [
     "RED",
     0xEE3030FF,
     [
-      [[[_, [Z_AXIS, -1.61]], [
-        0.46,
-        createPyramid([0.11, 0.09, 0.4], 3),
-      ]]],
+      [[
+        [_, [Z_AXIS, -1.61]],
+        _geometry(
+          0.46,
+          createPyramid([0.11, 0.09, 0.4], 3),
+        ),
+      ]],
       [[10, [0.08, 0.11]], [13, [6, 28]], [15, [3, 108]], [20, [2.4, 3.5]]],
       _,
       [[
         [[0, [2, 2]], [3, [2, 18]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
         _,
         _,
-        [[
-          0.06,
-          createPyramid([0.008, 0.008, 0.1], 4),
-          0.1,
-        ]],
+        [_geometry(0.06, createPyramid([0.008, 0.008, 0.1], 4))],
       ]],
       [3, 6],
     ],
@@ -267,7 +290,7 @@ export default [
         [[3, [5, 16]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
         _,
         _,
-        [[0.1, createSphere(0.1)]],
+        [_geometry(0.1, createSphere(0.1))],
       ]],
       [2, 4],
     ],

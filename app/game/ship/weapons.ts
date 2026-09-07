@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createObject, XOOrientation, Z_AXIS } from "~/3D";
+import { createObject, XOOrientation } from "~/3D";
 import { NO_OP } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
@@ -39,7 +39,6 @@ export const createWeapon = (
   ) as WeaponSnapshot,
 ): Weapon => [
   createObject([mount] as XOOrientation),
-  Z_AXIS,
   [[], []],
   createActionSequencer(
     GameOptions[optionsIndex][2][3][0][1] ?? [
@@ -53,7 +52,7 @@ export const createWeapon = (
 
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   const [, , weapons, , , shipSnapshot] = ship,
-    [, , [bullets, instanceGroup], , snapshot] = weapons[weaponIndex];
+    [, [bullets, instanceGroup], , snapshot] = weapons[weaponIndex];
 
   if (
     !ship[6] && !consumeFuel(shipSnapshot[13] * shipSnapshot[5], ship)

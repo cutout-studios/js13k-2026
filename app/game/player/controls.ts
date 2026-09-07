@@ -43,7 +43,7 @@ import {
 } from "./constants.ts";
 
 const [[playerShip]] = GameState,
-  [playerShipObject, heading, [leftWeapon, rightWeapon], , , snapshot] =
+  [playerShipObject, playerAim, [leftWeapon, rightWeapon], , , snapshot] =
     playerShip,
   [wEnvelope, aEnvelope, sEnvelope, dEnvelope] = doTimes(
     4,
@@ -57,12 +57,12 @@ const [[playerShip]] = GameState,
 export const checkMousePointer = bindPointer(
   (tickLength: number, x: number, y: number) => {
     [x, y] = scaleXYZ(
-      subtractXYZ(mapClientXYToZPlane(x, y), heading),
+      subtractXYZ(mapClientXYToZPlane(x, y), playerAim),
       tickLength / snapshot[21],
     );
 
-    heading[0] += x;
-    heading[1] += y;
+    playerAim[0] += x;
+    playerAim[1] += y;
   },
 );
 
@@ -74,13 +74,13 @@ const startGame = () => {
 export const checkLMouseButton = bindButton(
   "LClick",
   startGame,
-  (t) => leftWeapon[3](playerShip, t),
+  (t) => leftWeapon[2](playerShip, t),
 );
 
 export const checkRMouseButton = bindButton(
   "RClick",
   startGame,
-  (t) => rightWeapon[3](playerShip, t),
+  (t) => rightWeapon[2](playerShip, t),
 );
 
 const strafe = [0, 0, 0, 0];
@@ -138,7 +138,7 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     scaleXYZ([strafeX, strafeY, 0], snapshot[20] * speedBoost * tickLength),
   ]);
 
-  aimObject(playerShipObject, heading);
+  aimObject(playerShipObject, playerAim);
 
   // clamp ship to camera bounds
   const [x, y, z] = readOrigin(playerShipObject[0]);

@@ -20,7 +20,12 @@ export type AxisAngle = [axis: XYZ, angle: number];
 
 export type XOOrientation = [position?: XYZ, rotation?: AxisAngle];
 
-export type XOGeometry = [radius: number, verticies: XYZ[]];
+export type XOGeometry = [
+  radius: number,
+  verticies: XYZ[],
+  halfLength?: number,
+];
+
 export type XOMaterial = [code: string, data: Float32Array];
 export type XOObject = [
   coordinates: Float32Array,

@@ -19,7 +19,7 @@ import { ActionSequencer } from "~/clock";
 
 export type Ship = [
   object: XOObject,
-  heading: XYZ,
+  aim: XYZ,
   weapons: Weapon[],
   sequence: ActionSequencer<Ship>,
   damages: Resources,
@@ -75,7 +75,6 @@ export type ShipSnapshot = [
 
 export type Weapon = [
   object: XOObject,
-  heading: XYZ,
   bullets: BulletGroup,
   sequence: ActionSequencer<Ship>,
   _snapshot: WeaponSnapshot,
@@ -99,7 +98,6 @@ export type WeaponSnapshot = [
 
 export type Bullet = [
   object: XOObject,
-  heading: XYZ,
   sequence: ActionSequencer<Bullet>,
   lifetime: number,
 ];

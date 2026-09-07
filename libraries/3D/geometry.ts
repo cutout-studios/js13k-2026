@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { cos, length, PI, sin, TAU } from "~/alias";
+import { abs, cos, length, max, PI, sin, TAU } from "~/alias";
 import { doTimes, flat, repeat } from "~/common";
 
 import { XYZ_LENGTH } from "./constants.ts";
@@ -38,13 +38,13 @@ export const createSquare = (
 export const createPyramid = (
   scale: XYZ = DEFAULT_SCALE,
   divisions = 4,
-): XYZ[] =>
+): [XYZ[], number] =>
   _lathe([[0, -1], [_inscribe(divisions), -1], [0, 1]], scale, divisions);
 
 export const createPrism = (
   scale: XYZ = DEFAULT_SCALE,
   divisions = 4,
-): XYZ[] => {
+): [XYZ[], number] => {
   const radius = _inscribe(divisions);
   return _lathe(
     [[0, -1], [radius, -1], [radius, 1], [0, 1]],
@@ -53,7 +53,7 @@ export const createPrism = (
   );
 };
 
-export const createSphere = (radius = 1, divisions = 10): XYZ[] =>
+export const createSphere = (radius = 1, divisions = 10): [XYZ[], number] =>
   _lathe(
     doTimes(divisions + 1, (index: number) => {
       const phi = PI * (index / divisions - 0.5);
@@ -67,7 +67,7 @@ const _lathe = (
   edgeLoops: Array<[radius: number, distance: number]>,
   [scaleX, scaleY, scaleZ]: XYZ = DEFAULT_SCALE,
   loopDivisions = 4,
-): XYZ[] => {
+): [XYZ[], number] => {
   const result: XYZ[] = [];
 
   doTimes(
@@ -107,7 +107,10 @@ const _lathe = (
       ),
   );
 
-  return result;
+  return [
+    result,
+    max(...edgeLoops.map(([, distance]) => abs(distance))) * abs(scaleZ),
+  ];
 };
 
 const _inscribe = (sides: number) => 1 / cos(PI / sides);

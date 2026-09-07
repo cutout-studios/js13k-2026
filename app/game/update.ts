@@ -18,10 +18,8 @@ import {
   aimObject,
   createObject,
   getCollisionPairs,
-  normalizeXYZ,
   readOrigin,
   setOrigin,
-  subtractXYZ,
 } from "~/3D";
 import { _, length, max, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
@@ -63,7 +61,7 @@ export const updateGame = (
   // -- handle collisions
   doTimes(
     playerWeapons,
-    ([, , bullets, , [, critChance, critDamage, bulletDamage]]) => {
+    ([, bullets, , [, critChance, critDamage, bulletDamage]]) => {
       const [hitIndicies, shipIndicies] = getCollisionPairs(
         bullets[1],
         doTimes(enemyShips, ([object]) => object),
@@ -91,7 +89,7 @@ export const updateGame = (
         [
           enemyShipObject,
           ,
-          [[, , bullets, , [, critChance, critDamage, bulletDamage]]],
+          [[, bullets, , [, critChance, critDamage, bulletDamage]]],
         ],
       ) => {
         const [hitIndicies] = getCollisionPairs(bullets[1], [
@@ -110,9 +108,6 @@ export const updateGame = (
             const bullet = bullets[0][bulletIndex],
               targetPosition = readOrigin(enemyShipObject[0]);
 
-            bullet[1] = normalizeXYZ(
-              subtractXYZ(targetPosition, readOrigin(bullet[0][0])),
-            );
             aimObject(bullet[0], targetPosition);
 
             const fauxSnapshot = repeat(7, 0);
@@ -121,7 +116,6 @@ export const updateGame = (
             playerWeapons.push(
               [
                 createObject(),
-                [0, 0, 0],
                 [[bullet], [bullet[0]]],
                 createActionSequencer([[NO_OP]]),
                 fauxSnapshot,
@@ -199,7 +193,7 @@ export const updateGame = (
     [playerWeapons],
     flatDoTimes(
       playerWeapons,
-      ([, , [bullets]], index) => {
+      ([, [bullets]], index) => {
         if (index < 2) return [];
 
         return length(bullets) ? [] : [index];

@@ -23,6 +23,7 @@ import {
   createPrism,
   localize,
   normalizeXYZ,
+  readHeading,
   readOrigin,
   scaleXYZ,
   setOrigin,
@@ -32,7 +33,7 @@ import {
 import { min } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
 import { ActionSchedule, createActionSequencer } from "~/clock";
-import { doTimes, spliceTable } from "~/common";
+import { doTimes, flat, spliceTable } from "~/common";
 import { rollSpread } from "~/random";
 
 import GameOptions, {
@@ -59,7 +60,6 @@ export const createBullet = (
     ] = ship,
     [
       [mountCoordinates],
-      [headingX, headingY, headingZ],
       ,
       ,
       snapshot,
@@ -78,14 +78,13 @@ export const createBullet = (
             ,
             ,
             [
-              bulletGeometry = [
-                0.06,
+              bulletGeometry = flat(
+                [0.06],
                 createPrism([0.006, 0.006, 0.12], 12),
-                0.12,
-              ] as XOGeometry,
+              ) as XOGeometry,
               bulletSchedule = [[
                 (
-                  [[coordinates], heading, , lifetime]: Bullet,
+                  [[coordinates], , lifetime]: Bullet,
                   tickLength: number,
                   elapsedTime: number,
                 ) => {
@@ -96,7 +95,7 @@ export const createBullet = (
                     addXYZ(
                       readOrigin(coordinates),
                       scaleXYZ(
-                        heading,
+                        readHeading(coordinates),
                         tickLength * BULLET_SPEED *
                           (shipOptionsIndex
                             ? (elapsedTime: number) =>
@@ -117,9 +116,9 @@ export const createBullet = (
     globalHeading = readOrigin(
       localize(
         setOrigin(createCoordinates(), [
-          headingX - rollSpread(snapshot[6]),
-          headingY - rollSpread(snapshot[6]),
-          headingZ,
+          -rollSpread(snapshot[6]),
+          -rollSpread(snapshot[6]),
+          1,
         ]),
         globalCoordinates,
       ),
@@ -141,14 +140,13 @@ export const createBullet = (
 
   return [
     bulletObject,
-    bulletHeading,
     createActionSequencer(bulletSchedule as ActionSchedule<Bullet>),
     snapshot[4],
   ];
 };
 
 export const updateBullets = (ship: Ship, tickLength: number) =>
-  ship[2].forEach(([, , bullets]) => {
+  ship[2].forEach(([, bullets]) => {
     const bulletsToCull = [] as number[];
 
     doTimes(
@@ -156,7 +154,7 @@ export const updateBullets = (ship: Ship, tickLength: number) =>
       (
         bullet: Bullet,
         index: number,
-      ) => bullet[2](bullet, tickLength) && bulletsToCull.push(index),
+      ) => bullet[1](bullet, tickLength) && bulletsToCull.push(index),
     );
 
     spliceTable(bullets, bulletsToCull);

@@ -56,16 +56,15 @@ const RESOURCE_NAMES = [
   });
 
 export const logShip = (ship: Ship, label = "SHIP") => {
-  const [[coordinates], heading, weapons, , damages, snapshot, optionsIndex] =
-    ship;
+  const [[coordinates], aim, weapons, , damages, snapshot, optionsIndex] = ship;
   console.groupCollapsed(`${label} ${GameOptions[optionsIndex][0]}`);
   console.log("origin", join(readOrigin(coordinates)));
-  console.log("heading", join(flat(heading)));
+  console.log("aim", join(flat(aim)));
   console.table(resources(damages, snapshot));
   console.table(properties(snapshot));
   doTimes(weapons, (weapon, index) => {
     console.groupCollapsed(`weapon (${["L", "R"][index]})`);
-    console.table(properties(weapon[4], 22));
+    console.table(properties(weapon[3], 22));
     console.groupEnd();
   });
   console.groupEnd();

@@ -45,8 +45,7 @@ export const normalize = (
   return [x / magnitude, y / magnitude, z / magnitude];
 };
 
-// export const dot = <T extends number[]>(left: T, right: T) =>
-//   left.reduce(
-//     (result, value, index) => result + value * right[index],
-//     0,
-//   );
+export const dot = (
+  [x1, y1, z1]: XYZ,
+  [x2, y2, z2]: XYZ,
+): number => x1 * x2 + y1 * y2 + z1 * z2;
