@@ -30,4 +30,7 @@ export default [
 
   // collection
   new Set(),
+
+  // drop pity
+  0,
 ] as World;

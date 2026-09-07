@@ -3,13 +3,11 @@ import { ActionSchedule, createActionSequencer } from "~/clock";
 import { createRoll } from "../actions.ts";
 import { Ship } from "./types.ts";
 
-const smoothstep = (x: number) => x * x * (3 - 2 * x);
-
 export const createSpinSequence = (
   [, , , originalSequence, , _snapshot]: Ship,
 ) => {
   const totalTime = _snapshot[19],
-    roll = createRoll(1, smoothstep);
+    roll = createRoll(1, (x: number) => x * x * (3 - 2 * x));
 
   return createActionSequencer([
     [([object, , , , resources], t, e, d) => {

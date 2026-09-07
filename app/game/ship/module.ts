@@ -61,7 +61,8 @@ export const createShip = (
       shapes,
       shipOverrides,
       shipSchedule = [[(ship: Ship, tickLength: number, ...args) => {
-        const shipX = readOrigin(ship[0][0])[0];
+        const [shipObject, heading, weapons, , , snapshot] = ship,
+          shipX = readOrigin(shipObject[0])[0];
 
         if (shipX > ENEMY_X_BOUND || !pullTracker.has(ship)) {
           pullTracker.set(ship, pullLeft);
@@ -69,20 +70,20 @@ export const createShip = (
           pullTracker.set(ship, pullRight);
         }
 
-        pullTracker.get(ship)!(ship[0], tickLength, ...args);
+        pullTracker.get(ship)!(shipObject, tickLength, ...args);
 
         const [x, y] = scaleXYZ(
-          subtractXYZ(readOrigin(GameState[0][0][0][0]), ship[1]),
-          tickLength / ship[5][21],
+          subtractXYZ(readOrigin(GameState[0][0][0][0]), heading),
+          tickLength / snapshot[21],
         );
 
-        ship[1][0] += x;
-        ship[1][1] += y;
+        heading[0] += x;
+        heading[1] += y;
 
-        aimObject(ship[0], ship[1]);
+        aimObject(shipObject, heading);
 
         if (shipX < ENEMY_X_BOUND && shipX > -ENEMY_X_BOUND) {
-          doTimes(ship[2], (weapon) => weapon[3](ship, tickLength));
+          doTimes(weapons, (weapon) => weapon[3](ship, tickLength));
         }
         updateBullets(ship, tickLength);
       }]] as ActionSchedule<Ship>,

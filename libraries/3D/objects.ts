@@ -140,23 +140,22 @@ export const scatterObjects = (
   cantOverlap: boolean,
   ...objects: XOObject[]
 ) => {
-  const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
-    scatterBoxVolume = scatterBoxDimensions.reduce(
-      (product, value) => product * value,
-      1,
-    );
-
-  let maxObjectDiameter = -Infinity, totalObjectVolume = 0;
-  doTimes(objects, ([, [radius]]) => {
-    maxObjectDiameter = max(maxObjectDiameter, radius * 2);
-    totalObjectVolume += (4 * PI / 3) * radius ** 3;
-  });
-
-  if (
-    // objects won't fit
-    min(...scatterBoxDimensions) < maxObjectDiameter ||
-    scatterBoxVolume < totalObjectVolume * 3
-  ) throw new Error("Objects won't fit!");
+  // guard against objects that can't fit in the scatter box - stripped for
+  // size once game balance is tuned; uncomment to debug scatter configs
+  // const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
+  //   scatterBoxVolume = scatterBoxDimensions.reduce(
+  //     (product, value) => product * value,
+  //     1,
+  //   );
+  // let maxObjectDiameter = -Infinity, totalObjectVolume = 0;
+  // doTimes(objects, ([, [radius]]) => {
+  //   maxObjectDiameter = max(maxObjectDiameter, radius * 2);
+  //   totalObjectVolume += (4 * PI / 3) * radius ** 3;
+  // });
+  // if (
+  //   min(...scatterBoxDimensions) < maxObjectDiameter ||
+  //   scatterBoxVolume < totalObjectVolume * 3
+  // ) throw new Error("Objects won't fit!");
 
   const placedObjects: XOObject[] = [];
   while (length(objects)) {

@@ -25,14 +25,12 @@ export const create = (
 ): XOMaterial => [shaderCode, paintData];
 
 export const createPalette = (...paints: number[]) =>
-  new F32(flatDoTimes(paints, _parseHex));
+  new F32(flatDoTimes(paints, (hex: number): RGBA => [
+    ((hex >> 16) & 255) / 255,
+    ((hex >> 8) & 255) / 255,
+    (hex & 255) / 255,
+    1,
+  ]));
 
 export const createWithPalette = (...paints: number[]) =>
   create(createPalette(...paints));
-
-const _parseHex = (hex: number): RGBA => [
-  ((hex >> 16) & 255) / 255,
-  ((hex >> 8) & 255) / 255,
-  (hex & 255) / 255,
-  1,
-];

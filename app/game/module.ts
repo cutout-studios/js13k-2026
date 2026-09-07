@@ -54,7 +54,7 @@ scatterObjects(
 );
 
 export const getSceneObjects = (
-  [[playerShip], [activeEnemies, droppedItems]]: Game,
+  [[playerShip], [activeEnemyGroups, droppedItems]]: Game,
 ): XOObject[][] => {
   const [hull, ...rest] = getShipObjects(playerShip);
   return flat(
@@ -62,8 +62,8 @@ export const getSceneObjects = (
     playerShip[4][4] && (Date.now() / 80 | 0) % 2 ? [] : [hull],
     rest,
     flatDoTimes(
-      activeEnemies,
-      ([ships]) => flatDoTimes(ships, getShipObjects) as XOObject[][],
+      activeEnemyGroups,
+      (ships) => flatDoTimes(ships, getShipObjects) as XOObject[][],
     ),
     doTimes(droppedItems, ([object]) => [object]),
   );

@@ -25,10 +25,12 @@ import GameOptions, {
   ENEMY_Z_PLANE,
 } from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
+import { Ship } from "../ship/types.ts";
 
 import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
-import { EnemyGroup } from "./types.ts";
+
+const _enemyDeck = createDeck(length(GameOptions.slice(1)));
 
 export const rollEnemies = (wave: number, level: number) =>
   doTimes(
@@ -42,29 +44,22 @@ export const rollEnemies = (wave: number, level: number) =>
         ),
       ),
     ),
-    (index: number) =>
-      _drawEnemyGroup(drawCard(_enemyDeck) + 1, level, index % 2 ? 1 : -1),
+    (index: number): Ship[] => {
+      const optionsIndex = drawCard(_enemyDeck) + 1,
+        side = index % 2 ? 1 : -1,
+        count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
+        ships = doTimes(count, () => createShip(optionsIndex, level));
+
+      scatterObjects(
+        [
+          spread(ENEMY_X_BOUND, 2 * side * ENEMY_X_BOUND),
+          spread(ENEMY_Y_BOUND),
+          spread(1, -ENEMY_Z_PLANE),
+        ],
+        true,
+        ...doTimes(ships, (ship) => ship[0]),
+      );
+
+      return ships;
+    },
   );
-
-const _enemyDeck = createDeck(length(GameOptions.slice(1)));
-const _drawEnemyGroup = (
-  optionsIndex: number,
-  level: number,
-  side: number = -1,
-): EnemyGroup => {
-  const count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
-    ships = doTimes(count, () => createShip(optionsIndex, level)),
-    shipObjects = doTimes(ships, (ship) => ship[0]);
-
-  scatterObjects(
-    [
-      spread(ENEMY_X_BOUND, 2 * side * ENEMY_X_BOUND),
-      spread(ENEMY_Y_BOUND),
-      spread(1, -ENEMY_Z_PLANE),
-    ],
-    true,
-    ...shipObjects,
-  );
-
-  return [ships, shipObjects];
-};

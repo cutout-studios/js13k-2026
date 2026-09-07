@@ -25,3 +25,7 @@ export const WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
 export const WAVES_PER_LEVEL_BAND = [2, 14] as Band;
 
 export const GROUPS_PER_WAVE_BAND = [1, 6] as Band;
+
+// +this, per missed item drop roll, added to the next roll's chance - resets
+// to 0 once a drop actually occurs
+export const DROP_PITY_STEP = 0.02;

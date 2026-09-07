@@ -18,3 +18,7 @@ export const PLAYER_INVENTORY_SIZE = 12;
 
 export const STRAFE_ATTACK_TIME = 0.3;
 export const STRAFE_RELEASE_TIME = 0.35;
+
+export const SPIN_BOOST_ATTACK_TIME = 0.1;
+export const SPIN_BOOST_RELEASE_TIME = 0.1;
+export const SPIN_BOOST_AMOUNT = 1.5;

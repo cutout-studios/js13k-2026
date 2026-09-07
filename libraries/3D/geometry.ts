@@ -68,16 +68,6 @@ const _lathe = (
   [scaleX, scaleY, scaleZ]: XYZ = DEFAULT_SCALE,
   loopDivisions = 4,
 ): XYZ[] => {
-  const _getVertex = (loopIndex: number, divisionIndex: number): XYZ => {
-    const [radius, distance] = edgeLoops[loopIndex],
-      angle = TAU * (divisionIndex + 0.5) / loopDivisions;
-    return [
-      radius * cos(angle) * scaleX,
-      radius * sin(angle) * scaleY,
-      distance * scaleZ,
-    ];
-  };
-
   const result: XYZ[] = [];
 
   doTimes(
@@ -85,13 +75,35 @@ const _lathe = (
     (ringIndex: number) =>
       doTimes(
         loopDivisions,
-        (divisionIndex: number) =>
+        (divisionIndex: number) => {
+          const [radius0, distance0] = edgeLoops[ringIndex],
+            [radius1, distance1] = edgeLoops[ringIndex + 1],
+            angle0 = TAU * (divisionIndex + 0.5) / loopDivisions,
+            angle1 = TAU * (divisionIndex + 1.5) / loopDivisions;
+
           result.push(...createSquare(
-            _getVertex(ringIndex, divisionIndex),
-            _getVertex(ringIndex, divisionIndex + 1),
-            _getVertex(ringIndex + 1, divisionIndex + 1),
-            _getVertex(ringIndex + 1, divisionIndex),
-          )),
+            [
+              radius0 * cos(angle0) * scaleX,
+              radius0 * sin(angle0) * scaleY,
+              distance0 * scaleZ,
+            ],
+            [
+              radius0 * cos(angle1) * scaleX,
+              radius0 * sin(angle1) * scaleY,
+              distance0 * scaleZ,
+            ],
+            [
+              radius1 * cos(angle1) * scaleX,
+              radius1 * sin(angle1) * scaleY,
+              distance1 * scaleZ,
+            ],
+            [
+              radius1 * cos(angle0) * scaleX,
+              radius1 * sin(angle0) * scaleY,
+              distance1 * scaleZ,
+            ],
+          ));
+        },
       ),
   );
 

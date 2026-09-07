@@ -135,8 +135,9 @@ form.onsubmit = (event: SubmitEvent) => {
         (index) => toEquip[inventory[index][0][2]] = index,
       );
       doTimes(inventory, (item, index) => {
-        if (toEquip[item[0][2]] == -1) return;
-        item[1] = toEquip[item[0][2]] == index;
+        const typeID = item[0][2];
+        if (toEquip[typeID] == -1) return;
+        item[1] = toEquip[typeID] == index;
       });
       updatePlayerEquipmentSnapshots(player);
       break;

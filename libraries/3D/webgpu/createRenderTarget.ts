@@ -28,20 +28,6 @@ const _getCanvasContext = memo((canvas: HTMLCanvasElement) => {
 });
 
 let cacheKey: string | undefined, cacheDepth: GPUTexture | undefined;
-const _getCanvasDepth = (canvas: HTMLCanvasElement): GPUTexture => {
-  const key = `${canvas.width}x${canvas.height}`;
-
-  if (key == cacheKey) return cacheDepth!;
-
-  cacheKey = key;
-  cacheDepth?.destroy();
-
-  return (cacheDepth = device.createTexture({
-    size: [canvas.width, canvas.height],
-    format: DEPTH_TEXTURE_FORMAT,
-    usage: GPUTextureUsage.RENDER_ATTACHMENT,
-  }));
-};
 
 export const createRenderTarget = (
   canvas: HTMLCanvasElement,
@@ -71,7 +57,19 @@ export const createRenderTarget = (
     descriptor,
     (action) => {
       colorAttachment.view = context.getCurrentTexture().createView();
-      depthStencilAttachment.view = _getCanvasDepth(canvas).createView();
+
+      const depthKey = `${canvas.width}x${canvas.height}`;
+      if (depthKey != cacheKey) {
+        cacheKey = depthKey;
+        cacheDepth?.destroy();
+        cacheDepth = device.createTexture({
+          size: [canvas.width, canvas.height],
+          format: DEPTH_TEXTURE_FORMAT,
+          usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        });
+      }
+      depthStencilAttachment.view = cacheDepth!.createView();
+
       const encoder = device.createCommandEncoder(),
         pass = encoder.beginRenderPass(descriptor);
       action(pass);

@@ -20,7 +20,6 @@ import {
   getCollisionPairs,
   readOrigin,
   setOrigin,
-  XOObject,
 } from "~/3D";
 import { _, length, max, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
@@ -33,26 +32,9 @@ import { updateBullets } from "./ship/bullets.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
 import { Ship, Weapon } from "./ship/types.ts";
 import { Game } from "./types.ts";
+import { DROP_PITY_STEP } from "./world/constants.ts";
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
-
-const _resolveCollisions = (
-  sourceObjects: XOObject[],
-  targetObjects: XOObject[],
-  callback: (sourceIndex: number, targetIndex: number) => void,
-): number[] => {
-  const sourceHits = [] as number[];
-  const [sourceIndicies, targetIndicies] = getCollisionPairs(
-    sourceObjects,
-    targetObjects,
-  );
-  doTimes(sourceIndicies, (sourceIndex: number, index: number) => {
-    const targetIndex = targetIndicies[index];
-    callback(sourceIndex, targetIndex);
-    sourceHits.push(sourceIndex);
-  });
-  return sourceHits;
-};
 
 export const updateGame = (
   [player, world]: Game,
@@ -68,7 +50,7 @@ export const updateGame = (
       playerResourceStatus,
       playerSnapshot,
     ] = playerShip,
-    enemyShips = flatDoTimes(activeEnemyGroups, ([ships]) => ships) as Ship[];
+    enemyShips = flat(...activeEnemyGroups) as Ship[];
 
   // -- update everything in the game
   doTimes(flat([playerShip], enemyShips), (ship) => ship[3](ship, tickLength));
@@ -80,22 +62,23 @@ export const updateGame = (
   doTimes(
     playerWeapons,
     ([, , bullets, , [, critChance, critDamage, bulletDamage]]) => {
-      return spliceTable(
-        bullets,
-        _resolveCollisions(
-          bullets[1],
-          doTimes(enemyShips, ([object]) => object),
-          (_, shipIndex) => {
-            hitSound(
-              getPanFromCoordinates(enemyShips[shipIndex][0][0], ENEMY_X_BOUND),
-            );
-            enemyShips[shipIndex][4][0] +=
-              (random() < critChance
-                ? bulletDamage * critDamage
-                : bulletDamage) * (playerSnapshot[14] * (1 + playerShip[4][0]));
-          },
-        ),
+      const [hitIndicies, shipIndicies] = getCollisionPairs(
+        bullets[1],
+        doTimes(enemyShips, ([object]) => object),
       );
+
+      doTimes(hitIndicies, (_, index: number) => {
+        const shipIndex = shipIndicies[index];
+
+        hitSound(
+          getPanFromCoordinates(enemyShips[shipIndex][0][0], ENEMY_X_BOUND),
+        );
+        enemyShips[shipIndex][4][0] +=
+          (random() < critChance ? bulletDamage * critDamage : bulletDamage) *
+          (playerSnapshot[14] * (1 + playerResourceStatus[0]));
+      });
+
+      return spliceTable(bullets, hitIndicies);
     },
   );
 
@@ -109,76 +92,71 @@ export const updateGame = (
           [[, , bullets, , [, critChance, critDamage, bulletDamage]]],
         ],
       ) => {
-        spliceTable(
-          bullets,
-          _resolveCollisions(
-            bullets[1],
-            [playerShipObject],
-            (bulletIndex) => {
-              const baseDamage = random() < critChance
-                ? bulletDamage * critDamage
-                : bulletDamage;
+        const [hitIndicies] = getCollisionPairs(bullets[1], [
+          playerShipObject,
+        ]);
 
-              if (playerResourceStatus[6]) {
-                hitSound(
-                  getPanFromCoordinates(playerShipObject[0], PLAYER_X_BOUND),
-                );
-                const bullet = bullets[0][bulletIndex],
-                  newHeading = readOrigin(enemyShipObject[0]);
-                bullet[1] = newHeading;
-                aimObject(bullet[0], newHeading);
+        doTimes(hitIndicies, (bulletIndex: number) => {
+          const baseDamage = random() < critChance
+            ? bulletDamage * critDamage
+            : bulletDamage;
 
-                const fauxSnapshot = repeat(7, 0);
-                fauxSnapshot[3] = baseDamage * playerSnapshot[17];
+          if (playerResourceStatus[6]) {
+            hitSound(
+              getPanFromCoordinates(playerShipObject[0], PLAYER_X_BOUND),
+            );
+            const bullet = bullets[0][bulletIndex],
+              newHeading = readOrigin(enemyShipObject[0]);
+            bullet[1] = newHeading;
+            aimObject(bullet[0], newHeading);
 
-                playerWeapons.push(
-                  [
-                    createObject(),
-                    newHeading,
-                    [[bullet], [bullet[0]]],
-                    createActionSequencer([[NO_OP]]),
-                    fauxSnapshot,
-                    0,
-                  ] as Weapon,
-                );
+            const fauxSnapshot = repeat(7, 0);
+            fauxSnapshot[3] = baseDamage * playerSnapshot[17];
 
-                return;
-              }
+            playerWeapons.push(
+              [
+                createObject(),
+                newHeading,
+                [[bullet], [bullet[0]]],
+                createActionSequencer([[NO_OP]]),
+                fauxSnapshot,
+                0,
+              ] as Weapon,
+            );
 
-              const totalDamage = baseDamage * playerSnapshot[2];
+            return;
+          }
 
-              playerShip[4][0] += totalDamage * (1 - playerSnapshot[3]);
-              playerShip[4][1] += totalDamage * playerSnapshot[3];
-            },
-          ),
-        );
+          const totalDamage = baseDamage * playerSnapshot[2];
+
+          playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
+          playerResourceStatus[1] += totalDamage * playerSnapshot[3];
+        });
+
+        spliceTable(bullets, hitIndicies);
       },
     );
   }
 
   // pick up dropped items
-  spliceTable(
-    [droppedItems],
-    _resolveCollisions(
-      droppedItems.map(([object]) => object),
-      [
-        playerShipObject,
-      ],
-      (
-        itemIndex,
-      ) => {
-        setItemInFrame(droppedItems[itemIndex]);
-        inventory.push([droppedItems[itemIndex]]);
-        if (droppedItems[itemIndex][4] == 3) {
-          winCollection.add(droppedItems[itemIndex][3]);
-        }
-      },
-    ),
+  const [pickedUpIndicies] = getCollisionPairs(
+    droppedItems.map(([object]) => object),
+    [playerShipObject],
   );
+
+  doTimes(pickedUpIndicies, (itemIndex: number) => {
+    setItemInFrame(droppedItems[itemIndex]);
+    inventory.push([droppedItems[itemIndex]]);
+    if (droppedItems[itemIndex][4] == 3) {
+      winCollection.add(droppedItems[itemIndex][3]);
+    }
+  });
+
+  spliceTable([droppedItems], pickedUpIndicies);
 
   // clean up dead enemies
   // WARNING: mutates in place, so enemyShips are stale below here
-  doTimes(activeEnemyGroups, ([ships]) => {
+  doTimes(activeEnemyGroups, (ships) => {
     spliceTable(
       [ships],
       flatDoTimes(
@@ -187,11 +165,13 @@ export const updateGame = (
           if (damages[0] < snapshot[15]) return [];
           explosionSound(getPanFromCoordinates(coordinates, ENEMY_X_BOUND));
 
-          if (random() < snapshot[10]) {
-            // if (1) { // always drop, for debugging
+          if (random() < snapshot[10] + world[4] * DROP_PITY_STEP) {
+            world[4] = 0;
             const item = createItem(optionsIndex, _, progress[0]);
             setOrigin(item[0][0], readOrigin(coordinates));
             droppedItems.push(item);
+          } else {
+            world[4]++;
           }
 
           return [index];
@@ -205,7 +185,7 @@ export const updateGame = (
     [activeEnemyGroups],
     flatDoTimes(
       activeEnemyGroups,
-      ([ships], index) => length(ships) ? [] : [index],
+      (ships, index) => length(ships) ? [] : [index],
     ),
   );
 

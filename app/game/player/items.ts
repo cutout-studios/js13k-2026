@@ -29,7 +29,7 @@ import { _, abs, length, min } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { clamp, doTimes, flat, spread } from "~/common";
 
-import { bell, oneOf, rollBand } from "~/random";
+import { bell, oneOf, rollBand, rollSpread } from "~/random";
 
 import { createPull, orbit } from "../actions.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
@@ -45,11 +45,7 @@ import { Item } from "./types.ts";
 
 const FIELD_HOME_RATE = 0.5; // per-second pull strength back toward the player's field
 
-const _itemDeck = createDeck(4),
-  _itemRankRoll = (
-    level: number,
-    roll = bell() + levelCurve(level),
-  ) => length([0.85, 1.35].filter((threshold) => roll >= threshold)) + 1;
+const _itemDeck = createDeck(4);
 
 const [[, , [ITEM_GEOMETRY]]] = GameOptions;
 
@@ -57,7 +53,11 @@ export const createItem = (
   colorID: number,
   typeID: number = drawCard(_itemDeck),
   level: number = 1,
-  rank: number = _itemRankRoll(level),
+  rank: number =
+    ((roll: number) =>
+      length([0.85, 1.35].filter((threshold) => roll >= threshold)) + 1)(
+        bell() + levelCurve(level),
+      ),
 ): Item => {
   const [, value, , [[
       baseMass,
@@ -84,7 +84,7 @@ export const createItem = (
     adjustObject(object, [[
       (clamp(x, spread(PLAYER_X_BOUND)) - x) * FIELD_HOME_RATE,
       -yOvershoot * FIELD_HOME_RATE +
-      rollBand(spread(yJitterAmount * FIELD_HOME_RATE)),
+      rollSpread(yJitterAmount * FIELD_HOME_RATE),
       0,
     ]]);
   };

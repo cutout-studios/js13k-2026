@@ -22,7 +22,6 @@ import {
   setOrigin,
   subtractXYZ,
 } from "~/3D";
-import { _ } from "~/alias";
 import { createEnvelope } from "~/clock";
 import { clamp, doTimes, spread } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
@@ -35,7 +34,13 @@ import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/module.ts";
 import { consumeFuel } from "../ship/module.ts";
 import { createSpinSequence } from "../ship/spin.ts";
 
-import { STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME } from "./constants.ts";
+import {
+  SPIN_BOOST_AMOUNT,
+  SPIN_BOOST_ATTACK_TIME,
+  SPIN_BOOST_RELEASE_TIME,
+  STRAFE_ATTACK_TIME,
+  STRAFE_RELEASE_TIME,
+} from "./constants.ts";
 
 const [[playerShip]] = GameState,
   [playerShipObject, heading, [leftWeapon, rightWeapon], , , snapshot] =
@@ -43,6 +48,10 @@ const [[playerShip]] = GameState,
   [wEnvelope, aEnvelope, sEnvelope, dEnvelope] = doTimes(
     4,
     () => createEnvelope(STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME),
+  ),
+  spinBoostEnvelope = createEnvelope(
+    SPIN_BOOST_ATTACK_TIME,
+    SPIN_BOOST_RELEASE_TIME,
   );
 
 export const checkMousePointer = bindPointer(
@@ -57,14 +66,20 @@ export const checkMousePointer = bindPointer(
   },
 );
 
-export const checkLMouseButton = bindButton("LClick", () => {
+const startGame = () => {
   GameState[2] = true;
   title.style.opacity = "0";
-}, (t) => leftWeapon[3](playerShip, t));
+};
+
+export const checkLMouseButton = bindButton(
+  "LClick",
+  startGame,
+  (t) => leftWeapon[3](playerShip, t),
+);
 
 export const checkRMouseButton = bindButton(
   "RClick",
-  _,
+  startGame,
   (t) => rightWeapon[3](playerShip, t),
 );
 
@@ -113,10 +128,14 @@ export const checkEscapeKey = bindButton(
 
 export const applyInputToPlayerShip = (tickLength: number) => {
   const strafeX = strafe[3] - strafe[1],
-    strafeY = strafe[0] - strafe[2];
+    strafeY = strafe[0] - strafe[2],
+    // ramp the spin speed boost in/out (driven by the "countering" resource
+    // flag) instead of snapping to it
+    speedBoost = 1 +
+      spinBoostEnvelope(tickLength, !!playerShip[4][6]) * SPIN_BOOST_AMOUNT;
 
-  adjustObject(playerShip[0], [
-    scaleXYZ([strafeX, strafeY, 0], snapshot[20] * tickLength),
+  adjustObject(playerShipObject, [
+    scaleXYZ([strafeX, strafeY, 0], snapshot[20] * speedBoost * tickLength),
   ]);
 
   aimObject(playerShipObject, heading);
