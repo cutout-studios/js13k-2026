@@ -138,6 +138,7 @@ export const updateGame = (
                     [[bullet], [bullet[0]]],
                     createActionSequencer([[NO_OP]]),
                     fauxSnapshot,
+                    0
                   ] as Weapon,
                 );
 
@@ -181,8 +182,8 @@ export const updateGame = (
           if (damages[0] < snapshot[15]) return [];
           explosionSound(getPanFromCoordinates(coordinates, ENEMY_X_BOUND));
 
-          if (random() < snapshot[10]) {
-            // if (1) { // always drop, for debugging
+          // if (random() < snapshot[10]) {
+            if (1) { // always drop, for debugging
             const item = createItem(optionsIndex, _, progress[0]);
             setOrigin(item[0][0], readOrigin(coordinates));
             droppedItems.push(item);

@@ -20,8 +20,8 @@ import {
   flattenObjects,
   XOObject,
 } from "~/3D";
-import { length, min, round } from "~/alias";
-import { doTimes, flat, flatDoTimes, repeat } from "~/common";
+import { length, min } from "~/alias";
+import { doTimes, flat, repeat } from "~/common";
 
 import GameOptions, { BASE_PROPERTIES } from "../options/module.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
@@ -33,9 +33,11 @@ export const updatePlayerEquipmentSnapshots = (
   [ship, [rezLevels, gasLevels, _, hpLevels], inventory]: Player,
 ) => {
   const _shipSnapshot = flat(BASE_PROPERTIES) as ShipSnapshot,
-    equippedItems: Item[] = flatDoTimes(
-      inventory,
-      ([item, equipped]) => equipped ? [item] : [],
+    equippedItems: (Item | undefined)[] = inventory.reduce(
+      (slots, [item, equipped]) => (
+        equipped && (slots[item[2]] = item), slots
+      ),
+      repeat(4, undefined) as (Item | undefined)[],
     ),
     _weaponsSnapshots = doTimes(
       2,
@@ -59,11 +61,15 @@ export const updatePlayerEquipmentSnapshots = (
     );
 
   _shipSnapshot[13] = equippedItems.reduce(
-    (sum: number, item: Item) => sum + item[6],
-    4 - equippedItems.length, // +1kg for each empty equip slot
+    (sum: number, item) => sum + (item ? item[6] : 1), // +1kg for each empty equip slot
+    0,
   );
 
-  doTimes(equippedItems, ([, , , , , modifiers]) => {
+  doTimes(equippedItems, (item) => {
+    if (!item) return;
+
+    const [, , , , , modifiers] = item;
+
     doTimes(modifiers, ([statID, operator, value]) => {
       const isWeaponStat = statID > 21,
         targetID = isWeaponStat ? statID - 22 : statID;
@@ -79,25 +85,27 @@ export const updatePlayerEquipmentSnapshots = (
     });
   });
 
-  doTimes(
-    _weaponsSnapshots,
-    (snap, index) => {
-      const colorID = equippedItems[index]?.[3] ?? 0;
+  doTimes(4, (index: number) => {
+    const colorID = equippedItems[index]?.[3] ?? 0;
 
-      equippedItemObjects[index] = createObject(
-        ...GameOptions[0][2][0][index],
-        paint(GameOptions[colorID][1]),
-      );
+    equippedItemObjects[index] = createObject(
+      ...GameOptions[0][2][0][index],
+      paint(GameOptions[colorID][1]),
+    );
 
-      ship[2][index] = createWeapon(
+    if (index > 1) return; // only WING (L)/WING (R) slots carry a weapon
+
+    const weapon = ship[2][index],
+      newWeapon = createWeapon(
         colorID,
         index,
         1,
         GameOptions[0][2][3][index][2],
-        snap
+        _weaponsSnapshots[index],
       );
-    },
-  );
+
+    doTimes(newWeapon, (value, fieldIndex) => weapon[fieldIndex] = value);
+  });
 
   const [, newGeometry, newMaterial] = flattenObjects(...equippedItemObjects);
   ship[0][1] = newGeometry;
@@ -136,7 +144,5 @@ export const updatePlayerEquipmentSnapshots = (
     (id, index) => _shipSnapshot[id] *= _shipSnapshot[11] ** levels[index],
   );
 
-  // these values need to be ints
-  _shipSnapshot[0] = round(_shipSnapshot[0]);
-  _shipSnapshot[4] = round(_shipSnapshot[4]);
+  ship[5] = _shipSnapshot;
 };

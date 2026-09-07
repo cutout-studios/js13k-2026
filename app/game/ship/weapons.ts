@@ -30,7 +30,8 @@ export const createWeapon = (
   optionsIndex: number,
   weaponIndex = 0,
   level = 1,
-  mount = GameOptions[optionsIndex][2][3][weaponIndex][2],
+  mount = (GameOptions[optionsIndex][2][3][weaponIndex] ??
+    GameOptions[optionsIndex][2][3][0])[2],
   snapshot = levelRollOverrides(
     BASE_PROPERTIES.slice(22),
     GameOptions[optionsIndex][2][3][0][0],

@@ -81,10 +81,11 @@ const EQUIP_OFFSET = 2,
       );
     }, 0.5],
   ]),
-  equippedItems = doTimes(
+  defaultEquipItems = doTimes(
     4,
     (typeID: number) => setItemInFrame(createItem(0, typeID, 1, 1)),
   ),
+  equippedItems = [...defaultEquipItems],
   updateItemPopover = (
     [, , _typeID, _colorID, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
   ) => {
@@ -153,6 +154,7 @@ form.onsubmit = (event: SubmitEvent) => {
         );
         inventory.push([item]);
         if (item[4] == 3) winCollection.add(item[3]);
+        updatePlayerEquipmentSnapshots(player);
       }
       break;
     }
@@ -190,6 +192,7 @@ export const resetMenu = () => {
       (element.style.background = "#" + GameOptions[index + 1][1].toString(16)),
   );
   camera([[portrait(GameState[1][3].size / 6)]], renderTargets[0]);
+  doTimes(4, (typeID: number) => equippedItems[typeID] = defaultEquipItems[typeID]);
   doTimes(inventory, ([item, equipped], index) => {
     camera([[item[0]]], renderTargets[index + INVENTORY_OFFSET]);
     if (equipped) equippedItems[item[2]] = item;

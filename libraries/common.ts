@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { arrayFrom, max, min } from "~/alias";
+import { arrayFrom, max, min, round } from "~/alias";
 
 export type Band = readonly [min: number, max: number];
 
@@ -33,7 +33,7 @@ export const doTimes = <T, K>(
   action: (element: K, index: number) => T,
 ): T[] =>
   (typeof enumerator == "number"
-    ? arrayFrom(Array(max(0, enumerator)).keys())
+    ? arrayFrom(Array(max(0, round(enumerator))).keys())
     : enumerator)
     .map(action as (element: K | number, index: number) => T);
 
