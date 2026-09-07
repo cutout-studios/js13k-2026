@@ -65,7 +65,7 @@ export const checkLMouseButton = bindButton("LClick", () => {
 export const checkRMouseButton = bindButton(
   "RClick",
   _,
-  (t) => rightWeapon[3](playerShip, t)
+  (t) => rightWeapon[3](playerShip, t),
 );
 
 const strafe = [0, 0, 0, 0];
@@ -101,6 +101,7 @@ export const checkDKey = bindButton(
 export const checkSpaceBar = bindButton(
   "Space",
   () =>
+    !playerShip[4][4] &&
     (!GameState[2] || consumeFuel(snapshot[13], playerShip)) &&
     (playerShip[3] = createSpinSequence(playerShip)),
 );

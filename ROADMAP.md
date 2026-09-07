@@ -11,12 +11,13 @@ _Currently have ~2kB of space remaining._
 
 ### UX
 
+- Enemy bullets start slower, then accelerate
+  - Other ways to further clarify the enemy/player plane(s) (?)
 - Lots of distinct sound effects. Use RX + spectral analysis to
   reverse-engineer:
   - Item pickup
   - Menu sounds - select, confirm, success
   - Different damage, weapons, "explosion" sounds for player
-- Enemy bullets start slower, then accelerate
 - Short wiki explaining how the game works (external link to this repo)
 
 ### Gameplay

@@ -34,13 +34,13 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0, // Rez Save
   1, // Damage Taken
   0, // Damage Taken From Gas
-  15, // Gas
+  40, // Gas
   0.1, // Gas Cost
 
   // 6-10
   0, // Gas Eject Delay
-  5, // Gas Regen
-  2, // Gas Segments
+  8, // Gas Regen
+  3, // Gas Segments
   1, // Item Mixture Quality
   0.08, // Item Drop Rate
 
@@ -180,7 +180,7 @@ export default [
       [1, 3],
     ],
     [
-      [[8, 30], 1, 1, [0.7, 1.2], [3, 8]],
+      [[8, 20], 1, 1, [0.7, 1.2], [3, 8]],
       [
         [0, 15, "x", [1.1, 2.5]], // Shield
         [0, 2, "x", [0.98, 0.7]], // Damage Taken

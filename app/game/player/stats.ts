@@ -20,7 +20,7 @@ import {
   flattenObjects,
   XOObject,
 } from "~/3D";
-import { length, min } from "~/alias";
+import { length, min, round } from "~/alias";
 import { doTimes, flat, repeat } from "~/common";
 
 import GameOptions, { BASE_PROPERTIES } from "../options/module.ts";
@@ -143,6 +143,11 @@ export const updatePlayerEquipmentSnapshots = (
     [0, 4, 7, 8, 15, 16],
     (id, index) => _shipSnapshot[id] *= _shipSnapshot[11] ** levels[index],
   );
+
+  // these are all discrete values - ensure int so HUD/state line up
+  _shipSnapshot[0] = round(_shipSnapshot[0]);
+  _shipSnapshot[4] = round(_shipSnapshot[4]);
+  _shipSnapshot[8] = round(_shipSnapshot[8]);
 
   ship[5] = _shipSnapshot;
 };

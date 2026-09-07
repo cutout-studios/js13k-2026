@@ -15,27 +15,35 @@
  */
 
 import {
+  adjustObject,
   createObject,
   createPaintMaterialWithPalette as paint,
+  readOrigin,
   setOrigin,
   XOGeometry,
+  XOObject,
   XOOrientation,
   Z_AXIS,
 } from "~/3D";
-import { _, length, min } from "~/alias";
+import { _, abs, length, min } from "~/alias";
 import { createActionSequencer } from "~/clock";
-import { doTimes, flat } from "~/common";
+import { clamp, doTimes, flat, spread } from "~/common";
 
 import { bell, oneOf, rollBand } from "~/random";
 
 import { createPull, orbit } from "../actions.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
-import GameOptions from "../options/module.ts";
+import GameOptions, {
+  PLAYER_X_BOUND,
+  PLAYER_Y_BOUND,
+} from "../options/module.ts";
 
 import { ModifierOptions } from "../options/types.ts";
 import { levelCurve, levelRoll } from "../world/levels.ts";
 
 import { Item } from "./types.ts";
+
+const FIELD_HOME_RATE = 0.5; // per-second pull strength back toward the player's field
 
 const _itemDeck = createDeck(4),
   _itemRankRoll = (
@@ -61,6 +69,26 @@ export const createItem = (
     modifierDeck = [] as ModifierOptions[],
     pull = createPull(Z_AXIS, 0.01, () => 1, [[0, 0], [0, 0.07], [0, 0.01]]);
 
+  let yJitterAmount: number | undefined;
+
+  // enemies can die outside the player's reachable X/Y field, which would otherwise
+  // leave their drop uncatchable - steer it back toward the field as it drifts in.
+  // the Y correction is jittered, with the jitter's size fixed from how far outside
+  // the field the item started, so a wilder drop wobbles more on its way back
+  const homeToField = (object: XOObject) => {
+    const [x, y] = readOrigin(object[0]),
+      yOvershoot = y - clamp(y, spread(PLAYER_Y_BOUND));
+
+    yJitterAmount ??= abs(yOvershoot);
+
+    adjustObject(object, [[
+      (clamp(x, spread(PLAYER_X_BOUND)) - x) * FIELD_HOME_RATE,
+      -yOvershoot * FIELD_HOME_RATE +
+      rollBand(spread(yJitterAmount * FIELD_HOME_RATE)),
+      0,
+    ]]);
+  };
+
   doTimes(modifiers, (modifier) => {
     if (modifier[0] == typeID || modifier[0] == 0) {
       insertCard(modifierDeck, modifier);
@@ -73,7 +101,9 @@ export const createItem = (
       paint(value),
     ),
     createActionSequencer([[
-      ([object], ...args) => (pull(object, ...args), orbit(object, ...args)),
+      ([object], ...args) => (
+        pull(object, ...args), homeToField(object), orbit(object, ...args)
+      ),
     ]]),
     typeID,
     colorID,

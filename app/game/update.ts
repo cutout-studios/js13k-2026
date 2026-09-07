@@ -138,7 +138,7 @@ export const updateGame = (
                     [[bullet], [bullet[0]]],
                     createActionSequencer([[NO_OP]]),
                     fauxSnapshot,
-                    0
+                    0,
                   ] as Weapon,
                 );
 
@@ -166,8 +166,13 @@ export const updateGame = (
       ],
       (
         itemIndex,
-      ) => (setItemInFrame(droppedItems[itemIndex]),
-        inventory.push([droppedItems[itemIndex]])),
+      ) => {
+        setItemInFrame(droppedItems[itemIndex]);
+        inventory.push([droppedItems[itemIndex]]);
+        if (droppedItems[itemIndex][4] == 3) {
+          winCollection.add(droppedItems[itemIndex][3]);
+        }
+      },
     ),
   );
 
@@ -182,8 +187,8 @@ export const updateGame = (
           if (damages[0] < snapshot[15]) return [];
           explosionSound(getPanFromCoordinates(coordinates, ENEMY_X_BOUND));
 
-          // if (random() < snapshot[10]) {
-            if (1) { // always drop, for debugging
+          if (random() < snapshot[10]) {
+            // if (1) { // always drop, for debugging
             const item = createItem(optionsIndex, _, progress[0]);
             setOrigin(item[0][0], readOrigin(coordinates));
             droppedItems.push(item);
@@ -219,7 +224,7 @@ export const updateGame = (
 
   // clean up items that have floated off screen
   spliceTable(
-    droppedItems,
+    [droppedItems],
     flatDoTimes(
       droppedItems,
       ([[itemCoordinates]], index) =>
@@ -258,7 +263,7 @@ export const updateGame = (
   if (length(activeEnemyGroups)) return;
 
   // -- update game progress
-  if (progress[1] > progress[2]) { // advance to the next level
+  if (progress[1] >= progress[2]) { // advance to the next level
     progress[1] = 1;
     progress[0]++;
     progress[2] = getWavesInLevel(progress[0]);
