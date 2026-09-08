@@ -24,6 +24,7 @@ import {
 } from "~/3D";
 import { _, NO_OP } from "~/alias";
 import { flat } from "~/common";
+import { blueSchedule } from "../ship/behaviors/blue.ts";
 import { yellowSchedule } from "../ship/behaviors/yellow.ts";
 import { bulletSound } from "../ship/sounds.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
@@ -205,7 +206,7 @@ export default [
         ],
       ],
       [[8, [0.2, 0.3]], [9, [35, 400]], [11, [24, 270]], [16, [0.3, 0.6]]],
-      _,
+      blueSchedule,
       [[
         [[3, [7, 27]], [5, [.7, 1.2]]],
       ]],
