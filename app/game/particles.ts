@@ -59,7 +59,12 @@ export const spawnParticle = (
   particles.push([
     object,
     createActionSequencer([[
-      (obj: XOObject, tickLength: number, elapsedTime: number, duration: number) => {
+      (
+        obj: XOObject,
+        tickLength: number,
+        elapsedTime: number,
+        duration: number,
+      ) => {
         const scale = 1 - elapsedTime / duration;
 
         obj[0] = createCoordinates(

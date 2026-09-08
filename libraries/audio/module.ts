@@ -25,9 +25,5 @@ export {
 } from "./buffer.ts";
 export { createSound } from "./createSound.ts";
 export { getPanFromCoordinates } from "./pan.ts";
-export {
-  createSoundDecoder,
-  PACK_BUFFER_NAMES,
-  packSound,
-} from "./pack.ts";
+export { createSoundDecoder, PACK_BUFFER_NAMES, packSound } from "./pack.ts";
 export type { PackEvent, PackLayer } from "./pack.ts";

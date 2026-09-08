@@ -147,7 +147,10 @@ export const createSoundDecoder = (data: string) => {
           hi = nextValue(),
           duration = nextValue(DURATION_MAX);
 
-        schedule.push([[ke >> 1, lo == hi ? lo : [lo, hi], !!(ke & 1)], duration]);
+        schedule.push([
+          [ke >> 1, lo == hi ? lo : [lo, hi], !!(ke & 1)],
+          duration,
+        ]);
       }
 
       layers.push([buffer, schedule]);

@@ -61,11 +61,11 @@ const [[playerShip]] = GameState,
     SPIN_BOOST_ATTACK_TIME,
     SPIN_BOOST_RELEASE_TIME,
   );
-  // particles: cut for now - see particles.ts
-  // approximate engine mount, local to the ship (-Z is behind - +Z is the
-  // heading/nose per aimObject) - comment out along with the thruster spawn
-  // below to cut particles entirely
-  // const ENGINE_MOUNT = createCoordinates(_, _, _, [0, 0, -0.3]);
+// particles: cut for now - see particles.ts
+// approximate engine mount, local to the ship (-Z is behind - +Z is the
+// heading/nose per aimObject) - comment out along with the thruster spawn
+// below to cut particles entirely
+// const ENGINE_MOUNT = createCoordinates(_, _, _, [0, 0, -0.3]);
 
 export const checkMousePointer = bindPointer(
   (tickLength: number, x: number, y: number) => {
