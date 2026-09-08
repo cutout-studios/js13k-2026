@@ -24,6 +24,7 @@ import {
 } from "~/3D";
 import { _, NO_OP } from "~/alias";
 import { flat } from "~/common";
+import { bulletSound } from "../ship/sounds.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { ColorOptions } from "./types.ts";
 
@@ -122,7 +123,15 @@ export default [
       ]],
       [],
       [[NO_OP]], // clear default sequencer
-      [[[], _, [0.3, 0, -0.26]], [[], _, [-0.3, 0, -0.26]]],
+      [[[], _, [0.3, 0, -0.26], [
+        _,
+        _,
+        bulletSound,
+      ]], [[], _, [-0.3, 0, -0.26], [
+        _,
+        _,
+        bulletSound,
+      ]]],
       [1, 1],
     ],
     [

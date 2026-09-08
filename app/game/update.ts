@@ -27,6 +27,7 @@ import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, repeat, spliceTable } from "~/common";
 
 import { ENEMY_X_BOUND, PLAYER_X_BOUND } from "./options/module.ts";
+import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { updateBullets } from "./ship/bullets.ts";
 import { explosionSound, hitSound } from "./ship/sounds.ts";
@@ -139,11 +140,15 @@ export const updateGame = (
 
   // pick up dropped items
   const [pickedUpIndicies] = getCollisionPairs(
-    droppedItems.map(([object]) => object),
-    [playerShipObject],
-  );
+      droppedItems.map(([object]) => object),
+      [playerShipObject],
+    ),
+    toPickUp = pickedUpIndicies.slice(
+      0,
+      PLAYER_INVENTORY_SIZE - length(inventory),
+    ); // (don't pick up past the inventory cap)
 
-  doTimes(pickedUpIndicies, (itemIndex: number) => {
+  doTimes(toPickUp, (itemIndex: number) => {
     setItemInFrame(droppedItems[itemIndex]);
     inventory.push(droppedItems[itemIndex]);
     if (droppedItems[itemIndex][4] == 2) {
@@ -151,7 +156,7 @@ export const updateGame = (
     }
   });
 
-  spliceTable([droppedItems], pickedUpIndicies);
+  spliceTable([droppedItems], toPickUp);
 
   // clean up dead enemies
   // WARNING: mutates in place, so enemyShips are stale below here
@@ -162,7 +167,6 @@ export const updateGame = (
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[11]) return [];
-          explosionSound(getPanFromCoordinates(coordinates, ENEMY_X_BOUND));
 
           if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
             world[4] = 0;

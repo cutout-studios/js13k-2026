@@ -24,6 +24,7 @@ import { oneOf } from "~/random";
 import { camera } from "../camera.ts";
 import GameState from "../game/module.ts";
 import GameOptions from "../game/options/module.ts";
+import { PLAYER_INVENTORY_SIZE } from "../game/player/constants.ts";
 import {
   combineItems,
   createItem,
@@ -54,7 +55,6 @@ let hoveredCellIndex = -1,
 
 const EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
-  INVENTORY_CAPACITY = 12,
   [player, [, , progress, winCollection]] = GameState,
   [playerShip, equipped, inventory] = player,
   getFormValues = () => [
@@ -197,7 +197,7 @@ export const resetMenu = () => {
   });
 
   doTimes(
-    INVENTORY_CAPACITY,
+    PLAYER_INVENTORY_SIZE,
     (index: number) =>
       camera(
         inventory[index] ? [[inventory[index][0]]] : [],

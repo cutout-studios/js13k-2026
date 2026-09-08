@@ -38,6 +38,7 @@ type ShipOptions = [
     bullet?: [
       geometry?: XOGeometry,
       schedule?: ActionSchedule<Bullet>,
+      sound?: (pan: number) => void,
     ],
   ][],
   countBand: Band,

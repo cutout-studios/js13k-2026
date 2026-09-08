@@ -42,7 +42,6 @@ import GameOptions, {
   ENEMY_BULLET_RAMP_TIME,
 } from "../options/module.ts";
 
-import { bulletSound } from "./sounds.ts";
 import { Bullet, Ship } from "./types.ts";
 
 export const createBullet = (
@@ -106,6 +105,7 @@ export const createBullet = (
                   );
                 },
               ]] as ActionSchedule<Bullet>,
+              bulletSound
             ] = [],
           ],
         ],
@@ -139,7 +139,7 @@ export const createBullet = (
     );
 
   aimObject(bulletObject, addXYZ(globalOrigin, bulletHeading));
-  bulletSound(getPanFromCoordinates(bulletObject[0], 5));
+  bulletSound?.(getPanFromCoordinates(bulletObject[0], 5));
 
   return [
     bulletObject,
