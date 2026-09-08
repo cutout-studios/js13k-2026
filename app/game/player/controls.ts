@@ -140,10 +140,9 @@ export const checkEscapeKey = bindButton(
 export const applyInputToPlayerShip = (tickLength: number) => {
   const strafeX = strafe[3] - strafe[1],
     strafeY = strafe[0] - strafe[2],
-    // ramp the spin speed boost in/out (driven by the "countering" resource
-    // flag) instead of snapping to it
     speedBoost = 1 +
-      spinBoostEnvelope(tickLength, !!playerShip[4][4]) * SPIN_BOOST_AMOUNT;
+      spinBoostEnvelope(tickLength, !!playerShip[4][4]) * SPIN_BOOST_AMOUNT *
+        snapshot[14];
 
   adjustObject(playerShipObject, [
     scaleXYZ([strafeX, strafeY, 0], snapshot[16] * speedBoost * tickLength),

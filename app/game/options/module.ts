@@ -46,15 +46,15 @@ import { ColorOptions } from "./types.ts";
 const _geometry = (radius: number, mesh: [XYZ[], number]): XOGeometry =>
   flat([radius], mesh) as XOGeometry;
 
-export const BULLET_SPEED = 8;
 export const BULLET_ALPHA = 0xBF;
-export const ENEMY_BULLET_RAMP_TIME = 0.3;
+export const BULLET_MAX_RANGE = 20;
 
 export const PLAYER_SHIP_Z_PLANE = 5;
 export const PLAYER_AIM_Z_PLANE = 8;
-
 export const PLAYER_X_BOUND = 2.8;
 export const PLAYER_Y_BOUND = 2.1;
+
+export const ENEMY_BULLET_RAMP_TIME = 0.3;
 
 export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   2, // Rez
@@ -79,7 +79,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   // 12-15
   3, // Regen
   1, // Spin Damage
-  0.1, // Spin Handling (?)
+  1, // Spin Speed
   0.35, // Spin Time
 
   // 16
@@ -95,7 +95,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0.05, // Bullet Crit Chance
   2, // Bullet Crit Damage
   1, // Bullet Damage
-  1.5, // Bullet Lifetime
+  8, // Bullet Speed
   8, // Bullet Rate
 
   // WPN 6   (24)
@@ -161,7 +161,10 @@ export default [
       [[8, [0.06, 0.1]], [9, [0, 0]], [11, [6, 70]], [16, [0, 0]]], // base overrides
       purpleSchedule,
       [[
-        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [5, [0.2, 0.3]]], // wpn overrides
+        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [4, [10, 10]], [
+          5,
+          [0.2, 0.3],
+        ]], // wpn overrides
         _,
         _,
         [_, _, purpleWeaponSound],
@@ -174,6 +177,7 @@ export default [
         [0, 8, "+", [0.02, 0.2]], // Item Drop rate
         [0, 19, "+", [0.005, 0.2]], // Bullet Crit Chance
         [0, 20, "x", [1.1, 5]], // Bullet Crit Damage
+        [0, 9, "x", [0.95, 0.5]], // KG
       ],
     ],
   ],
@@ -189,7 +193,7 @@ export default [
       [[9, [7, 20]], [11, [4, 20]], [16, [3, 5]]],
       greenSchedule,
       [[
-        [[3, [1, 5]], [5, [12, 21]]],
+        [[3, [1, 5]], [4, [6.5, 6.5]], [5, [12, 21]]],
         _,
         _,
         [_geometry(0.015, createSphere(0.015)), _, greenWeaponSound],
@@ -201,7 +205,7 @@ export default [
       [
         [0, 5, "x", [0.95, 0.2]], // Gas Cost
         [0, 16, "x", [1.05, 2.3]], // Speed
-        [0, 22, "x", [1.1, 4]], // Bullet Lifetime
+        [0, 22, "x", [1.1, 4]], // Bullet Speed
         [2, 3, "+", [0.02, 0.3]], // Damage Taken From Gas
         [3, 15, "+", [0.03, 0.2]], // Spin Time
       ],
@@ -224,7 +228,7 @@ export default [
       [[8, [0.2, 0.3]], [9, [35, 400]], [11, [24, 270]], [16, [0.3, 0.6]]],
       blueSchedule,
       [[
-        [[3, [7, 27]], [5, [.7, 1.2]]],
+        [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
         _,
         _,
         [_, _, blueWeaponSound],
@@ -236,7 +240,6 @@ export default [
       [
         [0, 11, "x", [1.1, 2.5]], // Shield
         [0, 2, "x", [0.98, 0.7]], // Damage Taken
-        [0, 9, "x", [1.1, 2]], // Mass
         [2, 0, "+", [1, 4]], // Armor
         [3, 6, "+", [0.15, 0.5]], // Fuel Regen
       ],
@@ -250,7 +253,7 @@ export default [
       [[8, [0.02, 0.04]], [9, [1, 5]], [11, [1, 12]]],
       pinkSchedule,
       [[
-        [[3, [1, 8]], [5, [0.7, 1.5]], [6, [0.05, 0.12]]],
+        [[3, [1, 8]], [4, [4, 4]], [5, [0.7, 1.5]], [6, [0.05, 0.12]]],
         _,
         _,
         [_geometry(0.03, createSphere(0.03)), _, purpleWeaponSound],
@@ -300,7 +303,7 @@ export default [
         [0, 23, "x", [1.2, 3]], // Bullet Rate
         [0, 4, "+", [3, 15]], // Gas
         [2, 17, "+", [-0.02, -1]], // Aim Time
-        [3, 14, "x", [1.1, 2.5]], // Spin Handling
+        [3, 14, "x", [0.95, 0.5]], // Spin Speed
       ],
     ],
   ],
@@ -317,7 +320,7 @@ export default [
       [[8, [0.13, 0.18]], [9, [7, 13]], [11, [8, 87]], [16, [1.5, 3]]],
       yellowSchedule,
       [[
-        [[3, [5, 16]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
+        [[3, [5, 16]], [4, [4, 4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
         _,
         _,
         [_geometry(0.1, createSphere(0.1)), _, yellowWeaponSound],

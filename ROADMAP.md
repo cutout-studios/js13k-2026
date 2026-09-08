@@ -1,8 +1,8 @@
 # TODOs
 
+- Fix portrait
 - Fill stubbed audio (~1kB)
 - Fill stubbed behaviors (~1kB)
-- Fix portrait
 
 ## Likely to land in a "director's cut", if any
 

@@ -82,7 +82,6 @@ export const createItem = (
 
     yJitterAmount ??= abs(yOvershoot);
 
-    // TODO: reuse createPullAction?
     adjustObject(object, [[
       (clamp(x, spread(PLAYER_X_BOUND)) - x) * FIELD_HOME_RATE * tickLength,
       (-yOvershoot * FIELD_HOME_RATE +

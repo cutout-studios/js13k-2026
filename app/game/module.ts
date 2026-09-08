@@ -23,8 +23,8 @@ import {
   XOGeometry,
   XOObject,
 } from "~/3D";
-import { _, cos, random, sin, TAU } from "~/alias";
-import { Band, doTimes, flat, flatDoTimes } from "~/common";
+import { _, cos, sin, TAU } from "~/alias";
+import { doTimes, flat, flatDoTimes } from "~/common";
 import { rollBand } from "~/random";
 
 import startingPlayer from "./player/module.ts";
@@ -33,9 +33,6 @@ import { Game } from "./types.ts";
 import startingWorld from "./world/module.ts";
 
 export default [startingPlayer, startingWorld, false] as Game;
-
-// TODO: bell parameter
-const rollUniform = ([lo, hi]: Band) => lo + (hi - lo) * random();
 
 const STAR_Z_PLANE = 300,
   STAR_WALL_COUNT = 6,
@@ -59,9 +56,9 @@ const STAR_Z_PLANE = 300,
       );
 
       setOrigin(object[0], [
-        centerX + rollUniform([-STAR_LOCAL_SPREAD, STAR_LOCAL_SPREAD]),
-        centerY + rollUniform([-STAR_LOCAL_SPREAD, STAR_LOCAL_SPREAD]),
-        -STAR_Z_PLANE + rollUniform([-30, 30]),
+        centerX + rollBand([-STAR_LOCAL_SPREAD, STAR_LOCAL_SPREAD], 1),
+        centerY + rollBand([-STAR_LOCAL_SPREAD, STAR_LOCAL_SPREAD], 1),
+        -STAR_Z_PLANE + rollBand([-30, 30], 1),
       ]);
 
       return object;
