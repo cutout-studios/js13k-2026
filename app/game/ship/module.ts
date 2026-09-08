@@ -15,40 +15,22 @@
  */
 
 import {
-  aimObject,
   createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
-  readOrigin,
-  scaleXYZ,
-  subtractXYZ,
   XOObject,
   XYZ,
 } from "~/3D";
 import { length } from "~/alias";
-import { ActionSchedule, createActionSequencer } from "~/clock";
-import { doTimes, flat, repeat, spread } from "~/common";
+import { createActionSequencer } from "~/clock";
+import { doTimes, flat, repeat } from "~/common";
 
-import { isPointVisible } from "../../elements/mainCanvas.ts";
-import { createPullAction } from "../actions.ts";
-import GameState from "../module.ts";
-import { BASE_PROPERTIES, PLAYER_X_BOUND } from "../options/module.ts";
+import { BASE_PROPERTIES } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
-import { updateBullets } from "./bullets.ts";
 import { Resources, Ship, ShipSnapshot } from "./types.ts";
-import { createWeapon } from "./weapons.ts";
-
-const pullTracker = new WeakMap(),
-  [pullLeft, pullRight] = doTimes(
-    spread(PLAYER_X_BOUND) as [lo: number, hi: number],
-    (bound) =>
-      createPullAction([bound, 0, 0], 0.01, () => 1, [[0, 0.02], [0, 0.005], [
-        0,
-        0,
-      ]]),
-  );
+import { createWeapon } from "./weapons/module.ts";
 
 export const createShip = (
   optionsIndex: number,
@@ -60,33 +42,7 @@ export const createShip = (
     [
       shapes,
       shipOverrides,
-      shipSchedule = [[(ship: Ship, tickLength: number, ...args) => {
-        const [shipObject, shipAim, weapons, , , snapshot] = ship,
-          shipOrigin = readOrigin(shipObject[0]),
-          shipVisible = isPointVisible(shipOrigin);
-
-        if (!shipVisible || !pullTracker.has(ship)) {
-          pullTracker.set(ship, shipOrigin[0] > 0 ? pullLeft : pullRight);
-        }
-
-        pullTracker.get(ship)!(shipObject, tickLength, ...args);
-
-        const [x, y] = scaleXYZ(
-          subtractXYZ(readOrigin(GameState[0][0][0][0]), shipAim),
-          tickLength / snapshot[17],
-        );
-
-        shipAim[0] += x;
-        shipAim[1] += y;
-
-        aimObject(shipObject, shipAim);
-
-        if (shipVisible) {
-          doTimes(weapons, (weapon) => weapon[2](ship, tickLength));
-        }
-
-        updateBullets(ship, tickLength);
-      }]] as ActionSchedule<Ship>,
+      shipSchedule,
       shipWeapons,
     ],
   ] = GameOptions[optionsIndex];
@@ -111,8 +67,6 @@ export const createShip = (
   ];
 };
 
-// export const createFlinchSequencer = () => {};
-
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,
 ): XOObject[][] =>
@@ -120,3 +74,5 @@ export const getShipObjects = (
     [[shipObject]],
     doTimes(weapons, ([, [, bullets]]) => bullets),
   );
+
+// export const createFlinchSequencer = () => {};

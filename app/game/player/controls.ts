@@ -26,12 +26,14 @@ import { createEnvelope } from "~/clock";
 import { clamp, doTimes, spread } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
 
+import { getPanFromCoordinates } from "../../../libraries/audio/pan.ts";
 import { menu, title } from "../../elements/handles.ts";
 import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
 import GameState from "../module.ts";
 import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/module.ts";
 import { createSpinSequence } from "../ship/spin.ts";
+import { playerSpinSound } from "../sounds.ts";
 
 import {
   SPIN_BOOST_AMOUNT,
@@ -125,6 +127,7 @@ export const checkSpaceBar = bindButton(
       resources[1] = totalGasUsed;
     }
 
+    playerSpinSound(getPanFromCoordinates(playerShip[0][0]));
     playerShip[3] = createSpinSequence(playerShip);
   },
 );

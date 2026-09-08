@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-export {
-  createPulseBuffer,
-  createRingBuffer,
-  NOISE_BUFFER,
-  SAWTOOTH_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
-export { getPanFromCoordinates } from "./pan.ts";
+import { ActionSchedule } from "~/clock";
+
+import { Ship } from "../types.ts";
+
+// they kinda float in from one side of the screen, perhaps a bit more varied in depth than currently and kinda
+// gently follow the player around, emitting bullets that moreso drift than
+// shoot
+export const pinkSchedule: ActionSchedule<Ship> = [[
+  () => {
+  },
+]];

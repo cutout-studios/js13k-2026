@@ -19,13 +19,13 @@ import { rollBand } from "~/random";
 
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
-import { SoundDefinition } from "./types.ts";
+import { Sound, SoundDefinition } from "./types.ts";
 
-export const createSound = (...definitions: SoundDefinition[]) => {
+export const createSound = (...definitions: SoundDefinition[]): Sound => {
   const groupBus = api.createDynamicsCompressor();
   groupBus.connect(masterBus);
 
-  return (pan = 0) =>
+  const play = (pan = 0) =>
     doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
       const source = new AudioBufferSourceNode(api, { buffer, loop: true }),
         ampKnob = api.createGain(),
@@ -41,10 +41,17 @@ export const createSound = (...definitions: SoundDefinition[]) => {
       doTimes(schedule, ([[knobID, value, exponential], duration = 0]) => {
         time += duration;
         knobs[knobID][
-          exponential ? "exponentialRampToValueAtTime" : "linearRampToValueAtTime"
+          exponential
+            ? "exponentialRampToValueAtTime"
+            : "linearRampToValueAtTime"
         ](typeof value == "number" ? value : rollBand(value), time);
       });
 
       source.stop(time);
     });
+
+  // TODO: delete - for devtools introspection
+  (play as unknown as Sound).definitions = definitions;
+
+  return play as unknown as Sound;
 };

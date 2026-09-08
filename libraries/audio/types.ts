@@ -21,3 +21,7 @@ export type SoundDefinition = [buffer: AudioBuffer, schedule: SoundSchedule];
 export type SoundSchedule = Schedule<
   [knobID: number, value: number | Band, exponential?: boolean]
 >;
+
+export type Sound = ((pan?: number) => void) & {
+  definitions: SoundDefinition[];
+};

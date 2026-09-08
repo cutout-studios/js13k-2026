@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-export {
-  createPulseBuffer,
-  createRingBuffer,
-  NOISE_BUFFER,
-  SAWTOOTH_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
-export { getPanFromCoordinates } from "./pan.ts";
+import { ActionSchedule } from "~/clock";
+import { Ship } from "../types.ts";
+
+// swoops to the right or left, then alternate between doing a spin
+// counter and "dropping a bomb" between swoops to the left or right
+// their "bomb" weapon floats forward similar to an item and then
+// "explodes" when its lifetime expires, spawing a scatterbox of bullets (1
+// for each damage the bomb deals) that go in random directions
+export const yellowSchedule: ActionSchedule<Ship> = [[() => {}]];

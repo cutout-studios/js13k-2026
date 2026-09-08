@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-export {
-  createPulseBuffer,
-  createRingBuffer,
-  NOISE_BUFFER,
-  SAWTOOTH_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
-export { getPanFromCoordinates } from "./pan.ts";
+import { ActionSchedule } from "~/clock";
+
+import { Ship } from "../types.ts";
+
+// - each constantly streams bullets
+// - the green enemy spirals in from behind the player or from deep field,
+//   constantly spewing bullets that splay outward
+// - the groups enters in as a line
+// - if they get out of view, they reverse their spiral
+export const greenSchedule: ActionSchedule<Ship> = [[
+  () => {
+  },
+]];

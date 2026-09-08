@@ -1,0 +1,71 @@
+<meta charset=utf-8>
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #eee;
+  font-family: Menlo, ui-monospace;
+  font-size: 13px;
+}
+body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  width: 100vw;
+  height: 100vh;
+}
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #05050a;
+  cursor: crosshair;
+}
+#panel {
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: #0a0a0a;
+  border-left: 1px solid #333;
+}
+h2 {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #888;
+  margin: 0 0 .5rem;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+button {
+  cursor: pointer;
+  padding: .4rem .6rem;
+  background: #111;
+  color: #eee;
+  border: 1px solid #444;
+  font: inherit;
+}
+button:hover,
+button:focus {
+  border-color: #0f0;
+  color: #0f0;
+}
+#clearShips {
+  margin-top: .5rem;
+  align-self: flex-start;
+}
+</style>
+<canvas id=canvas></canvas>
+<div id=panel>
+  <div>
+    <h2>Ships (click to spawn)</h2>
+    <div class=row id=shipButtons></div>
+    <button id=clearShips>Clear all</button>
+  </div>
+</div>

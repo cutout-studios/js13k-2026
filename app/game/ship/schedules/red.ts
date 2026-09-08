@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-export {
-  createPulseBuffer,
-  createRingBuffer,
-  NOISE_BUFFER,
-  SAWTOOTH_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
-export { getPanFromCoordinates } from "./pan.ts";
+import { ActionSchedule } from "~/clock";
+
+import { Ship } from "../types.ts";
+
+// each ship in the group swoops from back to front across the field,
+// firing their weapns in bursts at the player
+export const redSchedule: ActionSchedule<Ship> = [[
+  () => {
+  },
+]];

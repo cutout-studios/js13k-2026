@@ -1,6 +1,6 @@
-const GRID = 64, RANGE = 46, BASE = 35, OFFSET = RANGE + BASE;
+export const GRID = 64, RANGE = 46, BASE = 35, OFFSET = RANGE + BASE;
 
-const VERTICES = [
+export const VERTICES = [
   -20,
   12,
   20,
@@ -243,10 +243,15 @@ const VERTICES = [
   -42,
 ];
 
-const quantize = (value: number) => Math.round(value * RANGE / GRID);
+export const quantize = (value: number) => Math.round(value * RANGE / GRID);
 
-const encoded = VERTICES
-  .map((value) => String.fromCharCode(quantize(value) + OFFSET))
-  .join("");
+export const encode = (vertices: number[] = VERTICES) =>
+  vertices
+    .map((value) => String.fromCharCode(quantize(value) + OFFSET))
+    .join("");
 
-console.log(JSON.stringify(encoded), encoded.length);
+if (import.meta.main) {
+  const encoded = encode();
+
+  console.log(JSON.stringify(encoded), encoded.length);
+}

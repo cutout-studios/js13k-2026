@@ -30,7 +30,7 @@ export type ColorOptions = [
 type ShipOptions = [
   shape: [orientation: XOOrientation, geometry: XOGeometry][],
   overrides: BaseStatOverride[],
-  schedule: ActionSchedule<Ship> | undefined,
+  schedule: ActionSchedule<Ship>,
   weapons: [
     overrides: BaseStatOverride[],
     schedule?: ActionSchedule<Ship>,
@@ -44,7 +44,7 @@ type ShipOptions = [
   countBand: Band,
 ];
 
-export type BaseStatOverride = [statID: number, band: Band];
+export type BaseStatOverride = [statID: number, band: Band]; 
 
 export type ItemOptions = [
   base: [

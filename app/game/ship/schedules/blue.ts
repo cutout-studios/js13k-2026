@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-export {
-  createPulseBuffer,
-  createRingBuffer,
-  NOISE_BUFFER,
-  SAWTOOTH_BUFFER,
-  SINE_BUFFER,
-  SQUARE_BUFFER,
-  TRIANGLE_BUFFER,
-} from "./buffer.ts";
-export { createSound } from "./createSound.ts";
-export { getPanFromCoordinates } from "./pan.ts";
+import { ActionSchedule } from "~/clock";
+
+import { Ship } from "../types.ts";
+
+// arcs in through the top of the screen always firing down at the player
+export const blueSchedule: ActionSchedule<Ship> = [[
+  () => {
+  },
+]];

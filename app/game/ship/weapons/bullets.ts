@@ -40,9 +40,9 @@ import GameOptions, {
   BULLET_ALPHA,
   BULLET_SPEED,
   ENEMY_BULLET_RAMP_TIME,
-} from "../options/module.ts";
+} from "../../options/module.ts";
 
-import { Bullet, Ship } from "./types.ts";
+import { Bullet, Ship } from "../types.ts";
 
 export const createBullet = (
   ship: Ship,

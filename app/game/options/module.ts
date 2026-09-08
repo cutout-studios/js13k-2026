@@ -24,10 +24,23 @@ import {
 } from "~/3D";
 import { _, NO_OP } from "~/alias";
 import { flat } from "~/common";
-import { blueSchedule } from "../ship/behaviors/blue.ts";
-import { yellowSchedule } from "../ship/behaviors/yellow.ts";
-import { bulletSound } from "../ship/sounds.ts";
+import {
+  blueSchedule,
+  greenSchedule,
+  pinkSchedule,
+  purpleSchedule,
+  redSchedule,
+  yellowSchedule,
+} from "../ship/schedules/module.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
+import {
+  blueWeaponSound,
+  defaultWeaponSound,
+  greenWeaponSound,
+  purpleWeaponSound,
+  redWeaponSound,
+  yellowWeaponSound,
+} from "../sounds.ts";
 import { ColorOptions } from "./types.ts";
 
 const _geometry = (radius: number, mesh: [XYZ[], number]): XOGeometry =>
@@ -127,11 +140,11 @@ export default [
       [[[], _, [0.3, 0, -0.26], [
         _,
         _,
-        bulletSound,
+        defaultWeaponSound,
       ]], [[], _, [-0.3, 0, -0.26], [
         _,
         _,
-        bulletSound,
+        defaultWeaponSound,
       ]]],
       [1, 1],
     ],
@@ -146,9 +159,12 @@ export default [
     [
       [[[], _geometry(0.5, createPyramid([0.25, 0.25, 0.125]))]], // shape
       [[8, [0.06, 0.1]], [9, [0, 0]], [11, [6, 70]], [16, [0, 0]]], // base overrides
-      _,
+      purpleSchedule,
       [[
         [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [5, [0.2, 0.3]]], // wpn overrides
+        _,
+        _,
+        [_, _, purpleWeaponSound],
       ]],
       [3, 5],
     ],
@@ -171,12 +187,12 @@ export default [
         [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
       ],
       [[9, [7, 20]], [11, [4, 20]], [16, [3, 5]]],
-      _,
+      greenSchedule,
       [[
         [[3, [1, 5]], [5, [12, 21]]],
         _,
         _,
-        [_geometry(0.015, createSphere(0.015))],
+        [_geometry(0.015, createSphere(0.015)), _, greenWeaponSound],
       ]],
       [4, 7],
     ],
@@ -209,6 +225,9 @@ export default [
       blueSchedule,
       [[
         [[3, [7, 27]], [5, [.7, 1.2]]],
+        _,
+        _,
+        [_, _, blueWeaponSound],
       ]],
       [1, 3],
     ],
@@ -229,12 +248,12 @@ export default [
     [
       [[[], _geometry(0.4, createSphere(0.10, 20))]],
       [[8, [0.02, 0.04]], [9, [1, 5]], [11, [1, 12]]],
-      _,
+      pinkSchedule,
       [[
         [[3, [1, 8]], [5, [0.7, 1.5]], [6, [0.05, 0.12]]],
         _,
         _,
-        [_geometry(0.03, createSphere(0.03))],
+        [_geometry(0.03, createSphere(0.03)), _, purpleWeaponSound],
       ]],
       [9, 16],
     ],
@@ -261,12 +280,16 @@ export default [
         ),
       ]],
       [[8, [0.1, 0.15]], [9, [6, 28]], [11, [3, 108]], [16, [2.4, 3.5]]],
-      _,
+      redSchedule,
       [[
         [[0, [2, 2]], [3, [2, 18]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
         _,
         _,
-        [_geometry(0.06, createPyramid([0.008, 0.008, 0.1], 4))],
+        [
+          _geometry(0.06, createPyramid([0.008, 0.008, 0.1], 4)),
+          _,
+          redWeaponSound,
+        ],
       ]],
       [3, 6],
     ],
@@ -297,7 +320,7 @@ export default [
         [[3, [5, 16]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
         _,
         _,
-        [_geometry(0.1, createSphere(0.1))],
+        [_geometry(0.1, createSphere(0.1)), _, yellowWeaponSound],
       ]],
       [2, 4],
     ],

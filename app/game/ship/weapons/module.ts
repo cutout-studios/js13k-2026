@@ -19,11 +19,11 @@ import { NO_OP } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
 
-import GameOptions from "../options/module.ts";
-import { BASE_PROPERTIES } from "../options/module.ts";
-import { levelRollOverrides } from "../world/levels.ts";
+import GameOptions from "../../options/module.ts";
+import { BASE_PROPERTIES } from "../../options/module.ts";
+import { levelRollOverrides } from "../../world/levels.ts";
+import { Ship, Weapon, WeaponSnapshot } from "../types.ts";
 import { createBullet } from "./bullets.ts";
-import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
 
 export const createWeapon = (
   optionsIndex: number,
