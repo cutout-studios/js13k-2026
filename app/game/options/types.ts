@@ -44,7 +44,7 @@ type ShipOptions = [
   countBand: Band,
 ];
 
-export type BaseStatOverride = [statID: number, band: Band]; 
+export type BaseStatOverride = [statID: number, band: Band];
 
 export type ItemOptions = [
   base: [
