@@ -35,12 +35,11 @@ export const BULLET_SPEED = 8;
 export const BULLET_ALPHA = 0xBF;
 export const ENEMY_BULLET_RAMP_TIME = 0.3;
 
-export const PLAYER_Z_PLANE = 5;
+export const PLAYER_SHIP_Z_PLANE = 5;
+export const PLAYER_AIM_Z_PLANE = 8;
+
 export const PLAYER_X_BOUND = 2.8;
 export const PLAYER_Y_BOUND = 2.1;
-export const ENEMY_Z_PLANE = 8;
-export const ENEMY_X_BOUND = PLAYER_X_BOUND * (ENEMY_Z_PLANE / PLAYER_Z_PLANE);
-export const ENEMY_Y_BOUND = PLAYER_Y_BOUND * (ENEMY_Z_PLANE / PLAYER_Z_PLANE);
 
 export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   2, // Rez

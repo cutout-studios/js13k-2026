@@ -29,13 +29,10 @@ import { length } from "~/alias";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat, spread } from "~/common";
 
-import { createPull } from "../actions.ts";
+import { isPointVisible } from "../../elements/mainCanvas.ts";
+import { createPullAction } from "../actions.ts";
 import GameState from "../module.ts";
-import {
-  BASE_PROPERTIES,
-  ENEMY_X_BOUND,
-  PLAYER_X_BOUND,
-} from "../options/module.ts";
+import { BASE_PROPERTIES, PLAYER_X_BOUND } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
@@ -47,7 +44,10 @@ const pullTracker = new WeakMap(),
   [pullLeft, pullRight] = doTimes(
     spread(PLAYER_X_BOUND) as [lo: number, hi: number],
     (bound) =>
-      createPull([bound, 0, 0], 0.01, () => 1, [[0, 0.02], [0, 0.005], [0, 0]]),
+      createPullAction([bound, 0, 0], 0.01, () => 1, [[0, 0.02], [0, 0.005], [
+        0,
+        0,
+      ]]),
   );
 
 export const createShip = (
@@ -62,12 +62,11 @@ export const createShip = (
       shipOverrides,
       shipSchedule = [[(ship: Ship, tickLength: number, ...args) => {
         const [shipObject, shipAim, weapons, , , snapshot] = ship,
-          shipX = readOrigin(shipObject[0])[0];
+          shipOrigin = readOrigin(shipObject[0]),
+          shipVisible = isPointVisible(shipOrigin);
 
-        if (shipX > ENEMY_X_BOUND || !pullTracker.has(ship)) {
-          pullTracker.set(ship, pullLeft);
-        } else if (shipX < -ENEMY_X_BOUND) {
-          pullTracker.set(ship, pullRight);
+        if (!shipVisible || !pullTracker.has(ship)) {
+          pullTracker.set(ship, shipOrigin[0] > 0 ? pullLeft : pullRight);
         }
 
         pullTracker.get(ship)!(shipObject, tickLength, ...args);
@@ -82,9 +81,10 @@ export const createShip = (
 
         aimObject(shipObject, shipAim);
 
-        if (shipX < ENEMY_X_BOUND && shipX > -ENEMY_X_BOUND) {
+        if (shipVisible) {
           doTimes(weapons, (weapon) => weapon[2](ship, tickLength));
         }
+
         updateBullets(ship, tickLength);
       }]] as ActionSchedule<Ship>,
       shipWeapons,

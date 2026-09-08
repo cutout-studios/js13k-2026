@@ -17,24 +17,30 @@
 import {
   addXYZ,
   adjustObject,
+  aimObject,
+  createPaintMaterialWithPalette as paint,
   normalizeXYZ,
+  readOrigin,
   scaleXYZ,
+  subtractXYZ,
+  toHSL,
+  toRGB,
   XOObject,
   XYZ,
   Z_AXIS,
 } from "~/3D";
-import { TAU } from "~/alias";
+import { PI, round, sin, TAU } from "~/alias";
 import { Action } from "~/clock";
-import { Band, doTimes, repeat } from "~/common";
+import { Band, doTimes, interpolate, repeat } from "~/common";
 import { rollBand } from "~/random";
 
-export const orbit: Action<XOObject> = (object: XOObject, tickLength) =>
+export const orbitAction: Action<XOObject> = (object: XOObject, tickLength) =>
   adjustObject(object, [undefined, [
     repeat(3, tickLength) as XYZ,
     tickLength,
   ]]);
 
-export const createPull = (
+export const createPullAction = (
   direction: XYZ,
   speed: number,
   curve: (value: number) => number = () => 1,
@@ -53,7 +59,7 @@ export const createPull = (
   ]);
 });
 
-export const createRoll = (
+export const createRollAction = (
   rotations: number,
   curve: (value: number) => number = (n) => n,
 ): Action<XOObject> =>
@@ -62,3 +68,42 @@ export const createRoll = (
     Z_AXIS,
     curve(elapsedTime / duration) * rotations * TAU,
   ]]);
+
+export const createSwoopAction = (
+  target: XYZ,
+  depth: number,
+  speed: number,
+  depthAxis: XYZ = Z_AXIS,
+): Action<XOObject> =>
+(object: XOObject, tickLength, elapsedTime: number, duration: number) => {
+  const swoopCurve = sin(PI * (elapsedTime / duration)),
+    waypoint = addXYZ(target, scaleXYZ(depthAxis, depth * swoopCurve)),
+    direction = subtractXYZ(waypoint, readOrigin(object[0]));
+
+  createPullAction(direction, speed, () => swoopCurve)(
+    object,
+    tickLength,
+    elapsedTime,
+    duration,
+  );
+  aimObject(object, waypoint);
+};
+
+export const createColorTransitionAction = (
+  fromColor: number,
+  toColor: number,
+  curve: (t: number) => number = (t) => t,
+): Action<XOObject> => {
+  const from = toHSL(fromColor),
+    to = toHSL(toColor);
+
+  return (object: XOObject, _, elapsedTime: number, duration: number) => {
+    const t = curve(elapsedTime / duration),
+      [h, s, l, a] = doTimes(
+        4,
+        (index: number) => interpolate([from[index], to[index]], t),
+      );
+
+    object[2] = paint(toRGB(h, s, l, round(a)));
+  };
+};

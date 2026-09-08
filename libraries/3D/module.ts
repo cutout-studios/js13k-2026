@@ -55,6 +55,8 @@ export {
   create as createPaintMaterial,
   createPalette as createPaintPalette,
   createWithPalette as createPaintMaterialWithPalette,
+  toHSL,
+  toRGB,
 } from "./materials/paint.ts";
 export {
   add as addXYZ,

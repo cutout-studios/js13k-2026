@@ -17,16 +17,28 @@
 /// <reference lib="dom" />
 
 import { CAMERA_MAGNIFICATION_RATIO, createRenderTarget, XYZ } from "~/3D";
-import { ENEMY_Z_PLANE } from "../game/options/module.ts";
+import { abs } from "~/alias";
+import { PLAYER_AIM_Z_PLANE } from "../game/options/module.ts";
 import { mainCanvas as mainCanvasElement } from "./handles.ts";
 
 export let mainCanvas = createRenderTarget(mainCanvasElement);
 onresize = () => mainCanvas = createRenderTarget(mainCanvasElement);
 
+// half-width/half-height the camera can currently see at a given depth
+export const visibleHalfExtentAt = (z: number): [x: number, y: number] => {
+  const scale = abs(z) / CAMERA_MAGNIFICATION_RATIO;
+  return [scale * mainCanvas[0], scale];
+};
+
+export const isPointVisible = ([x, y, z]: XYZ) => {
+  const [xHalf, yHalf] = visibleHalfExtentAt(z);
+  return abs(x) < xHalf && abs(y) < yHalf;
+};
+
 export const mapClientXYToZPlane = (
   clientX: number,
   clientY: number,
-  plane = ENEMY_Z_PLANE,
+  plane = PLAYER_AIM_Z_PLANE,
 ): XYZ =>
   [
     (2 * clientX - mainCanvasElement.clientWidth) /

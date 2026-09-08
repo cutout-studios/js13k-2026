@@ -105,7 +105,7 @@ export const createBullet = (
                   );
                 },
               ]] as ActionSchedule<Bullet>,
-              bulletSound
+              bulletSound,
             ] = [],
           ],
         ],

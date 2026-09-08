@@ -17,17 +17,20 @@
 import { scatterObjects } from "~/3D";
 import { length, max, min, round } from "~/alias";
 import { doTimes, spread } from "~/common";
+import { rollBand } from "~/random";
 
+import { visibleHalfExtentAt } from "../../elements/mainCanvas.ts";
 import { createDeck, drawCard } from "../decks.ts";
-import GameOptions, {
-  ENEMY_X_BOUND,
-  ENEMY_Y_BOUND,
-  ENEMY_Z_PLANE,
-} from "../options/module.ts";
+import GameOptions from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 import { Ship } from "../ship/types.ts";
 
-import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
+import {
+  ENEMY_SPAWN_DEPTH_BAND,
+  GROUPS_PER_WAVE_BAND,
+  WAVE_CURVE,
+  WAVE_PACING,
+} from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
 
 const _enemyDeck = createDeck(length(GameOptions.slice(1)));
@@ -48,13 +51,15 @@ export const rollEnemies = (wave: number, level: number) =>
       const optionsIndex = drawCard(_enemyDeck) + 1,
         side = index % 2 ? 1 : -1,
         count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
-        ships = doTimes(count, () => createShip(optionsIndex, level));
+        ships = doTimes(count, () => createShip(optionsIndex, level)),
+        spawnDepth = rollBand(ENEMY_SPAWN_DEPTH_BAND),
+        [enemyXBound, enemyYBound] = visibleHalfExtentAt(-spawnDepth);
 
       scatterObjects(
         [
-          spread(ENEMY_X_BOUND, 2 * side * ENEMY_X_BOUND),
-          spread(ENEMY_Y_BOUND),
-          spread(1, -ENEMY_Z_PLANE),
+          spread(enemyXBound, 2 * side * enemyXBound),
+          spread(enemyYBound),
+          spread(1, -spawnDepth),
         ],
         true,
         ...doTimes(ships, (ship) => ship[0]),

@@ -26,7 +26,8 @@ import { getPanFromCoordinates } from "~/audio";
 import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, repeat, spliceTable } from "~/common";
 
-import { ENEMY_X_BOUND, PLAYER_X_BOUND } from "./options/module.ts";
+import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
+import { PLAYER_X_BOUND } from "./options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { updateBullets } from "./ship/bullets.ts";
@@ -69,10 +70,14 @@ export const updateGame = (
       );
 
       doTimes(hitIndicies, (_, index: number) => {
-        const shipIndex = shipIndicies[index];
+        const shipIndex = shipIndicies[index],
+          shipCoordinates = enemyShips[shipIndex][0][0];
 
         hitSound(
-          getPanFromCoordinates(enemyShips[shipIndex][0][0], ENEMY_X_BOUND),
+          getPanFromCoordinates(
+            shipCoordinates,
+            visibleHalfExtentAt(readOrigin(shipCoordinates)[2])[0],
+          ),
         );
         enemyShips[shipIndex][4][0] +=
           (random() < critChance ? bulletDamage * critDamage : bulletDamage) *

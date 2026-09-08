@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { F32 } from "~/alias";
-import { flatDoTimes } from "~/common";
+import { abs, F32, max, min, round } from "~/alias";
+import { doTimes, flatDoTimes } from "~/common";
+
 import type { RGBA, XOMaterial } from "../types.ts";
 
 import shaderCode from "./paint.wgsl.ts";
@@ -24,13 +25,46 @@ export const create = (
   paintData: Float32Array,
 ): XOMaterial => [shaderCode, paintData];
 
+// unpacks a 0xRRGGBBAA hex into 4 normalized (0-1) channels
+const _unpackRGBA = (hex: number): RGBA =>
+  doTimes(
+    4,
+    (index: number) => ((hex >> (24 - 8 * index)) & 255) / 255,
+  ) as RGBA;
+
 export const createPalette = (...paints: number[]) =>
-  new F32(flatDoTimes(paints, (hex: number): RGBA => [
-    ((hex >> 24) & 255) / 255,
-    ((hex >> 16) & 255) / 255,
-    ((hex >> 8) & 255) / 255,
-    (hex & 255) / 255,
-  ]));
+  new F32(flatDoTimes(paints, _unpackRGBA));
 
 export const createWithPalette = (...paints: number[]) =>
   create(createPalette(...paints));
+
+export const toRGB = (h: number, s: number, l: number, a = 255): number => {
+  const chroma = (s / 100) * min(l / 100, 1 - l / 100),
+    channel = (n: number) => {
+      const k = (n + h / 30) % 12;
+
+      return round(255 * (l / 100 - chroma * max(min(k - 3, 9 - k, 1), -1)));
+    };
+
+  return (channel(0) << 24) | (channel(8) << 16) | (channel(4) << 8) | a;
+};
+
+export const toHSL = (
+  hex: number,
+): [h: number, s: number, l: number, a: number] => {
+  const [r, g, b] = _unpackRGBA(hex),
+    hi = max(r, g, b),
+    lo = min(r, g, b),
+    l = (hi + lo) / 2,
+    delta = hi - lo,
+    s = delta ? delta / (1 - abs(2 * l - 1)) : 0,
+    h = !delta
+      ? 0
+      : 60 * (hi == r
+        ? ((g - b) / delta + 6) % 6
+        : hi == g
+        ? (b - r) / delta + 2
+        : (r - g) / delta + 4);
+
+  return [h, s * 100, l * 100, hex & 255];
+};

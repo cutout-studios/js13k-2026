@@ -31,7 +31,7 @@ import { clamp, doTimes, flat, spread } from "~/common";
 
 import { bell, oneOf, rollBand, rollSpread } from "~/random";
 
-import { createPull, orbit } from "../actions.ts";
+import { createPullAction, orbitAction } from "../actions.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
 import GameOptions, {
   PLAYER_X_BOUND,
@@ -67,20 +67,22 @@ export const createItem = (
       baseBulletDamage,
     ], modifiers]] = GameOptions[colorID],
     modifierDeck = [] as ModifierOptions[],
-    pull = createPull(Z_AXIS, 0.01, () => 1, [[0, 0], [0, 0.07], [0, 0.01]]);
+    pullAction = createPullAction(Z_AXIS, 0.01, () => 1, [[0, 0], [0, 0.07], [
+      0,
+      0.01,
+    ]]);
 
   let yJitterAmount: number | undefined;
 
   // enemies can die outside the player's reachable X/Y field, which would otherwise
   // leave their drop uncatchable - steer it back toward the field as it drifts in.
-  // the Y correction is jittered, with the jitter's size fixed from how far outside
-  // the field the item started, so a wilder drop wobbles more on its way back
-  const homeToField = (object: XOObject, tickLength: number) => {
+  const pullToPlayerFieldAction = (object: XOObject, tickLength: number) => {
     const [x, y] = readOrigin(object[0]),
       yOvershoot = y - clamp(y, spread(PLAYER_Y_BOUND));
 
     yJitterAmount ??= abs(yOvershoot);
 
+    // TODO: reuse createPullAction?
     adjustObject(object, [[
       (clamp(x, spread(PLAYER_X_BOUND)) - x) * FIELD_HOME_RATE * tickLength,
       (-yOvershoot * FIELD_HOME_RATE +
@@ -102,9 +104,9 @@ export const createItem = (
     ),
     createActionSequencer([[
       ([object], tickLength: number, ...args) => (
-        pull(object, tickLength, ...args),
-          homeToField(object, tickLength),
-          orbit(object, tickLength, ...args)
+        pullAction(object, tickLength, ...args),
+          pullToPlayerFieldAction(object, tickLength),
+          orbitAction(object, tickLength, ...args)
       ),
     ]]),
     typeID,
@@ -148,7 +150,7 @@ export const setItemInFrame = (item: Item) => {
   setOrigin(item[0][0], [0, 0, -1.5]);
 
   item[1] = createActionSequencer([[
-    ([object], ...args) => orbit(object, ...args),
+    ([object], ...args) => orbitAction(object, ...args),
   ]]);
 
   return item;
