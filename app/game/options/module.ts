@@ -80,7 +80,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   3, // Regen
   1, // Spin Damage
   1, // Spin Speed
-  0.35, // Spin Time
+  0.7, // Spin Time
 
   // 16
   2.4, // Strafe Speed

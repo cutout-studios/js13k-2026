@@ -33,7 +33,8 @@ export type Resources = [
   rez: number,
   invulnerable: 0 | 1,
   countering: 0 | 1,
-  flinching: 0 | 1,
+  recovering: 0 | 1,
+  roll: number,
 ];
 
 export type ShipSnapshot = [

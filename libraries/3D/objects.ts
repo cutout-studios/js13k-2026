@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { abs, F32, hypot, length, max /* min, PI */ } from "~/alias";
+import { abs, cos, F32, hypot, length, max, sin /* PI */ } from "~/alias";
 import { Band, clamp, doTimes, flatDoTimes, repeat } from "~/common";
 import { rollBand } from "~/random";
 import {
@@ -66,11 +66,22 @@ export const adjustObject = (
   if (rotation) object[0] = localize(createRotation(rotation), object[0]);
 };
 
-export const aimObject = (object: XOObject, aim: XYZ) => {
+export const aimObject = (object: XOObject, aim: XYZ, roll = 0) => {
   const origin = readOrigin(object[0]),
     zAxis = normalize(subtract(aim, origin)),
-    right = normalize(cross(Y_AXIS, zAxis));
-  object[0] = createCoordinates(right, cross(zAxis, right), zAxis, origin);
+    right = normalize(cross(Y_AXIS, zAxis)),
+    up = cross(zAxis, right),
+    c = cos(roll),
+    s = sin(roll);
+
+  // roll spins {right, up} within their own plane - zero when roll is 0, so
+  // this is a strict extension of the old (always upright) behavior
+  object[0] = createCoordinates(
+    add(scale(right, c), scale(up, s)),
+    add(scale(up, c), scale(right, -s)),
+    zAxis,
+    origin,
+  );
 };
 
 // CRUCIAL NOTE!!: assumes all materials are paint materials

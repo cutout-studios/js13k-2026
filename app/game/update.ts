@@ -27,6 +27,8 @@ import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, repeat, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
+// particles: cut for now - see particles.ts
+// import { createBurst, updateParticles } from "./particles.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { Ship, Weapon } from "./ship/types.ts";
@@ -193,6 +195,15 @@ export const updateGame = (
           if (damages[0] < snapshot[11]) return [];
 
           enemyDestroyedSound(getPanFromCoordinates(coordinates));
+          // particles: cut for now - see particles.ts
+          // createBurst(
+          //   readOrigin(coordinates),
+          //   8,
+          //   [1, 2],
+          //   [0.2, 0.4],
+          //   0xFFEE99FF,
+          //   0x99220000,
+          // );
 
           if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
             world[4] = 0;

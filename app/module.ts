@@ -26,6 +26,7 @@ import GameState, {
   getSceneObjects,
   updateBackgroundStars,
 } from "./game/module.ts";
+// import { updateParticles } from "./game/particles.ts";
 import {
   applyInputToPlayerShip,
   checkAKey,
@@ -57,6 +58,7 @@ const checkMouse = (tickLength: number) =>
 startClock((tickLength) => {
   checkKeyboard(tickLength);
   updateBackgroundStars(tickLength);
+  // updateParticles(tickLength);
 
   // game hasn't started yet
   if (!GameState[2]) {

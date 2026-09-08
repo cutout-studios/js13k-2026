@@ -17,11 +17,16 @@
 import {
   adjustObject,
   aimObject,
+  // particles: cut for now - see particles.ts
+  // createCoordinates,
+  // localize,
+  // normalizeXYZ,
   readOrigin,
   scaleXYZ,
   setOrigin,
   subtractXYZ,
 } from "~/3D";
+// import { _ } from "~/alias";
 import { createEnvelope } from "~/clock";
 import { clamp, doTimes, spread } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
@@ -32,6 +37,8 @@ import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
 import GameState from "../module.ts";
 import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/module.ts";
+// import GameOptions from "../options/module.ts";
+// import { spawnParticle } from "../particles.ts";
 import { createSpinSequence } from "../ship/spin.ts";
 import { playerSpinSound } from "../sounds.ts";
 
@@ -54,6 +61,11 @@ const [[playerShip]] = GameState,
     SPIN_BOOST_ATTACK_TIME,
     SPIN_BOOST_RELEASE_TIME,
   );
+  // particles: cut for now - see particles.ts
+  // approximate engine mount, local to the ship (-Z is behind - +Z is the
+  // heading/nose per aimObject) - comment out along with the thruster spawn
+  // below to cut particles entirely
+  // const ENGINE_MOUNT = createCoordinates(_, _, _, [0, 0, -0.3]);
 
 export const checkMousePointer = bindPointer(
   (tickLength: number, x: number, y: number) => {
@@ -119,7 +131,7 @@ export const checkSpaceBar = bindButton(
   () => {
     const resources = playerShip[4];
 
-    if (resources[3]) return; // invulnerable
+    if (resources[3] || resources[4] || resources[5]) return; // invulnerable, or still recovering
 
     if (GameState[2]) {
       const totalGasUsed = resources[1] + snapshot[9];
@@ -128,7 +140,10 @@ export const checkSpaceBar = bindButton(
     }
 
     playerSpinSound(getPanFromCoordinates(playerShip[0][0]));
-    playerShip[3] = createSpinSequence(playerShip);
+    playerShip[3] = createSpinSequence(
+      playerShip,
+      strafe[3] - strafe[1] < 0 ? -1 : 1,
+    );
   },
 );
 
@@ -148,7 +163,7 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     scaleXYZ([strafeX, strafeY, 0], snapshot[16] * speedBoost * tickLength),
   ]);
 
-  aimObject(playerShipObject, playerAim);
+  aimObject(playerShipObject, playerAim, playerShip[4][6]);
 
   // clamp ship to camera bounds
   const [x, y, z] = readOrigin(playerShipObject[0]);
@@ -157,4 +172,20 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     clamp(y, spread(PLAYER_Y_BOUND)),
     z,
   ]);
+
+  // particles: cut for now - see particles.ts
+  // if (strafeX || strafeY) {
+  //   // exhaust trails opposite the ship's actual motion, not the aim heading -
+  //   // strafing is independent of where you're aiming
+  //   const weaponColor = GameOptions[leftWeapon[4]][1];
+  //
+  //   spawnParticle(
+  //     readOrigin(localize(ENGINE_MOUNT, playerShipObject[0])),
+  //     scaleXYZ(normalizeXYZ([strafeX, strafeY, 0]), -1),
+  //     2,
+  //     0.15,
+  //     weaponColor,
+  //     weaponColor & 0xFFFFFF00,
+  //   );
+  // }
 };

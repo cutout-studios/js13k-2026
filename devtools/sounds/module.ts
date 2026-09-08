@@ -21,6 +21,8 @@ import {
   createRingBuffer,
   createSound,
   NOISE_BUFFER,
+  PACK_BUFFER_NAMES,
+  packSound,
   SAWTOOTH_BUFFER,
   SINE_BUFFER,
   SQUARE_BUFFER,
@@ -71,7 +73,9 @@ const CUSTOM_BUFFERS: Record<
   [RING_NAME]: [createRingBuffer, "ratio", 2],
 };
 
-const BUFFER_NAMES = [...Object.keys(BUFFERS), ...Object.keys(CUSTOM_BUFFERS)];
+// PACK_BUFFER_NAMES (shared with libraries/audio/pack.ts) is the source of
+// truth for ordering - packSound() encodes a buffer as an index into it.
+const BUFFER_NAMES: string[] = [...PACK_BUFFER_NAMES];
 const KNOB_NAMES = ["Gain", "Rate"];
 
 type StepModel = {
@@ -365,4 +369,29 @@ document.getElementById("copyCode")!.onclick = () => {
 
   output.value = code;
   navigator.clipboard?.writeText(code).catch(() => {});
+};
+
+// paste the result onto the end of SOUND_DATA in app/game/sounds.ts, and add
+// one more `createSound(...decodeSound())` call after the previous one - the
+// decoder consumes fragments in the order they were appended
+document.getElementById("copyPacked")!.onclick = () => {
+  const packed = packSound(
+      layers.map((layer) => ({
+        bufferIndex: BUFFER_NAMES.indexOf(layer.bufferName),
+        param: layer.param,
+        events: layer.steps.map((
+          step,
+        ): [number, number, number, boolean, number] => [
+          step.knob,
+          step.value,
+          step.isBand ? step.valueHi : step.value,
+          step.exponential,
+          step.duration,
+        ]),
+      })),
+    ),
+    output = document.getElementById("output") as HTMLTextAreaElement;
+
+  output.value = packed;
+  navigator.clipboard?.writeText(packed).catch(() => {});
 };

@@ -57,7 +57,7 @@ export const createShip = (
       (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level),
     ),
     createActionSequencer(shipSchedule),
-    repeat(6, 0) as Resources,
+    repeat(7, 0) as Resources,
     levelRollOverrides(
       BASE_PROPERTIES,
       shipOverrides,

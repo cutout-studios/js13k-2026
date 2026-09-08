@@ -27,9 +27,8 @@ import {
   toRGB,
   XOObject,
   XYZ,
-  Z_AXIS,
 } from "~/3D";
-import { /* PI, */ round, /* sin, */ TAU } from "~/alias";
+import { /* PI, */ round /* sin */ } from "~/alias";
 import { Action } from "~/clock";
 import { Band, doTimes, interpolate, repeat } from "~/common";
 import { rollBand } from "~/random";
@@ -58,16 +57,6 @@ export const createPullAction = (
     ),
   ]);
 });
-
-export const createRollAction = (
-  rotations: number,
-  curve: (value: number) => number = (n) => n,
-): Action<XOObject> =>
-(object: XOObject, _, elapsedTime, duration) =>
-  adjustObject(object, [undefined, [
-    Z_AXIS,
-    curve(elapsedTime / duration) * rotations * TAU,
-  ]]);
 
 export const createColorTransitionAction = (
   fromColor: number,

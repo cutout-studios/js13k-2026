@@ -27,6 +27,8 @@ import { _, cos, sin, TAU } from "~/alias";
 import { doTimes, flat, flatDoTimes } from "~/common";
 import { rollBand } from "~/random";
 
+// particles: cut for now - see particles.ts
+// import { particles } from "./particles.ts";
 import startingPlayer from "./player/module.ts";
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
@@ -83,12 +85,13 @@ export const getSceneObjects = (
   const [hull, ...rest] = getShipObjects(playerShip);
   return flat(
     starWalls,
-    playerShip[4][4] && (Date.now() / 80 | 0) % 2 ? [] : [hull],
+    playerShip[4][3] && (Date.now() / 80 | 0) % 2 ? [] : [hull],
     rest,
     flatDoTimes(
       activeEnemyGroups,
       (ships) => flatDoTimes(ships, getShipObjects) as XOObject[][],
     ),
     doTimes(droppedItems, ([object]) => [object]),
+    // doTimes(particles, ([object]) => [object]),
   );
 };
