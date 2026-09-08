@@ -30,10 +30,8 @@ export type Ship = [
 export type Resources = [
   hp: number,
   gas: number,
-  gasSegments: number,
   rez: number,
   invulnerable: 0 | 1,
-  ejecting: 0 | 1,
   countering: 0 | 1,
   flinching: 0 | 1,
 ];
@@ -48,28 +46,26 @@ export type ShipSnapshot = [
   gasCanSize: number,
   gasCost: number,
 
-  // 6-10
-  gasEjectDelay: number,
+  // 6-8
   gasRegen: number,
-  gasCans: number,
   itemMixtureQuality: number,
   itemDropRate: number,
 
-  // 11-15
-  levelQuality: number,
-  lowestResource: number,
+  // 9-11
   kg: number,
   resolve: number,
   hp: number,
 
-  // 16-20
+  // 12-15
   regen: number,
   spinDamage: number,
   spinHandling: number,
   spinTime: number,
+
+  // 16
   strafeSpeed: number,
 
-  // 21
+  // 17
   aimSpeed: number,
 ];
 

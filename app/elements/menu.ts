@@ -15,7 +15,7 @@
  */
 
 import { createRenderTarget, GPURenderTarget } from "~/3D";
-import { join, length, preventDefault } from "~/alias";
+import { _, join, length, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, repeat, spliceTable } from "~/common";
 import { updateStyles } from "~/dom";
@@ -37,14 +37,10 @@ import {
   base,
   canvasCells,
   equipButton,
+  equipLabels,
   form,
   header,
   itemPopover,
-  levelButton,
-  levelGas,
-  levelHP,
-  levelLabel,
-  levelRez,
   menu,
   modifiers,
   restoreButton,
@@ -58,19 +54,18 @@ let hoveredCellIndex = -1,
 
 const EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
+  INVENTORY_CAPACITY = 12,
   [player, [, , progress, winCollection]] = GameState,
-  [playerShip, playerLevels, inventory] = player,
+  [playerShip, equipped, inventory] = player,
   getFormValues = () => [
     doTimes(new FormData(form).getAll("i"), Number),
     doTimes(new FormData(form).getAll("l"), Number),
   ],
-  restorePreviewSequence = createActionSequencer<
-    [item: Item, equipped?: boolean | undefined][]
-  >([
+  restorePreviewSequence = createActionSequencer<Item[]>([
     [(inventory) => {
       restorePreviewItem = oneOf(doTimes(
         getFormValues()[0],
-        (value) => inventory[value]?.[0],
+        (value) => inventory[value],
       ));
     }],
     [(_inventory, tickLength) => {
@@ -85,13 +80,12 @@ const EQUIP_OFFSET = 2,
     4,
     (typeID: number) => setItemInFrame(createItem(0, typeID, 1, 1)),
   ),
-  equippedItems = [...defaultEquipItems],
   updateItemPopover = (
     [, , _typeID, _colorID, _rank, _modifiers, _baseMass, _baseWeapon]: Item,
   ) => {
     header.innerText = join([
       "⭑".repeat(_rank),
-      GameOptions[_colorID][0],
+      _colorID ? GameOptions[_colorID][0] : "DEFAULT",
       PARTS[_typeID],
     ]);
 
@@ -117,43 +111,37 @@ const EQUIP_OFFSET = 2,
 
 form.onsubmit = (event: SubmitEvent) => {
   preventDefault(event);
-  const [detail, levels] = getFormValues();
+  const [detail] = getFormValues();
   switch ((event.submitter as HTMLButtonElement).value) {
-    case "1": {
-      if (levels[0] + levels[1] + levels[2] == (progress[0] - 1)) {
-        playerLevels[0] = levels[0];
-        playerLevels[1] = levels[1];
-        playerLevels[3] = levels[2];
-      }
-      updatePlayerEquipmentSnapshots(player);
-      break;
-    }
     case "2": {
       const toEquip = repeat(4, -1);
-      doTimes(
-        detail,
-        (index) => toEquip[inventory[index][0][2]] = index,
+      doTimes(detail, (index) => toEquip[inventory[index][2]] = index);
+
+      const newlyEquipped = doTimes(
+        4,
+        (typeID: number) =>
+          toEquip[typeID] == -1 ? _ : inventory[toEquip[typeID]],
       );
-      doTimes(inventory, (item, index) => {
-        const typeID = item[0][2];
-        if (toEquip[typeID] == -1) return;
-        item[1] = toEquip[typeID] == index;
+
+      spliceTable([inventory], detail);
+
+      doTimes(newlyEquipped, (item, typeID) => {
+        if (!item) return;
+        if (equipped[typeID]) inventory.push(equipped[typeID]!);
+        equipped[typeID] = item;
       });
+
       updatePlayerEquipmentSnapshots(player);
       break;
     }
     case "3": {
       const item = combineItems(
         progress[0] * playerShip[5][9],
-        ...doTimes(detail, (index) => inventory[index][0]),
+        ...doTimes(detail, (index) => inventory[index]),
       );
       if (item) {
         spliceTable([inventory], detail);
-        doTimes(
-          detail,
-          (index) => camera([[]], renderTargets[index + INVENTORY_OFFSET]),
-        );
-        inventory.push([item]);
+        inventory.push(item);
         if (item[4] == 2) winCollection.add(item[3]);
         updatePlayerEquipmentSnapshots(player);
       }
@@ -185,7 +173,13 @@ menu.onmouseenter = menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
 };
 
 export const resetMenu = () => {
-  renderTargets ||= doTimes(canvasCells, createRenderTarget);
+  if (!renderTargets) {
+    renderTargets = doTimes(canvasCells, createRenderTarget);
+    doTimes(
+      4,
+      (typeID: number) => equipLabels[typeID].textContent = PARTS[typeID],
+    );
+  }
   doTimes(
     winCollectionElements,
     (element, index) =>
@@ -193,48 +187,55 @@ export const resetMenu = () => {
       (element.style.background = "#" + GameOptions[index + 1][1].toString(16)),
   );
   camera([[portrait(GameState[1][3].size / 6)]], renderTargets[0]);
-  doTimes(
-    4,
-    (typeID: number) => equippedItems[typeID] = defaultEquipItems[typeID],
-  );
-  doTimes(inventory, ([item, equipped], index) => {
-    camera([[item[0]]], renderTargets[index + INVENTORY_OFFSET]);
-    if (equipped) equippedItems[item[2]] = item;
-  });
-  doTimes(
-    equippedItems,
-    (item, index) => camera([[item[0]]], renderTargets[index + EQUIP_OFFSET]),
-  );
 
-  levelLabel.innerText = `LVLS USED: ${
-    playerLevels[0] + playerLevels[1] + playerLevels[3]
-  } / ${progress[0] - 1}`;
-  levelHP.value = levelHP.min = playerLevels[0] + "";
-  levelGas.value = levelGas.min = playerLevels[1] + "";
-  levelRez.value = levelRez.min = playerLevels[3] + "";
+  doTimes(4, (typeID: number) => {
+    const item = equipped[typeID] ?? defaultEquipItems[typeID];
+    camera([[item[0]]], renderTargets[typeID + EQUIP_OFFSET]);
+    canvasCells[typeID + EQUIP_OFFSET].style.opacity = equipped[typeID]
+      ? "1"
+      : "0.5";
+  });
+
+  doTimes(
+    INVENTORY_CAPACITY,
+    (index: number) =>
+      camera(
+        inventory[index] ? [[inventory[index][0]]] : [],
+        renderTargets[index + INVENTORY_OFFSET],
+      ),
+  );
 };
 
 export const updateMenu = (tickLength: number) => {
-  equipButton.disabled = !length(getFormValues()[0]);
-  restoreButton.disabled = length(getFormValues()[0]) < 2;
+  const selectedIndicies = getFormValues()[0];
+
+  equipButton.disabled = !length(selectedIndicies);
+  restoreButton.disabled = length(selectedIndicies) < 2;
 
   if (!restoreButton.disabled) restorePreviewSequence(inventory, tickLength);
   else camera([], renderTargets[1]);
 
+  const selectedTypeIDs = doTimes(
+    selectedIndicies,
+    (index: number) => inventory[index][2],
+  );
   doTimes(
-    [levelRez, levelGas, levelHP, levelButton],
-    (element: HTMLInputElement | HTMLButtonElement) =>
-      element.disabled =
-        (playerLevels[0] + playerLevels[1] + playerLevels[3]) ==
-          (progress[0] - 1),
+    4,
+    (typeID: number) =>
+      canvasCells[typeID + EQUIP_OFFSET].classList.toggle(
+        "selected",
+        selectedTypeIDs.includes(typeID),
+      ),
   );
 
-  const [item, equipped] = inventory[hoveredCellIndex - INVENTORY_OFFSET] ??
-    [equippedItems[hoveredCellIndex - EQUIP_OFFSET], true];
+  const inventoryItem = inventory[hoveredCellIndex - INVENTORY_OFFSET],
+    equipTypeID = hoveredCellIndex - EQUIP_OFFSET,
+    item = inventoryItem ?? equipped[equipTypeID] ??
+      defaultEquipItems[equipTypeID];
+
   if (!item) return updateStyles(itemPopover, { visibility: "hidden" });
   updateItemPopover(item);
   updateStyles(itemPopover, { visibility: "visible" });
   item[1](item, tickLength);
   camera([[item[0]]], renderTargets[hoveredCellIndex]);
-  if (equipped) camera([[item[0]]], renderTargets[item[2] + EQUIP_OFFSET]);
 };

@@ -32,13 +32,8 @@ export const [
   header,
   modifiers,
   base,
-  levelLabel,
-  levelHP,
-  levelGas,
-  levelRez,
   equipButton,
   restoreButton,
-  levelButton,
 ] = doTimes(
   [
     "c",
@@ -54,13 +49,8 @@ export const [
     "a",
     "b",
     "k",
-    "ab",
-    "ad",
-    "ac",
-    "ae",
     "e",
     "z",
-    "af",
   ],
   (char) => document.getElementById(char),
 ) as [
@@ -77,17 +67,16 @@ export const [
   HTMLElement,
   HTMLElement,
   HTMLElement,
-  HTMLElement,
-  HTMLInputElement,
-  HTMLInputElement,
-  HTMLInputElement,
-  HTMLButtonElement,
   HTMLButtonElement,
   HTMLButtonElement,
 ];
 
 export const canvasCells = arrayFrom(
   document.querySelectorAll<HTMLCanvasElement>("#o canvas"),
+);
+
+export const equipLabels = arrayFrom(
+  document.querySelectorAll<HTMLElement>("#g label"),
 );
 
 export const winCollectionElements = arrayFrom(

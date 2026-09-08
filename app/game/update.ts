@@ -75,14 +75,14 @@ export const updateGame = (
         );
         enemyShips[shipIndex][4][0] +=
           (random() < critChance ? bulletDamage * critDamage : bulletDamage) *
-          (playerSnapshot[14] * (1 + playerResourceStatus[0]));
+          (playerSnapshot[10] * (1 + playerResourceStatus[0]));
       });
 
       return spliceTable(bullets, hitIndicies);
     },
   );
 
-  if (!playerResourceStatus[4]) { // skip enemy bullets while the player is invulnerable
+  if (!playerResourceStatus[3]) { // skip enemy bullets while the player is invulnerable
     doTimes(
       enemyShips,
       (
@@ -101,7 +101,7 @@ export const updateGame = (
             ? bulletDamage * critDamage
             : bulletDamage;
 
-          if (playerResourceStatus[6]) {
+          if (playerResourceStatus[4]) {
             hitSound(
               getPanFromCoordinates(playerShipObject[0], PLAYER_X_BOUND),
             );
@@ -111,7 +111,7 @@ export const updateGame = (
             aimObject(bullet[0], targetPosition);
 
             const fauxSnapshot = repeat(7, 0);
-            fauxSnapshot[3] = baseDamage * playerSnapshot[17];
+            fauxSnapshot[3] = baseDamage * playerSnapshot[13];
 
             playerWeapons.push(
               [
@@ -145,7 +145,7 @@ export const updateGame = (
 
   doTimes(pickedUpIndicies, (itemIndex: number) => {
     setItemInFrame(droppedItems[itemIndex]);
-    inventory.push([droppedItems[itemIndex]]);
+    inventory.push(droppedItems[itemIndex]);
     if (droppedItems[itemIndex][4] == 2) {
       winCollection.add(droppedItems[itemIndex][3]);
     }
@@ -161,10 +161,10 @@ export const updateGame = (
       flatDoTimes(
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
-          if (damages[0] < snapshot[15]) return [];
+          if (damages[0] < snapshot[11]) return [];
           explosionSound(getPanFromCoordinates(coordinates, ENEMY_X_BOUND));
 
-          if (random() < snapshot[10] + world[4] * DROP_PITY_STEP) {
+          if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
             world[4] = 0;
             const item = createItem(optionsIndex, _, progress[0]);
             setOrigin(item[0][0], readOrigin(coordinates));
@@ -215,28 +215,28 @@ export const updateGame = (
   // restore hp
   playerResourceStatus[0] = max(
     0,
-    playerResourceStatus[0] - playerSnapshot[16] * tickLength,
+    playerResourceStatus[0] - playerSnapshot[12] * tickLength,
   );
 
   // if hp is depleted, reduce rez by one, trigger temporary invulnerability
-  if (playerResourceStatus[0] >= playerSnapshot[15]) {
+  if (playerResourceStatus[0] >= playerSnapshot[11]) {
     explosionSound();
-    playerResourceStatus[0] = playerSnapshot[15];
-    (random() > playerSnapshot[1]) && playerResourceStatus[3]++;
-    playerResourceStatus[4] = 1;
-    if (playerResourceStatus[3] >= playerSnapshot[0]) {
+    playerResourceStatus[0] = playerSnapshot[11];
+    (random() > playerSnapshot[1]) && playerResourceStatus[2]++;
+    playerResourceStatus[3] = 1;
+    if (playerResourceStatus[2] >= playerSnapshot[0]) {
       alert("MISSION " + (winCollection.size == 6 ? "COMPLETE" : "FAILED"));
       location.reload();
     }
   }
 
   // remove temporary invulnerability once hp is fully restored
-  if (playerResourceStatus[0] <= 0) playerResourceStatus[4] = 0;
+  if (playerResourceStatus[0] <= 0) playerResourceStatus[3] = 0;
 
   // refill gas
   playerResourceStatus[1] = max(
     0,
-    playerResourceStatus[1] - playerSnapshot[7] * tickLength,
+    playerResourceStatus[1] - playerSnapshot[6] * tickLength,
   );
 
   if (length(activeEnemyGroups)) return;
@@ -246,7 +246,7 @@ export const updateGame = (
     progress[1] = 1;
     progress[0]++;
     progress[2] = getWavesInLevel(progress[0]);
-    doTimes(8, (index: number) => playerResourceStatus[index] = 0);
+    doTimes(6, (index: number) => playerResourceStatus[index] = 0);
   } else { // stay in the current level
     progress[1]++;
   }

@@ -1,8 +1,20 @@
 # TODOs
 
-_Currently have ~1.5kB of space remaining._
+_Currently have ~2kB of space remaining._
 
 ## Core Improvements
+
+### Gameplay
+
+- Add color-specific enemy behaviors
+  - swoop + fire: red + green
+  - fade in/out: purple
+    - switch to box collider? (for oblong bullets/ships)
+  - spin + bomb: yellow
+- Re-allocate modifiers post-cut
+- Implement KG flinch
+
+- Continue to tune game settings.
 
 ### UX
 
@@ -13,23 +25,6 @@ _Currently have ~1.5kB of space remaining._
   - Menu sounds - select, confirm, success
   - Different damage, weapons, "explosion" sounds for player
 
-### Gameplay
-
-- Add color-specific enemy behaviors
-  - swoop + fire: red + green
-  - fade in/out: purple
-    - switch to box collider? (for oblong bullets/ships)
-  - spin + bomb: yellow
-
-- Implement gas canister eject delay (+ lil' animation?)
-- Implement KG flinch
-
-- Continue to tune game settings.
-
-### Aesthetics
-
-- Add FX (chromatic abberation) to background stars, nebula.
-
 ### Likely to land in a "director's cut", if any
 
 #### UX
@@ -38,7 +33,6 @@ _Currently have ~1.5kB of space remaining._
 
 #### Gameplay
 
-- Boost mechanic? Skip waves you don't like at the expense of one gas canister.
 - Improve spin counter
   - map controls to virtual analog stick
   - implement spin handling
@@ -50,6 +44,7 @@ _Currently have ~1.5kB of space remaining._
 
 #### Aesthetics
 
+- Add FX (chromatic abberation) to background stars, nebula.
 - Add thrusters: main + direction-based, explosion effects
 - More expressive spin-counter animation: directional, over-spin
 - Music

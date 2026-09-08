@@ -84,6 +84,7 @@ input[type=number]:focus {
   place-self: start;
   transform: rotate(-15deg);
   transform-origin: 100% 100%;
+  width: 80%;
 }
 #s {
   grid-area: 1/2;
@@ -95,6 +96,7 @@ input[type=number]:focus {
   place-self: start end;
   transform: rotate(15deg);
   transform-origin: 0 100%;
+  width: 80%;
 }
 #d {
   grid-area: 2/1;
@@ -235,28 +237,13 @@ input[type=number]:focus {
   margin: .3rem;
   text-align: center;
 }
-#ab {
-  margin-bottom: 1rem;
+#g > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-#aa {
-  display: grid;
-  grid: auto / min-content auto;
-  gap: .33rem;
-  padding-left: 1rem;
-  place-self: center;
-}
-#aa label {
-  place-self: center start;
-  margin-right: 0.5rem;
-}
-#ab {
-  grid-area: 1/1/2/3;
-  place-self: center;
-}
-#aa button {
-  margin-top: 1rem;
-  grid-area: 5/1/6/3;
-  place-self: center;
+#g canvas.selected {
+  border-color: #ff0;
 }
 </style>
 <canvas id=c></canvas>
@@ -275,16 +262,6 @@ input[type=number]:focus {
 </div>
 <dialog id=m>
   <form id=o>
-    <div id=aa>
-      <div id=ab>LVLS USED: 0 / 0</div>
-      <label>HP</label>
-      <input id=ad type=number value=0 min=0 name=l disabled>
-      <label>GAS</label>
-      <input id=ac type=number value=0 min=0 name=l disabled>
-      <label>REZ</label>
-      <input id=ae type=number value=0 min=0 name=l disabled>
-      <button id=af value=1 disabled>LVL ↑</button>
-    </div>
     <div id=n>
       <canvas></canvas>
       <div id=y>
@@ -293,10 +270,10 @@ input[type=number]:focus {
 			</div>
     </div>
     <div id=g>
-      <canvas></canvas>
-      <canvas></canvas>
-      <canvas></canvas>
-      <canvas></canvas>
+      <div><label></label><canvas></canvas></div>
+      <div><label></label><canvas></canvas></div>
+      <div><label></label><canvas></canvas></div>
+      <div><label></label><canvas></canvas></div>
     </div>
     <div id=v>
       <label><input type=checkbox name=i value=0><canvas></canvas></label>

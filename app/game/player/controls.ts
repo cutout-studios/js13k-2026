@@ -31,7 +31,6 @@ import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
 import GameState from "../module.ts";
 import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/module.ts";
-import { consumeFuel } from "../ship/module.ts";
 import { createSpinSequence } from "../ship/spin.ts";
 
 import {
@@ -58,7 +57,7 @@ export const checkMousePointer = bindPointer(
   (tickLength: number, x: number, y: number) => {
     [x, y] = scaleXYZ(
       subtractXYZ(mapClientXYToZPlane(x, y), playerAim),
-      tickLength / snapshot[21],
+      tickLength / snapshot[17],
     );
 
     playerAim[0] += x;
@@ -115,10 +114,19 @@ export const checkDKey = bindButton(
 
 export const checkSpaceBar = bindButton(
   "Space",
-  () =>
-    !playerShip[4][4] &&
-    (!GameState[2] || consumeFuel(snapshot[13], playerShip)) &&
-    (playerShip[3] = createSpinSequence(playerShip)),
+  () => {
+    const resources = playerShip[4];
+
+    if (resources[3]) return; // invulnerable
+
+    if (GameState[2]) {
+      const totalGasUsed = resources[1] + snapshot[9];
+      if (totalGasUsed >= snapshot[4]) return;
+      resources[1] = totalGasUsed;
+    }
+
+    playerShip[3] = createSpinSequence(playerShip);
+  },
 );
 
 export const checkEscapeKey = bindButton(
@@ -132,10 +140,10 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     // ramp the spin speed boost in/out (driven by the "countering" resource
     // flag) instead of snapping to it
     speedBoost = 1 +
-      spinBoostEnvelope(tickLength, !!playerShip[4][6]) * SPIN_BOOST_AMOUNT;
+      spinBoostEnvelope(tickLength, !!playerShip[4][4]) * SPIN_BOOST_AMOUNT;
 
   adjustObject(playerShipObject, [
-    scaleXYZ([strafeX, strafeY, 0], snapshot[20] * speedBoost * tickLength),
+    scaleXYZ([strafeX, strafeY, 0], snapshot[16] * speedBoost * tickLength),
   ]);
 
   aimObject(playerShipObject, playerAim);

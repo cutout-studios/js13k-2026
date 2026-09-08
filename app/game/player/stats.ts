@@ -20,31 +20,25 @@ import {
   flattenObjects,
   XOObject,
 } from "~/3D";
-import { length, min, round } from "~/alias";
-import { doTimes, flat, repeat } from "~/common";
+import { round } from "~/alias";
+import { doTimes, flat } from "~/common";
 
 import GameOptions, { BASE_PROPERTIES } from "../options/module.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import { createWeapon } from "../ship/weapons.ts";
 
-import { Item, Player } from "./types.ts";
+import { Player } from "./types.ts";
 
 export const updatePlayerEquipmentSnapshots = (
-  [ship, [rezLevels, gasLevels, _, hpLevels], inventory]: Player,
+  [ship, equippedItems]: Player,
 ) => {
   const _shipSnapshot = flat(BASE_PROPERTIES) as ShipSnapshot,
-    equippedItems: (Item | undefined)[] = inventory.reduce(
-      (slots, [item, equipped]) => (
-        equipped && (slots[item[2]] = item), slots
-      ),
-      repeat(4, undefined) as (Item | undefined)[],
-    ),
     _weaponsSnapshots = doTimes(
       2,
       (index: number) => {
         const item = equippedItems[index];
 
-        if (!item) return BASE_PROPERTIES.slice(22);
+        if (!item) return BASE_PROPERTIES.slice(18);
 
         const _snapshot = createWeapon(item[3], index)[3];
 
@@ -60,8 +54,8 @@ export const updatePlayerEquipmentSnapshots = (
       (geometry) => createObject(...geometry, paint(0xFFFFFFFF)),
     );
 
-  _shipSnapshot[13] = equippedItems.reduce(
-    (sum: number, item) => sum + (item ? item[6] : 1), // +1kg for each empty equip slot
+  _shipSnapshot[9] = equippedItems.reduce(
+    (sum: number, item) => sum + (item ? item[6] : 1), // +1kg per default item
     0,
   );
 
@@ -71,8 +65,8 @@ export const updatePlayerEquipmentSnapshots = (
     const [, , , , , modifiers] = item;
 
     doTimes(modifiers, ([statID, operator, value]) => {
-      const isWeaponStat = statID > 21,
-        targetID = isWeaponStat ? statID - 22 : statID;
+      const isWeaponStat = statID > 17,
+        targetID = isWeaponStat ? statID - 18 : statID;
 
       doTimes(
         (isWeaponStat ? _weaponsSnapshots : [_shipSnapshot]) as number[][],
@@ -111,43 +105,8 @@ export const updatePlayerEquipmentSnapshots = (
   ship[0][1] = newGeometry;
   ship[0][2] = newMaterial;
 
-  let levels = [rezLevels, gasLevels, hpLevels];
-
-  const minLevelIndicies = levels.reduce((arr, val) => {
-    val == min(...levels) && arr.push(val);
-    return arr;
-  }, [] as number[]);
-
-  if (length(minLevelIndicies) < 3) {
-    doTimes(
-      levels,
-      (_, index) =>
-        minLevelIndicies.includes(index) &&
-        (levels[index] *= _shipSnapshot[12] / length(minLevelIndicies)),
-    );
-  }
-
-  levels[
-    levels.indexOf(
-      min(rezLevels, gasLevels, hpLevels),
-    )
-  ] *= _shipSnapshot[12];
-
-  levels = [
-    levels[0],
-    ...repeat(3, levels[1]),
-    ...repeat(2, levels[2]),
-  ];
-
-  doTimes(
-    [0, 4, 7, 8, 15, 16],
-    (id, index) => _shipSnapshot[id] *= _shipSnapshot[11] ** levels[index],
-  );
-
-  // these are all discrete values - ensure int so HUD/state line up
+  // discrete value - ensure int so HUD/state line up
   _shipSnapshot[0] = round(_shipSnapshot[0]);
-  _shipSnapshot[4] = round(_shipSnapshot[4]);
-  _shipSnapshot[8] = round(_shipSnapshot[8]);
 
   ship[5] = _shipSnapshot;
 };

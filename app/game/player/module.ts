@@ -19,7 +19,6 @@ import { repeat } from "~/common";
 
 import { ENEMY_Z_PLANE, PLAYER_Z_PLANE } from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
-import { Resources } from "../ship/types.ts";
 import { Player } from "./types.ts";
 
 const ship = createShip(0);
@@ -30,7 +29,9 @@ ship[1] = [0, 0, -ENEMY_Z_PLANE];
 
 export default [
   ship,
-  repeat(8, 0) as Resources,
+
+  // equipment
+  repeat(4, undefined),
 
   // inventory
   [],

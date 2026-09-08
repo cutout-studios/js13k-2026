@@ -25,7 +25,7 @@ import {
   XOObject,
   XYZ,
 } from "~/3D";
-import { floor, length } from "~/alias";
+import { length } from "~/alias";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { doTimes, flat, repeat, spread } from "~/common";
 
@@ -74,7 +74,7 @@ export const createShip = (
 
         const [x, y] = scaleXYZ(
           subtractXYZ(readOrigin(GameState[0][0][0][0]), shipAim),
-          tickLength / snapshot[21],
+          tickLength / snapshot[17],
         );
 
         shipAim[0] += x;
@@ -101,7 +101,7 @@ export const createShip = (
       (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level),
     ),
     createActionSequencer(shipSchedule),
-    repeat(8, 0) as Resources,
+    repeat(6, 0) as Resources,
     levelRollOverrides(
       BASE_PROPERTIES,
       shipOverrides,
@@ -112,20 +112,6 @@ export const createShip = (
 };
 
 // export const createFlinchSequencer = () => {};
-
-export const consumeFuel = (
-  amount: number,
-  [, , , , resources, snapshot]: Ship,
-): boolean => {
-  const gasConsumed = amount + resources[1] + resources[2] * snapshot[4];
-
-  if (gasConsumed >= snapshot[4] * snapshot[8]) return false;
-
-  resources[1] = gasConsumed % snapshot[4];
-  resources[2] = floor(gasConsumed / snapshot[4]);
-
-  return true;
-};
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,

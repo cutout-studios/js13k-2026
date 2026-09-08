@@ -17,15 +17,12 @@
 import { XOObject } from "~/3D";
 
 import { ActionSequencer } from "~/clock";
-import { Resources, Ship } from "../ship/types.ts";
+import { Ship } from "../ship/types.ts";
 
 export type Player = [
   ship: Ship,
-  levelAssigments: Resources,
-  inventory: [
-    item: Item,
-    equipped?: boolean,
-  ][],
+  equipped: (Item | undefined)[],
+  inventory: Item[],
 ];
 
 export type Item = [

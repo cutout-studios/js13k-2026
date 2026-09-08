@@ -54,7 +54,7 @@ export const updateHUD = (
       ,
       ,
       ,
-      [damage, gasUsed = 0, cansUsed = 0, rez = 0],
+      [damage, gas = 0, rez = 0],
       _snapshot,
     ]],
     [, , [stage, wave, lastWave]],
@@ -70,15 +70,6 @@ export const updateHUD = (
   rezUpdate(
     doTimes(_snapshot[0], (index: number) => [1, +(index >= rez)]),
   );
-  hpUpdate([[_snapshot[15], _snapshot[15] - damage]]);
-  gasUpdate(
-    doTimes(_snapshot[8], (index: number) => [
-      _snapshot[4],
-      (_snapshot[8] - 1 - index) < cansUsed
-        ? 0
-        : (_snapshot[8] - 1 - index) > cansUsed
-        ? _snapshot[4]
-        : _snapshot[4] - gasUsed,
-    ]),
-  );
+  hpUpdate([[_snapshot[11], _snapshot[11] - damage]]);
+  gasUpdate([[_snapshot[4], _snapshot[4] - gas]]);
 };
