@@ -116,8 +116,7 @@ async function bundle(
         action: "write" as InputAction,
       },
     ], { allowFreeVars: true });
-    // await packer.optimize(2); // TODO
-    await packer.optimize(1);
+    await packer.optimize(2);
 
     const { firstLine, secondLine } = packer.makeDecoder();
 

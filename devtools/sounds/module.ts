@@ -28,8 +28,8 @@ import {
 } from "~/audio";
 import { doTimes } from "~/common";
 
-import type { Sound, SoundDefinition } from "../../libraries/audio/types.ts";
 import * as sounds from "../../app/game/sounds.ts";
+import type { Sound, SoundDefinition } from "../../libraries/audio/types.ts";
 
 // -- soundboard: every sound already exported from game/sounds.ts. clicking
 // one plays it (as before) and also loads it into the editor below --

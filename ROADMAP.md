@@ -1,45 +1,27 @@
 # TODOs
 
-_Currently have ~2kB of space remaining._
+- Fill stubbed audio (~1kB)
+- Fill stubbed behaviors (~1kB)
+- Fix portrait
 
-## Core Improvements
+## Likely to land in a "director's cut", if any
+
+### Aesthetics
+
+- Add thrusters: main + direction-based, explosion effects
+- Add FX (chromatic abberation) to background stars, nebula.
+- Music
+- More expressive spin-counter animation: directional, over-spin
 
 ### Gameplay
 
-- All bullets should "fade out" at the end of their lifetimes, and right before
-  they enter the camera's clip plane.
-- Re-allocate modifiers post-cut
-  - bullet speed
-  -
-- Implement KG flinch
+- Map WASD controls to virtual stick, support controllers
 
-- Continue to tune game settings.
-
-### Likely to land in a "director's cut", if any
-
-#### UX
+### UX
 
 - Short wiki explaining how the game works (external link to this repo)
 
-#### Gameplay
-
-- Improve spin counter
-  - map controls to virtual analog stick
-  - implement spin handling
-
-#### Accessibility
-
-- Support alternative controllers
-- _(lot more to be done here)_
-
-#### Aesthetics
-
-- Add FX (chromatic abberation) to background stars, nebula.
-- Add thrusters: main + direction-based, explosion effects
-- More expressive spin-counter animation: directional, over-spin
-- Music
-
-## Misc. Compression Ideas - mostly considered but probably not worth it
+## Misc. Compression Ideas - considered but probably not worth it
 
 - Remove destructuring in favor of repeated individual index access
 - Quantize all values (out of 256)... then...
