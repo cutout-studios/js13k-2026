@@ -56,12 +56,10 @@ _Currently have ~2kB of space remaining._
 
 ### UX
 
-- Lots of distinct sound effects. Use RX + spectral analysis to
-  reverse-engineer:
+- Lots of distinct sound effects.
   - Item pickup
   - Level complete
-  - Menu sounds - select, confirm, success
-  - Different damage, weapons, "explosion" sounds for player
+  - Different damage, weapons, "explosion" sounds
 
 ### Likely to land in a "director's cut", if any
 

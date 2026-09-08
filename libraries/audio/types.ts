@@ -18,4 +18,6 @@ import { Schedule } from "~/clock";
 import { Band } from "~/common";
 
 export type SoundDefinition = [buffer: AudioBuffer, schedule: SoundSchedule];
-export type SoundSchedule = Schedule<[knobID: number, value: number | Band]>;
+export type SoundSchedule = Schedule<
+  [knobID: number, value: number | Band, exponential?: boolean]
+>;

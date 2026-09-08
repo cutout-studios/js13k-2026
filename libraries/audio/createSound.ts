@@ -38,12 +38,11 @@ export const createSound = (...definitions: SoundDefinition[]) => {
       source.connect(ampKnob).connect(panKnob).connect(groupBus);
       source.start(time);
 
-      doTimes(schedule, ([[knobID, value], duration = 0]) => {
+      doTimes(schedule, ([[knobID, value, exponential], duration = 0]) => {
         time += duration;
-        knobs[knobID].linearRampToValueAtTime(
-          typeof value == "number" ? value : rollBand(value),
-          time,
-        );
+        knobs[knobID][
+          exponential ? "exponentialRampToValueAtTime" : "linearRampToValueAtTime"
+        ](typeof value == "number" ? value : rollBand(value), time);
       });
 
       source.stop(time);
