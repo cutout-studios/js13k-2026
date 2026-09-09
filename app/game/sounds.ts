@@ -23,29 +23,37 @@ import {
   SQUARE_BUFFER,
   TRIANGLE_BUFFER,
 } from "~/audio";
-import { SoundDefinition } from "../../libraries/audio/types.ts";
 
 export const defaultWeaponSound = createSound(
-  [NOISE_BUFFER, [
-    [[1, [0.7, 1]], 0],
-    [[0, [0.7, 0.8]], 0.003],
-    [[0, 0], 0.06],
-  ]],
   [SINE_BUFFER, [
-    [[1, [0.4, 0.6]], 0],
-    [[0, 0.43], 0.004],
-    [[1, [0.13, 0.16]], 0.03],
-    [[0, 0], 0.1],
+    [[1, [0.1, 0.13], true], 0],
+    [[0, 0.5, true], 0],
+    [[0, 0.3, true], 0.06],
+    [[1, 0.1], 1.5],
+    [[0, 0, true], 1.5],
   ]],
-  [SQUARE_BUFFER, [
-    [[1, [4.3, 6]], 0],
-    [[0, 0.035], 0.03],
-    [[0, 0], 0.14],
-    [[1, [0.2, 0.5], true], 0],
+  [SAWTOOTH_BUFFER, [
+    [[1, [0.2, 0.3], true], 0],
+    [[0, 0.04], 0],
+    [[0, 0.02], 0.14],
+    [[1, [0.06, 0.02], true], 0.01],
+    [[0, 0.01], 0.56],
+    [[0, 0], 1.5],
+  ]],
+  [NOISE_BUFFER, [
+    [[1, 1, true], 0],
+    [[0, 1], 0],
+    [[0, 0], 0.02],
+  ]],
+  [NOISE_BUFFER, [
+    [[0, [0.15, 0.11], true], 0],
+    [[0, 0.03, true], 0.2],
+    [[0, 0.01, true], 0.6],
+    [[0, 0], 1.15],
   ]],
 );
 
-const assetMissing: SoundDefinition[] = [
+export const errorSound = createSound(
   [SQUARE_BUFFER, [
     [[1, 3.5, true], 0],
     [[0, 0.19], 0],
@@ -67,8 +75,7 @@ const assetMissing: SoundDefinition[] = [
     [[0, 0.15], 0],
     [[1, 0.5, true], 0.04],
     [[0, 0], 0.04],
-  ]],
-];
+  ]]);
 
 export const equipSound = createSound(
   [NOISE_BUFFER, [
@@ -91,7 +98,7 @@ export const equipSound = createSound(
   ]],
 );
 export const itemPickupSound = equipSound;
-export const inventoryFullSound = createSound(...assetMissing);
+export const inventoryFullSound = errorSound;
 
 export const enemyHitSound = createSound(
   [NOISE_BUFFER, [
@@ -109,8 +116,8 @@ export const enemyHitSound = createSound(
 export const enemyDestroyedSound = createSound(
   [SINE_BUFFER, [
     [[1, [0.1, 0.13], true], 0],
-    [[0, 1, true], 0],
-    [[0, 0.6, true], 0.06],
+    [[0, 0.5, true], 0],
+    [[0, 0.3, true], 0.06],
     [[1, 0.1], 1.5],
     [[0, 0, true], 1.5],
   ]],
@@ -122,12 +129,12 @@ export const enemyDestroyedSound = createSound(
     [[0, 0.01], 0.56],
     [[0, 0], 1.5],
   ]],
-  [NOISE_BUFFER, [ // crack
+  [NOISE_BUFFER, [
     [[1, 1, true], 0],
     [[0, 1], 0],
     [[0, 0], 0.02],
   ]],
-  [NOISE_BUFFER, [ // false reverb
+  [NOISE_BUFFER, [
     [[0, [0.15, 0.11], true], 0],
     [[0, 0.03, true], 0.2],
     [[0, 0.01, true], 0.6],
@@ -227,11 +234,11 @@ export const stageCompleteSound = createSound([SINE_BUFFER, [
 export const winCollectionSound = stageCompleteSound;
 
 // TODO: enemies
-export const redWeaponSound = createSound(...assetMissing);
-export const greenWeaponSound = createSound(...assetMissing);
-export const purpleWeaponSound = createSound(...assetMissing);
-export const blueWeaponSound = createSound(...assetMissing);
-export const pinkWeaponSound = createSound(...assetMissing);
-export const yellowWeaponSound = createSound(...assetMissing);
-export const yellowBombReadySound = createSound(...assetMissing);
-export const yellowBombExplodeSound = createSound(...assetMissing);
+export const redWeaponSound = defaultWeaponSound;
+export const greenWeaponSound = defaultWeaponSound;
+export const purpleWeaponSound = defaultWeaponSound;
+export const blueWeaponSound = defaultWeaponSound;
+export const pinkWeaponSound = defaultWeaponSound;
+export const yellowWeaponSound = defaultWeaponSound;
+export const yellowBombReadySound = errorSound
+export const yellowBombExplodeSound = enemyDestroyedSound;
