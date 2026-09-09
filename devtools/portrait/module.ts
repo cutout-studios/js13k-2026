@@ -35,7 +35,9 @@ const CANVAS_SIZE = 512,
 // [hue, saturation max, lightness] - mirrors app/elements/portrait.ts's 6
 // color bands. cycling by triangle index (instead of the original's fixed
 // per-band triangle counts) means this stays correct no matter how many
-// triangles get added/removed here
+// triangles get added/removed here. edit these live via the Colors panel;
+// paste "Copy BANDS array"'s output back in here (like TRIANGLE_BANDS
+// above) to persist edits across reloads
 const BANDS = [
   [270, 20, 8],
   [220, 60, 93],
@@ -50,6 +52,64 @@ const colorAt = (triangleIndex: number, progress: number): string => {
     packed = toRGB(hue, interpolate([0, satMax], progress), lightness);
 
   return "#" + ((packed >>> 8) & 0xFFFFFF).toString(16).padStart(6, "0");
+};
+
+const renderBandColors = () => {
+  bandColorsContainer.innerHTML = "";
+
+  doTimes(BANDS, (band, bandIndex: number) => {
+    const row = document.createElement("div"),
+      swatch = document.createElement("div"),
+      updateSwatch = () => {
+        const [hue, satMax, lightness] = BANDS[bandIndex];
+        swatch.style.background = `hsl(${hue}, ${satMax}%, ${lightness}%)`;
+      },
+      propertyInput = (value: number, max: number, propertyIndex: number) => {
+        const element = document.createElement("input");
+
+        element.type = "number";
+        element.min = "0";
+        element.max = max.toString();
+        element.value = value.toString();
+        element.oninput = () => {
+          BANDS[bandIndex][propertyIndex] = +element.value || 0;
+          updateSwatch();
+          draw();
+        };
+
+        return element;
+      };
+
+    row.className = "bandRow";
+    swatch.className = "swatch";
+    updateSwatch();
+
+    row.append(
+      swatch,
+      propertyInput(band[0], 360, 0),
+      propertyInput(band[1], 100, 1),
+      propertyInput(band[2], 100, 2),
+    );
+    bandColorsContainer.appendChild(row);
+  });
+};
+
+const renderBandOptions = () => {
+  bandSelect.innerHTML = "";
+
+  doTimes(BANDS, (_, bandIndex: number) => {
+    const option = document.createElement("option");
+
+    option.value = bandIndex.toString();
+    option.textContent = (bandIndex + 1).toString();
+    bandSelect.appendChild(option);
+  });
+};
+
+const addBandColor = () => {
+  BANDS.push([...BANDS[BANDS.length - 1]]);
+  renderBandOptions();
+  renderBandColors();
 };
 
 const vertices = [...VERTICES];
@@ -84,6 +144,7 @@ const canvas = document.getElementById("canvas") as HTMLCanvasElement,
   selectedLabel = document.getElementById("selected")!,
   vertexXInput = document.getElementById("vertexX") as HTMLInputElement,
   vertexYInput = document.getElementById("vertexY") as HTMLInputElement,
+  bandColorsContainer = document.getElementById("bandColors")!,
   outputArea = document.getElementById("output") as HTMLTextAreaElement;
 
 let selectedVertex: number | null = null,
@@ -305,6 +366,32 @@ const sortTrianglesByBand = () => {
   draw();
 };
 
+// the 2D preview fills triangles regardless of vertex order, but the real
+// WebGPU pipeline backface-culls (cullMode: "back") - triangles wound the
+// wrong way silently vanish into holes there even though they look fine
+// here. normalizes every triangle to the same winding so nothing gets culled
+const fixWinding = () => {
+  doTimes(triangleCount(), (triangleIndex: number) => {
+    const base = triangleIndex * 6,
+      [ax, ay, bx, by, cx, cy] = vertices.slice(base, base + 6);
+
+    if ((bx - ax) * (cy - ay) - (by - ay) * (cx - ax) < 0) {
+      [
+        vertices[base + 2],
+        vertices[base + 3],
+        vertices[base + 4],
+        vertices[base + 5],
+      ] = [
+        vertices[base + 4],
+        vertices[base + 5],
+        vertices[base + 2],
+        vertices[base + 3],
+      ];
+    }
+  });
+  draw();
+};
+
 canvas.onmousedown = (event) => {
   const foundVertex = findVertexNear(event.offsetX, event.offsetY);
 
@@ -487,6 +574,7 @@ bandSelect.onchange = () => {
 document.getElementById("addTriangle")!.onclick = addTriangle;
 document.getElementById("deleteTriangle")!.onclick = deleteSelectedTriangle;
 document.getElementById("sortByBand")!.onclick = sortTrianglesByBand;
+document.getElementById("fixWinding")!.onclick = fixWinding;
 
 const showOutput = (text: string) => {
   outputArea.value = text;
@@ -532,4 +620,13 @@ document.getElementById("copyColors")!.onclick = () => {
   showOutput(`paint(\n  ...flat(\n${calls}\n  ),\n)`);
 };
 
+document.getElementById("copyBandColors")!.onclick = () =>
+  showOutput(
+    `[\n  ${BANDS.map((band) => `[${band.join(", ")}]`).join(",\n  ")},\n]`,
+  );
+
+document.getElementById("addBandColor")!.onclick = addBandColor;
+
+renderBandOptions();
+renderBandColors();
 draw();

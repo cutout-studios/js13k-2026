@@ -26,6 +26,8 @@ canvas {
 }
 #panel {
   overflow-y: auto;
+  box-sizing: border-box;
+  height: 100vh;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -66,6 +68,27 @@ select {
 .row > label {
   flex: 1;
 }
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.bandRow {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .4rem;
+}
+.bandRow input {
+  width: 0; /* let flex:1 drive the actual width instead of the number input's intrinsic size */
+  flex: 1;
+}
+.swatch {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: 0 0 auto;
+  border: 1px solid #444;
+}
 button {
   cursor: pointer;
   padding: .4rem .6rem;
@@ -81,7 +104,8 @@ button:focus {
 }
 textarea {
   width: 100%;
-  height: 4rem;
+  flex: 1;
+  min-height: 4rem;
   background: #111;
   color: #6f6;
   border: 1px solid #444;
@@ -90,6 +114,12 @@ textarea {
 }
 #selected {
   color: #ff0;
+}
+#finalize {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 </style>
 <div id=stage>
@@ -119,31 +149,37 @@ textarea {
       <label>Y <input type=number id=vertexY step=1></label>
     </div>
     <label>Color band
-      <select id=band>
-        <option value=0>1</option>
-        <option value=1>2</option>
-        <option value=2>3</option>
-        <option value=3>4</option>
-        <option value=4>5</option>
-        <option value=5>6</option>
-      </select>
+      <select id=band></select>
     </label>
   </div>
   <div>
+    <h2>Colors</h2>
+    <div class="row" style="color:#888; font-size:.7rem; margin-bottom:.2rem">
+      <span style="flex:0 0 1.4rem"></span>
+      <span style="flex:1">Hue</span>
+      <span style="flex:1">Sat max</span>
+      <span style="flex:1">Light</span>
+    </div>
+    <div id=bandColors></div>
+    <button id=addBandColor style="margin-top:.5rem">Add color</button>
+  </div>
+  <div>
     <h2>Triangles</h2>
-    <div class=row>
+    <div class=buttons>
       <button id=addTriangle>Add triangle</button>
       <button id=deleteTriangle>Delete selected (Del)</button>
       <button id=sortByBand>Sort triangles by color</button>
+      <button id=fixWinding>Fix triangle winding</button>
     </div>
   </div>
-  <div>
+  <div id=finalize>
     <h2>Finalize</h2>
-    <div class=row>
+    <div class=buttons>
       <button id=copyVertices>Copy VERTICES array</button>
       <button id=copyEncoded>Copy encoded string</button>
       <button id=copyBands>Copy TRIANGLE_BANDS array</button>
       <button id=copyColors>Copy colors (paint call)</button>
+      <button id=copyBandColors>Copy BANDS array</button>
     </div>
     <textarea id=output readonly></textarea>
   </div>

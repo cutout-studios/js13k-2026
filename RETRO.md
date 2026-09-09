@@ -12,11 +12,17 @@ technique categories:
 2. Imperfect Abstractions - “forced” DRYness and messy side effects in pursuit of forcing consistency (doTimes)
 3. actually concise systems - 3D lathe + concat, quantization and data tables (TBI)
 
+Important:
+WebGPU can crash!!
+
 post competition action items:
 1. I still don’t fully understand rotation lmao but maybe i don’t have to
 2. open deno proposal or PR for mangling props (doesn’t exist!)
 3. W3C proposal for console append-only “live group” to make debugging loops in the browser easier (doesn’t exist!)
-4. maybe directors cut - would want to keep it very close to size limit still -->
+4. maybe directors cut - would want to keep it very close to size limit still 
+
+If this was helpful consider donating~
+-->
 
 # Retrospective
 
