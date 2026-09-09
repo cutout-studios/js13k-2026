@@ -29,7 +29,10 @@ import { Ship } from "../ship/types.ts";
 import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
 
-const [visibleX, visibleY] = visibleHalfExtentAt(PLAYER_AIM_Z_PLANE);
+// enemies spawn closer than the aim plane, so size the frustum for the
+// depth they'll actually be placed at rather than PLAYER_AIM_Z_PLANE itself
+const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2;
+const [visibleX, visibleY] = visibleHalfExtentAt(SPAWN_Z);
 
 const _enemyDeck = createDeck(length(GameOptions.slice(1)));
 const _spawnRegionDeck: [Band, Band, Band][] = doTimes(
@@ -40,9 +43,11 @@ const _spawnRegionDeck: [Band, Band, Band][] = doTimes(
   (
     [x, y],
   ) => [
-    spread(visibleX / 2, x * 2 * visibleX),
-    spread(visibleY / 2, y * 2 * visibleY),
-    spread(1, -PLAYER_AIM_Z_PLANE + 2),
+    // just outside the visible edge (~1.2x out, ±0.25x wide) rather than
+    // 1.5-2.5x out - slow ships were taking forever to travel in from there
+    spread(visibleX * 0.25, x * 1.2 * visibleX),
+    spread(visibleY * 0.25, y * 1.2 * visibleY),
+    spread(1, -SPAWN_Z),
   ],
 );
 

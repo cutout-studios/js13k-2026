@@ -38,6 +38,7 @@ import GameOptions from "../../app/game/options/module.ts";
 import { setPlayerShip } from "../../app/game/player/ship.ts";
 import { createShip, getShipObjects } from "../../app/game/ship/module.ts";
 import { Ship } from "../../app/game/ship/types.ts";
+import { updateBullets } from "../../app/game/ship/weapons/bullets.ts";
 
 const canvasElement = document.getElementById("c") as HTMLCanvasElement,
   camera = createCamera();
@@ -48,17 +49,18 @@ onresize = () => renderTarget = createRenderTarget(canvasElement);
 // mirrors world/enemies.ts's _spawnRegionDeck (4 screen corners + center) so
 // spawned ships get the same kind of orbit reference point / placement box
 // their schedules are actually tuned around
+const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2;
 const [visibleX, visibleY] = ((z: number) => {
   const scale = abs(z) / CAMERA_MAGNIFICATION_RATIO;
   return [scale * renderTarget[0], scale];
-})(PLAYER_AIM_Z_PLANE);
+})(SPAWN_Z);
 
 const _spawnRegionDeck: [Band, Band, Band][] = doTimes(
   [[-1, 1], [1, 1], [1, -1], [-1, -1]],
   ([x, y]): [Band, Band, Band] => [
-    spread(visibleX / 2, x * 2 * visibleX),
-    spread(visibleY / 2, y * 2 * visibleY),
-    spread(1, -PLAYER_AIM_Z_PLANE + 2),
+    spread(visibleX * 0.25, x * 1.2 * visibleX),
+    spread(visibleY * 0.25, y * 1.2 * visibleY),
+    spread(1, -SPAWN_Z),
   ],
 );
 
@@ -121,8 +123,10 @@ const updateTelemetry = () =>
   ).join("");
 
 startClock((tickLength) => {
-  playerShip[3](playerShip, tickLength);
-  doTimes(activeShips, (ship) => ship[3](ship, tickLength));
+  doTimes([playerShip, ...activeShips], (ship) => {
+    ship[3](ship, tickLength);
+    updateBullets(ship, tickLength);
+  });
   camera(
     flatDoTimes([playerShip, ...activeShips], getShipObjects),
     renderTarget,

@@ -22,7 +22,7 @@ import {
   XYZ,
 } from "~/3D";
 import { length, NO_OP } from "~/alias";
-import { createActionSequencer } from "~/clock";
+import { ActionSequencer, createActionSequencer } from "~/clock";
 import { Band, doTimes, flat, repeat } from "~/common";
 
 import { BASE_PROPERTIES } from "../options/module.ts";
@@ -71,7 +71,14 @@ export const createShip = (
     optionsIndex,
   ];
 
-  ship[3] = shipSequencerFactory(ship, arcPoint);
+  // deferred to the ship's first real tick, which by then always happens
+  // after the caller (rollEnemies' scatterObjects, sandbox's spawnShip) has
+  // actually placed it - schedules that snapshot their own starting point
+  // at creation time (readOrigin) would otherwise capture the object's
+  // default origin of [0,0,0] instead of the real spawn point
+  let sequencer: ActionSequencer<Ship> | undefined;
+  ship[3] = (payload, tickLength) =>
+    (sequencer ??= shipSequencerFactory(ship, arcPoint))(payload, tickLength);
 
   return ship;
 };

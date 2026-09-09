@@ -67,10 +67,11 @@ export const updateGame = (
     enemyShips = flat(...activeEnemyGroups) as Ship[];
 
   // -- update everything in the game
-  doTimes(flat([playerShip], enemyShips), (ship) => ship[3](ship, tickLength));
+  doTimes(flat([playerShip], enemyShips), (ship) => {
+    ship[3](ship, tickLength);
+    updateBullets(ship, tickLength);
+  });
   doTimes(droppedItems, (drop) => drop[1](drop, tickLength));
-
-  updateBullets(playerShip, tickLength);
 
   // -- handle collisions
   doTimes(

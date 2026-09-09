@@ -17,13 +17,20 @@
 // TODO: each ship in the group swoops from back to front across the field,
 // firing their weapns in bursts at the player
 
-import { readOrigin, subtractXYZ } from "~/3D";
+import { addXYZ, readOrigin, subtractXYZ } from "~/3D";
 import { hypot } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { Band, clamp, doTimes, repeat, spread } from "~/common";
 import { randomPoint } from "~/random";
 
-import { createAimAction, createOrbitAction } from "../../actions.ts";
+import { isPointVisible } from "../../../elements/mainCanvas.ts";
+
+import {
+  createAimAction,
+  createOrbitAction,
+  EASE_IN,
+  EASE_OUT,
+} from "../../actions.ts";
 import {
   PLAYER_AIM_Z_PLANE,
   PLAYER_X_BOUND,
@@ -48,17 +55,23 @@ export const redSequencerFactory = (
       spread(0.5, -PLAYER_AIM_Z_PLANE),
     ]),
     referencePoint = randomPoint(arcPointRange),
+    // mirrored through the start/field midpoint - orbitFromAction ends up
+    // tracing the SAME circle in the SAME rotational direction as
+    // orbitToAction (continuing the loop back to the spawn point) instead of
+    // retracing the inbound arc backwards
+    mirroredReferencePoint = addXYZ(
+      startingPoint,
+      subtractXYZ(fieldPoint, referencePoint),
+    ),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
       _ship[5][16],
-    orbitToAction = createOrbitAction(
-      fieldPoint,
-      referencePoint,
-      (t: number) => t * t * (3 - 2 * t),
-    ),
+    // fast near the spawn point on both legs, slow near the field point -
+    // keeps distant travel readable as depth without lingering on the way in
+    orbitToAction = createOrbitAction(fieldPoint, referencePoint, EASE_OUT),
     orbitFromAction = createOrbitAction(
       startingPoint,
-      referencePoint,
-      (t: number) => t * t * (3 - 2 * t),
+      mirroredReferencePoint,
+      EASE_IN,
     ),
     aimAction = createAimAction(
       _ship[1],
@@ -66,6 +79,7 @@ export const redSequencerFactory = (
       () => _ship[5][17],
     ),
     fireWeapons = (tickLength: number) =>
+      isPointVisible(readOrigin(_ship[0][0])) &&
       doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
 
   return createActionSequencer([
