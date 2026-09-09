@@ -95,6 +95,12 @@ let selectedVertex: number | null = null,
   groupSelection = new Set<number>(),
   groupDragStart: [number, number] | null = null,
   groupDragOrigin: Map<number, [number, number]> | null = null,
+  // ctrl/cmd+drag a group member instead of a plain drag - scales every
+  // selected vertex away from/toward the group's centroid, by how much
+  // farther/closer the mouse gets from it since the gesture started
+  groupScaleStart: [number, number] | null = null,
+  groupScaleCentroid: [number, number] | null = null,
+  groupScaleOrigin: Map<number, [number, number]> | null = null,
   marqueeStart: [number, number] | null = null,
   marqueeCurrent: [number, number] | null = null;
 
@@ -316,14 +322,29 @@ canvas.onmousedown = (event) => {
     foundVertex != null && groupSelection.size > 1 &&
     groupSelection.has(foundVertex)
   ) {
-    // dragging any already-selected member moves the whole group together
+    // dragging any already-selected member moves the whole group together;
+    // ctrl/cmd+drag scales it instead
     selectVertex(foundVertex);
-    groupDragStart = [event.offsetX, event.offsetY];
-    groupDragOrigin = new Map(
+
+    const origin = new Map(
       [...groupSelection].map((
         v,
       ) => [v, [vertices[v * 2], vertices[v * 2 + 1]] as [number, number]]),
     );
+
+    if (event.ctrlKey || event.metaKey) {
+      const points = [...origin.values()];
+
+      groupScaleOrigin = origin;
+      groupScaleCentroid = [
+        points.reduce((sum, [x]) => sum + x, 0) / points.length,
+        points.reduce((sum, [, y]) => sum + y, 0) / points.length,
+      ];
+      groupScaleStart = fromCanvas(event.offsetX, event.offsetY);
+    } else {
+      groupDragStart = [event.offsetX, event.offsetY];
+      groupDragOrigin = origin;
+    }
   } else if (foundVertex != null) {
     groupSelection.clear();
     selectVertex(foundVertex);
@@ -356,6 +377,26 @@ document.onmousemove = (event) => {
     groupDragOrigin.forEach(([originX, originY], vertexIndex) => {
       vertices[vertexIndex * 2] = Math.round(originX + dx);
       vertices[vertexIndex * 2 + 1] = Math.round(originY + dy);
+    });
+    draw();
+    return;
+  }
+
+  if (groupScaleOrigin && groupScaleCentroid && groupScaleStart) {
+    const [centerX, centerY] = groupScaleCentroid,
+      [mouseX, mouseY] = fromCanvas(canvasX, canvasY),
+      startDistance =
+        Math.hypot(groupScaleStart[0] - centerX, groupScaleStart[1] - centerY) ||
+        1,
+      factor = Math.hypot(mouseX - centerX, mouseY - centerY) / startDistance;
+
+    groupScaleOrigin.forEach(([originX, originY], vertexIndex) => {
+      vertices[vertexIndex * 2] = Math.round(
+        centerX + (originX - centerX) * factor,
+      );
+      vertices[vertexIndex * 2 + 1] = Math.round(
+        centerY + (originY - centerY) * factor,
+      );
     });
     draw();
     return;
@@ -405,6 +446,9 @@ document.onmouseup = () => {
   marqueeCurrent = null;
   groupDragStart = null;
   groupDragOrigin = null;
+  groupScaleStart = null;
+  groupScaleCentroid = null;
+  groupScaleOrigin = null;
   dragging = false;
   snapHoverTarget = null;
   draw();

@@ -60,12 +60,33 @@ button:focus {
   margin-top: .5rem;
   align-self: flex-start;
 }
+#telemetry {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  font-size: .7rem;
+  line-height: 1.5;
+}
+#telemetry b {
+  color: #0f0;
+}
+#error {
+  color: #f66;
+  font-size: .7rem;
+  white-space: pre-wrap;
+  margin: 0;
+}
 </style>
-<canvas id=canvas></canvas>
+<canvas id=c></canvas>
 <div id=panel>
+  <pre id=error></pre>
   <div>
     <h2>Ships (click to spawn)</h2>
     <div class=row id=shipButtons></div>
     <button id=clearShips>Clear all</button>
+  </div>
+  <div>
+    <h2>Telemetry</h2>
+    <div id=telemetry></div>
   </div>
 </div>

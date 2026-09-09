@@ -44,7 +44,7 @@ export const purpleSequencerFactory = (
     fieldPoint = randomPoint([
       spread(PLAYER_X_BOUND),
       spread(PLAYER_Y_BOUND),
-      spread(0.5, PLAYER_AIM_Z_PLANE),
+      spread(0.5, -PLAYER_AIM_Z_PLANE),
     ]),
     referencePoint = randomPoint(arcPointRange),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /

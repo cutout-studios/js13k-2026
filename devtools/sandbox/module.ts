@@ -16,30 +16,68 @@
 
 /// <reference lib="dom" />
 
-import { createCamera, createRenderTarget, setOrigin } from "~/3D";
+import {
+  CAMERA_MAGNIFICATION_RATIO,
+  createCamera,
+  createRenderTarget,
+  readOrigin,
+  scatterObjects,
+  setOrigin,
+  XYZ,
+} from "~/3D";
+import { abs } from "~/alias";
 import { startClock } from "~/clock";
-import { doTimes, flatDoTimes } from "~/common";
+import { Band, doTimes, flatDoTimes, spread } from "~/common";
 
+import {
+  PLAYER_AIM_Z_PLANE,
+  PLAYER_SHIP_Z_PLANE,
+} from "../../app/game/constants.ts";
+import { drawCard } from "../../app/game/decks.ts";
 import GameOptions from "../../app/game/options/module.ts";
+import { setPlayerShip } from "../../app/game/player/ship.ts";
 import { createShip, getShipObjects } from "../../app/game/ship/module.ts";
 import { Ship } from "../../app/game/ship/types.ts";
 
-// a ship spawned this far out gives swoop/arc-in style behaviors room to
-// actually travel before settling, without needing the real spawn/wave logic
-const SPAWN_ORIGIN = [0, 0, -12] as const;
-
-const canvasElement = document.getElementById("canvas") as HTMLCanvasElement,
+const canvasElement = document.getElementById("c") as HTMLCanvasElement,
   camera = createCamera();
 
 let renderTarget = createRenderTarget(canvasElement);
 onresize = () => renderTarget = createRenderTarget(canvasElement);
 
+// mirrors world/enemies.ts's _spawnRegionDeck (4 screen corners + center) so
+// spawned ships get the same kind of orbit reference point / placement box
+// their schedules are actually tuned around
+const [visibleX, visibleY] = ((z: number) => {
+  const scale = abs(z) / CAMERA_MAGNIFICATION_RATIO;
+  return [scale * renderTarget[0], scale];
+})(PLAYER_AIM_Z_PLANE);
+
+const _spawnRegionDeck: [Band, Band, Band][] = doTimes(
+  [[-1, 1], [1, 1], [1, -1], [-1, -1]],
+  ([x, y]): [Band, Band, Band] => [
+    spread(visibleX / 2, x * 2 * visibleX),
+    spread(visibleY / 2, y * 2 * visibleY),
+    spread(1, -PLAYER_AIM_Z_PLANE + 2),
+  ],
+);
+
+_spawnRegionDeck.push([spread(1, 0), spread(1, 0), spread(1, 3)]);
+
+// wire up the button UI before touching anything ship/scene related, so a
+// bug further down (WebGPU, sequencers, etc.) can never take the buttons
+// down with it
+const errorElement = document.getElementById("error")!;
+onerror = (message, _source, _line, _col, error) =>
+  errorElement.textContent = error?.stack ?? String(message);
+
 const activeShips: Ship[] = [];
 
 const spawnShip = (colorIndex: number) => {
-  const ship = createShip(colorIndex);
+  const spawnRegion = drawCard(_spawnRegionDeck),
+    ship = createShip(colorIndex, 1, spawnRegion);
 
-  setOrigin(ship[0][0], [...SPAWN_ORIGIN]);
+  scatterObjects(spawnRegion, true, ship[0]);
   activeShips.push(ship);
 };
 
@@ -57,7 +95,37 @@ document.getElementById("clearShips")!.onclick = () => {
   activeShips.length = 0;
 };
 
+// a dummy player, kept out of activeShips - it's scenery/a target for
+// spawned enemies' aimAction (which targets getPlayerShip()[0][0]) to shoot
+// at, not something "Clear all" should have to special-case
+const playerShip = createShip(0);
+setOrigin(playerShip[0][0], [0, 0, -PLAYER_SHIP_Z_PLANE]);
+setPlayerShip(playerShip);
+
+const telemetryElement = document.getElementById("telemetry")!;
+
+const formatXYZ = ([x, y, z]: XYZ) =>
+  `${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)}`;
+
+const updateTelemetry = () =>
+  telemetryElement.innerHTML = [
+    ["PLAYER", playerShip] as const,
+    ...doTimes(
+      activeShips,
+      (ship): [string, Ship] => [GameOptions[ship[6]][0], ship],
+    ),
+  ].map(([label, [object, aim, , , , snapshot]]) =>
+    `<div><b>${label}</b><br>pos ${formatXYZ(readOrigin(object[0]))}<br>aim ${
+      formatXYZ(aim)
+    }<br>hp ${snapshot[11]}</div>`
+  ).join("");
+
 startClock((tickLength) => {
+  playerShip[3](playerShip, tickLength);
   doTimes(activeShips, (ship) => ship[3](ship, tickLength));
-  camera(flatDoTimes(activeShips, getShipObjects), renderTarget);
+  camera(
+    flatDoTimes([playerShip, ...activeShips], getShipObjects),
+    renderTarget,
+  );
+  updateTelemetry();
 });
