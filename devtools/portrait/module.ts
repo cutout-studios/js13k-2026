@@ -88,7 +88,15 @@ const canvas = document.getElementById("canvas") as HTMLCanvasElement,
 
 let selectedVertex: number | null = null,
   dragging = false,
-  snapHoverTarget: number | null = null;
+  snapHoverTarget: number | null = null,
+  // shift+click toggles a vertex in/out; shift+drag on empty space rubber-
+  // bands a region into it. once 2+ are selected, a plain click+drag on any
+  // of them moves the whole group together (see canvas.onmousedown)
+  groupSelection = new Set<number>(),
+  groupDragStart: [number, number] | null = null,
+  groupDragOrigin: Map<number, [number, number]> | null = null,
+  marqueeStart: [number, number] | null = null,
+  marqueeCurrent: [number, number] | null = null;
 
 const draw = () => {
   const progress = +progressInput.value;
@@ -120,6 +128,15 @@ const draw = () => {
       vertices[vertexIndex * 2 + 1],
     );
 
+    if (groupSelection.has(vertexIndex)) {
+      context.beginPath();
+      context.arc(x, y, 7, 0, Math.PI * 2);
+      context.strokeStyle = "#f80";
+      context.lineWidth = 2;
+      context.stroke();
+      context.lineWidth = 1;
+    }
+
     context.beginPath();
     context.arc(
       x,
@@ -139,6 +156,20 @@ const draw = () => {
       : "#0ff";
     context.fill();
   });
+
+  if (marqueeStart && marqueeCurrent) {
+    const [x1, y1] = marqueeStart, [x2, y2] = marqueeCurrent;
+
+    context.strokeStyle = "#f80";
+    context.setLineDash([4, 4]);
+    context.strokeRect(
+      Math.min(x1, x2),
+      Math.min(y1, y2),
+      Math.abs(x2 - x1),
+      Math.abs(y2 - y1),
+    );
+    context.setLineDash([]);
+  }
 };
 
 const findVertexNear = (
@@ -200,8 +231,12 @@ const findTriangleAt = (x: number, y: number): number | null => {
 const selectVertex = (vertexIndex: number | null) => {
   selectedVertex = vertexIndex;
 
+  const groupSuffix = groupSelection.size
+    ? ` (${groupSelection.size} in group)`
+    : "";
+
   if (vertexIndex == null) {
-    selectedLabel.textContent = "none - click a point";
+    selectedLabel.textContent = "none - click a point" + groupSuffix;
     vertexXInput.value = vertexYInput.value = "";
     return;
   }
@@ -209,7 +244,7 @@ const selectVertex = (vertexIndex: number | null) => {
   const triangleIndex = Math.floor(vertexIndex / 3);
 
   selectedLabel.textContent =
-    `vertex ${vertexIndex} (triangle ${triangleIndex})`;
+    `vertex ${vertexIndex} (triangle ${triangleIndex})${groupSuffix}`;
   vertexXInput.value = vertices[vertexIndex * 2].toString();
   vertexYInput.value = vertices[vertexIndex * 2 + 1].toString();
   bandSelect.value = triangleBand[triangleIndex].toString();
@@ -222,6 +257,7 @@ const deleteSelectedTriangle = () => {
 
   vertices.splice(triangleIndex * 6, 6);
   triangleBand.splice(triangleIndex, 1);
+  groupSelection.clear(); // indices shift - stale entries would drag the wrong verts
   selectVertex(null);
   draw();
 };
@@ -250,12 +286,15 @@ const sortTrianglesByBand = () => {
 
   const newVertices: number[] = [], newBands: number[] = [];
   doTimes(order, (triangleIndex: number) => {
-    newVertices.push(...vertices.slice(triangleIndex * 6, triangleIndex * 6 + 6));
+    newVertices.push(
+      ...vertices.slice(triangleIndex * 6, triangleIndex * 6 + 6),
+    );
     newBands.push(triangleBand[triangleIndex]);
   });
 
   vertices.splice(0, vertices.length, ...newVertices);
   triangleBand.splice(0, triangleBand.length, ...newBands);
+  groupSelection.clear(); // indices shift - stale entries would drag the wrong verts
   selectVertex(null);
   draw();
 };
@@ -263,10 +302,34 @@ const sortTrianglesByBand = () => {
 canvas.onmousedown = (event) => {
   const foundVertex = findVertexNear(event.offsetX, event.offsetY);
 
-  if (foundVertex != null) {
+  if (event.shiftKey) {
+    if (foundVertex != null) {
+      if (groupSelection.has(foundVertex)) groupSelection.delete(foundVertex);
+      else groupSelection.add(foundVertex);
+    } else {
+      marqueeStart = [event.offsetX, event.offsetY];
+      marqueeCurrent = marqueeStart;
+    }
+    dragging = false;
+    selectVertex(selectedVertex); // refresh the group count in the label
+  } else if (
+    foundVertex != null && groupSelection.size > 1 &&
+    groupSelection.has(foundVertex)
+  ) {
+    // dragging any already-selected member moves the whole group together
+    selectVertex(foundVertex);
+    groupDragStart = [event.offsetX, event.offsetY];
+    groupDragOrigin = new Map(
+      [...groupSelection].map((
+        v,
+      ) => [v, [vertices[v * 2], vertices[v * 2 + 1]] as [number, number]]),
+    );
+  } else if (foundVertex != null) {
+    groupSelection.clear();
     selectVertex(foundVertex);
     dragging = true;
   } else {
+    groupSelection.clear();
     const foundTriangle = findTriangleAt(event.offsetX, event.offsetY);
     selectVertex(foundTriangle != null ? foundTriangle * 3 : null);
     dragging = false;
@@ -276,11 +339,29 @@ canvas.onmousedown = (event) => {
 };
 
 document.onmousemove = (event) => {
-  if (!dragging || selectedVertex == null) return;
-
   const rect = canvas.getBoundingClientRect(),
     canvasX = event.clientX - rect.left,
     canvasY = event.clientY - rect.top;
+
+  if (marqueeStart) {
+    marqueeCurrent = [canvasX, canvasY];
+    draw();
+    return;
+  }
+
+  if (groupDragOrigin && groupDragStart) {
+    const dx = (canvasX - groupDragStart[0]) / SCALE,
+      dy = -(canvasY - groupDragStart[1]) / SCALE;
+
+    groupDragOrigin.forEach(([originX, originY], vertexIndex) => {
+      vertices[vertexIndex * 2] = Math.round(originX + dx);
+      vertices[vertexIndex * 2 + 1] = Math.round(originY + dy);
+    });
+    draw();
+    return;
+  }
+
+  if (!dragging || selectedVertex == null) return;
 
   snapHoverTarget = snapToggle.checked
     ? findVertexNear(canvasX, canvasY, selectedVertex, SNAP_RADIUS)
@@ -298,6 +379,32 @@ document.onmousemove = (event) => {
 };
 
 document.onmouseup = () => {
+  if (marqueeStart && marqueeCurrent) {
+    const [x1, y1] = marqueeStart,
+      [x2, y2] = marqueeCurrent,
+      left = Math.min(x1, x2),
+      right = Math.max(x1, x2),
+      top = Math.min(y1, y2),
+      bottom = Math.max(y1, y2);
+
+    doTimes(vertexCount(), (vertexIndex: number) => {
+      const [vx, vy] = toCanvas(
+        vertices[vertexIndex * 2],
+        vertices[vertexIndex * 2 + 1],
+      );
+
+      if (vx >= left && vx <= right && vy >= top && vy <= bottom) {
+        groupSelection.add(vertexIndex);
+      }
+    });
+
+    selectVertex(selectedVertex); // refresh the group count in the label
+  }
+
+  marqueeStart = null;
+  marqueeCurrent = null;
+  groupDragStart = null;
+  groupDragOrigin = null;
   dragging = false;
   snapHoverTarget = null;
   draw();

@@ -29,14 +29,12 @@ import { _, abs, length, min } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { clamp, doTimes, flat, spread } from "~/common";
 
-import { bell, oneOf, rollBand, rollSpread } from "~/random";
+import { bell, rollBand, rollSpread } from "~/random";
 
-import { createPullAction, orbitAction } from "../actions.ts";
+import { createPullAction, spinAction } from "../actions.ts";
+import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../constants.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
-import GameOptions, {
-  PLAYER_X_BOUND,
-  PLAYER_Y_BOUND,
-} from "../options/module.ts";
+import GameOptions from "../options/module.ts";
 
 import { ModifierOptions } from "../options/types.ts";
 import { levelCurve, levelRoll } from "../world/levels.ts";
@@ -105,7 +103,7 @@ export const createItem = (
       ([object], tickLength: number, ...args) => (
         pullAction(object, tickLength, ...args),
           pullToPlayerFieldAction(object, tickLength),
-          orbitAction(object, tickLength, ...args)
+          spinAction(object, tickLength, ...args)
       ),
     ]]),
     typeID,
@@ -138,8 +136,8 @@ export const combineItems = (
   ...items: Item[]
 ): Item | undefined =>
   setItemInFrame(createItem(
-    oneOf(doTimes(items, ([, , , colorID]) => colorID)),
-    oneOf(doTimes(items, ([, , typeID]) => typeID)),
+    drawCard(doTimes(items, ([, , , colorID]) => colorID)),
+    drawCard(doTimes(items, ([, , typeID]) => typeID)),
     level,
     min(3, min(...doTimes(items, ([, , , , rank]) => rank)) + 1),
   ));
@@ -149,7 +147,7 @@ export const setItemInFrame = (item: Item) => {
   setOrigin(item[0][0], [0, 0, -1.5]);
 
   item[1] = createActionSequencer([[
-    ([object], ...args) => orbitAction(object, ...args),
+    ([object], ...args) => spinAction(object, ...args),
   ]]);
 
   return item;

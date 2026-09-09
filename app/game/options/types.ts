@@ -15,7 +15,7 @@
  */
 
 import { XOGeometry, XOOrientation } from "~/3D";
-import { ActionSchedule } from "~/clock";
+import { ActionSchedule, ActionSequencer } from "~/clock";
 import { Band } from "~/common";
 
 import { Bullet, Ship } from "../ship/types.ts";
@@ -30,7 +30,10 @@ export type ColorOptions = [
 type ShipOptions = [
   shape: [orientation: XOOrientation, geometry: XOGeometry][],
   overrides: BaseStatOverride[],
-  schedule: ActionSchedule<Ship>,
+  sequenceFactory: (
+    ship: Ship,
+    arcPoint?: [Band, Band, Band],
+  ) => ActionSequencer<Ship>,
   weapons: [
     overrides: BaseStatOverride[],
     schedule?: ActionSchedule<Ship>,

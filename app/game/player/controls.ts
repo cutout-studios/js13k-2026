@@ -16,7 +16,6 @@
 
 import {
   adjustObject,
-  aimObject,
   // particles: cut for now - see particles.ts
   // createCoordinates,
   // localize,
@@ -24,7 +23,7 @@ import {
   readOrigin,
   scaleXYZ,
   setOrigin,
-  subtractXYZ,
+  XYZ,
 } from "~/3D";
 // import { _ } from "~/alias";
 import { createEnvelope } from "~/clock";
@@ -35,8 +34,9 @@ import { getPanFromCoordinates } from "../../../libraries/audio/pan.ts";
 import { menu, title } from "../../elements/handles.ts";
 import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
+import { createAimAction } from "../actions.ts";
+import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../constants.ts";
 import GameState from "../module.ts";
-import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/module.ts";
 // import GameOptions from "../options/module.ts";
 // import { spawnParticle } from "../particles.ts";
 import { createSpinSequence } from "../ship/spin.ts";
@@ -60,23 +60,24 @@ const [[playerShip]] = GameState,
   spinBoostEnvelope = createEnvelope(
     SPIN_BOOST_ATTACK_TIME,
     SPIN_BOOST_RELEASE_TIME,
+  ),
+  aimAction = createAimAction(
+    playerAim,
+    () => mouseTarget,
+    () => snapshot[17],
+    () => playerShip[4][6],
   );
+
 // particles: cut for now - see particles.ts
 // approximate engine mount, local to the ship (-Z is behind - +Z is the
 // heading/nose per aimObject) - comment out along with the thruster spawn
 // below to cut particles entirely
 // const ENGINE_MOUNT = createCoordinates(_, _, _, [0, 0, -0.3]);
 
+let mouseTarget: XYZ = playerAim;
 export const checkMousePointer = bindPointer(
-  (tickLength: number, x: number, y: number) => {
-    [x, y] = scaleXYZ(
-      subtractXYZ(mapClientXYToZPlane(x, y), playerAim),
-      tickLength / snapshot[17],
-    );
-
-    playerAim[0] += x;
-    playerAim[1] += y;
-  },
+  (_tickLength: number, x: number, y: number) =>
+    mouseTarget = mapClientXYToZPlane(x, y),
 );
 
 const startGame = () => {
@@ -163,7 +164,7 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     scaleXYZ([strafeX, strafeY, 0], snapshot[16] * speedBoost * tickLength),
   ]);
 
-  aimObject(playerShipObject, playerAim, playerShip[4][6]);
+  aimAction(playerShipObject, tickLength, 0, 1);
 
   // clamp ship to camera bounds
   const [x, y, z] = readOrigin(playerShipObject[0]);

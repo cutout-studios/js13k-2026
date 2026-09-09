@@ -383,7 +383,9 @@ const renderGraph = (layer: LayerModel, knob: number, label: string) => {
     const points = knobEvents
       .map((event) =>
         `${timeToX(event.time)},${
-          valueToY(event.isBand ? (event.value + event.valueHi) / 2 : event.value)
+          valueToY(
+            event.isBand ? (event.value + event.valueHi) / 2 : event.value,
+          )
         }`
       )
       .join(" ");
@@ -714,7 +716,12 @@ const renderLayer = (layer: LayerModel, layerIndex: number) => {
     renderLayers();
   };
 
-  header.append(bufferSelect, muteButton, duplicateLayerButton, removeLayerButton);
+  header.append(
+    bufferSelect,
+    muteButton,
+    duplicateLayerButton,
+    removeLayerButton,
+  );
 
   if (layer.bufferName in CUSTOM_BUFFERS) {
     const [, paramLabel] = CUSTOM_BUFFERS[layer.bufferName],

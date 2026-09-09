@@ -19,9 +19,9 @@ import { _, join, length, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, repeat, spliceTable } from "~/common";
 import { updateStyles } from "~/dom";
-import { oneOf } from "~/random";
 
 import { camera } from "../camera.ts";
+import { createDeck, drawCard } from "../game/decks.ts";
 import GameState from "../game/module.ts";
 import GameOptions from "../game/options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "../game/player/constants.ts";
@@ -55,6 +55,7 @@ import { portrait } from "./portrait.ts";
 
 let hoveredCellIndex = -1,
   restorePreviewItem: Item | undefined,
+  restorePreviewDeck: number[] = [],
   renderTargets: GPURenderTarget[];
 
 const EQUIP_OFFSET = 2,
@@ -67,10 +68,13 @@ const EQUIP_OFFSET = 2,
   ],
   restorePreviewSequence = createActionSequencer<Item[]>([
     [(inventory) => {
-      restorePreviewItem = oneOf(doTimes(
-        getFormValues()[0],
-        (value) => inventory[value],
-      ));
+      const selected = getFormValues()[0];
+
+      if (length(restorePreviewDeck) != length(selected)) {
+        restorePreviewDeck = createDeck(length(selected));
+      }
+
+      restorePreviewItem = inventory[selected[drawCard(restorePreviewDeck)]];
     }],
     [(_inventory, tickLength) => {
       restorePreviewItem?.[1](restorePreviewItem, tickLength);

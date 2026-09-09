@@ -17,8 +17,10 @@
 import { setOrigin } from "~/3D";
 import { repeat } from "~/common";
 
-import { PLAYER_AIM_Z_PLANE, PLAYER_SHIP_Z_PLANE } from "../options/module.ts";
+import { PLAYER_AIM_Z_PLANE, PLAYER_SHIP_Z_PLANE } from "../constants.ts";
 import { createShip } from "../ship/module.ts";
+
+import { setPlayerShip } from "./ship.ts";
 import { Player } from "./types.ts";
 
 const ship = createShip(0);
@@ -26,6 +28,8 @@ const ship = createShip(0);
 setOrigin(ship[0][0], [-1.2, 0.7, -PLAYER_SHIP_Z_PLANE]);
 
 ship[1] = [0, 0, -PLAYER_AIM_Z_PLANE];
+
+setPlayerShip(ship);
 
 export default [
   ship,

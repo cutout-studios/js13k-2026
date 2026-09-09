@@ -23,14 +23,15 @@ import {
   Z_AXIS,
 } from "~/3D";
 import { _, NO_OP } from "~/alias";
+import { createActionSequencer } from "~/clock";
 import { flat } from "~/common";
 import {
-  blueSchedule,
-  greenSchedule,
-  pinkSchedule,
-  purpleSchedule,
-  redSchedule,
-  yellowSchedule,
+  blueSequencerFactory,
+  greenSequencerFactory,
+  pinkSequencerFactory,
+  purpleSequencerFactory,
+  redSequencerFactory,
+  yellowSequencerFactory,
 } from "../ship/schedules/module.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import {
@@ -48,11 +49,6 @@ const _geometry = (radius: number, mesh: [XYZ[], number]): XOGeometry =>
 
 export const BULLET_ALPHA = 0xBF;
 export const BULLET_MAX_RANGE = 20;
-
-export const PLAYER_SHIP_Z_PLANE = 5;
-export const PLAYER_AIM_Z_PLANE = 8;
-export const PLAYER_X_BOUND = 2.8;
-export const PLAYER_Y_BOUND = 2.1;
 
 export const ENEMY_BULLET_RAMP_TIME = 0.3;
 
@@ -136,7 +132,7 @@ export default [
         ),
       ]],
       [],
-      [[NO_OP]], // clear default sequencer
+      () => createActionSequencer([[NO_OP]]), // clear default sequencer
       [[[], _, [0.3, 0, -0.26], [
         _,
         _,
@@ -159,7 +155,7 @@ export default [
     [
       [[[], _geometry(0.5, createPyramid([0.25, 0.25, 0.125]))]], // shape
       [[8, [0.06, 0.1]], [9, [0, 0]], [11, [6, 70]], [16, [0, 0]]], // base overrides
-      purpleSchedule,
+      purpleSequencerFactory,
       [[
         [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [4, [10, 10]], [
           5,
@@ -191,7 +187,7 @@ export default [
         [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
       ],
       [[9, [7, 20]], [11, [4, 20]], [16, [3, 5]]],
-      greenSchedule,
+      greenSequencerFactory,
       [[
         [[3, [1, 5]], [4, [6.5, 6.5]], [5, [12, 21]]],
         _,
@@ -226,7 +222,7 @@ export default [
         ],
       ],
       [[8, [0.2, 0.3]], [9, [35, 400]], [11, [24, 270]], [16, [0.3, 0.6]]],
-      blueSchedule,
+      blueSequencerFactory,
       [[
         [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
         _,
@@ -250,10 +246,12 @@ export default [
     0xD4349FFF,
     [
       [[[], _geometry(0.4, createSphere(0.10, 20))]],
-      [[8, [0.02, 0.04]], [9, [1, 5]], [11, [1, 12]]],
-      pinkSchedule,
+      // meandering, lazy: slow strafe (16) alongside the existing drop-rate/mass/hp
+      [[8, [0.02, 0.04]], [9, [1, 5]], [11, [1, 12]], [16, [0.5, 0.9]]],
+      pinkSequencerFactory,
       [[
-        [[3, [1, 8]], [4, [4, 4]], [5, [0.7, 1.5]], [6, [0.05, 0.12]]],
+        // slow bullets (4), wide spread (6) - a lazy shotgun, not a sniper
+        [[3, [1, 8]], [4, [4, 4]], [5, [0.7, 1.5]], [6, [0.15, 0.4]]],
         _,
         _,
         [_geometry(0.03, createSphere(0.03)), _, purpleWeaponSound],
@@ -268,6 +266,8 @@ export default [
         [0, 1, "+", [0.05, 0.3]], // Armor Save
         [2, 12, "x", [1.1, 2]], // Shield Regen
         [3, 6, "x", [1.2, 2.2]], // Fuel Regen
+        [0, 24, "x", [1.2, 2]], // Bullet Spread
+        [0, 22, "x", [0.9, 0.6]], // Bullet Speed
       ],
     ],
   ],
@@ -283,7 +283,7 @@ export default [
         ),
       ]],
       [[8, [0.1, 0.15]], [9, [6, 28]], [11, [3, 108]], [16, [2.4, 3.5]]],
-      redSchedule,
+      redSequencerFactory,
       [[
         [[0, [2, 2]], [3, [2, 18]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
         _,
@@ -318,7 +318,7 @@ export default [
         [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], YELLOW_ARM],
       ],
       [[8, [0.13, 0.18]], [9, [7, 13]], [11, [8, 87]], [16, [1.5, 3]]],
-      yellowSchedule,
+      yellowSequencerFactory,
       [[
         [[3, [5, 16]], [4, [4, 4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
         _,

@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import { Band, spread } from "~/common";
-import { PLAYER_AIM_Z_PLANE } from "../constants.ts";
+import { Ship } from "../ship/types.ts";
 
-export const DIFFICULTY_HALFLIFE = 8;
+// a leaf module on purpose: anything that needs "the current player" (e.g.
+// an enemy schedule picking an aim target) should import from here, NOT
+// from app/game/module.ts directly to avoid cycles
 
-export const ENEMY_PLACEMENT_SPREAD = 5;
-export const ENEMY_SPAWN_DEPTH_BAND = spread(2, PLAYER_AIM_Z_PLANE);
+let playerShip: Ship;
 
-export const WAVE_CURVE = 7.5;
-export const WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
-export const WAVES_PER_LEVEL_BAND = [2, 14] as Band;
-
-export const GROUPS_PER_WAVE_BAND = [1, 6] as Band;
-
-export const DROP_PITY_STEP = 0.03;
+export const setPlayerShip = (ship: Ship) => playerShip = ship;
+export const getPlayerShip = () => playerShip;

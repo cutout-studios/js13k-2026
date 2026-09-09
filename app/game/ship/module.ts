@@ -21,9 +21,9 @@ import {
   XOObject,
   XYZ,
 } from "~/3D";
-import { length } from "~/alias";
+import { length, NO_OP } from "~/alias";
 import { createActionSequencer } from "~/clock";
-import { doTimes, flat, repeat } from "~/common";
+import { Band, doTimes, flat, repeat } from "~/common";
 
 import { BASE_PROPERTIES } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
@@ -35,6 +35,11 @@ import { createWeapon } from "./weapons/module.ts";
 export const createShip = (
   optionsIndex: number,
   level = 1,
+  // only meaningful to schedules that accept it (currently just pink) - see
+  // options/types.ts's sequenceFactory signature. rollEnemies passes the
+  // group's own spawn region through here so ships in the same group draw
+  // their orbit reference point from the same neighborhood
+  arcPoint?: [Band, Band, Band],
 ): Ship => {
   const [
     ,
@@ -42,12 +47,12 @@ export const createShip = (
     [
       shapes,
       shipOverrides,
-      shipSchedule,
+      shipSequencerFactory,
       shipWeapons,
     ],
   ] = GameOptions[optionsIndex];
 
-  return [
+  const ship: Ship = [
     flattenObjects(
       ...shapes.map((args) => createObject(...args, paint(value))),
     ),
@@ -56,7 +61,7 @@ export const createShip = (
       length(shipWeapons),
       (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level),
     ),
-    createActionSequencer(shipSchedule),
+    createActionSequencer([[NO_OP]]),
     repeat(7, 0) as Resources,
     levelRollOverrides(
       BASE_PROPERTIES,
@@ -65,6 +70,10 @@ export const createShip = (
     ) as ShipSnapshot,
     optionsIndex,
   ];
+
+  ship[3] = shipSequencerFactory(ship, arcPoint);
+
+  return ship;
 };
 
 export const getShipObjects = (

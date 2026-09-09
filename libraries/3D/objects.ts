@@ -16,7 +16,7 @@
 
 import { abs, cos, F32, hypot, length, max, sin /* PI */ } from "~/alias";
 import { Band, clamp, doTimes, flatDoTimes, repeat } from "~/common";
-import { rollBand } from "~/random";
+import { randomPoint } from "~/random";
 import {
   COORDINATE_SIDE_LENGTH,
   RGBA_LENGTH,
@@ -228,34 +228,15 @@ export const scatterObjects = (
   cantOverlap: boolean,
   ...objects: XOObject[]
 ) => {
-  // guard against objects that can't fit in the scatter box -
-  // uncomment to debug scatter configs
-  // const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
-  //   scatterBoxVolume = scatterBoxDimensions.reduce(
-  //     (product, value) => product * value,
-  //     1,
-  //   );
-  // let maxObjectDiameter = -Infinity, totalObjectVolume = 0;
-  // doTimes(objects, ([, [radius]]) => {
-  //   maxObjectDiameter = max(maxObjectDiameter, radius * 2);
-  //   totalObjectVolume += (4 * PI / 3) * radius ** 3;
-  // });
-  // if (
-  //   min(...scatterBoxDimensions) < maxObjectDiameter ||
-  //   scatterBoxVolume < totalObjectVolume * 3
-  // ) throw new Error("Objects won't fit!");
-
   const placedObjects: XOObject[] = [];
   while (length(objects)) {
     const objectToPlace = objects.pop()!;
 
-    setOrigin(
-      objectToPlace[0],
-      doTimes(boxDimensions, (band) => rollBand(band)) as XYZ,
-    );
+    setOrigin(objectToPlace[0], randomPoint(boxDimensions));
 
     placedObjects.push(objectToPlace);
 
+    // TODO: this has a bug - we need to check placedObjects against itself...
     if (cantOverlap && length(getCollisionPairs(objects, placedObjects)[0])) {
       objects.push(placedObjects.pop()!);
     }

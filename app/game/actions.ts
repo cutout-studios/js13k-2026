@@ -17,27 +17,83 @@
 import {
   addXYZ,
   adjustObject,
-  // aimObject,
+  aimObject,
   createPaintMaterialWithPalette as paint,
+  crossXYZ,
   normalizeXYZ,
-  // readOrigin,
+  readOrigin,
   scaleXYZ,
-  // subtractXYZ,
+  setOrigin,
+  subtractXYZ,
   toHSL,
   toRGB,
   XOObject,
   XYZ,
 } from "~/3D";
-import { /* PI, */ round /* sin */ } from "~/alias";
+import { cos, hypot, min, PI, round, sin } from "~/alias";
 import { Action } from "~/clock";
 import { Band, doTimes, interpolate, repeat } from "~/common";
 import { rollBand } from "~/random";
 
-export const orbitAction: Action<XOObject> = (object: XOObject, tickLength) =>
+export const spinAction: Action<XOObject> = (object: XOObject, tickLength) =>
   adjustObject(object, [undefined, [
     repeat(3, tickLength) as XYZ,
     tickLength,
   ]]);
+
+export const createOrbitAction = (
+  targetPoint: XYZ,
+  referencePoint: XYZ,
+  curve: (value: number) => number = (t) => t,
+): Action<XOObject> => {
+  let startingPoint: XYZ | undefined;
+
+  return (object: XOObject, _, elapsedTime: number, duration: number) => {
+    startingPoint ??= readOrigin(object[0]);
+
+    const center = scaleXYZ(addXYZ(startingPoint, targetPoint), 0.5),
+      radiusVector = subtractXYZ(startingPoint, center),
+      radius = hypot(...radiusVector),
+      planeNormal = normalizeXYZ(
+        crossXYZ(
+          subtractXYZ(targetPoint, startingPoint),
+          subtractXYZ(referencePoint, startingPoint),
+        ),
+      ),
+      perpendicular = scaleXYZ(
+        normalizeXYZ(crossXYZ(radiusVector, planeNormal)),
+        radius,
+      ),
+      angle = PI * curve(elapsedTime / duration);
+
+    setOrigin(
+      object[0],
+      addXYZ(
+        center,
+        addXYZ(
+          scaleXYZ(radiusVector, cos(angle)),
+          scaleXYZ(perpendicular, sin(angle)),
+        ),
+      ),
+    );
+  };
+};
+
+export const createAimAction = (
+  aim: XYZ,
+  getTarget: () => XYZ,
+  getAimTime: () => number,
+  getRoll: () => number = () => 0,
+): Action<XOObject> =>
+(object: XOObject, tickLength: number) => {
+  doTimes(3, (index: number) =>
+    aim[index] += scaleXYZ(
+      subtractXYZ(getTarget(), aim),
+      min(1, tickLength / getAimTime()),
+    )[index]);
+
+  aimObject(object, aim, getRoll());
+};
 
 export const createPullAction = (
   direction: XYZ,
@@ -76,30 +132,3 @@ export const createColorTransitionAction = (
     object[2] = paint(toRGB(h, s, l, round(a)));
   };
 };
-
-// export const createSwoopAction = (
-//   target: XYZ,
-//   depth: number,
-//   speed: number,
-//   depthAxis: XYZ = Z_AXIS,
-// ): Action<XOObject> => {
-
-//   return (
-//     object: XOObject,
-//     tickLength,
-//     elapsedTime: number,
-//     duration: number,
-//   ) => {
-//     const swoopCurve = sin(PI * (elapsedTime / duration)),
-//       waypoint = addXYZ(target, scaleXYZ(depthAxis, depth * swoopCurve)),
-//       direction = subtractXYZ(waypoint, readOrigin(object[0]));
-
-//     createPullAction(direction, speed, (progress) => sin(PI * progress))(
-//       object,
-//       tickLength,
-//       elapsedTime,
-//       duration,
-//     );
-//     aimObject(object, waypoint);
-//   };
-// };

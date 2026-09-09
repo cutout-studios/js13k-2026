@@ -1,8 +1,8 @@
 # TODOs
 
-- Fix portrait
-- Fill stubbed audio
-- Fill stubbed behaviors
+- Fix portrait (~)
+- Fill stubbed audio (~)
+- Fill stubbed behaviors (~)
 
 ## Director's cut, if any:
 
