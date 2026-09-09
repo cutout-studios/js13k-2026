@@ -26,12 +26,24 @@ import { _, NO_OP } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { flat } from "~/common";
 import {
+  blueBulletSequencerFactory,
   blueSequencerFactory,
+  blueWeaponSequenceFactory,
+  greenBulletSequencerFactory,
   greenSequencerFactory,
+  greenWeaponSequenceFactory,
+  pinkBulletSequencerFactory,
   pinkSequencerFactory,
+  pinkWeaponSequenceFactory,
+  purpleBulletSequencerFactory,
   purpleSequencerFactory,
+  purpleWeaponSequenceFactory,
+  redBulletSequencerFactory,
   redSequencerFactory,
+  redWeaponSequenceFactory,
+  yellowBulletSequencerFactory,
   yellowSequencerFactory,
+  yellowWeaponSequenceFactory,
 } from "../ship/schedules/module.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import {
@@ -44,13 +56,13 @@ import {
 } from "../sounds.ts";
 import { ColorOptions } from "./types.ts";
 
+const defaultBulletGeometry = flat(
+  [0.06],
+  createPrism([0.006, 0.006, 0.12], 12),
+) as XOGeometry;
+
 const _geometry = (radius: number, mesh: [XYZ[], number]): XOGeometry =>
   flat([radius], mesh) as XOGeometry;
-
-export const BULLET_ALPHA = 0xBF;
-export const BULLET_MAX_RANGE = 20;
-
-export const ENEMY_BULLET_RAMP_TIME = 0.3;
 
 export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   2, // Rez
@@ -161,9 +173,13 @@ export default [
           5,
           [0.2, 0.3],
         ]], // wpn overrides
+        purpleWeaponSequenceFactory,
         _,
-        _,
-        [_, _, purpleWeaponSound],
+        [
+          defaultBulletGeometry,
+          purpleBulletSequencerFactory,
+          purpleWeaponSound,
+        ],
       ]],
       [3, 5],
     ],
@@ -190,9 +206,13 @@ export default [
       greenSequencerFactory,
       [[
         [[3, [1, 5]], [4, [6.5, 6.5]], [5, [12, 21]]],
+        greenWeaponSequenceFactory,
         _,
-        _,
-        [_geometry(0.015, createSphere(0.015)), _, greenWeaponSound],
+        [
+          _geometry(0.015, createSphere(0.015)),
+          greenBulletSequencerFactory,
+          greenWeaponSound,
+        ],
       ]],
       [4, 7],
     ],
@@ -201,8 +221,7 @@ export default [
       [
         [0, 5, "x", [0.95, 0.2]], // Gas Cost
         [0, 16, "x", [1.05, 2.3]], // Speed
-        [0, 22, "x", [1.1, 4]], // Bullet Speed
-        [2, 3, "+", [0.02, 0.3]], // Damage Taken From Gas
+        [0, 23, "x", [1.2, 3]], // Bullet Rate
         [3, 15, "+", [0.03, 0.2]], // Spin Time
       ],
     ],
@@ -225,9 +244,9 @@ export default [
       blueSequencerFactory,
       [[
         [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
+        blueWeaponSequenceFactory,
         _,
-        _,
-        [_, _, blueWeaponSound],
+        [defaultBulletGeometry, blueBulletSequencerFactory, blueWeaponSound],
       ]],
       [1, 3],
     ],
@@ -237,7 +256,7 @@ export default [
         [0, 11, "x", [1.1, 2.5]], // Shield
         [0, 2, "x", [0.98, 0.7]], // Damage Taken
         [2, 0, "+", [1, 4]], // Armor
-        [3, 6, "+", [0.15, 0.5]], // Fuel Regen
+        [2, 3, "+", [0.02, 0.3]], // Damage Taken From Gas
       ],
     ],
   ],
@@ -246,15 +265,18 @@ export default [
     0xD4349FFF,
     [
       [[[], _geometry(0.4, createSphere(0.10, 20))]],
-      // meandering, lazy: slow strafe (16) alongside the existing drop-rate/mass/hp
       [[8, [0.02, 0.04]], [9, [1, 5]], [11, [1, 12]], [16, [0.5, 0.9]]],
       pinkSequencerFactory,
       [[
-        // slow bullets (4), wide spread (6) - a lazy shotgun, not a sniper
-        [[3, [1, 8]], [4, [4, 4]], [5, [0.7, 1.5]], [6, [0.15, 0.4]]],
+        // slow bullets (4), wide spread (6)
+        [[3, [1, 8]], [4, [1, 2]], [5, [0.7, 1.5]], [6, [0.25, 0.5]]],
+        pinkWeaponSequenceFactory,
         _,
-        _,
-        [_geometry(0.03, createSphere(0.03)), _, purpleWeaponSound],
+        [
+          _geometry(0.03, createSphere(0.03)),
+          pinkBulletSequencerFactory,
+          purpleWeaponSound,
+        ],
       ]],
       [9, 16],
     ],
@@ -265,9 +287,6 @@ export default [
         [0, 18, "+", [1, 3]], // Bullet Count
         [0, 1, "+", [0.05, 0.3]], // Armor Save
         [2, 12, "x", [1.1, 2]], // Shield Regen
-        [3, 6, "x", [1.2, 2.2]], // Fuel Regen
-        [0, 24, "x", [1.2, 2]], // Bullet Spread
-        [0, 22, "x", [0.9, 0.6]], // Bullet Speed
       ],
     ],
   ],
@@ -286,11 +305,11 @@ export default [
       redSequencerFactory,
       [[
         [[0, [2, 2]], [3, [2, 18]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
-        _,
+        redWeaponSequenceFactory,
         _,
         [
           _geometry(0.06, createPyramid([0.008, 0.008, 0.1], 4)),
-          _,
+          redBulletSequencerFactory,
           redWeaponSound,
         ],
       ]],
@@ -300,10 +319,9 @@ export default [
       [[2, 4], 0, 2, [2, 4], [2, 12]],
       [
         [0, 21, "x", [1.25, 3.5]], // Bullet Damage
-        [0, 23, "x", [1.2, 3]], // Bullet Rate
         [0, 4, "+", [3, 15]], // Gas
         [2, 17, "+", [-0.02, -1]], // Aim Time
-        [3, 14, "x", [0.95, 0.5]], // Spin Speed
+        [3, 6, "x", [1.2, 2.2]], // Gas Refill
       ],
     ],
   ],
@@ -321,9 +339,13 @@ export default [
       yellowSequencerFactory,
       [[
         [[3, [5, 16]], [4, [4, 4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
+        yellowWeaponSequenceFactory,
         _,
-        _,
-        [_geometry(0.1, createSphere(0.1)), _, yellowWeaponSound],
+        [
+          _geometry(0.1, createSphere(0.1)),
+          yellowBulletSequencerFactory,
+          yellowWeaponSound,
+        ],
       ]],
       [2, 4],
     ],
@@ -338,3 +360,5 @@ export default [
     ],
   ],
 ] as ColorOptions[];
+
+// TODO: BulletSpeed? [0, 22, "x", [1.1, 4]],

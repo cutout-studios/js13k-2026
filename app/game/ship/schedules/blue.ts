@@ -16,9 +16,9 @@
 
 // TODO: arcs in through the top of the screen always firing down at the player
 
-import { addXYZ, readOrigin, subtractXYZ } from "~/3D";
-import { hypot } from "~/alias";
-import { createActionSequencer } from "~/clock";
+import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
+import { hypot, min, NO_OP } from "~/alias";
+import { ActionSequencer, createActionSequencer } from "~/clock";
 import { Band, clamp, doTimes, repeat, spread } from "~/common";
 import { randomPoint } from "~/random";
 
@@ -27,17 +27,59 @@ import { isPointVisible } from "../../../elements/mainCanvas.ts";
 import {
   createAimAction,
   createOrbitAction,
+  createPullAction,
   EASE_IN,
   EASE_OUT,
 } from "../../actions.ts";
 import {
+  BULLET_MAX_RANGE,
+  ENEMY_BULLET_RAMP_TIME,
   PLAYER_AIM_Z_PLANE,
   PLAYER_X_BOUND,
   PLAYER_Y_BOUND,
 } from "../../constants.ts";
 import { getPlayerShip } from "../../player/ship.ts";
 
-import { Ship } from "../types.ts";
+import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
+
+// TODO: blue-specific bullet jitter/behavior, if any
+export const blueBulletSequencerFactory = (
+  [[coordinates]]: Bullet,
+  speed: number,
+  isEnemy: boolean,
+): ActionSequencer<Bullet> => {
+  const pullAction = createPullAction(
+    readHeading(coordinates),
+    speed,
+    isEnemy
+      ? (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
+      : () => 1,
+  );
+
+  return createActionSequencer([[
+    (bullet: Bullet, ...args) => {
+      pullAction(bullet[0], ...args);
+
+      const newOrigin = readOrigin(coordinates);
+
+      // cull once it's passed the camera, out past the play field, or
+      // drifted outside the visible frustum
+      return newOrigin[2] >= 0 ||
+        newOrigin[2] < -BULLET_MAX_RANGE ||
+        !isPointVisible(newOrigin);
+    },
+  ]]);
+};
+
+// TODO: blue-specific fire pattern
+export const blueWeaponSequenceFactory = (
+  fire: (ship: Ship) => void,
+  snapshot: WeaponSnapshot,
+): ActionSequencer<Ship> =>
+  createActionSequencer([
+    [fire],
+    [NO_OP, 1 / snapshot[5]],
+  ]);
 
 export const blueSequencerFactory = (
   _ship: Ship,

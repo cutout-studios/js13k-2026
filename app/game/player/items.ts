@@ -65,9 +65,11 @@ export const createItem = (
       baseBulletDamage,
     ], modifiers]] = GameOptions[colorID],
     modifierDeck = [] as ModifierOptions[],
-    pullAction = createPullAction(Z_AXIS, 0.01, () => 1, [[0, 0], [0, 0.07], [
+    // createPullAction's speed/jitter are now per-second (tickLength-scaled) -
+    // these are ~60x their old per-tick-implicit values, to keep the same feel
+    pullAction = createPullAction(Z_AXIS, 0.6, () => 1, [[0, 0], [0, 4.2], [
       0,
-      0.01,
+      0.6,
     ]]);
 
   let yJitterAmount: number | undefined;

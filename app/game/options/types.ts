@@ -15,10 +15,10 @@
  */
 
 import { XOGeometry, XOOrientation } from "~/3D";
-import { ActionSchedule, ActionSequencer } from "~/clock";
+import { ActionSequencer } from "~/clock";
 import { Band } from "~/common";
 
-import { Bullet, Ship } from "../ship/types.ts";
+import { Bullet, Ship, WeaponSnapshot } from "../ship/types.ts";
 
 export type ColorOptions = [
   name: string,
@@ -36,11 +36,18 @@ type ShipOptions = [
   ) => ActionSequencer<Ship>,
   weapons: [
     overrides: BaseStatOverride[],
-    schedule?: ActionSchedule<Ship>,
+    sequenceFactory: (
+      fire: (ship: Ship) => void,
+      snapshot: WeaponSnapshot,
+    ) => ActionSequencer<Ship>,
     mount?: XOOrientation,
     bullet?: [
-      geometry?: XOGeometry,
-      schedule?: ActionSchedule<Bullet>,
+      geometry: XOGeometry,
+      sequenceFactory: (
+        bullet: Bullet,
+        speed: number,
+        isEnemy: boolean,
+      ) => ActionSequencer<Bullet>,
       sound?: (pan: number) => void,
     ],
   ][],

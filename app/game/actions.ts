@@ -104,19 +104,23 @@ export const createPullAction = (
   speed: number,
   curve: (value: number) => number = () => 1,
   jitter: [Band, Band, Band] = [[0, 0], [0, 0], [0, 0]],
-): Action<
-  XOObject
-> => ((object: XOObject, _, elapsedTime: number, duration: number) => {
+): Action<XOObject> =>
+(
+  object: XOObject,
+  tickLength: number,
+  elapsedTime: number,
+  duration: number,
+) => {
   adjustObject(object, [
     scaleXYZ(
       addXYZ(
         normalizeXYZ(direction),
         doTimes(jitter, (band) => rollBand(band)) as XYZ,
       ),
-      speed * curve(elapsedTime / duration),
+      speed * curve(elapsedTime / duration) * tickLength,
     ),
   ]);
-});
+};
 
 export const createColorTransitionAction = (
   fromColor: number,

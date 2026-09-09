@@ -22,7 +22,7 @@ import { device, format } from "./setupDevice.ts";
 const _getCanvasContext = memo((canvas: HTMLCanvasElement) => {
   const context = canvas.getContext("webgpu")! as GPUCanvasContext;
 
-  context.configure({ device, format });
+  context.configure({ device, format, alphaMode: "premultiplied" });
 
   return context;
 });
@@ -39,7 +39,7 @@ export const createRenderTarget = (
 
   const context = _getCanvasContext(canvas),
     colorAttachment = {
-      clearValue: [0, 0, 0, 1],
+      clearValue: [0, 0, 0, 0],
       loadOp: "clear",
       storeOp: "store",
     } as unknown as GPURenderPassColorAttachment,

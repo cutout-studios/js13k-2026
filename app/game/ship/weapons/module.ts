@@ -16,7 +16,7 @@
 
 import { createObject, XOOrientation } from "~/3D";
 import { NO_OP } from "~/alias";
-import { createActionSequencer } from "~/clock";
+import { ActionSequencer, createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
 
 import GameOptions from "../../options/module.ts";
@@ -24,6 +24,17 @@ import { BASE_PROPERTIES } from "../../options/module.ts";
 import { levelRollOverrides } from "../../world/levels.ts";
 import { Ship, Weapon, WeaponSnapshot } from "../types.ts";
 import { createBullet } from "./bullets.ts";
+
+// used by ships that haven't been given their own {color}WeaponSequenceFactory
+// (see ship/schedules/*.ts) - a simple constant-rate single shot
+export const defaultWeaponSequenceFactory = (
+  fire: (ship: Ship) => void,
+  snapshot: WeaponSnapshot,
+): ActionSequencer<Ship> =>
+  createActionSequencer([
+    [fire],
+    [NO_OP, 1 / snapshot[5]],
+  ]);
 
 export const createWeapon = (
   optionsIndex: number,
@@ -36,15 +47,12 @@ export const createWeapon = (
     GameOptions[optionsIndex][2][3][0][0],
     level,
   ) as WeaponSnapshot,
+  weaponSequenceFactory = GameOptions[optionsIndex][2][3][0][1] ??
+    defaultWeaponSequenceFactory,
 ): Weapon => [
   createObject([mount] as XOOrientation),
   [[], []],
-  createActionSequencer(
-    GameOptions[optionsIndex][2][3][0][1] ?? [
-      [fireWeapon(weaponIndex)],
-      [NO_OP, 1 / snapshot[5]],
-    ],
-  ),
+  weaponSequenceFactory(fireWeapon(weaponIndex), snapshot),
   snapshot,
   optionsIndex,
 ];

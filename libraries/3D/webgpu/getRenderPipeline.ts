@@ -49,7 +49,7 @@ export const getRenderPipeline = memo((
         format,
         blend: {
           color: {
-            srcFactor: "src-alpha",
+            srcFactor: "one",
             dstFactor: "one-minus-src-alpha",
           },
           alpha: {

@@ -14,9 +14,33 @@
  * limitations under the License.
  */
 
-export { blueSequencerFactory } from "./blue.ts";
-export { greenSequencerFactory } from "./green.ts";
-export { pinkSequencerFactory } from "./pink.ts";
-export { purpleSequencerFactory } from "./purple.ts";
-export { redSequencerFactory } from "./red.ts";
-export { yellowSequencerFactory } from "./yellow.ts";
+export {
+  blueBulletSequencerFactory,
+  blueSequencerFactory,
+  blueWeaponSequenceFactory,
+} from "./blue.ts";
+export {
+  greenBulletSequencerFactory,
+  greenSequencerFactory,
+  greenWeaponSequenceFactory,
+} from "./green.ts";
+export {
+  pinkBulletSequencerFactory,
+  pinkSequencerFactory,
+  pinkWeaponSequenceFactory,
+} from "./pink.ts";
+export {
+  purpleBulletSequencerFactory,
+  purpleSequencerFactory,
+  purpleWeaponSequenceFactory,
+} from "./purple.ts";
+export {
+  redBulletSequencerFactory,
+  redSequencerFactory,
+  redWeaponSequenceFactory,
+} from "./red.ts";
+export {
+  yellowBulletSequencerFactory,
+  yellowSequencerFactory,
+  yellowWeaponSequenceFactory,
+} from "./yellow.ts";
