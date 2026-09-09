@@ -82,6 +82,12 @@ export const purpleWeaponSequenceFactory = (
     [NO_OP, 1 / snapshot[5]],
   ]);
 
+// purple's Strafe Speed override is pinned to 0 (it doesn't drift once in
+// position), but it still needs to physically fly in from its off-screen
+// spawn point - so its entrance/exit legs get their own fixed speed instead
+// of dividing by that (zero) combat stat
+const PURPLE_ENTRY_SPEED = 1.5;
+
 export const purpleSequencerFactory = (
   _ship: Ship,
   arcPointRange: [Band, Band, Band] = repeat(3, spread(1)) as [
@@ -102,7 +108,7 @@ export const purpleSequencerFactory = (
       subtractXYZ(fieldPoint, referencePoint),
     ),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
-      _ship[5][16],
+      PURPLE_ENTRY_SPEED,
     orbitToAction = createOrbitAction(fieldPoint, referencePoint, EASE_OUT),
     orbitFromAction = createOrbitAction(
       startingPoint,
@@ -114,9 +120,12 @@ export const purpleSequencerFactory = (
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
     ),
-    fireWeapons = (tickLength: number) =>
-      isPointVisible(readOrigin(_ship[0][0])) &&
-      doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    fireWeapons = (tickLength: number) => {
+      const origin = readOrigin(_ship[0][0]);
+
+      return isPointVisible(origin) &&
+        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    };
 
   return createActionSequencer([
     [(_ship: Ship, ...args) => {

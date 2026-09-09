@@ -26,7 +26,11 @@ export type XOGeometry = [
   halfLength?: number,
 ];
 
-export type XOMaterial = [code: string, data: Float32Array];
+export type XOMaterial = [
+  code: string,
+  data: Float32Array,
+  entryPoint?: string,
+];
 export type XOObject = [
   coordinates: Float32Array,
   geometry: XOGeometry,

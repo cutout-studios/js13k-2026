@@ -15,8 +15,8 @@
  */
 
 import {
+  createFlatPaintMaterialWithPalette as flatPaint,
   createObject,
-  createPaintMaterialWithPalette as paint,
   createSphere,
   readOrigin,
   setOrigin,
@@ -54,7 +54,7 @@ const STAR_Z_PLANE = 300,
       const object = createObject(
         _,
         flat([0.1], starGeometry) as XOGeometry,
-        paint(0xFFFFFFFF - rollBand([0x00, 0xFF])),
+        flatPaint(0xFFFFFFFF - rollBand([0x00, 0xFF])),
       );
 
       setOrigin(object[0], [

@@ -56,13 +56,12 @@ import {
 } from "../sounds.ts";
 import { ColorOptions } from "./types.ts";
 
-const defaultBulletGeometry = flat(
-  [0.06],
-  createPrism([0.006, 0.006, 0.12], 12),
-) as XOGeometry;
-
 const _geometry = (radius: number, mesh: [XYZ[], number]): XOGeometry =>
-  flat([radius], mesh) as XOGeometry;
+    flat([radius], mesh) as XOGeometry,
+  defaultBulletGeometry = _geometry(
+    0.06,
+    createPrism([0.006, 0.006, 0.12], 12),
+  );
 
 export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   2, // Rez
@@ -146,11 +145,11 @@ export default [
       [],
       () => createActionSequencer([[NO_OP]]), // clear default sequencer
       [[[], _, [0.3, 0, -0.26], [
-        _,
+        defaultBulletGeometry,
         _,
         defaultWeaponSound,
       ]], [[], _, [-0.3, 0, -0.26], [
-        _,
+        defaultBulletGeometry,
         _,
         defaultWeaponSound,
       ]]],
@@ -189,6 +188,7 @@ export default [
         [0, 8, "+", [0.02, 0.2]], // Item Drop rate
         [0, 19, "+", [0.005, 0.2]], // Bullet Crit Chance
         [0, 20, "x", [1.1, 5]], // Bullet Crit Damage
+        [2, 17, "+", [-0.02, -1]], // Aim Time
         [0, 9, "x", [0.95, 0.5]], // KG
       ],
     ],
@@ -202,7 +202,7 @@ export default [
         [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
         [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
       ],
-      [[9, [7, 20]], [11, [4, 20]], [16, [3, 5]]],
+      [[9, [7, 20]], [11, [4, 20]], [16, [2, 4]]],
       greenSequencerFactory,
       [[
         [[3, [1, 5]], [4, [6.5, 6.5]], [5, [12, 21]]],
@@ -246,7 +246,14 @@ export default [
         [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
         blueWeaponSequenceFactory,
         _,
-        [defaultBulletGeometry, blueBulletSequencerFactory, blueWeaponSound],
+        [
+          _geometry(
+            0.06,
+            createPrism([0.018, 0.018, 0.1], 12),
+          ),
+          blueBulletSequencerFactory,
+          blueWeaponSound,
+        ],
       ]],
       [1, 3],
     ],
@@ -301,10 +308,13 @@ export default [
           createPyramid([0.11, 0.09, 0.4], 3),
         ),
       ]],
-      [[8, [0.1, 0.15]], [9, [6, 28]], [11, [3, 108]], [16, [2.4, 3.5]]],
+      [[8, [0.1, 0.15]], [9, [6, 28]], [11, [3, 108]], [16, [1.8, 2.5]], [17, [
+        4,
+        2.5,
+      ]]],
       redSequencerFactory,
       [[
-        [[0, [2, 2]], [3, [2, 18]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
+        [[0, [2, 2]], [3, [2, 14]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
         redWeaponSequenceFactory,
         _,
         [
@@ -320,7 +330,7 @@ export default [
       [
         [0, 21, "x", [1.25, 3.5]], // Bullet Damage
         [0, 4, "+", [3, 15]], // Gas
-        [2, 17, "+", [-0.02, -1]], // Aim Time
+        [0, 22, "x", [1.1, 4]], // Bullet Speed - TODO: add
         [3, 6, "x", [1.2, 2.2]], // Gas Refill
       ],
     ],

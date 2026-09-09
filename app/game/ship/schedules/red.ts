@@ -20,7 +20,7 @@
 import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
-import { Band, clamp, doTimes, repeat, spread } from "~/common";
+import { Band, doTimes, repeat, spread } from "~/common";
 import { randomPoint } from "~/random";
 
 import { isPointVisible } from "../../../elements/mainCanvas.ts";
@@ -35,6 +35,7 @@ import {
 import {
   BULLET_MAX_RANGE,
   ENEMY_BULLET_RAMP_TIME,
+  ENEMY_FIRE_RANGE_MARGIN,
   PLAYER_AIM_Z_PLANE,
   PLAYER_X_BOUND,
   PLAYER_Y_BOUND,
@@ -43,7 +44,6 @@ import { getPlayerShip } from "../../player/ship.ts";
 
 import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
 
-// TODO: red-specific bullet jitter/behavior, if any
 export const redBulletSequencerFactory = (
   [[coordinates]]: Bullet,
   speed: number,
@@ -71,14 +71,15 @@ export const redBulletSequencerFactory = (
     },
   ]]);
 };
-// TODO: red-specific fire pattern (e.g. bursts, per the TODO above)
 export const redWeaponSequenceFactory = (
   fire: (ship: Ship) => void,
   snapshot: WeaponSnapshot,
 ): ActionSequencer<Ship> =>
   createActionSequencer([
     [fire],
-    [NO_OP, 1 / snapshot[5]],
+    [NO_OP, 0.15 / snapshot[5]],
+    [fire],
+    [NO_OP, 0.85 / snapshot[5]],
   ]);
 
 export const redSequencerFactory = (
@@ -113,9 +114,13 @@ export const redSequencerFactory = (
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
     ),
-    fireWeapons = (tickLength: number) =>
-      isPointVisible(readOrigin(_ship[0][0])) &&
-      doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    fireWeapons = (tickLength: number) => {
+      const origin = readOrigin(_ship[0][0]);
+
+      return isPointVisible(origin) &&
+        origin[2] > -(PLAYER_AIM_Z_PLANE + ENEMY_FIRE_RANGE_MARGIN) &&
+        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    };
 
   return createActionSequencer([
     [(_ship: Ship, ...args) => {
@@ -123,10 +128,6 @@ export const redSequencerFactory = (
       aimAction(_ship[0], ...args);
       fireWeapons(args[0]);
     }, travelTime],
-    [(_ship: Ship, ...args) => {
-      aimAction(_ship[0], ...args);
-      fireWeapons(args[0]);
-    }, clamp(4 / _ship[5][16], [2, 10])],
     [(_ship: Ship, ...args) => {
       orbitFromAction(_ship[0], ...args);
       aimAction(_ship[0], ...args);

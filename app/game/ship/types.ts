@@ -67,7 +67,7 @@ export type ShipSnapshot = [
   strafeSpeed: number,
 
   // 17
-  aimSpeed: number,
+  aimTime: number,
 ];
 
 export type Weapon = [

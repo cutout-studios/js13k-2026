@@ -22,4 +22,6 @@ export const PLAYER_Y_BOUND = 2.1;
 
 export const BULLET_ALPHA = 0xBF;
 export const BULLET_MAX_RANGE = 20;
+
 export const ENEMY_BULLET_RAMP_TIME = 0.3;
+export const ENEMY_FIRE_RANGE_MARGIN = 2;

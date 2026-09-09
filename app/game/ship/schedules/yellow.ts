@@ -38,6 +38,7 @@ import {
 import {
   BULLET_MAX_RANGE,
   ENEMY_BULLET_RAMP_TIME,
+  ENEMY_FIRE_RANGE_MARGIN,
   PLAYER_AIM_Z_PLANE,
   PLAYER_X_BOUND,
   PLAYER_Y_BOUND,
@@ -117,9 +118,13 @@ export const yellowSequencerFactory = (
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
     ),
-    fireWeapons = (tickLength: number) =>
-      isPointVisible(readOrigin(_ship[0][0])) &&
-      doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    fireWeapons = (tickLength: number) => {
+      const origin = readOrigin(_ship[0][0]);
+
+      return isPointVisible(origin) &&
+        origin[2] > -(PLAYER_AIM_Z_PLANE + ENEMY_FIRE_RANGE_MARGIN) &&
+        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    };
 
   return createActionSequencer([
     [(_ship: Ship, ...args) => {

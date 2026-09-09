@@ -20,10 +20,10 @@
 // - the groups enters in as a line
 // - if they get out of view, they reverse their spiral
 
-import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
-import { hypot, min, NO_OP } from "~/alias";
+import { addXYZ, readHeading, readOrigin, subtractXYZ, XYZ } from "~/3D";
+import { cos, hypot, min, NO_OP, PI, sin } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
-import { Band, clamp, doTimes, repeat, spread } from "~/common";
+import { Band, doTimes, repeat, spread } from "~/common";
 import { randomPoint } from "~/random";
 
 import { isPointVisible } from "../../../elements/mainCanvas.ts";
@@ -32,8 +32,6 @@ import {
   createAimAction,
   createOrbitAction,
   createPullAction,
-  EASE_IN,
-  EASE_OUT,
 } from "../../actions.ts";
 import {
   BULLET_MAX_RANGE,
@@ -86,6 +84,10 @@ export const greenWeaponSequenceFactory = (
     [NO_OP, 1 / snapshot[5]],
   ]);
 
+const CIRCLE_LOOPS = 3, // full laps around the aim-plane point, each made
+  // of 2 semicircle hops
+  CIRCLE_RADIUS = 1.2;
+
 export const greenSequencerFactory = (
   _ship: Ship,
   arcPointRange: [Band, Band, Band] = repeat(3, spread(1)) as [
@@ -101,41 +103,61 @@ export const greenSequencerFactory = (
       spread(0.5, -PLAYER_AIM_Z_PLANE),
     ]),
     referencePoint = randomPoint(arcPointRange),
+    // the ring green loops around once it reaches the aim plane - each
+    // step is a semicircle hop to the diametrically opposite point, so
+    // consecutive hops continue the same lap instead of retracing it
+    circlePoint = (step: number): XYZ => [
+      fieldPoint[0] + CIRCLE_RADIUS * cos(step * PI),
+      fieldPoint[1] + CIRCLE_RADIUS * sin(step * PI),
+      fieldPoint[2],
+    ],
+    circleReference = (step: number): XYZ => [
+      fieldPoint[0] + CIRCLE_RADIUS * 2 * cos((step + 0.5) * PI),
+      fieldPoint[1] + CIRCLE_RADIUS * 2 * sin((step + 0.5) * PI),
+      fieldPoint[2],
+    ],
+    entryPoint = circlePoint(0),
     mirroredReferencePoint = addXYZ(
       startingPoint,
-      subtractXYZ(fieldPoint, referencePoint),
+      subtractXYZ(entryPoint, referencePoint),
     ),
-    travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
+    travelTime = hypot(...subtractXYZ(entryPoint, startingPoint)) /
       _ship[5][16],
-    orbitToAction = createOrbitAction(fieldPoint, referencePoint, EASE_OUT),
-    orbitFromAction = createOrbitAction(
-      startingPoint,
-      mirroredReferencePoint,
-      EASE_IN,
+    circleTime = (CIRCLE_RADIUS * PI) / _ship[5][16],
+    orbitToAction = createOrbitAction(entryPoint, referencePoint),
+    orbitFromAction = createOrbitAction(startingPoint, mirroredReferencePoint),
+    circleActions = doTimes(
+      CIRCLE_LOOPS * 2,
+      (step: number) =>
+        createOrbitAction(circlePoint(step + 1), circleReference(step)),
     ),
     aimAction = createAimAction(
       _ship[1],
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
     ),
-    fireWeapons = (tickLength: number) =>
-      isPointVisible(readOrigin(_ship[0][0])) &&
-      doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    // green fires at any depth, not just once it's near the aim plane
+    fireWeapons = (tickLength: number) => {
+      const origin = readOrigin(_ship[0][0]);
+
+      return isPointVisible(origin) &&
+        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    },
+    hopSegment = (
+      orbitAction: ReturnType<typeof createOrbitAction>,
+      duration: number,
+    ): [(ship: Ship, ...args: [number, number, number]) => void, number] => [
+      (_ship: Ship, ...args) => {
+        orbitAction(_ship[0], ...args);
+        aimAction(_ship[0], ...args);
+        fireWeapons(args[0]);
+      },
+      duration,
+    ];
 
   return createActionSequencer([
-    [(_ship: Ship, ...args) => {
-      orbitToAction(_ship[0], ...args);
-      aimAction(_ship[0], ...args);
-      fireWeapons(args[0]);
-    }, travelTime],
-    [(_ship: Ship, ...args) => {
-      aimAction(_ship[0], ...args);
-      fireWeapons(args[0]);
-    }, clamp(4 / _ship[5][16], [2, 10])],
-    [(_ship: Ship, ...args) => {
-      orbitFromAction(_ship[0], ...args);
-      aimAction(_ship[0], ...args);
-      fireWeapons(args[0]);
-    }, travelTime],
+    hopSegment(orbitToAction, travelTime),
+    ...doTimes(circleActions, (action) => hopSegment(action, circleTime)),
+    hopSegment(orbitFromAction, travelTime),
   ]);
 };

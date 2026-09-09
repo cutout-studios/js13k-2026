@@ -25,31 +25,22 @@ import {
 } from "~/audio";
 
 export const defaultWeaponSound = createSound(
+  [NOISE_BUFFER, [
+    [[1, [0.7, 1]], 0],
+    [[0, [0.7, 0.8]], 0.003],
+    [[0, 0], 0.06],
+  ]],
   [SINE_BUFFER, [
-    [[1, [0.1, 0.13], true], 0],
-    [[0, 0.5, true], 0],
-    [[0, 0.3, true], 0.06],
-    [[1, 0.1], 1.5],
-    [[0, 0, true], 1.5],
+    [[1, [0.4, 0.6]], 0],
+    [[0, 0.43], 0.004],
+    [[1, [0.13, 0.16]], 0.03],
+    [[0, 0], 0.1],
   ]],
-  [SAWTOOTH_BUFFER, [
-    [[1, [0.2, 0.3], true], 0],
-    [[0, 0.04], 0],
-    [[0, 0.02], 0.14],
-    [[1, [0.06, 0.02], true], 0.01],
-    [[0, 0.01], 0.56],
-    [[0, 0], 1.5],
-  ]],
-  [NOISE_BUFFER, [
-    [[1, 1, true], 0],
-    [[0, 1], 0],
-    [[0, 0], 0.02],
-  ]],
-  [NOISE_BUFFER, [
-    [[0, [0.15, 0.11], true], 0],
-    [[0, 0.03, true], 0.2],
-    [[0, 0.01, true], 0.6],
-    [[0, 0], 1.15],
+  [SQUARE_BUFFER, [
+    [[1, [4.3, 6]], 0],
+    [[0, 0.035], 0.03],
+    [[0, 0], 0.14],
+    [[1, [0.2, 0.5], true], 0],
   ]],
 );
 
@@ -75,7 +66,8 @@ export const errorSound = createSound(
     [[0, 0.15], 0],
     [[1, 0.5, true], 0.04],
     [[0, 0], 0.04],
-  ]]);
+  ]],
+);
 
 export const equipSound = createSound(
   [NOISE_BUFFER, [
@@ -240,5 +232,5 @@ export const purpleWeaponSound = defaultWeaponSound;
 export const blueWeaponSound = defaultWeaponSound;
 export const pinkWeaponSound = defaultWeaponSound;
 export const yellowWeaponSound = defaultWeaponSound;
-export const yellowBombReadySound = errorSound
+export const yellowBombReadySound = errorSound;
 export const yellowBombExplodeSound = enemyDestroyedSound;

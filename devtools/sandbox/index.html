@@ -43,6 +43,23 @@ h2 {
   flex-wrap: wrap;
   gap: .4rem;
 }
+label {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  font-size: .7rem;
+  color: #aaa;
+  flex: 1;
+}
+input[type=number] {
+  width: 100%;
+  background: #111;
+  color: #eee;
+  border: 1px solid #444;
+  padding: .3rem;
+  font: inherit;
+  box-sizing: border-box;
+}
 button {
   cursor: pointer;
   padding: .4rem .6rem;
@@ -80,6 +97,36 @@ button:focus {
 <canvas id=c></canvas>
 <div id=panel>
   <pre id=error></pre>
+  <div>
+    <h2>Spawn region</h2>
+    <div class=row>
+      <label>X min <input type=number id=spawnXMin step=0.1></label>
+      <label>X max <input type=number id=spawnXMax step=0.1></label>
+    </div>
+    <div class=row>
+      <label>Y min <input type=number id=spawnYMin step=0.1></label>
+      <label>Y max <input type=number id=spawnYMax step=0.1></label>
+    </div>
+    <div class=row>
+      <label>Z min <input type=number id=spawnZMin step=0.1></label>
+      <label>Z max <input type=number id=spawnZMax step=0.1></label>
+    </div>
+  </div>
+  <div>
+    <h2>Reference point band</h2>
+    <div class=row>
+      <label>X min <input type=number id=refXMin step=0.1></label>
+      <label>X max <input type=number id=refXMax step=0.1></label>
+    </div>
+    <div class=row>
+      <label>Y min <input type=number id=refYMin step=0.1></label>
+      <label>Y max <input type=number id=refYMax step=0.1></label>
+    </div>
+    <div class=row>
+      <label>Z min <input type=number id=refZMin step=0.1></label>
+      <label>Z max <input type=number id=refZMax step=0.1></label>
+    </div>
+  </div>
   <div>
     <h2>Ships (click to spawn)</h2>
     <div class=row id=shipButtons></div>

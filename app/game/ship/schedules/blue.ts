@@ -19,7 +19,7 @@
 import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
-import { Band, clamp, doTimes, repeat, spread } from "~/common";
+import { clamp, doTimes, spread } from "~/common";
 import { randomPoint } from "~/random";
 
 import { isPointVisible } from "../../../elements/mainCanvas.ts";
@@ -34,6 +34,7 @@ import {
 import {
   BULLET_MAX_RANGE,
   ENEMY_BULLET_RAMP_TIME,
+  ENEMY_FIRE_RANGE_MARGIN,
   PLAYER_AIM_Z_PLANE,
   PLAYER_X_BOUND,
   PLAYER_Y_BOUND,
@@ -83,19 +84,14 @@ export const blueWeaponSequenceFactory = (
 
 export const blueSequencerFactory = (
   _ship: Ship,
-  arcPointRange: [Band, Band, Band] = repeat(3, spread(1)) as [
-    Band,
-    Band,
-    Band,
-  ],
 ) => {
   const startingPoint = readOrigin(_ship[0][0]),
     fieldPoint = randomPoint([
       spread(PLAYER_X_BOUND),
-      spread(PLAYER_Y_BOUND),
+      [PLAYER_Y_BOUND / 2, PLAYER_Y_BOUND],
       spread(0.5, -PLAYER_AIM_Z_PLANE),
     ]),
-    referencePoint = randomPoint(arcPointRange),
+    referencePoint = subtractXYZ(fieldPoint, [0.1, 0, 0]),
     mirroredReferencePoint = addXYZ(
       startingPoint,
       subtractXYZ(fieldPoint, referencePoint),
@@ -113,9 +109,13 @@ export const blueSequencerFactory = (
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
     ),
-    fireWeapons = (tickLength: number) =>
-      isPointVisible(readOrigin(_ship[0][0])) &&
-      doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    fireWeapons = (tickLength: number) => {
+      const origin = readOrigin(_ship[0][0]);
+
+      return isPointVisible(origin) &&
+        origin[2] > -(PLAYER_AIM_Z_PLANE + ENEMY_FIRE_RANGE_MARGIN) &&
+        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    };
 
   return createActionSequencer([
     [(_ship: Ship, ...args) => {

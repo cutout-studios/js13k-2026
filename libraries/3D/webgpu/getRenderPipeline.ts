@@ -26,7 +26,7 @@ import { device, format, pipelineLayout } from "./setupDevice.ts";
 
 let label = 0;
 export const getRenderPipeline = memo((
-  [code]: XOMaterial,
+  [code, , entryPoint = "paintedLambert"]: XOMaterial,
 ): GPURenderPipeline => {
   const module = device.createShaderModule({ code, label: label++ + "" });
 
@@ -45,6 +45,7 @@ export const getRenderPipeline = memo((
     },
     fragment: {
       module,
+      entryPoint,
       targets: [{
         format,
         blend: {

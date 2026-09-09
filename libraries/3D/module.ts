@@ -53,6 +53,7 @@ export {
 export { createPrism, createPyramid, createSphere } from "./geometry.ts";
 export {
   create as createPaintMaterial,
+  createFlatWithPalette as createFlatPaintMaterialWithPalette,
   createPalette as createPaintPalette,
   createWithPalette as createPaintMaterialWithPalette,
   toHSL,

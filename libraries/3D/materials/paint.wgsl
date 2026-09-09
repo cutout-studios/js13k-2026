@@ -14,11 +14,10 @@ fn main(@location(0) localPosition: vec3f, @builtin(vertex_index) vertexIndex: u
   return VertexOutput(coordinates[instanceIndex] * vec4f(localPosition, 1), vertexIndex / 3u);
 }
 
-@fragment
-fn paintedLambert(@builtin(position) fragment: vec4f, @location(0) @interpolate(flat) triangleIndex: u32) -> @location(0) vec4f {
+fn baseColor(fragment: vec4f, triangleIndex: u32) -> vec4f {
   let slope = vec2f(dpdx(fragment.w), dpdy(fragment.w)) * (600 / fragment.w);
   let facing = inverseSqrt(dot(slope, slope) + 1);
-  
+
   // cap the rim boost
   let rim = min(pow(1 - facing, 2) * 0.8, 0.3);
   let paint = colorPalette[triangleIndex % arrayLength(&colorPalette)];
@@ -27,3 +26,17 @@ fn paintedLambert(@builtin(position) fragment: vec4f, @location(0) @interpolate(
 
   return vec4f((paint.rgb * facing + rim) * alpha, alpha);
 }
+
+@fragment
+fn paintedLambert(@builtin(position) fragment: vec4f, @location(0) @interpolate(flat) triangleIndex: u32) -> @location(0) vec4f {
+  let color = baseColor(fragment, triangleIndex);
+  let depthFalloff = pow(min(1.0, 12.0 * fragment.w), 2.0);
+
+  return vec4f(color.rgb * depthFalloff, color.a);
+}
+
+@fragment
+fn paintedFlat(@builtin(position) fragment: vec4f, @location(0) @interpolate(flat) triangleIndex: u32) -> @location(0) vec4f {
+  return baseColor(fragment, triangleIndex);
+}
+

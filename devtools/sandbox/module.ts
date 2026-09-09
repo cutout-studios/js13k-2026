@@ -27,13 +27,12 @@ import {
 } from "~/3D";
 import { abs } from "~/alias";
 import { startClock } from "~/clock";
-import { Band, doTimes, flatDoTimes, spread } from "~/common";
+import { Band, doTimes, flatDoTimes, repeat, spread } from "~/common";
 
 import {
   PLAYER_AIM_Z_PLANE,
   PLAYER_SHIP_Z_PLANE,
 } from "../../app/game/constants.ts";
-import { drawCard } from "../../app/game/decks.ts";
 import GameOptions from "../../app/game/options/module.ts";
 import { setPlayerShip } from "../../app/game/player/ship.ts";
 import { createShip, getShipObjects } from "../../app/game/ship/module.ts";
@@ -46,25 +45,38 @@ const canvasElement = document.getElementById("c") as HTMLCanvasElement,
 let renderTarget = createRenderTarget(canvasElement);
 onresize = () => renderTarget = createRenderTarget(canvasElement);
 
-// mirrors world/enemies.ts's _spawnRegionDeck (4 screen corners + center) so
-// spawned ships get the same kind of orbit reference point / placement box
-// their schedules are actually tuned around
-const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2;
 const [visibleX, visibleY] = ((z: number) => {
   const scale = abs(z) / CAMERA_MAGNIFICATION_RATIO;
   return [scale * renderTarget[0], scale];
-})(SPAWN_Z);
+})(PLAYER_AIM_Z_PLANE);
 
-const _spawnRegionDeck: [Band, Band, Band][] = doTimes(
-  [[-1, 1], [1, 1], [1, -1], [-1, -1]],
-  ([x, y]): [Band, Band, Band] => [
-    spread(visibleX * 0.25, x * 1.2 * visibleX),
-    spread(visibleY * 0.25, y * 1.2 * visibleY),
-    spread(1, -SPAWN_Z),
-  ],
+const bandInputs = (prefix: string, defaultBand: [Band, Band, Band]) =>
+  doTimes(["X", "Y", "Z"], (axis: string, index: number) => {
+    const minInput = document.getElementById(
+        `${prefix}${axis}Min`,
+      ) as HTMLInputElement,
+      maxInput = document.getElementById(
+        `${prefix}${axis}Max`,
+      ) as HTMLInputElement;
+
+    [minInput.value, maxInput.value] = doTimes(
+      [...defaultBand[index]],
+      (value: number) => value.toFixed(2),
+    );
+
+    return () => [+minInput.value || 0, +maxInput.value || 0] as Band;
+  });
+
+const [readSpawnX, readSpawnY, readSpawnZ] = bandInputs("spawn", [
+  spread(visibleX * 0.25, 1.2 * visibleX),
+  spread(visibleY * 0.25, 1.2 * visibleY),
+  spread(1, -18),
+]);
+
+const [readRefX, readRefY, readRefZ] = bandInputs(
+  "ref",
+  repeat(3, spread(1)) as [Band, Band, Band],
 );
-
-_spawnRegionDeck.push([spread(1, 0), spread(1, 0), spread(1, 3)]);
 
 // wire up the button UI before touching anything ship/scene related, so a
 // bug further down (WebGPU, sequencers, etc.) can never take the buttons
@@ -76,8 +88,13 @@ onerror = (message, _source, _line, _col, error) =>
 const activeShips: Ship[] = [];
 
 const spawnShip = (colorIndex: number) => {
-  const spawnRegion = drawCard(_spawnRegionDeck),
-    ship = createShip(colorIndex, 1, spawnRegion);
+  const spawnRegion: [Band, Band, Band] = [
+      readSpawnX(),
+      readSpawnY(),
+      readSpawnZ(),
+    ],
+    referenceBand: [Band, Band, Band] = [readRefX(), readRefY(), readRefZ()],
+    ship = createShip(colorIndex, 1, referenceBand);
 
   scatterObjects(spawnRegion, true, ship[0]);
   activeShips.push(ship);

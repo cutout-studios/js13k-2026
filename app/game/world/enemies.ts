@@ -20,7 +20,6 @@ import { Band, doTimes, spread } from "~/common";
 
 import { visibleHalfExtentAt } from "../../elements/mainCanvas.ts";
 
-import { PLAYER_AIM_Z_PLANE } from "../constants.ts";
 import { createDeck, drawCard } from "../decks.ts";
 import GameOptions from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
@@ -29,7 +28,7 @@ import { Ship } from "../ship/types.ts";
 import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
 
-const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2,
+const SPAWN_Z = 14,
   [visibleX, visibleY] = visibleHalfExtentAt(SPAWN_Z),
   _enemyDeck = createDeck(length(GameOptions.slice(1))),
   _spawnRegionDeck: [Band, Band, Band][] = doTimes(
@@ -45,9 +44,13 @@ const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2,
       spread(visibleY * 0.25, y * 1.2 * visibleY),
       spread(1, -SPAWN_Z),
     ],
-  );
-
-_spawnRegionDeck.push([spread(1, 0), spread(1, 0), spread(1, 3)]);
+  ),
+  _arcRegionDeck: [Band, Band, Band][] = [
+    [[0, 1], [0, 1], [0, 0]],
+    [[0, 1], [0, -1], [0, 0]],
+    [[0, -1], [0, -1], [0, 0]],
+    [[0, -1], [0, 1], [0, 0]],
+  ];
 
 export const rollEnemies = (
   wave: number,
@@ -68,9 +71,10 @@ export const rollEnemies = (
       const optionsIndex = drawCard(_enemyDeck) + 1,
         count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
         spawnRegion = drawCard(_spawnRegionDeck),
+        arcRegion = drawCard(_arcRegionDeck),
         ships = doTimes(
           count,
-          () => createShip(optionsIndex, level, spawnRegion),
+          () => createShip(optionsIndex, level, arcRegion),
         );
 
       scatterObjects(

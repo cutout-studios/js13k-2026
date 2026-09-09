@@ -23,7 +23,8 @@ import shaderCode from "./paint.wgsl.ts";
 
 export const create = (
   paintData: Float32Array,
-): XOMaterial => [shaderCode, paintData];
+  entryPoint?: string,
+): XOMaterial => [shaderCode, paintData, entryPoint];
 
 // unpacks a 0xRRGGBBAA hex into 4 normalized (0-1) channels
 const _unpackRGBA = (hex: number): RGBA =>
@@ -37,6 +38,9 @@ export const createPalette = (...paints: number[]) =>
 
 export const createWithPalette = (...paints: number[]) =>
   create(createPalette(...paints));
+
+export const createFlatWithPalette = (...paints: number[]) =>
+  create(createPalette(...paints), "paintedFlat");
 
 export const toRGB = (h: number, s: number, l: number, a = 255): number => {
   const chroma = (s / 100) * min(l / 100, 1 - l / 100),
