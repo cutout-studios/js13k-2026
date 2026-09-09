@@ -14,55 +14,224 @@
  * limitations under the License.
  */
 
-import { createSound, NOISE_BUFFER, SINE_BUFFER, SQUARE_BUFFER } from "~/audio";
+import {
+  createPulseBuffer,
+  createSound,
+  NOISE_BUFFER,
+  SAWTOOTH_BUFFER,
+  SINE_BUFFER,
+  SQUARE_BUFFER,
+  TRIANGLE_BUFFER,
+} from "~/audio";
+import { SoundDefinition } from "../../libraries/audio/types.ts";
 
 export const defaultWeaponSound = createSound(
   [NOISE_BUFFER, [
-    [[1, [0.7, 1]]],
-    [[0, [.7, .8]], .003],
-    [[0, 0], .06],
+    [[1, [0.7, 1]], 0],
+    [[0, [0.7, 0.8]], 0.003],
+    [[0, 0], 0.06],
   ]],
   [SINE_BUFFER, [
-    [[1, [.4, .6]]],
-    [[0, .45], .004],
-    [[1, [.13, .16]], .03],
-    [[0, 0], .1],
+    [[1, [0.4, 0.6]], 0],
+    [[0, 0.43], 0.004],
+    [[1, [0.13, 0.16]], 0.03],
+    [[0, 0], 0.1],
   ]],
   [SQUARE_BUFFER, [
-    [[1, [4.3, 6]]],
-    [[0, .035], .03],
-    [[0, 0], .14],
-    // exp. fall-off to curtail "note" sound
-    [[1, [.2, .5], true], 0],
+    [[1, [4.3, 6]], 0],
+    [[0, 0.035], 0.03],
+    [[0, 0], 0.14],
+    [[1, [0.2, 0.5], true], 0],
   ]],
 );
 
-export const redWeaponSound = createSound();
-export const greenWeaponSound = createSound();
-export const purpleWeaponSound = createSound();
-export const blueWeaponSound = createSound();
-export const pinkWeaponSound = createSound();
-export const yellowWeaponSound = createSound();
+const assetMissing: SoundDefinition[] = [
+  [SQUARE_BUFFER, [
+    [[1, 3.5, true], 0],
+    [[0, 0.19], 0],
+    [[1, 1.5, true], 0.04],
+    [[0, 0], 0.04],
+    [[1, 1.5, true], 0],
+    [[1, 3.5, true], 0],
+    [[0, 0.18], 0],
+    [[1, 1.5, true], 0.04],
+    [[0, 0], 0.04],
+  ]],
+  [TRIANGLE_BUFFER, [
+    [[1, 0.8, true], 0],
+    [[0, 0.15], 0],
+    [[1, 0.5, true], 0.04],
+    [[0, 0], 0.04],
+    [[1, 0.5, true], 0],
+    [[1, 0.8, true], 0],
+    [[0, 0.15], 0],
+    [[1, 0.5, true], 0.04],
+    [[0, 0], 0.04],
+  ]],
+];
 
-// TODO: wire up the yellow-specific weapon sounds
-export const yellowBombReadySound = createSound();
-export const yellowBombExplodeSound = createSound();
+export const equipSound = createSound(
+  [NOISE_BUFFER, [
+    [[1, 0.6], 0],
+    [[0, 1.14], 0],
+    [[0, 0], 0.01],
+    [[0, 0], 0.02],
+    [[1, 0.85], 0.03],
+    [[0, 1], 0],
+    [[0, 0.01], 0.01],
+  ]],
+  [SINE_BUFFER, [
+    [[1, 0.35, true], 0],
+    [[0, 0.3], 0],
+    [[0, 0], 0.01],
+    [[0, 0], 0.02],
+    [[0, 0.3], 0.01],
+    [[0, 0], 0.01],
+    [[1, 0.4, true], 0.01],
+  ]],
+);
+export const itemPickupSound = equipSound;
+export const inventoryFullSound = createSound(...assetMissing);
 
-export const enemyHitSound = createSound();
-export const enemyDestroyedSound = createSound();
+export const enemyHitSound = createSound(
+  [NOISE_BUFFER, [
+    [[1, [0.3, 0.4], true], 0],
+    [[0, [0.65, 0.75]], 0],
+    [[0, 0], 0.03],
+  ]],
+  [SAWTOOTH_BUFFER, [
+    [[1, [0.7, 0.8], true], 0],
+    [[0, 0.25], 0],
+    [[0, 0], 0.03],
+    [[1, [0.2, 0.4], true], 0.01],
+  ]],
+);
+export const enemyDestroyedSound = createSound(
+  [SINE_BUFFER, [
+    [[1, [0.1, 0.13], true], 0],
+    [[0, 1, true], 0],
+    [[0, 0.6, true], 0.06],
+    [[1, 0.1], 1.5],
+    [[0, 0, true], 1.5],
+  ]],
+  [SAWTOOTH_BUFFER, [
+    [[1, [0.2, 0.3], true], 0],
+    [[0, 0.04], 0],
+    [[0, 0.02], 0.14],
+    [[1, [0.06, 0.02], true], 0.01],
+    [[0, 0.01], 0.56],
+    [[0, 0], 1.5],
+  ]],
+  [NOISE_BUFFER, [ // crack
+    [[1, 1, true], 0],
+    [[0, 1], 0],
+    [[0, 0], 0.02],
+  ]],
+  [NOISE_BUFFER, [ // false reverb
+    [[0, [0.15, 0.11], true], 0],
+    [[0, 0.03, true], 0.2],
+    [[0, 0.01, true], 0.6],
+    [[0, 0], 1.15],
+  ]],
+);
 
-export const playerHitSound = createSound();
-export const playerSpinSound = createSound();
-export const playerSpinCounterSound = createSound();
+// WIP
+export const playerSpinSound = createSound([TRIANGLE_BUFFER, [
+  [[0, 0.35], 0],
+  [[1, 0.8], 0],
+  [[1, 2.1, true], 0.15],
+  [[0, 0, false], 0.2],
+]], [NOISE_BUFFER, [
+  [[0, 0.0], 0],
+  [[1, 0.6], 0],
+  [[0, 0.4, false], 0.07],
+  [[0, 0, true], 0.22],
+]]);
 
-export const rezLostSound = createSound();
-export const rezSavedSound = createSound();
+export const playerSpinCounterSound = createSound([SQUARE_BUFFER, [
+  [[0, [0.5, 0.7]], 0],
+  [[1, [3.6, 4.6]], 0],
+  [[1, [1.0, 1.4], true], 0.08],
+  [[0, 0, false], 0.08],
+]], [NOISE_BUFFER, [
+  [[0, [0.3, 0.5]], 0],
+  [[1, [1.6, 2.4]], 0],
+  [[0, 0, false], 0.03],
+]]);
 
-export const itemPickupSound = createSound();
-export const inventoryFullSound = createSound();
+export const playerHitSound = createSound([TRIANGLE_BUFFER, [
+  [[0, 0.65], 0],
+  [[1, 1.1], 0],
+  [[1, 0.5, true], 0.06],
+  [[0, 0, false], 0.08],
+]], [createPulseBuffer(.5), [
+  [[0, 0.3], 0],
+  [[1, 0.85], 0],
+  [[0, 0, false], 0.04],
+]]);
 
-export const restoreSound = createSound();
-export const winCollectionSound = createSound();
-export const equipSound = createSound();
+export const rezLostSound = createSound([NOISE_BUFFER, [
+  [[1, 1.25], 0],
 
-export const stageCompleteSound = createSound();
+  [[0, 0.75], 0],
+  [[0, 0.05, true], 0.04],
+
+  [[0, 0.5], 0.07],
+  [[0, 0.05, true], 0.11],
+
+  [[0, 0.28], 0.14],
+  [[0, 0.03, true], 0.18],
+
+  [[0, 0.12], 0.21],
+  [[0, 0, true], 0.26],
+]]);
+
+export const rezSavedSound = createSound([SINE_BUFFER, [
+  [[0, 0.5], 0],
+  [[1, 0.8], 0],
+  [[1, 1.5, false], 0.07],
+  [[0, 0.05, true], 0.08],
+
+  [[0, 0.6], 0.11],
+  [[1, 1.2], 0.11],
+  [[1, 2.1, false], 0.21],
+  [[0, 0, true], 0.25],
+]]);
+export const restoreSound = rezSavedSound;
+
+export const stageCompleteSound = createSound([SINE_BUFFER, [
+  [[0, 0.45], 0],
+  [[1, 1.2], 0],
+  [[0, 0.1], 0.08],
+
+  [[0, 0.45], 0.09],
+  [[1, 0.9], 0.09],
+  [[0, 0.1], 0.17],
+
+  [[0, 0.55], 0.18],
+  [[1, 1.6], 0.18],
+  [[0, 0, true], 0.45],
+]], [SINE_BUFFER, [
+  [[0, 0.35], 0],
+  [[1, 1.8], 0],
+  [[0, 0.1], 0.08],
+
+  [[0, 0.35], 0.09],
+  [[1, 1.125], 0.09],
+  [[0, 0.1], 0.17],
+
+  [[0, 0.45], 0.18],
+  [[1, 3.2], 0.18],
+  [[0, 0, true], 0.45],
+]]);
+export const winCollectionSound = stageCompleteSound;
+
+// TODO: enemies
+export const redWeaponSound = createSound(...assetMissing);
+export const greenWeaponSound = createSound(...assetMissing);
+export const purpleWeaponSound = createSound(...assetMissing);
+export const blueWeaponSound = createSound(...assetMissing);
+export const pinkWeaponSound = createSound(...assetMissing);
+export const yellowWeaponSound = createSound(...assetMissing);
+export const yellowBombReadySound = createSound(...assetMissing);
+export const yellowBombExplodeSound = createSound(...assetMissing);

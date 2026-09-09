@@ -19,7 +19,12 @@
 import { toRGB } from "~/3D";
 import { doTimes, interpolate } from "~/common";
 
-import { encode, GRID, VERTICES } from "../../scripts/encodePortrait.ts";
+import {
+  encode,
+  GRID,
+  TRIANGLE_BANDS,
+  VERTICES,
+} from "../../scripts/encodePortrait.ts";
 
 const CANVAS_SIZE = 512,
   SCALE = CANVAS_SIZE / (2 * GRID),
@@ -52,26 +57,13 @@ const vertices = [...VERTICES];
 const vertexCount = () => vertices.length / 2;
 const triangleCount = () => vertexCount() / 3;
 
-// which of the 6 bands each triangle uses. the original 40 triangles are
-// grouped in contiguous blocks per band (matching the shipped counts in
-// app/elements/portrait.ts exactly); anything beyond that (added here)
-// just cycles through the bands
-const ORIGINAL_BAND_COUNTS = [5, 9, 8, 9, 4, 5];
-
-const initialBandFor = (triangleIndex: number): number => {
-  let remaining = triangleIndex;
-
-  for (let band = 0; band < ORIGINAL_BAND_COUNTS.length; band++) {
-    if (remaining < ORIGINAL_BAND_COUNTS[band]) return band;
-    remaining -= ORIGINAL_BAND_COUNTS[band];
-  }
-
-  return triangleIndex % BANDS.length;
-};
-
+// which of the 6 bands each triangle uses - loaded from the persisted
+// TRIANGLE_BANDS (see scripts/encodePortrait.ts) so assignments survive a
+// reload. only falls back to a guess (round-robin) for triangles added here
+// that haven't been exported with "Copy triangle bands" yet
 const triangleBand = Array.from(
   { length: triangleCount() },
-  (_, index) => initialBandFor(index),
+  (_, index) => TRIANGLE_BANDS[index] ?? index % BANDS.length,
 );
 
 const toCanvas = (x: number, y: number): [number, number] => [
@@ -175,6 +167,36 @@ const findVertexNear = (
   return closestIndex;
 };
 
+const sideOf = (
+  px: number,
+  py: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+) => (px - bx) * (ay - by) - (ax - bx) * (py - by);
+
+// last match wins - triangles drawn later are on top, matching what you see
+const findTriangleAt = (x: number, y: number): number | null => {
+  let found: number | null = null;
+
+  doTimes(triangleCount(), (triangleIndex: number) => {
+    const base = triangleIndex * 6,
+      [ax, ay] = toCanvas(vertices[base], vertices[base + 1]),
+      [bx, by] = toCanvas(vertices[base + 2], vertices[base + 3]),
+      [cx, cy] = toCanvas(vertices[base + 4], vertices[base + 5]),
+      d1 = sideOf(x, y, ax, ay, bx, by),
+      d2 = sideOf(x, y, bx, by, cx, cy),
+      d3 = sideOf(x, y, cx, cy, ax, ay),
+      hasNeg = d1 < 0 || d2 < 0 || d3 < 0,
+      hasPos = d1 > 0 || d2 > 0 || d3 > 0;
+
+    if (!(hasNeg && hasPos)) found = triangleIndex;
+  });
+
+  return found;
+};
+
 const selectVertex = (vertexIndex: number | null) => {
   selectedVertex = vertexIndex;
 
@@ -218,11 +240,38 @@ const addTriangle = () => {
   draw();
 };
 
-canvas.onmousedown = (event) => {
-  const found = findVertexNear(event.offsetX, event.offsetY);
+// the shader indexes the color palette by triangle position, so colors can
+// only be run-length-encoded into repeat() blocks if same-band triangles are
+// actually adjacent in the vertex array - this reorders both together
+// (stable within each band) so copyColors and copyVertices agree
+const sortTrianglesByBand = () => {
+  const order = Array.from({ length: triangleCount() }, (_, index) => index)
+    .sort((a, b) => triangleBand[a] - triangleBand[b]);
 
-  selectVertex(found);
-  dragging = found != null;
+  const newVertices: number[] = [], newBands: number[] = [];
+  doTimes(order, (triangleIndex: number) => {
+    newVertices.push(...vertices.slice(triangleIndex * 6, triangleIndex * 6 + 6));
+    newBands.push(triangleBand[triangleIndex]);
+  });
+
+  vertices.splice(0, vertices.length, ...newVertices);
+  triangleBand.splice(0, triangleBand.length, ...newBands);
+  selectVertex(null);
+  draw();
+};
+
+canvas.onmousedown = (event) => {
+  const foundVertex = findVertexNear(event.offsetX, event.offsetY);
+
+  if (foundVertex != null) {
+    selectVertex(foundVertex);
+    dragging = true;
+  } else {
+    const foundTriangle = findTriangleAt(event.offsetX, event.offsetY);
+    selectVertex(foundTriangle != null ? foundTriangle * 3 : null);
+    dragging = false;
+  }
+
   draw();
 };
 
@@ -284,6 +333,7 @@ bandSelect.onchange = () => {
 };
 document.getElementById("addTriangle")!.onclick = addTriangle;
 document.getElementById("deleteTriangle")!.onclick = deleteSelectedTriangle;
+document.getElementById("sortByBand")!.onclick = sortTrianglesByBand;
 
 const showOutput = (text: string) => {
   outputArea.value = text;
@@ -297,6 +347,36 @@ document.getElementById("copyEncoded")!.onclick = () => {
   const encoded = encode(vertices);
 
   showOutput(`${JSON.stringify(encoded)} // ${encoded.length} chars`);
+};
+
+// paste this into scripts/encodePortrait.ts's TRIANGLE_BANDS every time you
+// change a band assignment here - otherwise it's lost on reload (see
+// triangleBand's initializer above)
+document.getElementById("copyBands")!.onclick = () =>
+  showOutput(`[\n  ${triangleBand.join(", ")},\n]`);
+
+// run-length-encodes the current per-triangle band assignment into the same
+// repeat(count, toRGB(...)) shape app/elements/portrait.ts already uses -
+// stays correct after adding/deleting/reassigning triangles here
+document.getElementById("copyColors")!.onclick = () => {
+  const runs: [band: number, count: number][] = [];
+
+  doTimes(triangleCount(), (triangleIndex: number) => {
+    const band = triangleBand[triangleIndex],
+      last = runs[runs.length - 1];
+
+    if (last && last[0] == band) last[1]++;
+    else runs.push([band, 1]);
+  });
+
+  const calls = runs
+    .map(([band, count]) => {
+      const [hue, satMax, lightness] = BANDS[band];
+      return `    repeat(${count}, toRGB(${hue}, interpolate([0, ${satMax}], progress), ${lightness})),`;
+    })
+    .join("\n");
+
+  showOutput(`paint(\n  ...flat(\n${calls}\n  ),\n)`);
 };
 
 draw();
