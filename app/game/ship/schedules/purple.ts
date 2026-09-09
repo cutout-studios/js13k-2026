@@ -54,18 +54,12 @@ export const purpleSequencerFactory = (
       spread(0.5, -PLAYER_AIM_Z_PLANE),
     ]),
     referencePoint = randomPoint(arcPointRange),
-    // mirrored through the start/field midpoint - orbitFromAction ends up
-    // tracing the SAME circle in the SAME rotational direction as
-    // orbitToAction (continuing the loop back to the spawn point) instead of
-    // retracing the inbound arc backwards
     mirroredReferencePoint = addXYZ(
       startingPoint,
       subtractXYZ(fieldPoint, referencePoint),
     ),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
       _ship[5][16],
-    // fast near the spawn point on both legs, slow near the field point -
-    // keeps distant travel readable as depth without lingering on the way in
     orbitToAction = createOrbitAction(fieldPoint, referencePoint, EASE_OUT),
     orbitFromAction = createOrbitAction(
       startingPoint,

@@ -385,8 +385,10 @@ document.onmousemove = (event) => {
   if (groupScaleOrigin && groupScaleCentroid && groupScaleStart) {
     const [centerX, centerY] = groupScaleCentroid,
       [mouseX, mouseY] = fromCanvas(canvasX, canvasY),
-      startDistance =
-        Math.hypot(groupScaleStart[0] - centerX, groupScaleStart[1] - centerY) ||
+      startDistance = Math.hypot(
+        groupScaleStart[0] - centerX,
+        groupScaleStart[1] - centerY,
+      ) ||
         1,
       factor = Math.hypot(mouseX - centerX, mouseY - centerY) / startDistance;
 
