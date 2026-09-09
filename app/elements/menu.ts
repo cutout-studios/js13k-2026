@@ -19,9 +19,9 @@ import { _, join, length, preventDefault } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { doTimes, repeat, spliceTable } from "~/common";
 import { updateStyles } from "~/dom";
-import { oneOf } from "~/random";
 
 import { camera } from "../camera.ts";
+import { createDeck, drawCard } from "../game/decks.ts";
 import GameState from "../game/module.ts";
 import GameOptions from "../game/options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "../game/player/constants.ts";
@@ -33,12 +33,16 @@ import {
 import { updatePlayerEquipmentSnapshots } from "../game/player/stats.ts";
 import { Item } from "../game/player/types.ts";
 import { PARTS, PROPERTY_NAMES } from "../game/ship/constants.ts";
+import {
+  equipSound,
+  restoreSound,
+  winCollectionSound,
+} from "../game/sounds.ts";
 
 import {
   base,
   canvasCells,
   equipButton,
-  equipLabels,
   form,
   header,
   itemPopover,
@@ -51,6 +55,7 @@ import { portrait } from "./portrait.ts";
 
 let hoveredCellIndex = -1,
   restorePreviewItem: Item | undefined,
+  restorePreviewDeck: number[] = [],
   renderTargets: GPURenderTarget[];
 
 const EQUIP_OFFSET = 2,
@@ -63,10 +68,13 @@ const EQUIP_OFFSET = 2,
   ],
   restorePreviewSequence = createActionSequencer<Item[]>([
     [(inventory) => {
-      restorePreviewItem = oneOf(doTimes(
-        getFormValues()[0],
-        (value) => inventory[value],
-      ));
+      const selected = getFormValues()[0];
+
+      if (length(restorePreviewDeck) != length(selected)) {
+        restorePreviewDeck = createDeck(length(selected));
+      }
+
+      restorePreviewItem = inventory[selected[drawCard(restorePreviewDeck)]];
     }],
     [(_inventory, tickLength) => {
       restorePreviewItem?.[1](restorePreviewItem, tickLength);
@@ -125,11 +133,15 @@ form.onsubmit = (event: SubmitEvent) => {
 
       spliceTable([inventory], detail);
 
+      let hasEquippedItem = false;
       doTimes(newlyEquipped, (item, typeID) => {
         if (!item) return;
         if (equipped[typeID]) inventory.push(equipped[typeID]!);
         equipped[typeID] = item;
+        hasEquippedItem = true;
       });
+
+      if (hasEquippedItem) equipSound();
 
       updatePlayerEquipmentSnapshots(player);
       break;
@@ -142,7 +154,10 @@ form.onsubmit = (event: SubmitEvent) => {
       if (item) {
         spliceTable([inventory], detail);
         inventory.push(item);
-        if (item[4] == 2) winCollection.add(item[3]);
+        if (item[4] == 2) {
+          winCollection.add(item[3]);
+          winCollectionSound();
+        } else restoreSound();
         updatePlayerEquipmentSnapshots(player);
       }
       break;
@@ -173,13 +188,8 @@ menu.onmouseenter = menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
 };
 
 export const resetMenu = () => {
-  if (!renderTargets) {
-    renderTargets = doTimes(canvasCells, createRenderTarget);
-    doTimes(
-      4,
-      (typeID: number) => equipLabels[typeID].textContent = PARTS[typeID],
-    );
-  }
+  if (!renderTargets) renderTargets = doTimes(canvasCells, createRenderTarget);
+
   doTimes(
     winCollectionElements,
     (element, index) =>

@@ -40,3 +40,12 @@ export const SINE_BUFFER = _renderCycle((p) => sin(p * PI * 2));
 export const SQUARE_BUFFER = _renderCycle((p) => p < 0.5 ? 1 : -1);
 export const TRIANGLE_BUFFER = _renderCycle((p) => abs(p - 0.5) * 4 - 1);
 export const NOISE_BUFFER = _renderCycle(() => rollSpread(), 400);
+export const SAWTOOTH_BUFFER = _renderCycle((p) => p * 2 - 1);
+
+export const createPulseBuffer = (
+  dutyCycle: number,
+  cycles = 32,
+): AudioBuffer => _renderCycle((p) => p < dutyCycle ? 1 : -1, cycles);
+
+export const createRingBuffer = (ratio: number, cycles = 32): AudioBuffer =>
+  _renderCycle((p) => sin(p * PI * 2) * sin(p * PI * 2 * ratio), cycles);

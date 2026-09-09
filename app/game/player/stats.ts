@@ -21,11 +21,11 @@ import {
   XOObject,
 } from "~/3D";
 import { round } from "~/alias";
-import { doTimes, flat } from "~/common";
+import { doTimes, flat, sum } from "~/common";
 
 import GameOptions, { BASE_PROPERTIES } from "../options/module.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
-import { createWeapon } from "../ship/weapons.ts";
+import { createWeapon } from "../ship/weapons/module.ts";
 
 import { Player } from "./types.ts";
 
@@ -54,10 +54,8 @@ export const updatePlayerEquipmentSnapshots = (
       (geometry) => createObject(...geometry, paint(0xFFFFFFFF)),
     );
 
-  _shipSnapshot[9] = equippedItems.reduce(
-    (sum: number, item) => sum + (item ? item[6] : 1), // +1kg per default item
-    0,
-  );
+  // +1kg per default item
+  _shipSnapshot[9] = sum(doTimes(equippedItems, (item) => item ? item[6] : 1));
 
   doTimes(equippedItems, (item) => {
     if (!item) return;

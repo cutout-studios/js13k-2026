@@ -1,13 +1,15 @@
 import { normalizeXYZ, XYZ } from "~/3D";
-import { floor, length, random } from "~/alias";
-import { Band, doTimes, interpolate, repeat, spread } from "~/common";
+import { random } from "~/alias";
+import { Band, doTimes, interpolate, repeat, spread, sum } from "~/common";
 
-export const bell = () => (random() + random() + random()) / 3;
-export const rollBand = (band: Band) => interpolate(band, bell());
+export const bell = (n = 3) => sum(doTimes(n, random)) / n;
+export const rollBand = (band: Band, order?: number) =>
+  interpolate(band, bell(order));
 export const rollSpread = (amount?: number, center?: number) =>
   rollBand(spread(amount, center));
-export const oneOf = <T>(options: T[]): T =>
-  options[floor(random() * length(options))];
+
+export const randomPoint = (bands: [Band, Band, Band]) =>
+  doTimes(bands, (band) => rollBand(band)) as XYZ;
 export const randomDirection = (
   bands = repeat(3, spread(1)) as [Band, Band, Band],
-): XYZ => normalizeXYZ(doTimes(bands, (band) => rollBand(band)) as XYZ);
+): XYZ => normalizeXYZ(randomPoint(bands));

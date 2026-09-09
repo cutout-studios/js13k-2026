@@ -16,26 +16,43 @@
 
 import { scatterObjects } from "~/3D";
 import { length, max, min, round } from "~/alias";
-import { doTimes, spread } from "~/common";
-import { rollBand } from "~/random";
+import { Band, doTimes, spread } from "~/common";
 
 import { visibleHalfExtentAt } from "../../elements/mainCanvas.ts";
+
+import { PLAYER_AIM_Z_PLANE } from "../constants.ts";
 import { createDeck, drawCard } from "../decks.ts";
 import GameOptions from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 import { Ship } from "../ship/types.ts";
 
-import {
-  ENEMY_SPAWN_DEPTH_BAND,
-  GROUPS_PER_WAVE_BAND,
-  WAVE_CURVE,
-  WAVE_PACING,
-} from "./constants.ts";
+import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
 
-const _enemyDeck = createDeck(length(GameOptions.slice(1)));
+const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2,
+  [visibleX, visibleY] = visibleHalfExtentAt(SPAWN_Z),
+  _enemyDeck = createDeck(length(GameOptions.slice(1))),
+  _spawnRegionDeck: [Band, Band, Band][] = doTimes(
+    [[-1, 1], [1, 1], [
+      1,
+      -1,
+    ], [-1, -1]],
+    (
+      [x, y],
+    ) => [
+      // just outside the visible edge, in theory
+      spread(visibleX * 0.25, x * 1.2 * visibleX),
+      spread(visibleY * 0.25, y * 1.2 * visibleY),
+      spread(1, -SPAWN_Z),
+    ],
+  );
 
-export const rollEnemies = (wave: number, level: number) =>
+_spawnRegionDeck.push([spread(1, 0), spread(1, 0), spread(1, 3)]);
+
+export const rollEnemies = (
+  wave: number,
+  level: number,
+) =>
   doTimes(
     round(
       min(
@@ -47,20 +64,17 @@ export const rollEnemies = (wave: number, level: number) =>
         ),
       ),
     ),
-    (index: number): Ship[] => {
+    (): Ship[] => {
       const optionsIndex = drawCard(_enemyDeck) + 1,
-        side = index % 2 ? 1 : -1,
         count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
-        ships = doTimes(count, () => createShip(optionsIndex, level)),
-        spawnDepth = rollBand(ENEMY_SPAWN_DEPTH_BAND),
-        [enemyXBound, enemyYBound] = visibleHalfExtentAt(-spawnDepth);
+        spawnRegion = drawCard(_spawnRegionDeck),
+        ships = doTimes(
+          count,
+          () => createShip(optionsIndex, level, spawnRegion),
+        );
 
       scatterObjects(
-        [
-          spread(enemyXBound, 2 * side * enemyXBound),
-          spread(enemyYBound),
-          spread(1, -spawnDepth),
-        ],
+        spawnRegion,
         true,
         ...doTimes(ships, (ship) => ship[0]),
       );

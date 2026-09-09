@@ -18,7 +18,7 @@
 
 import { CAMERA_MAGNIFICATION_RATIO, createRenderTarget, XYZ } from "~/3D";
 import { abs } from "~/alias";
-import { PLAYER_AIM_Z_PLANE } from "../game/options/module.ts";
+import { PLAYER_AIM_Z_PLANE } from "../game/constants.ts";
 import { mainCanvas as mainCanvasElement } from "./handles.ts";
 
 export let mainCanvas = createRenderTarget(mainCanvasElement);

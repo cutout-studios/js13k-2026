@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
+import { max } from "~/alias";
 import { doTimes } from "~/common";
 import { rollBand } from "~/random";
 
 import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
-import { SoundDefinition } from "./types.ts";
+import { Sound, SoundDefinition } from "./types.ts";
 
-export const createSound = (...definitions: SoundDefinition[]) => {
+export const createSound = (...definitions: SoundDefinition[]): Sound => {
   const groupBus = api.createDynamicsCompressor();
   groupBus.connect(masterBus);
 
-  return (pan = 0) =>
+  const play = (pan = 0) =>
     doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
       const source = new AudioBufferSourceNode(api, { buffer, loop: true }),
         ampKnob = api.createGain(),
@@ -33,19 +34,27 @@ export const createSound = (...definitions: SoundDefinition[]) => {
         knobs = [ampKnob.gain, source.playbackRate, panKnob.pan];
 
       let time = api.currentTime;
-      ampKnob.gain.setValueAtTime(0, time);
+      // exponentialRampToValueAtTime throws if the ramp starts or ends at exactly 0...
+      ampKnob.gain.setValueAtTime(0.0001, time);
       panKnob.pan.setValueAtTime(pan, time);
       source.connect(ampKnob).connect(panKnob).connect(groupBus);
       source.start(time);
 
-      doTimes(schedule, ([[knobID, value], duration = 0]) => {
+      doTimes(schedule, ([[knobID, value, exponential], duration = 0]) => {
         time += duration;
-        knobs[knobID].linearRampToValueAtTime(
-          typeof value == "number" ? value : rollBand(value),
-          time,
-        );
+        const target = typeof value == "number" ? value : rollBand(value);
+        knobs[knobID][
+          exponential
+            ? "exponentialRampToValueAtTime"
+            : "linearRampToValueAtTime"
+        ](knobID < 2 ? max(target, 0.0001) : target, time);
       });
 
       source.stop(time);
     });
+
+  // TODO: delete - for devtools introspection
+  (play as unknown as Sound).definitions = definitions;
+
+  return play as unknown as Sound;
 };

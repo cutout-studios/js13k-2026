@@ -33,7 +33,8 @@ export type Resources = [
   rez: number,
   invulnerable: 0 | 1,
   countering: 0 | 1,
-  flinching: 0 | 1,
+  recovering: 0 | 1,
+  roll: number,
 ];
 
 export type ShipSnapshot = [
@@ -59,7 +60,7 @@ export type ShipSnapshot = [
   // 12-15
   regen: number,
   spinDamage: number,
-  spinHandling: number,
+  spinSpeed: number,
   spinTime: number,
 
   // 16
@@ -85,7 +86,7 @@ export type WeaponSnapshot = [
   bulletCritChance: number,
   bulletCritDamage: number,
   bulletDamage: number,
-  bulletLifetime: number,
+  bulletSpeed: number,
   bulletRate: number,
 
   // 6
@@ -95,7 +96,6 @@ export type WeaponSnapshot = [
 export type Bullet = [
   object: XOObject,
   sequence: ActionSequencer<Bullet>,
-  lifetime: number,
 ];
 
 export type BulletGroup = [

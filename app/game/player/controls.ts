@@ -16,22 +16,31 @@
 
 import {
   adjustObject,
-  aimObject,
+  // particles: cut for now - see particles.ts
+  // createCoordinates,
+  // localize,
+  // normalizeXYZ,
   readOrigin,
   scaleXYZ,
   setOrigin,
-  subtractXYZ,
+  XYZ,
 } from "~/3D";
+// import { _ } from "~/alias";
 import { createEnvelope } from "~/clock";
 import { clamp, doTimes, spread } from "~/common";
 import { bindButton, bindPointer } from "~/controller";
 
+import { getPanFromCoordinates } from "../../../libraries/audio/pan.ts";
 import { menu, title } from "../../elements/handles.ts";
 import { mapClientXYToZPlane } from "../../elements/mainCanvas.ts";
 import { resetMenu } from "../../elements/menu.ts";
+import { createAimAction } from "../actions.ts";
+import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../constants.ts";
 import GameState from "../module.ts";
-import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/module.ts";
+// import GameOptions from "../options/module.ts";
+// import { spawnParticle } from "../particles.ts";
 import { createSpinSequence } from "../ship/spin.ts";
+import { playerSpinSound } from "../sounds.ts";
 
 import {
   SPIN_BOOST_AMOUNT,
@@ -51,18 +60,24 @@ const [[playerShip]] = GameState,
   spinBoostEnvelope = createEnvelope(
     SPIN_BOOST_ATTACK_TIME,
     SPIN_BOOST_RELEASE_TIME,
+  ),
+  aimAction = createAimAction(
+    playerAim,
+    () => mouseTarget,
+    () => snapshot[17],
+    () => playerShip[4][6],
   );
 
-export const checkMousePointer = bindPointer(
-  (tickLength: number, x: number, y: number) => {
-    [x, y] = scaleXYZ(
-      subtractXYZ(mapClientXYToZPlane(x, y), playerAim),
-      tickLength / snapshot[17],
-    );
+// particles: cut for now - see particles.ts
+// approximate engine mount, local to the ship (-Z is behind - +Z is the
+// heading/nose per aimObject) - comment out along with the thruster spawn
+// below to cut particles entirely
+// const ENGINE_MOUNT = createCoordinates(_, _, _, [0, 0, -0.3]);
 
-    playerAim[0] += x;
-    playerAim[1] += y;
-  },
+let mouseTarget: XYZ = playerAim;
+export const checkMousePointer = bindPointer(
+  (_tickLength: number, x: number, y: number) =>
+    mouseTarget = mapClientXYToZPlane(x, y),
 );
 
 const startGame = () => {
@@ -117,7 +132,7 @@ export const checkSpaceBar = bindButton(
   () => {
     const resources = playerShip[4];
 
-    if (resources[3]) return; // invulnerable
+    if (resources[3] || resources[4] || resources[5]) return; // invulnerable, or still recovering
 
     if (GameState[2]) {
       const totalGasUsed = resources[1] + snapshot[9];
@@ -125,7 +140,11 @@ export const checkSpaceBar = bindButton(
       resources[1] = totalGasUsed;
     }
 
-    playerShip[3] = createSpinSequence(playerShip);
+    playerSpinSound(getPanFromCoordinates(playerShip[0][0]));
+    playerShip[3] = createSpinSequence(
+      playerShip,
+      strafe[3] - strafe[1] < 0 ? -1 : 1,
+    );
   },
 );
 
@@ -137,16 +156,15 @@ export const checkEscapeKey = bindButton(
 export const applyInputToPlayerShip = (tickLength: number) => {
   const strafeX = strafe[3] - strafe[1],
     strafeY = strafe[0] - strafe[2],
-    // ramp the spin speed boost in/out (driven by the "countering" resource
-    // flag) instead of snapping to it
     speedBoost = 1 +
-      spinBoostEnvelope(tickLength, !!playerShip[4][4]) * SPIN_BOOST_AMOUNT;
+      spinBoostEnvelope(tickLength, !!playerShip[4][4]) * SPIN_BOOST_AMOUNT *
+        snapshot[14];
 
   adjustObject(playerShipObject, [
     scaleXYZ([strafeX, strafeY, 0], snapshot[16] * speedBoost * tickLength),
   ]);
 
-  aimObject(playerShipObject, playerAim);
+  aimAction(playerShipObject, tickLength, 0, 1);
 
   // clamp ship to camera bounds
   const [x, y, z] = readOrigin(playerShipObject[0]);
@@ -155,4 +173,20 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     clamp(y, spread(PLAYER_Y_BOUND)),
     z,
   ]);
+
+  // particles: cut for now - see particles.ts
+  // if (strafeX || strafeY) {
+  //   // exhaust trails opposite the ship's actual motion, not the aim heading -
+  //   // strafing is independent of where you're aiming
+  //   const weaponColor = GameOptions[leftWeapon[4]][1];
+  //
+  //   spawnParticle(
+  //     readOrigin(localize(ENGINE_MOUNT, playerShipObject[0])),
+  //     scaleXYZ(normalizeXYZ([strafeX, strafeY, 0]), -1),
+  //     2,
+  //     0.15,
+  //     weaponColor,
+  //     weaponColor & 0xFFFFFF00,
+  //   );
+  // }
 };

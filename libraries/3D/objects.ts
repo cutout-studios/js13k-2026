@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { abs, F32, hypot, length, max /* min, PI */ } from "~/alias";
+import { abs, cos, F32, hypot, length, max, sin /* PI */ } from "~/alias";
 import { Band, clamp, doTimes, flatDoTimes, repeat } from "~/common";
-import { rollBand } from "~/random";
+import { randomPoint } from "~/random";
 import {
   COORDINATE_SIDE_LENGTH,
   RGBA_LENGTH,
@@ -66,11 +66,21 @@ export const adjustObject = (
   if (rotation) object[0] = localize(createRotation(rotation), object[0]);
 };
 
-export const aimObject = (object: XOObject, aim: XYZ) => {
+export const aimObject = (object: XOObject, aim: XYZ, roll = 0) => {
   const origin = readOrigin(object[0]),
     zAxis = normalize(subtract(aim, origin)),
-    right = normalize(cross(Y_AXIS, zAxis));
-  object[0] = createCoordinates(right, cross(zAxis, right), zAxis, origin);
+    right = normalize(cross(Y_AXIS, zAxis)),
+    up = cross(zAxis, right),
+    c = cos(roll),
+    s = sin(roll);
+
+  // TODO I still don't understand rotation...
+  object[0] = createCoordinates(
+    add(scale(right, c), scale(up, s)),
+    add(scale(up, c), scale(right, -s)),
+    zAxis,
+    origin,
+  );
 };
 
 // CRUCIAL NOTE!!: assumes all materials are paint materials
@@ -130,10 +140,6 @@ const _getCapsule = ([coordinates, [radius, , halfLength = 0]]: XOObject) => {
   return [radius, subtract(origin, offset), add(origin, offset)] as const;
 };
 
-// TODO: this may be able to be further compacted.
-// closest distance between two line segments (Ericson, "Real-Time Collision
-// Detection" 5.1.9). leftT/rightT land in [0, 1] and mark where along each
-// segment the two segments come nearest to each other.
 const _segmentDistance = (
   leftStart: XYZ,
   leftEnd: XYZ,
@@ -217,34 +223,15 @@ export const scatterObjects = (
   cantOverlap: boolean,
   ...objects: XOObject[]
 ) => {
-  // guard against objects that can't fit in the scatter box -
-  // uncomment to debug scatter configs
-  // const scatterBoxDimensions = doTimes(boxDimensions, ([lo, hi]) => hi - lo),
-  //   scatterBoxVolume = scatterBoxDimensions.reduce(
-  //     (product, value) => product * value,
-  //     1,
-  //   );
-  // let maxObjectDiameter = -Infinity, totalObjectVolume = 0;
-  // doTimes(objects, ([, [radius]]) => {
-  //   maxObjectDiameter = max(maxObjectDiameter, radius * 2);
-  //   totalObjectVolume += (4 * PI / 3) * radius ** 3;
-  // });
-  // if (
-  //   min(...scatterBoxDimensions) < maxObjectDiameter ||
-  //   scatterBoxVolume < totalObjectVolume * 3
-  // ) throw new Error("Objects won't fit!");
-
   const placedObjects: XOObject[] = [];
   while (length(objects)) {
     const objectToPlace = objects.pop()!;
 
-    setOrigin(
-      objectToPlace[0],
-      doTimes(boxDimensions, (band) => rollBand(band)) as XYZ,
-    );
+    setOrigin(objectToPlace[0], randomPoint(boxDimensions));
 
     placedObjects.push(objectToPlace);
 
+    // TODO: this has a bug - we need to check placedObjects against itself...
     if (cantOverlap && length(getCollisionPairs(objects, placedObjects)[0])) {
       objects.push(placedObjects.pop()!);
     }

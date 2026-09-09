@@ -98,6 +98,9 @@ export const spliceTable = (
 export const interpolate = ([lo, hi]: Band, amount: number) =>
   lo + (hi - lo) * amount;
 
+export const sum = (values: number[]) => values.reduce((a, b) => a + b);
+export const product = (values: number[]) => values.reduce((a, b) => a * b);
+
 export const spread = (
   amount: number = 1,
   center = 0,

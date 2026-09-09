@@ -15,44 +15,27 @@
  */
 
 import {
-  aimObject,
   createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
-  readOrigin,
-  scaleXYZ,
-  subtractXYZ,
   XOObject,
   XYZ,
 } from "~/3D";
-import { length } from "~/alias";
-import { ActionSchedule, createActionSequencer } from "~/clock";
-import { doTimes, flat, repeat, spread } from "~/common";
+import { length, NO_OP } from "~/alias";
+import { ActionSequencer, createActionSequencer } from "~/clock";
+import { Band, doTimes, flat, repeat } from "~/common";
 
-import { isPointVisible } from "../../elements/mainCanvas.ts";
-import { createPullAction } from "../actions.ts";
-import GameState from "../module.ts";
-import { BASE_PROPERTIES, PLAYER_X_BOUND } from "../options/module.ts";
+import { BASE_PROPERTIES } from "../options/module.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
-import { updateBullets } from "./bullets.ts";
 import { Resources, Ship, ShipSnapshot } from "./types.ts";
-import { createWeapon } from "./weapons.ts";
-
-const pullTracker = new WeakMap(),
-  [pullLeft, pullRight] = doTimes(
-    spread(PLAYER_X_BOUND) as [lo: number, hi: number],
-    (bound) =>
-      createPullAction([bound, 0, 0], 0.01, () => 1, [[0, 0.02], [0, 0.005], [
-        0,
-        0,
-      ]]),
-  );
+import { createWeapon } from "./weapons/module.ts";
 
 export const createShip = (
   optionsIndex: number,
   level = 1,
+  arcPoint?: [Band, Band, Band],
 ): Ship => {
   const [
     ,
@@ -60,38 +43,12 @@ export const createShip = (
     [
       shapes,
       shipOverrides,
-      shipSchedule = [[(ship: Ship, tickLength: number, ...args) => {
-        const [shipObject, shipAim, weapons, , , snapshot] = ship,
-          shipOrigin = readOrigin(shipObject[0]),
-          shipVisible = isPointVisible(shipOrigin);
-
-        if (!shipVisible || !pullTracker.has(ship)) {
-          pullTracker.set(ship, shipOrigin[0] > 0 ? pullLeft : pullRight);
-        }
-
-        pullTracker.get(ship)!(shipObject, tickLength, ...args);
-
-        const [x, y] = scaleXYZ(
-          subtractXYZ(readOrigin(GameState[0][0][0][0]), shipAim),
-          tickLength / snapshot[17],
-        );
-
-        shipAim[0] += x;
-        shipAim[1] += y;
-
-        aimObject(shipObject, shipAim);
-
-        if (shipVisible) {
-          doTimes(weapons, (weapon) => weapon[2](ship, tickLength));
-        }
-
-        updateBullets(ship, tickLength);
-      }]] as ActionSchedule<Ship>,
+      shipSequencerFactory,
       shipWeapons,
     ],
   ] = GameOptions[optionsIndex];
 
-  return [
+  const ship: Ship = [
     flattenObjects(
       ...shapes.map((args) => createObject(...args, paint(value))),
     ),
@@ -100,8 +57,8 @@ export const createShip = (
       length(shipWeapons),
       (weaponIndex: number) => createWeapon(optionsIndex, weaponIndex, level),
     ),
-    createActionSequencer(shipSchedule),
-    repeat(6, 0) as Resources,
+    createActionSequencer([[NO_OP]]),
+    repeat(7, 0) as Resources,
     levelRollOverrides(
       BASE_PROPERTIES,
       shipOverrides,
@@ -109,9 +66,13 @@ export const createShip = (
     ) as ShipSnapshot,
     optionsIndex,
   ];
-};
 
-// export const createFlinchSequencer = () => {};
+  let sequencer: ActionSequencer<Ship> | undefined;
+  ship[3] = (payload, tickLength) =>
+    (sequencer ??= shipSequencerFactory(ship, arcPoint))(payload, tickLength);
+
+  return ship;
+};
 
 export const getShipObjects = (
   [shipObject, , weapons]: Ship,
@@ -120,3 +81,5 @@ export const getShipObjects = (
     [[shipObject]],
     doTimes(weapons, ([, [, bullets]]) => bullets),
   );
+
+// export const createFlinchSequencer = () => {};

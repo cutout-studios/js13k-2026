@@ -21,6 +21,8 @@ fn paintedLambert(@builtin(position) fragment: vec4f, @location(0) @interpolate(
   // cap the rim boost
   let rim = min(pow(1 - facing, 2) * 0.8, 0.3);
   let paint = colorPalette[triangleIndex % arrayLength(&colorPalette)];
+  // fade out as geometry nears the camera's clip plane, instead of popping
+  let clipRolloff = clamp(1.5 / fragment.w, 0, 1);
 
-  return vec4f(paint.rgb * facing + rim, paint.a);
+  return vec4f(paint.rgb * facing + rim, paint.a * clipRolloff);
 }

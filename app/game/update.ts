@@ -27,12 +27,24 @@ import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, repeat, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
-import { PLAYER_X_BOUND } from "./options/module.ts";
+// particles: cut for now - see particles.ts
+// import { createBurst, updateParticles } from "./particles.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
-import { updateBullets } from "./ship/bullets.ts";
-import { explosionSound, hitSound } from "./ship/sounds.ts";
 import { Ship, Weapon } from "./ship/types.ts";
+import { updateBullets } from "./ship/weapons/bullets.ts";
+import {
+  enemyDestroyedSound,
+  enemyHitSound,
+  inventoryFullSound,
+  itemPickupSound,
+  playerHitSound,
+  playerSpinCounterSound,
+  rezLostSound,
+  rezSavedSound,
+  stageCompleteSound,
+  winCollectionSound,
+} from "./sounds.ts";
 import { Game } from "./types.ts";
 import { DROP_PITY_STEP } from "./world/constants.ts";
 import { rollEnemies } from "./world/enemies.ts";
@@ -55,10 +67,11 @@ export const updateGame = (
     enemyShips = flat(...activeEnemyGroups) as Ship[];
 
   // -- update everything in the game
-  doTimes(flat([playerShip], enemyShips), (ship) => ship[3](ship, tickLength));
+  doTimes(flat([playerShip], enemyShips), (ship) => {
+    ship[3](ship, tickLength);
+    updateBullets(ship, tickLength);
+  });
   doTimes(droppedItems, (drop) => drop[1](drop, tickLength));
-
-  updateBullets(playerShip, tickLength);
 
   // -- handle collisions
   doTimes(
@@ -73,7 +86,7 @@ export const updateGame = (
         const shipIndex = shipIndicies[index],
           shipCoordinates = enemyShips[shipIndex][0][0];
 
-        hitSound(
+        enemyHitSound(
           getPanFromCoordinates(
             shipCoordinates,
             visibleHalfExtentAt(readOrigin(shipCoordinates)[2])[0],
@@ -108,8 +121,8 @@ export const updateGame = (
             : bulletDamage;
 
           if (playerResourceStatus[4]) {
-            hitSound(
-              getPanFromCoordinates(playerShipObject[0], PLAYER_X_BOUND),
+            playerSpinCounterSound(
+              getPanFromCoordinates(playerShipObject[0]),
             );
             const bullet = bullets[0][bulletIndex],
               targetPosition = readOrigin(enemyShipObject[0]);
@@ -132,6 +145,10 @@ export const updateGame = (
             return;
           }
 
+          playerHitSound(
+            getPanFromCoordinates(playerShipObject[0]),
+          );
+
           const totalDamage = baseDamage * playerSnapshot[2];
 
           playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
@@ -153,12 +170,17 @@ export const updateGame = (
       PLAYER_INVENTORY_SIZE - length(inventory),
     ); // (don't pick up past the inventory cap)
 
+  if (length(pickedUpIndicies) && !length(toPickUp)) {
+    inventoryFullSound(getPanFromCoordinates(playerShipObject[0]));
+  }
+
   doTimes(toPickUp, (itemIndex: number) => {
     setItemInFrame(droppedItems[itemIndex]);
     inventory.push(droppedItems[itemIndex]);
     if (droppedItems[itemIndex][4] == 2) {
       winCollection.add(droppedItems[itemIndex][3]);
-    }
+      winCollectionSound();
+    } else itemPickupSound(getPanFromCoordinates(playerShipObject[0]));
   });
 
   spliceTable([droppedItems], toPickUp);
@@ -172,6 +194,17 @@ export const updateGame = (
         ships,
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[11]) return [];
+
+          enemyDestroyedSound(getPanFromCoordinates(coordinates));
+          // particles: cut for now - see particles.ts
+          // createBurst(
+          //   readOrigin(coordinates),
+          //   8,
+          //   [1, 2],
+          //   [0.2, 0.4],
+          //   0xFFEE99FF,
+          //   0x99220000,
+          // );
 
           if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
             world[4] = 0;
@@ -229,9 +262,10 @@ export const updateGame = (
 
   // if hp is depleted, reduce rez by one, trigger temporary invulnerability
   if (playerResourceStatus[0] >= playerSnapshot[11]) {
-    explosionSound();
     playerResourceStatus[0] = playerSnapshot[11];
-    (random() > playerSnapshot[1]) && playerResourceStatus[2]++;
+    (random() > playerSnapshot[1])
+      ? (playerResourceStatus[2]++, rezSavedSound())
+      : rezLostSound();
     playerResourceStatus[3] = 1;
     if (playerResourceStatus[2] >= playerSnapshot[0]) {
       alert("MISSION " + (winCollection.size == 6 ? "COMPLETE" : "FAILED"));
@@ -252,6 +286,7 @@ export const updateGame = (
 
   // -- update game progress
   if (progress[1] >= progress[2]) { // advance to the next level
+    stageCompleteSound();
     progress[1] = 1;
     progress[0]++;
     progress[2] = getWavesInLevel(progress[0]);

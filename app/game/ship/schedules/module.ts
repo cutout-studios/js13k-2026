@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-import { Band, spread } from "~/common";
-import { PLAYER_AIM_Z_PLANE } from "../constants.ts";
-
-export const DIFFICULTY_HALFLIFE = 8;
-
-export const ENEMY_PLACEMENT_SPREAD = 5;
-export const ENEMY_SPAWN_DEPTH_BAND = spread(2, PLAYER_AIM_Z_PLANE);
-
-export const WAVE_CURVE = 7.5;
-export const WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
-export const WAVES_PER_LEVEL_BAND = [2, 14] as Band;
-
-export const GROUPS_PER_WAVE_BAND = [1, 6] as Band;
-
-export const DROP_PITY_STEP = 0.03;
+export { blueSequencerFactory } from "./blue.ts";
+export { greenSequencerFactory } from "./green.ts";
+export { pinkSequencerFactory } from "./pink.ts";
+export { purpleSequencerFactory } from "./purple.ts";
+export { redSequencerFactory } from "./red.ts";
+export { yellowSequencerFactory } from "./yellow.ts";

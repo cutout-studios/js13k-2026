@@ -22,11 +22,14 @@ import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
 
-const APP_DIR = "app";
-const OUTPUT_DIR = ".output";
+const TARGET_DIR = Deno.args[0] || "app";
+const IS_DEV_TOOL = TARGET_DIR != "app";
 
-const JS_ENTRYPOINT = `./${APP_DIR}/module.ts`;
-const HTML_ENTRYPOINT = `./${APP_DIR}/index.html`;
+const SOURCE_DIR = IS_DEV_TOOL ? `devtools/${TARGET_DIR}` : "app";
+const OUTPUT_DIR = `.output/${TARGET_DIR}`;
+
+const JS_ENTRYPOINT = `./${SOURCE_DIR}/module.ts`;
+const HTML_ENTRYPOINT = `./${SOURCE_DIR}/index.html`;
 const BUNDLE_OUTPUT_FILE = "index.html";
 const BUNDLE_OUTPUT_COMPRESSED_FILE = `${BUNDLE_OUTPUT_FILE}.zip`;
 const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}`;
@@ -37,10 +40,15 @@ const PROPS_TO_MANGLE = [] as string[];
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-await bundle();
-logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
+if (IS_DEV_TOOL) {
+  // no size budget to enforce and nothing to compress - just build it fast
+  await bundle({ minify: false, sourcemap: "inline" }, JS_ENTRYPOINT, true);
+} else {
+  await bundle();
+  logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
 
-await bundle({ minify: false, sourcemap: "inline" });
+  await bundle({ minify: false, sourcemap: "inline" });
+}
 
 await new Deno.Command("open", {
   args: [BUNDLE_OUTPUT_FILEPATH],
@@ -49,6 +57,7 @@ await new Deno.Command("open", {
 async function bundle(
   options: Partial<Deno.bundle.Options> = { minify: true },
   entrypoint = JS_ENTRYPOINT,
+  skipCompression = false,
 ) {
   const _result = await Deno.bundle({
     ...options,
@@ -102,8 +111,7 @@ async function bundle(
         action: "write" as InputAction,
       },
     ], { allowFreeVars: true });
-    await packer.optimize(2); // TODO
-    // await packer.optimize(1);
+    await packer.optimize(2);
 
     const { firstLine, secondLine } = packer.makeDecoder();
 
@@ -115,6 +123,8 @@ async function bundle(
     appOutputText,
   );
 
+  if (skipCompression) return;
+
   const zip = await new Deno.Command("advzip", {
     args: ["-a", "-4", BUNDLE_OUTPUT_COMPRESSED_FILE, BUNDLE_OUTPUT_FILE],
     cwd: OUTPUT_DIR,
@@ -124,7 +134,9 @@ async function bundle(
     console.error(new TextDecoder().decode(zip.stderr));
   }
 
-  await new Deno.Command("./ect/build/ect", {
+  // ect lives at .output/ect/build/ect (see scripts/setup.sh) - a fixed
+  // location one level up from every target's own OUTPUT_DIR
+  await new Deno.Command("../ect/build/ect", {
     args: ["-zip", "-9", BUNDLE_OUTPUT_COMPRESSED_FILE],
     cwd: OUTPUT_DIR,
   }).output();

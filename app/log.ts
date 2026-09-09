@@ -27,7 +27,7 @@ const RESOURCE_NAMES = [
     "rez",
     "invulnerable",
     "countering",
-    "flinching",
+    "recovering",
   ],
   properties = (values: number[], offset = 0) =>
     Object.fromEntries(

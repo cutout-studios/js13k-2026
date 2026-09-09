@@ -1,0 +1,213 @@
+<meta charset=utf-8>
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #eee;
+  font-family: Menlo, ui-monospace;
+  font-size: 13px;
+}
+body {
+  display: grid;
+  grid-template-columns: 280px 1fr 340px;
+  width: 100vw;
+  height: 100vh;
+}
+#soundboard {
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  background: #0a0a0a;
+  border-right: 1px solid #333;
+}
+#editor {
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+#outputPanel {
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  background: #0a0a0a;
+  border-left: 1px solid #333;
+}
+#outputPanel textarea {
+  flex: 1;
+  height: auto;
+}
+h2 {
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #888;
+  margin: 0 0 .5rem;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  align-items: center;
+}
+button {
+  cursor: pointer;
+  padding: .4rem .6rem;
+  background: #111;
+  color: #eee;
+  border: 1px solid #444;
+  font: inherit;
+}
+button:hover,
+button:focus {
+  border-color: #0f0;
+  color: #0f0;
+}
+select,
+input[type=number] {
+  background: #111;
+  color: #eee;
+  border: 1px solid #444;
+  padding: .3rem;
+  font: inherit;
+}
+input[type=number] {
+  width: 4.5rem;
+}
+label {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  color: #aaa;
+}
+.layer {
+  border: 1px solid #333;
+  padding: .75rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.step {
+  display: flex;
+  gap: .4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top: 1px solid #222;
+  padding-top: .4rem;
+}
+textarea {
+  width: 100%;
+  height: 8rem;
+  background: #111;
+  color: #6f6;
+  border: 1px solid #444;
+  font: inherit;
+  resize: vertical;
+}
+#play {
+  background: #030;
+  border-color: #0f0;
+  color: #0f0;
+  font-weight: bold;
+}
+button.muted {
+  background: #400;
+  border-color: #f00;
+  color: #f88;
+}
+.graph-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.graph-label {
+  font-size: 10px;
+  color: #888;
+}
+.graph {
+  background: #0a0a0a;
+  border: 1px solid #333;
+  touch-action: none;
+}
+.graph-bg {
+  fill: transparent;
+  cursor: crosshair;
+}
+.graph-zero {
+  stroke: #333;
+  stroke-width: 1;
+}
+.graph-line {
+  fill: none;
+  stroke: #0f0;
+  stroke-width: 1.5;
+  opacity: .5;
+  pointer-events: none;
+}
+.graph-range {
+  stroke: #0ff;
+  stroke-width: 4;
+  cursor: ew-resize;
+}
+.graph-point {
+  fill: #0ff;
+  stroke: #000;
+  cursor: grab;
+}
+.graph-point-lo {
+  fill: #08c;
+}
+.graph-point-hi {
+  fill: #0ff;
+}
+.graph-toggle {
+  fill: #888;
+  font-size: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.graph-toggle-active {
+  fill: #0f0;
+}
+.graph-axis-label {
+  fill: #666;
+  font-size: 9px;
+  user-select: none;
+  pointer-events: none;
+}
+.graph-axis-label-y {
+  text-anchor: end;
+  dominant-baseline: middle;
+}
+.graph-axis-label-x-start {
+  text-anchor: start;
+}
+.graph-axis-label-x-end {
+  text-anchor: end;
+}
+</style>
+<div id=soundboard>
+  <h2>Sounds (click to play)</h2>
+  <div class=row id=soundButtons></div>
+</div>
+<div id=editor>
+  <h2>Build a sound</h2>
+  <div class=row>
+    <button id=play>▶ Play</button>
+    <button id=addLayer>Add layer</button>
+    <button id=copyCode>Copy code</button>
+    <button id=copyPacked>Copy packed</button>
+  </div>
+  <div id=layers></div>
+</div>
+<div id=outputPanel>
+  <h2>Output</h2>
+  <textarea id=output readonly></textarea>
+</div>
