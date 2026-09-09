@@ -74,8 +74,7 @@ export const aimObject = (object: XOObject, aim: XYZ, roll = 0) => {
     c = cos(roll),
     s = sin(roll);
 
-  // roll spins {right, up} within their own plane - zero when roll is 0, so
-  // this is a strict extension of the old (always upright) behavior
+  // TODO I still don't understand rotation...
   object[0] = createCoordinates(
     add(scale(right, c), scale(up, s)),
     add(scale(up, c), scale(right, -s)),
@@ -141,10 +140,6 @@ const _getCapsule = ([coordinates, [radius, , halfLength = 0]]: XOObject) => {
   return [radius, subtract(origin, offset), add(origin, offset)] as const;
 };
 
-// TODO: this may be able to be further compacted.
-// closest distance between two line segments (Ericson, "Real-Time Collision
-// Detection" 5.1.9). leftT/rightT land in [0, 1] and mark where along each
-// segment the two segments come nearest to each other.
 const _segmentDistance = (
   leftStart: XYZ,
   leftEnd: XYZ,

@@ -35,10 +35,6 @@ import { createWeapon } from "./weapons/module.ts";
 export const createShip = (
   optionsIndex: number,
   level = 1,
-  // only meaningful to schedules that accept it (currently just pink) - see
-  // options/types.ts's sequenceFactory signature. rollEnemies passes the
-  // group's own spawn region through here so ships in the same group draw
-  // their orbit reference point from the same neighborhood
   arcPoint?: [Band, Band, Band],
 ): Ship => {
   const [
@@ -71,11 +67,6 @@ export const createShip = (
     optionsIndex,
   ];
 
-  // deferred to the ship's first real tick, which by then always happens
-  // after the caller (rollEnemies' scatterObjects, sandbox's spawnShip) has
-  // actually placed it - schedules that snapshot their own starting point
-  // at creation time (readOrigin) would otherwise capture the object's
-  // default origin of [0,0,0] instead of the real spawn point
   let sequencer: ActionSequencer<Ship> | undefined;
   ship[3] = (payload, tickLength) =>
     (sequencer ??= shipSequencerFactory(ship, arcPoint))(payload, tickLength);

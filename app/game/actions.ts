@@ -79,12 +79,8 @@ export const createOrbitAction = (
   };
 };
 
-// fast near t=0, slowing into t=1 - used for the leg leaving the spawn point
+// TODO: maybe create a curves.ts
 export const EASE_OUT = (t: number) => 1 - (1 - t) ** 4;
-
-// slow out of t=0, fast into t=1 - the mirror of EASE_OUT, used for the leg
-// returning to the spawn point, so both legs are fast near the spawn point
-// and slow near the field point
 export const EASE_IN = (t: number) => 1 - EASE_OUT(1 - t);
 
 export const createAimAction = (

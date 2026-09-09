@@ -4,8 +4,6 @@ import { Ship } from "./types.ts";
 
 const RECOVERY_TIME = 0.2;
 
-// "back ease out" - overshoots past 1 before settling exactly at 1, so the
-// ship spins a little further than a full turn, then springs back
 const overshoot = (x: number) =>
   1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1) ** 2;
 

@@ -29,27 +29,23 @@ import { Ship } from "../ship/types.ts";
 import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
 
-// enemies spawn closer than the aim plane, so size the frustum for the
-// depth they'll actually be placed at rather than PLAYER_AIM_Z_PLANE itself
-const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2;
-const [visibleX, visibleY] = visibleHalfExtentAt(SPAWN_Z);
-
-const _enemyDeck = createDeck(length(GameOptions.slice(1)));
-const _spawnRegionDeck: [Band, Band, Band][] = doTimes(
-  [[-1, 1], [1, 1], [
-    1,
-    -1,
-  ], [-1, -1]],
-  (
-    [x, y],
-  ) => [
-    // just outside the visible edge (~1.2x out, ±0.25x wide) rather than
-    // 1.5-2.5x out - slow ships were taking forever to travel in from there
-    spread(visibleX * 0.25, x * 1.2 * visibleX),
-    spread(visibleY * 0.25, y * 1.2 * visibleY),
-    spread(1, -SPAWN_Z),
-  ],
-);
+const SPAWN_Z = PLAYER_AIM_Z_PLANE - 2,
+  [visibleX, visibleY] = visibleHalfExtentAt(SPAWN_Z),
+  _enemyDeck = createDeck(length(GameOptions.slice(1))),
+  _spawnRegionDeck: [Band, Band, Band][] = doTimes(
+    [[-1, 1], [1, 1], [
+      1,
+      -1,
+    ], [-1, -1]],
+    (
+      [x, y],
+    ) => [
+      // just outside the visible edge, in theory
+      spread(visibleX * 0.25, x * 1.2 * visibleX),
+      spread(visibleY * 0.25, y * 1.2 * visibleY),
+      spread(1, -SPAWN_Z),
+    ],
+  );
 
 _spawnRegionDeck.push([spread(1, 0), spread(1, 0), spread(1, 3)]);
 
@@ -71,9 +67,6 @@ export const rollEnemies = (
     (): Ship[] => {
       const optionsIndex = drawCard(_enemyDeck) + 1,
         count = round(levelRoll(GameOptions[optionsIndex][2][4], level)),
-        // shared per-group, not per-ship - so ships that use it (see
-        // createShip's arcPoint) draw their orbit reference point from the
-        // same neighborhood the whole group spawns into
         spawnRegion = drawCard(_spawnRegionDeck),
         ships = doTimes(
           count,

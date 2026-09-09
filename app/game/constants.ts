@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-// deliberately a leaf module (no imports): these used to live in
-// options/module.ts, which only ever defined them, never used them - but
-// world/constants.ts, every ship schedule, and others all imported them
-// FROM options/module.ts, which options/module.ts transitively depends on
-// (to build GameOptions' schedule factories). That's a real import cycle,
-// not just a theoretical one - it broke GameOptions itself at runtime
-// (came back undefined). Keeping these here, with zero dependencies,
-// means nothing that needs them can ever be part of a cycle over them.
-
+// TODO: anything else goes here?
 export const PLAYER_SHIP_Z_PLANE = 5;
 export const PLAYER_AIM_Z_PLANE = 8;
 export const PLAYER_X_BOUND = 2.8;

@@ -22,11 +22,6 @@ import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
 
-// `deno task bundle:<name>` passes a devtools/ directory name here (e.g.
-// "sandbox", "portrait", "sounds") to build that tool instead of the real,
-// size-constrained game - dev tools have no size budget and nothing to
-// compress, so they skip straight to an unminified build. every target's
-// output nests under .output/<target>/, including the real game's "app"
 const TARGET_DIR = Deno.args[0] || "app";
 const IS_DEV_TOOL = TARGET_DIR != "app";
 

@@ -22,8 +22,6 @@ import { api } from "./api.ts";
 import { masterBus } from "./masterBus.ts";
 import { Sound, SoundDefinition } from "./types.ts";
 
-const MIN_RAMP_VALUE = 0.0001;
-
 export const createSound = (...definitions: SoundDefinition[]): Sound => {
   const groupBus = api.createDynamicsCompressor();
   groupBus.connect(masterBus);
@@ -36,9 +34,8 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
         knobs = [ampKnob.gain, source.playbackRate, panKnob.pan];
 
       let time = api.currentTime;
-      // exponentialRampToValueAtTime throws if the ramp starts or ends at
-      // exactly 0 (gain/rate only - pan is fine at 0) - nudge away from it
-      ampKnob.gain.setValueAtTime(MIN_RAMP_VALUE, time);
+      // exponentialRampToValueAtTime throws if the ramp starts or ends at exactly 0...
+      ampKnob.gain.setValueAtTime(0.0001, time);
       panKnob.pan.setValueAtTime(pan, time);
       source.connect(ampKnob).connect(panKnob).connect(groupBus);
       source.start(time);
@@ -50,7 +47,7 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
           exponential
             ? "exponentialRampToValueAtTime"
             : "linearRampToValueAtTime"
-        ](knobID < 2 ? max(target, MIN_RAMP_VALUE) : target, time);
+        ](knobID < 2 ? max(target, 0.0001) : target, time);
       });
 
       source.stop(time);
