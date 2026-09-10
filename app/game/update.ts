@@ -33,7 +33,7 @@ import { BASE_PROPERTIES } from "./options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { Ship, Weapon } from "./ship/types.ts";
-import { updateBullets } from "./ship/weapons/bullets.ts";
+import { defaultBulletSequencerFactory, updateBullets } from "./ship/weapons/bullets.ts";
 import {
   enemyDestroyedSound,
   enemyHitSound,
@@ -129,6 +129,8 @@ export const updateGame = (
               targetPosition = readOrigin(enemyShipObject[0]);
 
             aimObject(bullet[0], targetPosition);
+
+            bullet[1] = defaultBulletSequencerFactory(bullet, 8, false);
 
             const fauxSnapshot = BASE_PROPERTIES.slice(18);
             fauxSnapshot[3] = baseDamage * playerSnapshot[13];

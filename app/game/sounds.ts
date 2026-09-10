@@ -136,19 +136,18 @@ export const enemyDestroyedSound = createSound(
 
 // WIP
 export const playerSpinSound = createSound([TRIANGLE_BUFFER, [
-    [[0, 0.13], 0],
-    [[1, 0.8], 0],
-    [[1, 2.1, true], 0.15],
-    [[0, 0], 0.2],
-  ]],
-  [NOISE_BUFFER, [
-    [[1, 0.6, true], 0],
-    [[0, 0], 0],
-    [[0, 0.18], 0.08],
-    [[0, 0.5], 0.06],
-    [[0, 0.1], 0.05],
-    [[0, 0, true], 0.5],
-  ]]);
+  [[0, 0.13], 0],
+  [[1, 0.8], 0],
+  [[1, 2.1, true], 0.15],
+  [[0, 0], 0.2],
+]], [NOISE_BUFFER, [
+  [[1, 0.6, true], 0],
+  [[0, 0], 0],
+  [[0, 0.18], 0.08],
+  [[0, 0.5], 0.06],
+  [[0, 0.1], 0.05],
+  [[0, 0, true], 0.5],
+]]);
 
 export const playerSpinCounterSound = createSound([SQUARE_BUFFER, [
   [[0, [0.5, 0.7]], 0],
@@ -229,11 +228,16 @@ export const stageCompleteSound = createSound([SINE_BUFFER, [
 export const winCollectionSound = stageCompleteSound;
 
 // TODO: enemies
-export const redWeaponSound = defaultWeaponSound;
-export const greenWeaponSound = defaultWeaponSound;
-export const purpleWeaponSound = defaultWeaponSound;
-export const blueWeaponSound = defaultWeaponSound;
-export const pinkWeaponSound = defaultWeaponSound;
-export const yellowWeaponSound = defaultWeaponSound;
+export const redWeaponSound = createSound([SQUARE_BUFFER, [
+  [[1, [4.3, 6]], 0],
+  [[0, 0.035], 0.03],
+  [[0, 0], 0.14],
+  [[1, [0.2, 0.5], true], 0],
+]]);
+export const greenWeaponSound = redWeaponSound;
+export const purpleWeaponSound = redWeaponSound;
+export const blueWeaponSound = redWeaponSound;
+export const pinkWeaponSound = redWeaponSound;
+export const yellowWeaponSound = redWeaponSound;
 export const yellowBombReadySound = errorSound;
 export const yellowBombExplodeSound = enemyDestroyedSound;

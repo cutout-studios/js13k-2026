@@ -90,7 +90,6 @@ export const purpleSequencerFactory = (
     };
 
   return createActionSequencer([
-    [NO_OP, 1], 
     [(_ship: Ship, ...args) => {
       aimAction(_ship[0], ...args);
       fireWeapons(args[0]);

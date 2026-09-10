@@ -21,7 +21,7 @@ fn baseColor(fragment: vec4f, triangleIndex: u32) -> vec4f {
   // cap the rim boost
   let rim = min(pow(1 - facing, 2) * 0.8, 0.3);
   let paint = colorPalette[triangleIndex % arrayLength(&colorPalette)];
-  let clipRolloff = clamp(1.5 / fragment.w, 0, 1);
+  let clipRolloff = clamp(4.5 / fragment.w, 0, 1);
   let alpha = paint.a * clipRolloff;
 
   return vec4f((paint.rgb * facing + rim) * alpha, alpha);
@@ -30,7 +30,7 @@ fn baseColor(fragment: vec4f, triangleIndex: u32) -> vec4f {
 @fragment
 fn paintedLambert(@builtin(position) fragment: vec4f, @location(0) @interpolate(flat) triangleIndex: u32) -> @location(0) vec4f {
   let color = baseColor(fragment, triangleIndex);
-  let depthFalloff = pow(min(1.0, 8.0 * fragment.w), 2.5);
+  let depthFalloff = pow(min(1.0, 8.0 * fragment.w), 3);
 
   return vec4f(color.rgb * depthFalloff, color.a);
 }

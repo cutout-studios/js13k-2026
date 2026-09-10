@@ -105,7 +105,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
 ];
 
 const GREEN_PRONG = _geometry(0.12, createPyramid([0.065, 0.065, 0.095], 12)),
-  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15]));
+  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15]))
 
 export default [
   [ // player
@@ -163,14 +163,14 @@ export default [
       [[8, [0.06, 0.1]], [11, [6, 70]], [16, [0, 0]]], // base overrides
       purpleSequencerFactory,
       [[
-        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [4, [10, 10]], [
+        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [4, [2, 2]], [
           5,
           [0.2, 0.3],
         ]], // wpn overrides
         purpleWeaponSequenceFactory,
         _,
         [
-          _geometry(0.06, createPrism([0.006, 0.006, 0.13], 12)),
+          _geometry(0.06, createPrism([0.006, 0.006, 0.06], 12)),
           purpleBulletSequencerFactory,
           purpleWeaponSound,
         ],
@@ -202,9 +202,18 @@ export default [
       [[
         [[3, [0.07, 0.5]], [4, [2, 3]], [5, [12, 21]], [6, [0.05, 0.1]]],
         greenWeaponSequenceFactory,
-        _,
+        [0.2, -0.08, 0.15],
         [
-          _geometry(0.01, createSphere(0.015)),
+          _geometry(0.02, createPyramid([0.02, 0.002, 0.015], 4)),
+          greenBulletSequencerFactory,
+          NO_OP,
+        ],
+      ], [
+        [[3, [0.07, 0.5]], [4, [2, 3]], [5, [12, 21]], [6, [0.05, 0.1]]],
+        greenWeaponSequenceFactory,
+        [-0.2, -0.08, 0.15],
+        [
+          _geometry(0.02, createPyramid([0.02, 0.002, 0.015], 4)),
           greenBulletSequencerFactory,
           NO_OP,
         ],
@@ -240,7 +249,7 @@ export default [
       [[
         [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
         blueWeaponSequenceFactory,
-        _,
+        [0, -0.30, 0.42],
         [
           _geometry(
             0.06,
@@ -309,7 +318,7 @@ export default [
       ]]],
       redSequencerFactory,
       [[
-        [[0, [2, 2]], [3, [2, 14]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
+        [[0, [2, 2]], [3, [1, 10]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
         redWeaponSequenceFactory,
         _,
         [
