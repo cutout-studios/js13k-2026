@@ -47,7 +47,8 @@ export const createWeapon = (
     GameOptions[optionsIndex][2][3][0][0],
     level,
   ) as WeaponSnapshot,
-  weaponSequenceFactory = GameOptions[optionsIndex][2][3][0][1] ??
+  weaponSequenceFactory = (GameOptions[optionsIndex][2][3][weaponIndex] ??
+    GameOptions[optionsIndex][2][3][0])[1] ??
     defaultWeaponSequenceFactory,
 ): Weapon => [
   createObject([mount] as XOOrientation),

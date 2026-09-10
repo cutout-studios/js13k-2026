@@ -145,7 +145,7 @@ export const createBullet = (
     readOrigin(bulletObject[0])[2] / 18,
   );
 
-  const bullet: Bullet = [bulletObject, createActionSequencer([[NO_OP]])];
+  const bullet: Bullet = [bulletObject, createActionSequencer([[NO_OP]]), ship, weaponIndex];
   bullet[1] = (bulletSequencerFactory ?? defaultBulletSequencerFactory)(
     bullet,
     snapshot[4],

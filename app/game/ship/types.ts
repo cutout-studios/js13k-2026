@@ -92,6 +92,8 @@ export type WeaponSnapshot = [
 export type Bullet = [
   object: XOObject,
   sequence: ActionSequencer<Bullet>,
+  ship?: Ship,
+  weaponIndex?: number
 ];
 
 export type BulletGroup = [

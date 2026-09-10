@@ -44,18 +44,14 @@ import { getPlayerShip } from "../../player/ship.ts";
 
 import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
 
-// TODO: green-specific bullet jitter/behavior, if any
 export const greenBulletSequencerFactory = (
   [[coordinates]]: Bullet,
   speed: number,
-  isEnemy: boolean,
 ): ActionSequencer<Bullet> => {
   const pullAction = createPullAction(
     readHeading(coordinates),
     speed,
-    isEnemy
-      ? (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
-      : () => 1,
+    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME),
   );
 
   return createActionSequencer([[

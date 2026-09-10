@@ -352,7 +352,7 @@ export default [
       [[8, [0.13, 0.18]], [11, [8, 87]], [16, [1, 2]]],
       yellowSequencerFactory,
       [[
-        [[3, [5, 16]], [4, [4, 4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
+        [[3, [5, 16]], [4, [0.4, 0.4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
         yellowWeaponSequenceFactory,
         _,
         [
@@ -360,6 +360,9 @@ export default [
           yellowBulletSequencerFactory,
           yellowWeaponSound,
         ],
+      ], [
+        [],
+        createActionSequencer([[NO_OP]]),
       ]],
       [2, 4],
     ],

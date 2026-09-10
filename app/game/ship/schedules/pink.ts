@@ -52,14 +52,11 @@ import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
 export const pinkBulletSequencerFactory = (
   [[coordinates]]: Bullet,
   speed: number,
-  isEnemy: boolean,
 ): ActionSequencer<Bullet> => {
   const pullAction = createPullAction(
     readHeading(coordinates),
     speed,
-    isEnemy
-      ? (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
-      : () => 1,
+    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME),
     repeat(3, spread(0.2)) as [Band, Band, Band],
   );
 

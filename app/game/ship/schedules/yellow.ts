@@ -20,11 +20,22 @@
 // "explodes" when its lifetime expires, spawing a scatterbox of bullets (1
 // for each damage the bomb deals) that go in random directions
 
-import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
+import {
+  addXYZ,
+  aimObject,
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  createSphere,
+  readHeading,
+  readOrigin,
+  subtractXYZ,
+} from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
+import { getPanFromCoordinates } from "~/audio";
 import { ActionSequencer, createActionSequencer } from "~/clock";
 import { Band, clamp, doTimes, repeat, spread } from "~/common";
-import { randomPoint } from "~/random";
+
+import { randomDirection, randomPoint } from "~/random";
 
 import { isPointVisible } from "../../../elements/mainCanvas.ts";
 
@@ -36,7 +47,6 @@ import {
   EASE_OUT,
 } from "../../actions.ts";
 import {
-  BULLET_MAX_RANGE,
   ENEMY_BULLET_RAMP_TIME,
   ENEMY_FIRE_RANGE_MARGIN,
   PLAYER_AIM_Z_PLANE,
@@ -44,36 +54,138 @@ import {
   PLAYER_Y_BOUND,
 } from "../../constants.ts";
 import { getPlayerShip } from "../../player/ship.ts";
+import { errorSound, yellowBombExplodeSound } from "../../sounds.ts";
 
 import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
+import { defaultBulletSequencerFactory } from "../weapons/bullets.ts";
 
-// TODO: yellow-specific bullet jitter/behavior, if any
+// [[
+//     (bullet: Bullet, ...args) => {
+//       pullAction(bullet[0], ...args);
+//       bullet[0][2] = paint(0xF4AD32FF);
+//     },
+//     2 / speed,
+//   ], [(bullet: Bullet) => {
+//     errorSound(
+//       getPanFromCoordinates(bullet[0][0]),
+//       readOrigin(bullet[0][0])[2] / 14,
+//     );
+//   }], [
+//     (bullet: Bullet) => bullet[0][2] = paint(0xED8523FF),
+//     0.1,
+//   ], [
+//     (bullet: Bullet) => bullet[0][2] = paint(0xF4AD32FF),
+//     0.1,
+//   ], [
+//     (bullet: Bullet) => bullet[0][2] = paint(0xED8523FF),
+//     0.1,
+//   ], [
+//     (bullet: Bullet) => bullet[0][2] = paint(0xF4AD32FF),
+//     0.1,
+//   ], [
+//     (bullet: Bullet) => {
+//       yellowBombExplodeSound(
+//         getPanFromCoordinates(bullet[0][0]),
+//         readOrigin(bullet[0][0])[2] / 14,
+//       );
+
+//       ship[2][weaponIndex][1].push(
+//         doTimes(40, () => {
+//           const bulletObject = createObject([readOrigin(bullet[0][0])], [
+//             0.01,
+//             ...createSphere(0.01),
+//           ], paint(0xF4AD32FF));
+
+//           aimObject(bulletObject, randomDirection());
+
+//           return [
+//             bulletObject,
+//             defaultBulletSequencerFactory(
+//               [bulletObject, createActionSequencer([[NO_OP]])],
+//               8,
+//               false,
+//             ),
+//           ];
+//         }),
+//       );
+//     },
+//   ]]
+
 export const yellowBulletSequencerFactory = (
   [[coordinates]]: Bullet,
-  speed: number,
-  isEnemy: boolean,
+  speed: number
 ): ActionSequencer<Bullet> => {
   const pullAction = createPullAction(
     readHeading(coordinates),
     speed,
-    isEnemy
-      ? (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
-      : () => 1,
+    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME),
+    [spread(0.1), spread(0.1), [0, 0]],
   );
+
+  // return createActionSequencer([() => {}]);
 
   return createActionSequencer([[
     (bullet: Bullet, ...args) => {
       pullAction(bullet[0], ...args);
-
-      const newOrigin = readOrigin(coordinates);
-
-      // cull once it's passed the camera, out past the play field, or
-      // drifted outside the visible frustum
-      return newOrigin[2] >= 0 ||
-        newOrigin[2] < -BULLET_MAX_RANGE ||
-        !isPointVisible(newOrigin);
+      bullet[0][2] = paint(0xF4AD32FF);
     },
-  ]]);
+    2 / speed,
+  ], [(bullet: Bullet) => {
+    errorSound(
+      getPanFromCoordinates(bullet[0][0]),
+      readOrigin(bullet[0][0])[2] / 14,
+    );
+  }], [
+    (bullet: Bullet) => {
+      bullet[0][2] = paint(0xED8523FF);
+    },
+    0.1,
+  ], [
+    (bullet: Bullet) => {
+      bullet[0][2] = paint(0xF4AD32FF);
+    },
+    0.1,
+  ], [
+    (bullet: Bullet) => {
+      bullet[0][2] = paint(0xED8523FF);
+    },
+    0.1,
+  ], [
+    (bullet: Bullet) => {
+      bullet[0][2] = paint(0xF4AD32FF);
+    },
+    0.2,
+  ], [
+    (bullet: Bullet) => {
+      yellowBombExplodeSound(
+        getPanFromCoordinates(bullet[0][0]),
+        readOrigin(bullet[0][0])[2] / 14,
+      );
+
+      const bullets = doTimes(bullet[2]![2][0][3][3], () => {
+          const bulletObject = createObject([readOrigin(bullet[0][0])], [
+            0.01,
+            ...createSphere(0.01),
+          ], paint(0xF4AD3266));
+
+          aimObject(bulletObject, randomDirection());
+
+          return [
+            bulletObject,
+            defaultBulletSequencerFactory(
+              [bulletObject, createActionSequencer([[NO_OP]])],
+              8,
+              false,
+            ),
+          ];
+        }) as Bullet[];
+
+      const weaponBullets = bullet[2]![2][1][1];
+
+      weaponBullets[0].push(...bullets);
+      weaponBullets[1].push(...doTimes(bullets, ([object]) => object));
+    },
+  ]], 1);
 };
 
 // TODO: yellow-specific fire pattern
@@ -123,7 +235,7 @@ export const yellowSequencerFactory = (
 
       return isPointVisible(origin) &&
         origin[2] > -(PLAYER_AIM_Z_PLANE + ENEMY_FIRE_RANGE_MARGIN) &&
-        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+        _ship[2][0][2](_ship, tickLength);
     };
 
   return createActionSequencer([
