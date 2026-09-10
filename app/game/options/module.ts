@@ -49,7 +49,6 @@ import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
 import {
   blueWeaponSound,
   defaultWeaponSound,
-  greenWeaponSound,
   purpleWeaponSound,
   redWeaponSound,
   yellowWeaponSound,
@@ -73,26 +72,22 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   40, // Gas
   0.1, // Gas Cost
 
-  // 6-8
+  // 6-10
   8, // Gas Regen
   1, // Item Mixture Quality
   0.11, // Item Drop Rate
-
-  // 9-11
   4, // Mass
   1, // Resolve
-  40, // HP
 
-  // 12-15
+  // 11-15
+  40, // HP
   3, // Regen
   1, // Spin Damage
   1, // Spin Speed
   0.7, // Spin Time
 
-  // 16
+  // 16-17
   2.4, // Strafe Speed
-
-  // 17
   1, // Aim Time
 
   // WPN 0   (18)
@@ -165,7 +160,7 @@ export default [
     0x8434D4FF,
     [
       [[[], _geometry(0.5, createPyramid([0.25, 0.25, 0.125]))]], // shape
-      [[8, [0.06, 0.1]], [9, [0, 0]], [11, [6, 70]], [16, [0, 0]]], // base overrides
+      [[8, [0.06, 0.1]], [11, [6, 70]], [16, [0, 0]]], // base overrides
       purpleSequencerFactory,
       [[
         [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [4, [10, 10]], [
@@ -175,7 +170,7 @@ export default [
         purpleWeaponSequenceFactory,
         _,
         [
-          defaultBulletGeometry,
+          _geometry(0.06, createPrism([0.006, 0.006, 0.13], 12)),
           purpleBulletSequencerFactory,
           purpleWeaponSound,
         ],
@@ -202,16 +197,16 @@ export default [
         [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
         [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
       ],
-      [[9, [7, 20]], [11, [4, 20]], [16, [2, 4]]],
+      [[11, [4, 20]], [16, [1.2, 2.5]]],
       greenSequencerFactory,
       [[
-        [[3, [1, 5]], [4, [6.5, 6.5]], [5, [12, 21]]],
+        [[3, [0.07, 0.5]], [4, [2, 3]], [5, [12, 21]], [6, [0.05, 0.1]]],
         greenWeaponSequenceFactory,
         _,
         [
-          _geometry(0.015, createSphere(0.015)),
+          _geometry(0.01, createSphere(0.015)),
           greenBulletSequencerFactory,
-          greenWeaponSound,
+          NO_OP,
         ],
       ]],
       [4, 7],
@@ -240,7 +235,7 @@ export default [
           ),
         ],
       ],
-      [[8, [0.2, 0.3]], [9, [35, 400]], [11, [24, 270]], [16, [0.3, 0.6]]],
+      [[8, [0.2, 0.3]], [11, [24, 270]], [16, [0.5, 0.8]]],
       blueSequencerFactory,
       [[
         [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
@@ -272,7 +267,7 @@ export default [
     0xD4349FFF,
     [
       [[[], _geometry(0.4, createSphere(0.10, 20))]],
-      [[8, [0.02, 0.04]], [9, [1, 5]], [11, [1, 12]], [16, [0.5, 0.9]]],
+      [[8, [0.02, 0.04]], [11, [1, 12]], [16, [0.5, 0.9]]],
       pinkSequencerFactory,
       [[
         // slow bullets (4), wide spread (6)
@@ -308,7 +303,7 @@ export default [
           createPyramid([0.11, 0.09, 0.4], 3),
         ),
       ]],
-      [[8, [0.1, 0.15]], [9, [6, 28]], [11, [3, 108]], [16, [1.8, 2.5]], [17, [
+      [[8, [0.1, 0.15]], [11, [3, 108]], [16, [1, 2]], [17, [
         4,
         2.5,
       ]]],
@@ -345,7 +340,7 @@ export default [
         [[[0.52, 0.02, 0], [Z_AXIS, 0.65]], YELLOW_ARM],
         [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], YELLOW_ARM],
       ],
-      [[8, [0.13, 0.18]], [9, [7, 13]], [11, [8, 87]], [16, [1.5, 3]]],
+      [[8, [0.13, 0.18]], [11, [8, 87]], [16, [1, 2]]],
       yellowSequencerFactory,
       [[
         [[3, [5, 16]], [4, [4, 4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],

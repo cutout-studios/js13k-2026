@@ -30,7 +30,7 @@ fn baseColor(fragment: vec4f, triangleIndex: u32) -> vec4f {
 @fragment
 fn paintedLambert(@builtin(position) fragment: vec4f, @location(0) @interpolate(flat) triangleIndex: u32) -> @location(0) vec4f {
   let color = baseColor(fragment, triangleIndex);
-  let depthFalloff = pow(min(1.0, 12.0 * fragment.w), 2.0);
+  let depthFalloff = pow(min(1.0, 8.0 * fragment.w), 2.5);
 
   return vec4f(color.rgb * depthFalloff, color.a);
 }

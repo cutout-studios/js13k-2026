@@ -109,7 +109,7 @@ export const enemyDestroyedSound = createSound(
   [SINE_BUFFER, [
     [[1, [0.1, 0.13], true], 0],
     [[0, 0.5, true], 0],
-    [[0, 0.3, true], 0.06],
+    [[0, 0.1, true], 0.06],
     [[1, 0.1], 1.5],
     [[0, 0, true], 1.5],
   ]],
@@ -136,16 +136,19 @@ export const enemyDestroyedSound = createSound(
 
 // WIP
 export const playerSpinSound = createSound([TRIANGLE_BUFFER, [
-  [[0, 0.35], 0],
-  [[1, 0.8], 0],
-  [[1, 2.1, true], 0.15],
-  [[0, 0, false], 0.2],
-]], [NOISE_BUFFER, [
-  [[0, 0.0], 0],
-  [[1, 0.6], 0],
-  [[0, 0.4, false], 0.07],
-  [[0, 0, true], 0.22],
-]]);
+    [[0, 0.13], 0],
+    [[1, 0.8], 0],
+    [[1, 2.1, true], 0.15],
+    [[0, 0], 0.2],
+  ]],
+  [NOISE_BUFFER, [
+    [[1, 0.6, true], 0],
+    [[0, 0], 0],
+    [[0, 0.18], 0.08],
+    [[0, 0.5], 0.06],
+    [[0, 0.1], 0.05],
+    [[0, 0, true], 0.5],
+  ]]);
 
 export const playerSpinCounterSound = createSound([SQUARE_BUFFER, [
   [[0, [0.5, 0.7]], 0],

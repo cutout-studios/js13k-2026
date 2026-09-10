@@ -24,11 +24,12 @@ import {
 import { _, length, max, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
 import { createActionSequencer } from "~/clock";
-import { doTimes, flat, flatDoTimes, repeat, spliceTable } from "~/common";
+import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
 // particles: cut for now - see particles.ts
 // import { createBurst, updateParticles } from "./particles.ts";
+import { BASE_PROPERTIES } from "./options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { Ship, Weapon } from "./ship/types.ts";
@@ -129,7 +130,7 @@ export const updateGame = (
 
             aimObject(bullet[0], targetPosition);
 
-            const fauxSnapshot = repeat(7, 0);
+            const fauxSnapshot = BASE_PROPERTIES.slice(18);
             fauxSnapshot[3] = baseDamage * playerSnapshot[13];
 
             playerWeapons.push(

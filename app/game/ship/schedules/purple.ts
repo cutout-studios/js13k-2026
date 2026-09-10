@@ -16,27 +16,20 @@
 
 // TODO: fades in and is stationary, then fires
 
-import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
-import { hypot, min, NO_OP } from "~/alias";
+import { readHeading, readOrigin } from "~/3D";
+import { min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
-import { Band, clamp, doTimes, repeat, spread } from "~/common";
-import { randomPoint } from "~/random";
+import { doTimes } from "~/common";
 
 import { isPointVisible } from "../../../elements/mainCanvas.ts";
 
 import {
   createAimAction,
-  createOrbitAction,
   createPullAction,
-  EASE_IN,
-  EASE_OUT,
 } from "../../actions.ts";
 import {
   BULLET_MAX_RANGE,
   ENEMY_BULLET_RAMP_TIME,
-  PLAYER_AIM_Z_PLANE,
-  PLAYER_X_BOUND,
-  PLAYER_Y_BOUND,
 } from "../../constants.ts";
 import { getPlayerShip } from "../../player/ship.ts";
 
@@ -82,45 +75,14 @@ export const purpleWeaponSequenceFactory = (
     [NO_OP, 1 / snapshot[5]],
   ]);
 
-// purple's Strafe Speed override is pinned to 0 (it doesn't drift once in
-// position), but it still needs to physically fly in from its off-screen
-// spawn point - so its entrance/exit legs get their own fixed speed instead
-// of dividing by that (zero) combat stat
-const PURPLE_ENTRY_SPEED = 1.5;
-
 export const purpleSequencerFactory = (
   _ship: Ship,
-  arcPointRange: [Band, Band, Band] = repeat(3, spread(1)) as [
-    Band,
-    Band,
-    Band,
-  ],
 ) => {
-  const startingPoint = readOrigin(_ship[0][0]),
-    fieldPoint = randomPoint([
-      spread(PLAYER_X_BOUND),
-      spread(PLAYER_Y_BOUND),
-      spread(0.5, -PLAYER_AIM_Z_PLANE),
-    ]),
-    referencePoint = randomPoint(arcPointRange),
-    mirroredReferencePoint = addXYZ(
-      startingPoint,
-      subtractXYZ(fieldPoint, referencePoint),
-    ),
-    travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
-      PURPLE_ENTRY_SPEED,
-    orbitToAction = createOrbitAction(fieldPoint, referencePoint, EASE_OUT),
-    orbitFromAction = createOrbitAction(
-      startingPoint,
-      mirroredReferencePoint,
-      EASE_IN,
-    ),
-    aimAction = createAimAction(
+  const aimAction = createAimAction(
       _ship[1],
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
-    ),
-    fireWeapons = (tickLength: number) => {
+    ), fireWeapons = (tickLength: number) => {
       const origin = readOrigin(_ship[0][0]);
 
       return isPointVisible(origin) &&
@@ -128,19 +90,10 @@ export const purpleSequencerFactory = (
     };
 
   return createActionSequencer([
-    [(_ship: Ship, ...args) => {
-      orbitToAction(_ship[0], ...args);
-      aimAction(_ship[0], ...args);
-      fireWeapons(args[0]);
-    }, travelTime],
+    [NO_OP, 1], 
     [(_ship: Ship, ...args) => {
       aimAction(_ship[0], ...args);
       fireWeapons(args[0]);
-    }, clamp(4 / _ship[5][16], [2, 10])],
-    [(_ship: Ship, ...args) => {
-      orbitFromAction(_ship[0], ...args);
-      aimAction(_ship[0], ...args);
-      fireWeapons(args[0]);
-    }, travelTime],
-  ]);
+    }]
+  ])
 };

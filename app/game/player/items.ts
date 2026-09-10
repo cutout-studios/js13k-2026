@@ -65,14 +65,9 @@ export const createItem = (
       baseBulletDamage,
     ], modifiers]] = GameOptions[colorID],
     modifierDeck = [] as ModifierOptions[],
-    // createPullAction's speed/jitter are now per-second (tickLength-scaled) -
-    // these are ~60x their old per-tick-implicit values, to keep the same feel.
-    // the bands are zero-centered (spread) rather than one-sided, so the
-    // jitter wobbles the item in place instead of constantly shoving it in
-    // one direction hard enough to outrun pullToPlayerFieldAction below
     pullAction = createPullAction(Z_AXIS, 0.6, () => 1, [
       [0, 0],
-      spread(2.1),
+      spread(0.5),
       spread(0.3),
     ]);
 

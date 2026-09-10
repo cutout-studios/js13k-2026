@@ -47,26 +47,22 @@ export type ShipSnapshot = [
   gasCanSize: number,
   gasCost: number,
 
-  // 6-8
+  // 6-10
   gasRegen: number,
   itemMixtureQuality: number,
   itemDropRate: number,
-
-  // 9-11
   kg: number,
   resolve: number,
-  hp: number,
 
-  // 12-15
+  // 11-15
+  hp: number,
   regen: number,
   spinDamage: number,
   spinSpeed: number,
   spinTime: number,
 
-  // 16
+  // 16-17
   strafeSpeed: number,
-
-  // 17
   aimTime: number,
 ];
 
