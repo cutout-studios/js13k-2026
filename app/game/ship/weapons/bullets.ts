@@ -140,7 +140,10 @@ export const createBullet = (
     );
 
   aimObject(bulletObject, addXYZ(globalOrigin, bulletHeading));
-  bulletSound?.(getPanFromCoordinates(bulletObject[0], 5));
+  bulletSound?.(
+    getPanFromCoordinates(bulletObject[0], 5),
+    readOrigin(bulletObject[0])[2] / 18,
+  );
 
   const bullet: Bullet = [bulletObject, createActionSequencer([[NO_OP]])];
   bullet[1] = (bulletSequencerFactory ?? defaultBulletSequencerFactory)(

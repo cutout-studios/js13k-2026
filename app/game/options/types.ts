@@ -48,7 +48,7 @@ type ShipOptions = [
         speed: number,
         isEnemy: boolean,
       ) => ActionSequencer<Bullet>,
-      sound?: (pan: number) => void,
+      sound?: (pan: number, volume: number) => void,
     ],
   ][],
   countBand: Band,

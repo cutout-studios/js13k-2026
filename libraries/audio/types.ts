@@ -22,6 +22,6 @@ export type SoundSchedule = Schedule<
   [knobID: number, value: number | Band, exponential?: boolean]
 >;
 
-export type Sound = ((pan?: number) => void) & {
+export type Sound = ((pan?: number, volume?: number) => void) & {
   definitions: SoundDefinition[];
 };

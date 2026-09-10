@@ -105,7 +105,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
 ];
 
 const GREEN_PRONG = _geometry(0.12, createPyramid([0.065, 0.065, 0.095], 12)),
-  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15]))
+  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15]));
 
 export default [
   [ // player

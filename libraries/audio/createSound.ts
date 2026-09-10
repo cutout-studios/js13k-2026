@@ -26,7 +26,7 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
   const groupBus = api.createDynamicsCompressor();
   groupBus.connect(masterBus);
 
-  const play = (pan = 0) =>
+  const play = (pan = 0, volume = 1) =>
     doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
       const source = new AudioBufferSourceNode(api, { buffer, loop: true }),
         ampKnob = api.createGain(),
@@ -47,7 +47,10 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
           exponential
             ? "exponentialRampToValueAtTime"
             : "linearRampToValueAtTime"
-        ](knobID < 2 ? max(target, 0.0001) : target, time);
+        ](
+          knobID < 2 ? max(target, 0.0001) : target * (knobID ? 1 : volume),
+          time,
+        );
       });
 
       source.stop(time);

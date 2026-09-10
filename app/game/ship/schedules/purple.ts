@@ -23,14 +23,8 @@ import { doTimes } from "~/common";
 
 import { isPointVisible } from "../../../elements/mainCanvas.ts";
 
-import {
-  createAimAction,
-  createPullAction,
-} from "../../actions.ts";
-import {
-  BULLET_MAX_RANGE,
-  ENEMY_BULLET_RAMP_TIME,
-} from "../../constants.ts";
+import { createAimAction, createPullAction } from "../../actions.ts";
+import { BULLET_MAX_RANGE, ENEMY_BULLET_RAMP_TIME } from "../../constants.ts";
 import { getPlayerShip } from "../../player/ship.ts";
 
 import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
@@ -82,7 +76,8 @@ export const purpleSequencerFactory = (
       _ship[1],
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
-    ), fireWeapons = (tickLength: number) => {
+    ),
+    fireWeapons = (tickLength: number) => {
       const origin = readOrigin(_ship[0][0]);
 
       return isPointVisible(origin) &&
@@ -93,6 +88,6 @@ export const purpleSequencerFactory = (
     [(_ship: Ship, ...args) => {
       aimAction(_ship[0], ...args);
       fireWeapons(args[0]);
-    }]
-  ])
+    }],
+  ]);
 };

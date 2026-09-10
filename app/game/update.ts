@@ -33,7 +33,10 @@ import { BASE_PROPERTIES } from "./options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { Ship, Weapon } from "./ship/types.ts";
-import { defaultBulletSequencerFactory, updateBullets } from "./ship/weapons/bullets.ts";
+import {
+  defaultBulletSequencerFactory,
+  updateBullets,
+} from "./ship/weapons/bullets.ts";
 import {
   enemyDestroyedSound,
   enemyHitSound,
@@ -92,6 +95,7 @@ export const updateGame = (
             shipCoordinates,
             visibleHalfExtentAt(readOrigin(shipCoordinates)[2])[0],
           ),
+          readOrigin(shipCoordinates)[2] / 18,
         );
         enemyShips[shipIndex][4][0] +=
           (random() < critChance ? bulletDamage * critDamage : bulletDamage) *
@@ -198,7 +202,10 @@ export const updateGame = (
         ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
           if (damages[0] < snapshot[11]) return [];
 
-          enemyDestroyedSound(getPanFromCoordinates(coordinates));
+          enemyDestroyedSound(
+            getPanFromCoordinates(coordinates),
+            readOrigin(coordinates)[2] / 18,
+          );
           // particles: cut for now - see particles.ts
           // createBurst(
           //   readOrigin(coordinates),
@@ -267,8 +274,8 @@ export const updateGame = (
   if (playerResourceStatus[0] >= playerSnapshot[11]) {
     playerResourceStatus[0] = playerSnapshot[11];
     (random() > playerSnapshot[1])
-      ? (playerResourceStatus[2]++, rezSavedSound())
-      : rezLostSound();
+      ? (playerResourceStatus[2]++, rezLostSound())
+      : rezSavedSound();
     playerResourceStatus[3] = 1;
     if (playerResourceStatus[2] >= playerSnapshot[0]) {
       alert("MISSION " + (winCollection.size == 6 ? "COMPLETE" : "FAILED"));
