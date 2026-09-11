@@ -44,7 +44,6 @@ import {
 import GameOptions from "../../options/module.ts";
 import { Bullet, Ship } from "../types.ts";
 
-// TODO: fold together various behaviors
 export const defaultBulletSequencerFactory = (
   [[coordinates]]: Bullet,
   speed: number,

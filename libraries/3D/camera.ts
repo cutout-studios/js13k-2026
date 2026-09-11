@@ -60,7 +60,7 @@ export const createCamera = (
         const [[, geometry, material]] = group;
 
         // skip invisible objects
-        if (!geometry) return;
+        if (!geometry || !material) return;
 
         loadObject(
           process,

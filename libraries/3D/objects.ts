@@ -74,7 +74,7 @@ export const aimObject = (object: XOObject, aim: XYZ, roll = 0) => {
     c = cos(roll),
     s = sin(roll);
 
-  // TODO I still don't understand rotation...
+  // I still don't understand rotation...
   object[0] = createCoordinates(
     add(scale(right, c), scale(up, s)),
     add(scale(up, c), scale(right, -s)),
@@ -218,7 +218,6 @@ export const getCollisionPairs = (
   return [leftResult, rightResult];
 };
 
-// TODO: we can probably delete this now
 export const scatterObjects = (
   boxDimensions: [Band, Band, Band],
   cantOverlap: boolean,

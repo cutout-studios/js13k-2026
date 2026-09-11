@@ -79,6 +79,7 @@ export const getShipObjects = (
 ): XOObject[][] =>
   flat(
     [[shipObject]],
+    doTimes(weapons, ([object]) => [object]),
     doTimes(weapons, ([, [, bullets]]) => bullets),
   );
 

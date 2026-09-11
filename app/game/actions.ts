@@ -79,7 +79,6 @@ export const createOrbitAction = (
   };
 };
 
-// TODO: maybe create a curves.ts
 export const EASE_OUT = (t: number) => 1 - (1 - t) ** 4;
 export const EASE_IN = (t: number) => 1 - EASE_OUT(1 - t);
 

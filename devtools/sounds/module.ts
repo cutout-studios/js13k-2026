@@ -99,7 +99,7 @@ const detectBuffer = (buffer: AudioBuffer): [name: string, param: number] => {
     return [PULSE_NAME, Math.round(dutyCycle * 100) / 100];
   }
 
-  // TODO: ring mod isn't detectable this way (it's a smooth product of two
+  // ring mod isn't detectable this way (it's a smooth product of two
   // sines, not a hard two-level wave) - flagged as unknown rather than
   // guessing wrong
   return [UNKNOWN_NAME, 0];

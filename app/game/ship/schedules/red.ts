@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// TODO: each ship in the group swoops from back to front across the field,
-// firing their weapns in bursts at the player
-
 import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";

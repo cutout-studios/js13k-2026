@@ -334,7 +334,7 @@ export default [
       [
         [0, 21, "x", [1.25, 3.5]], // Bullet Damage
         [0, 4, "+", [3, 15]], // Gas
-        [0, 22, "x", [1.1, 4]], // Bullet Speed - TODO: add
+        [0, 22, "x", [1.1, 4]], // Bullet Speed
         [3, 6, "x", [1.2, 2.2]], // Gas Refill
       ],
     ],

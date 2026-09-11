@@ -227,7 +227,6 @@ export const stageCompleteSound = createSound([SINE_BUFFER, [
 ]]);
 export const winCollectionSound = stageCompleteSound;
 
-// TODO: enemies
 export const redWeaponSound = createSound([SQUARE_BUFFER, [
   [[1, [4.3, 6]], 0],
   [[0, 0.035], 0.03],

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-// TODO: anything else goes here?
 export const PLAYER_SHIP_Z_PLANE = 5;
 export const PLAYER_AIM_Z_PLANE = 8;
 export const PLAYER_X_BOUND = 2.8;

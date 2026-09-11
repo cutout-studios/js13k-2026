@@ -189,9 +189,8 @@ export const updateGame = (
       winCollectionSound();
 
       if (winCollection.size == 6) {
-            alert("MISSION COMPLETED");
-    location.reload();
-
+        alert("MISSION COMPLETED");
+        location.reload();
       }
     } else itemPickupSound(getPanFromCoordinates(playerShipObject[0]));
   });

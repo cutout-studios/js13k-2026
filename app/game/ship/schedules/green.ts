@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-// TODO:
-// - the green enemy spirals in from behind the player or from deep field,
-//   constantly spewing bullets that splay outward
-// - the groups enters in as a line
-// - if they get out of view, they reverse their spiral
-
 import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
@@ -79,7 +73,7 @@ export const greenWeaponSequenceFactory = (
     [NO_OP, 1 / snapshot[5]],
   ]);
 
-export const redSequencerFactory = (
+export const greenSequencerFactory = (
   _ship: Ship,
   arcPointRange: [Band, Band, Band] = repeat(3, spread(1)) as [
     Band,
