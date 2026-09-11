@@ -48,7 +48,7 @@ export const blueBulletSequencerFactory = (
   const pullAction = createPullAction(
     readHeading(coordinates),
     speed,
-    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
+    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME),
   );
 
   return createActionSequencer([[
@@ -91,11 +91,15 @@ export const blueSequencerFactory = (
     ),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
       _ship[5][16],
-    orbitToAction = createOrbitAction(fieldPoint, referencePoint, (t) => EASE_OUT(t) ** .8),
+    orbitToAction = createOrbitAction(
+      fieldPoint,
+      referencePoint,
+      (t) => EASE_OUT(t) ** .8,
+    ),
     orbitFromAction = createOrbitAction(
       startingPoint,
       mirroredReferencePoint,
-      EASE_IN
+      EASE_IN,
     ),
     aimAction = createAimAction(
       _ship[1],

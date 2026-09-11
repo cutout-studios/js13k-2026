@@ -32,7 +32,8 @@ import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
 import { BASE_PROPERTIES } from "./options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
-import { Ship, Weapon } from "./ship/types.ts";
+import { updateWeaponMounts } from "./ship/module.ts";
+import { Ship, Weapon, WeaponSnapshot } from "./ship/types.ts";
 import {
   defaultBulletSequencerFactory,
   updateBullets,
@@ -55,10 +56,11 @@ import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
 
 export const updateGame = (
-  [player, world]: Game,
+  game: Game,
   tickLength: number,
 ): void => {
-  const [activeEnemyGroups, droppedItems, progress, winCollection] = world,
+  const [player, world] = game,
+    [activeEnemyGroups, droppedItems, progress, winCollection] = world,
     [playerShip, , inventory] = player,
     [
       playerShipObject,
@@ -72,9 +74,7 @@ export const updateGame = (
 
   // -- update everything in the game
   doTimes(flat([playerShip], enemyShips), (ship) => {
-    // dead enemies (ship[6] truthy, damages[3] used as a corpse flag - see
-    // cleanup below) stop acting/firing, but their already-fired bullets
-    // still fly and get to hit the player
+    updateWeaponMounts(ship);
     ship[6] && ship[4][3] || ship[3](ship, tickLength);
     updateBullets(ship, tickLength);
   });
@@ -123,64 +123,60 @@ export const updateGame = (
   );
 
   if (!playerResourceStatus[3]) { // skip enemy bullets while the player is invulnerable
-    doTimes(
-      enemyShips,
-      (
-        [
-          enemyShipObject,
-          ,
-          [[, bullets, , [, critChance, critDamage, bulletDamage]]],
-        ],
-      ) => {
-        const [hitIndicies] = getCollisionPairs(bullets[1], [
-          playerShipObject,
-        ]);
+    doTimes(enemyShips, ([enemyShipObject, , weapons]) => {
+      doTimes(
+        weapons,
+        ([, bullets, , [, critChance, critDamage, bulletDamage]]) => {
+          const [hitIndicies] = getCollisionPairs(bullets[1], [
+            playerShipObject,
+          ]);
 
-        doTimes(hitIndicies, (bulletIndex: number) => {
-          const baseDamage = random() < critChance
-            ? bulletDamage * critDamage
-            : bulletDamage;
+          doTimes(hitIndicies, (bulletIndex: number) => {
+            const baseDamage = random() < critChance
+              ? bulletDamage * critDamage
+              : bulletDamage;
 
-          if (playerResourceStatus[4]) {
-            playerSpinCounterSound(
+            if (playerResourceStatus[4]) {
+              playerSpinCounterSound(
+                getPanFromCoordinates(playerShipObject[0]),
+              );
+              const bullet = bullets[0][bulletIndex],
+                targetPosition = readOrigin(enemyShipObject[0]);
+
+              aimObject(bullet[0], targetPosition);
+
+              bullet[1] = defaultBulletSequencerFactory(bullet, 8, false);
+
+              const fauxSnapshot = BASE_PROPERTIES.slice(18) as WeaponSnapshot;
+              fauxSnapshot[3] = baseDamage * playerSnapshot[13];
+
+              playerWeapons.push(
+                [
+                  createObject(),
+                  [[bullet], [bullet[0]]],
+                  createActionSequencer([[NO_OP]]),
+                  fauxSnapshot,
+                  0,
+                ] as Weapon,
+              );
+
+              return;
+            }
+
+            playerHitSound(
               getPanFromCoordinates(playerShipObject[0]),
             );
-            const bullet = bullets[0][bulletIndex],
-              targetPosition = readOrigin(enemyShipObject[0]);
 
-            aimObject(bullet[0], targetPosition);
+            const totalDamage = baseDamage * playerSnapshot[2];
 
-            bullet[1] = defaultBulletSequencerFactory(bullet, 8, false);
+            playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
+            playerResourceStatus[1] += totalDamage * playerSnapshot[3];
+          });
 
-            const fauxSnapshot = BASE_PROPERTIES.slice(18);
-            fauxSnapshot[3] = baseDamage * playerSnapshot[13];
-
-            playerWeapons.push(
-              [
-                createObject(),
-                [[bullet], [bullet[0]]],
-                createActionSequencer([[NO_OP]]),
-                fauxSnapshot,
-                0,
-              ] as Weapon,
-            );
-
-            return;
-          }
-
-          playerHitSound(
-            getPanFromCoordinates(playerShipObject[0]),
-          );
-
-          const totalDamage = baseDamage * playerSnapshot[2];
-
-          playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
-          playerResourceStatus[1] += totalDamage * playerSnapshot[3];
-        });
-
-        spliceTable(bullets, hitIndicies);
-      },
-    );
+          spliceTable(bullets, hitIndicies);
+        },
+      );
+    });
   }
 
   // pick up dropped items
@@ -205,8 +201,8 @@ export const updateGame = (
       winCollectionSound();
 
       if (winCollection.size == 6) {
-        alert("MISSION COMPLETED");
-        location.reload();
+        game[2] = false;
+        setTimeout(() => (alert("MISSION COMPLETED"), location.reload()));
       }
     } else itemPickupSound(getPanFromCoordinates(playerShipObject[0]));
   });
@@ -226,7 +222,7 @@ export const updateGame = (
         ) => {
           if (damages[0] < snapshot[11]) return [];
 
-          if (!damages[3]) { // first tick dead - damages[3] doubles as a corpse flag
+          if (!damages[3]) {
             damages[3] = 1;
             enemyDestroyedSound(
               getPanFromCoordinates(coordinates),
@@ -252,8 +248,6 @@ export const updateGame = (
             }
           }
 
-          // keep the corpse around (inert, per the check above) until its
-          // already-fired bullets are gone, instead of yanking them mid-flight
           return weapons.reduce((n, [, [b]]) => n + length(b), 0)
             ? []
             : [index];
@@ -320,8 +314,6 @@ export const updateGame = (
     playerResourceStatus[1] - playerSnapshot[6] * tickLength,
   );
 
-  // corpses (damages[3]) only stick around for their lingering bullets, so
-  // don't let them hold up the next wave
   if (flat(...activeEnemyGroups).some(([, , , , damages]) => !damages[3])) {
     return;
   }
@@ -337,7 +329,5 @@ export const updateGame = (
     progress[1]++;
   }
 
-  // keep any lingering corpse groups around alongside the freshly rolled
-  // wave, instead of cutting their bullets off
   world[0] = flat(activeEnemyGroups, rollEnemies(progress[1], progress[0]));
 };

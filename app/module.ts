@@ -39,6 +39,7 @@ import {
   checkSpaceBar,
   checkWKey,
 } from "./game/player/controls.ts";
+import { updateWeaponMounts } from "./game/ship/module.ts";
 import { updateGame } from "./game/update.ts";
 
 const checkKeyboard = (tickLength: number) =>
@@ -64,6 +65,7 @@ startClock((tickLength) => {
   if (!GameState[2]) {
     checkMouse(tickLength);
     applyInputToPlayerShip(tickLength);
+    updateWeaponMounts(GameState[0][0]);
     GameState[0][0][3](GameState[0][0], tickLength);
     updateHUD(GameState, tickLength);
     return camera(getSceneObjects(GameState), mainCanvas);
@@ -78,9 +80,9 @@ startClock((tickLength) => {
   applyInputToPlayerShip(tickLength);
   updateGame(GameState, tickLength), updateHUD(GameState, tickLength);
   camera(getSceneObjects(GameState), mainCanvas);
-  
+
   if (GameState[0][0][4][2] >= GameState[0][0][5][0]) {
-    alert("MISSION FAILED");
-    location.reload();
+    GameState[2] = false;
+    setTimeout(() => (alert("MISSION FAILED"), location.reload()));
   }
 });

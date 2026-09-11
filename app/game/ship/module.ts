@@ -18,6 +18,7 @@ import {
   createObject,
   createPaintMaterialWithPalette as paint,
   flattenObjects,
+  localize,
   XOObject,
   XYZ,
 } from "~/3D";
@@ -74,11 +75,21 @@ export const createShip = (
   return ship;
 };
 
+export const updateWeaponMounts = (ship: Ship) =>
+  doTimes(
+    ship[2],
+    ([object, , , , , localMount]) =>
+      localMount && (object[0] = localize(localMount, ship[0][0])),
+  );
+
 export const getShipObjects = (
-  [shipObject, , weapons, , damages]: Ship,
+  [shipObject, , weapons, , damages, , optionsIndex]: Ship,
 ): XOObject[][] =>
   flat(
-    damages[3]
+    // damages[3] is an enemy-only corpse flag (see update.ts's cleanup) -
+    // for the player it means invulnerable instead, which the blink in
+    // getSceneObjects handles separately, so don't hide the hull here too
+    optionsIndex && damages[3]
       ? []
       : flat([[shipObject]], doTimes(weapons, ([object]) => [object])),
     doTimes(weapons, ([, [, bullets]]) => bullets),

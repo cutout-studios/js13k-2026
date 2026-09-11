@@ -54,8 +54,6 @@ export const createBullet = (
       shipOptionsIndex,
     ] = ship,
     [
-      // kept fresh every tick in createWeapon, so this is already the
-      // weapon's current global transform
       [globalCoordinates],
       ,
       ,

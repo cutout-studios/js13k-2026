@@ -48,7 +48,7 @@ export const redBulletSequencerFactory = (
   const pullAction = createPullAction(
     readHeading(coordinates),
     speed,
-    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
+    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME),
   );
 
   return createActionSequencer([[

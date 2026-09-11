@@ -20,12 +20,14 @@ import {
   createObject,
   createPaintMaterialWithPalette as paint,
   createSphere,
+  normalizeXYZ,
   readHeading,
   readOrigin,
+  setOrigin,
   subtractXYZ,
   XOGeometry,
 } from "~/3D";
-import { hypot, min, NO_OP } from "~/alias";
+import { hypot, NO_OP } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
 import { ActionSequencer, createActionSequencer } from "~/clock";
 import { Band, clamp, doTimes, repeat, spread } from "~/common";
@@ -42,9 +44,9 @@ import {
   EASE_OUT,
 } from "../../actions.ts";
 import {
-  ENEMY_BULLET_RAMP_TIME,
   ENEMY_FIRE_RANGE_MARGIN,
   PLAYER_AIM_Z_PLANE,
+  PLAYER_SHIP_Z_PLANE,
   PLAYER_X_BOUND,
   PLAYER_Y_BOUND,
 } from "../../constants.ts";
@@ -54,85 +56,103 @@ import { errorSound, yellowBombExplodeSound } from "../../sounds.ts";
 import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
 import { defaultBulletSequencerFactory } from "../weapons/bulletMovement.ts";
 
+const GLOW_MATERIAL = paint(0xF4AD32FF),
+  WARN_MATERIAL = paint(0xED8523FF),
+  MIN_BOMB_DEPTH = PLAYER_SHIP_Z_PLANE + 2,
+  keepFromPlayer = (bullet: Bullet) => {
+    const origin = readOrigin(bullet[0][0]);
+
+    if (origin[2] > -MIN_BOMB_DEPTH) {
+      setOrigin(bullet[0][0], [origin[0], origin[1], -MIN_BOMB_DEPTH]);
+    }
+  };
+
 export const yellowBulletSequencerFactory = (
   [[coordinates]]: Bullet,
   speed: number,
 ): ActionSequencer<Bullet> => {
   const pullAction = createPullAction(
-    readHeading(coordinates),
-    speed,
-    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME),
-    [spread(0.1), spread(0.1), [0, 0]],
-  );
-
-  return createActionSequencer([[
-    (bullet: Bullet, ...args) => {
-      pullAction(bullet[0], ...args);
-      bullet[0][2] = paint(0xF4AD32FF);
-    },
-    2 / speed,
-  ], [(bullet: Bullet) => {
-    errorSound(
-      getPanFromCoordinates(bullet[0][0]),
-      readOrigin(bullet[0][0])[2] / 14,
-    );
-  }], [
-    (bullet: Bullet) => {
-      bullet[0][2] = paint(0xED8523FF);
-    },
-    0.1,
-  ], [
-    (bullet: Bullet) => {
-      bullet[0][2] = paint(0xF4AD32FF);
-    },
-    0.1,
-  ], [
-    (bullet: Bullet) => {
-      bullet[0][2] = paint(0xED8523FF);
-    },
-    0.1,
-  ], [
-    (bullet: Bullet) => {
-      bullet[0][2] = paint(0xF4AD32FF);
-    },
-    0.2,
-  ], [
-    (bullet: Bullet) => {
-      yellowBombExplodeSound(
+      readHeading(coordinates),
+      speed,
+      (t: number) => 1 - t, // decelerate
+      [spread(0.1), spread(0.1), [0, 0]],
+    ),
+    sequence = createActionSequencer([[
+      (bullet: Bullet, ...args) => {
+        pullAction(bullet[0], ...args);
+        bullet[0][2] = GLOW_MATERIAL;
+      },
+      2.5 / speed,
+    ], [(bullet: Bullet) => {
+      errorSound(
         getPanFromCoordinates(bullet[0][0]),
         readOrigin(bullet[0][0])[2] / 14,
       );
+    }], [
+      (bullet: Bullet) => {
+        bullet[0][2] = WARN_MATERIAL;
+      },
+      0.1,
+    ], [
+      (bullet: Bullet) => {
+        bullet[0][2] = GLOW_MATERIAL;
+      },
+      0.1,
+    ], [
+      (bullet: Bullet) => {
+        bullet[0][2] = WARN_MATERIAL;
+      },
+      0.1,
+    ], [
+      (bullet: Bullet) => {
+        bullet[0][2] = GLOW_MATERIAL;
+      },
+      0.2,
+    ], [
+      (bullet: Bullet) => {
+        yellowBombExplodeSound(
+          getPanFromCoordinates(bullet[0][0]),
+          readOrigin(bullet[0][0])[2] / 14,
+        );
 
-      // shared across every fragment - geometry/material are cached by
-      // object reference, so creating one fresh per fragment (40-120 of
-      // them at once) was building that many GPU pipelines in one frame
-      const fragmentGeometry = [0.01, ...createSphere(0.01)] as XOGeometry,
-        fragmentMaterial = paint(0xF4AD3266),
-        bullets = doTimes(bullet[2]![2][0][3][3], () => {
-          const bulletObject = createObject(
-            [readOrigin(bullet[0][0])],
-            fragmentGeometry,
-            fragmentMaterial,
-          );
+        const fragmentGeometry = [0.01, ...createSphere(0.01)] as XOGeometry,
+          fragmentMaterial = paint(0xF4AD3266),
+          bombHeading = readHeading(bullet[0][0]),
+          bullets = doTimes(bullet[2]![2][0][3][3], () => {
+            const bulletObject = createObject(
+              [readOrigin(bullet[0][0])],
+              fragmentGeometry,
+              fragmentMaterial,
+            );
 
-          aimObject(bulletObject, randomDirection());
+            aimObject(
+              bulletObject,
+              addXYZ(
+                readOrigin(bulletObject[0]),
+                normalizeXYZ(addXYZ(bombHeading, randomDirection())),
+              ),
+            );
 
-          return [
-            bulletObject,
-            defaultBulletSequencerFactory(
-              [bulletObject, createActionSequencer([[NO_OP]])],
-              8,
-              false,
-            ),
-          ];
-        }) as Bullet[];
+            return [
+              bulletObject,
+              defaultBulletSequencerFactory(
+                [bulletObject, createActionSequencer([[NO_OP]])],
+                8,
+                false,
+              ),
+            ];
+          }) as Bullet[];
 
-      const weaponBullets = bullet[2]![2][1][1];
+        const weaponBullets = bullet[2]![2][1][1];
 
-      weaponBullets[0].push(...bullets);
-      weaponBullets[1].push(...doTimes(bullets, ([object]) => object));
-    },
-  ]], 1);
+        weaponBullets[0].push(...bullets);
+        weaponBullets[1].push(...doTimes(bullets, ([object]) => object));
+      },
+    ]], 1);
+
+  return (bullet: Bullet, ...args) => (
+    keepFromPlayer(bullet), sequence(bullet, ...args)
+  );
 };
 
 export const yellowWeaponSequenceFactory = (

@@ -72,6 +72,8 @@ export type Weapon = [
   sequence: ActionSequencer<Ship>,
   _snapshot: WeaponSnapshot,
   _optionsIndex: number,
+
+  mountCoordinates?: Float32Array,
 ];
 
 export type WeaponSnapshot = [
@@ -93,7 +95,7 @@ export type Bullet = [
   object: XOObject,
   sequence: ActionSequencer<Bullet>,
   ship?: Ship,
-  weaponIndex?: number
+  weaponIndex?: number,
 ];
 
 export type BulletGroup = [

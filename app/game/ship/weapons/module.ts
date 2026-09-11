@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createObject, localize, XOOrientation } from "~/3D";
+import { createObject, XOOrientation } from "~/3D";
 import { NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
@@ -25,8 +25,6 @@ import { levelRollOverrides } from "../../world/levels.ts";
 import { Ship, Weapon, WeaponSnapshot } from "../types.ts";
 import { createBullet } from "./bullets.ts";
 
-// used by ships that haven't been given their own {color}WeaponSequenceFactory
-// (see ship/schedules/*.ts) - a simple constant-rate single shot
 export const defaultWeaponSequenceFactory = (
   fire: (ship: Ship) => void,
   snapshot: WeaponSnapshot,
@@ -53,18 +51,15 @@ export const createWeapon = (
   sight = (GameOptions[optionsIndex][2][3][weaponIndex] ??
     GameOptions[optionsIndex][2][3][0])[4],
 ): Weapon => {
-  const object = createObject([mount] as XOOrientation, sight?.[0], sight?.[1]),
-    localMount = object[0],
-    fire = weaponSequenceFactory(fireWeapon(weaponIndex), snapshot);
+  const object = createObject([mount] as XOOrientation, sight?.[0], sight?.[1]);
 
   return [
     object,
     [[], []],
-    (ship, ...args) => (
-      object[0] = localize(localMount, ship[0][0]), fire(ship, ...args)
-    ),
+    weaponSequenceFactory(fireWeapon(weaponIndex), snapshot),
     snapshot,
     optionsIndex,
+    object[0],
   ];
 };
 

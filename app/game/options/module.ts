@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 import {
+  createObject,
   createPaintMaterialWithPalette as paint,
   createPrism,
   createPyramid,
   createSphere,
+  flattenObjects,
   X_AXIS,
   XOGeometry,
   XYZ,
@@ -106,11 +108,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
 ];
 
 const GREEN_PRONG = _geometry(0.12, createPyramid([0.065, 0.065, 0.095], 12)),
-  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15])),
-  // purple's laser sight: a very thin, very long sliver jutting out of the
-  // mount so incoming fire is telegraphed regardless of range
-  PURPLE_SIGHT = _geometry(0.002, createPrism([0.002, 0.002, 30], 6)),
-  PURPLE_SIGHT_MATERIAL = paint(0x8434D444);
+  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15]));
 
 export default [
   [ // player
@@ -179,7 +177,15 @@ export default [
           purpleBulletSequencerFactory,
           purpleWeaponSound,
         ],
-        [PURPLE_SIGHT, PURPLE_SIGHT_MATERIAL],
+        [ // laser sight
+          flattenObjects(
+            createObject(
+              [[0, 0, 30]],
+              _geometry(0.002, createPrism([0.002, 0.002, 30], 6)),
+            ),
+          )[1],
+          paint(0x8434D444),
+        ],
       ]],
       [3, 5],
     ],
@@ -358,7 +364,7 @@ export default [
       [[8, [0.13, 0.18]], [11, [8, 87]], [16, [1, 2]]],
       yellowSequencerFactory,
       [[
-        [[3, [40, 120]], [4, [0.4, 0.4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
+        [[3, [15, 60]], [4, [1.5, 1.5]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
         yellowWeaponSequenceFactory,
         _,
         [
