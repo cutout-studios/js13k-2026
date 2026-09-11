@@ -6,7 +6,7 @@
 
 ## Likely after some code golfing:
 
-- Balancing
+- Balancing: I think things should just kind be cracked from the get go, so you know it works lmao
 
 - Remove arc point deck and simplify scatter objects
 - Point enemies w/ no change in sequencer to the default one
