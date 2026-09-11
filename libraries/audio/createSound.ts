@@ -56,7 +56,6 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
       source.stop(time);
     });
 
-  // TODO: delete - for devtools introspection
   (play as unknown as Sound).definitions = definitions;
 
   return play as unknown as Sound;

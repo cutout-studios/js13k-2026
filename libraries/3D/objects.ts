@@ -218,6 +218,7 @@ export const getCollisionPairs = (
   return [leftResult, rightResult];
 };
 
+// TODO: we can probably delete this now
 export const scatterObjects = (
   boxDimensions: [Band, Band, Band],
   cantOverlap: boolean,
@@ -231,7 +232,6 @@ export const scatterObjects = (
 
     placedObjects.push(objectToPlace);
 
-    // TODO: this has a bug - we need to check placedObjects against itself...
     if (cantOverlap && length(getCollisionPairs(objects, placedObjects)[0])) {
       objects.push(placedObjects.pop()!);
     }

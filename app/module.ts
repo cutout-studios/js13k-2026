@@ -31,7 +31,7 @@ import {
   applyInputToPlayerShip,
   checkAKey,
   checkDKey,
-  checkEscapeKey,
+  checkFKey,
   checkLMouseButton,
   checkMousePointer,
   checkRMouseButton,
@@ -70,7 +70,7 @@ startClock((tickLength) => {
   }
 
   // game has started, but is paused
-  checkEscapeKey(tickLength);
+  checkFKey(tickLength);
   if (menu.open) return updateMenu(tickLength);
 
   // game has started
@@ -78,4 +78,9 @@ startClock((tickLength) => {
   applyInputToPlayerShip(tickLength);
   updateGame(GameState, tickLength), updateHUD(GameState, tickLength);
   camera(getSceneObjects(GameState), mainCanvas);
+  
+  if (GameState[0][0][4][2] >= GameState[0][0][5][0]) {
+    alert("MISSION FAILED");
+    location.reload();
+  }
 });

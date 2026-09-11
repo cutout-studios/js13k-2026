@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// TODO: arcs in through the top of the screen always firing down at the player
-
 import { addXYZ, readHeading, readOrigin, subtractXYZ } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
@@ -68,7 +66,6 @@ export const blueBulletSequencerFactory = (
   ]]);
 };
 
-// TODO: blue-specific fire pattern
 export const blueWeaponSequenceFactory = (
   fire: (ship: Ship) => void,
   snapshot: WeaponSnapshot,
@@ -94,11 +91,11 @@ export const blueSequencerFactory = (
     ),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
       _ship[5][16],
-    orbitToAction = createOrbitAction(fieldPoint, referencePoint, EASE_OUT),
+    orbitToAction = createOrbitAction(fieldPoint, referencePoint, (t) => EASE_OUT(t) ** .8),
     orbitFromAction = createOrbitAction(
       startingPoint,
       mirroredReferencePoint,
-      EASE_IN,
+      EASE_IN
     ),
     aimAction = createAimAction(
       _ship[1],

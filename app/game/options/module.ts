@@ -69,18 +69,18 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0, // Rez Save
   1, // Damage Taken
   0, // Damage Taken From Gas
-  40, // Gas
+  30, // Gas
   0.1, // Gas Cost
 
   // 6-10
-  8, // Gas Regen
+  6, // Gas Regen
   1, // Item Mixture Quality
   0.11, // Item Drop Rate
   4, // Mass
   1, // Resolve
 
   // 11-15
-  40, // HP
+  50, // HP
   3, // Regen
   1, // Spin Damage
   1, // Spin Speed
@@ -163,14 +163,14 @@ export default [
       [[8, [0.06, 0.1]], [11, [6, 70]], [16, [0, 0]]], // base overrides
       purpleSequencerFactory,
       [[
-        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 80]], [4, [2, 2]], [
+        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 60]], [4, [2, 2]], [
           5,
           [0.2, 0.3],
         ]], // wpn overrides
         purpleWeaponSequenceFactory,
         _,
         [
-          _geometry(0.06, createPrism([0.006, 0.006, 0.06], 12)),
+          defaultBulletGeometry,
           purpleBulletSequencerFactory,
           purpleWeaponSound,
         ],
@@ -221,7 +221,7 @@ export default [
       [4, 7],
     ],
     [
-      [[2, 5], 0, 1, [12, 21], [1, 7]],
+      [[2, 5], 0, 1, [12, 21], [0.2, 2]],
       [
         [0, 5, "x", [0.95, 0.2]], // Gas Cost
         [0, 16, "x", [1.05, 2.3]], // Speed
@@ -244,7 +244,7 @@ export default [
           ),
         ],
       ],
-      [[8, [0.2, 0.3]], [11, [24, 270]], [16, [0.5, 0.8]]],
+      [[8, [0.2, 0.3]], [11, [100, 500]], [16, [0.5, 0.8]]],
       blueSequencerFactory,
       [[
         [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
@@ -312,7 +312,7 @@ export default [
           createPyramid([0.11, 0.09, 0.4], 3),
         ),
       ]],
-      [[8, [0.1, 0.15]], [11, [3, 108]], [16, [1, 2]], [17, [
+      [[8, [0.1, 0.15]], [11, [8, 108]], [16, [1, 2]], [17, [
         4,
         2.5,
       ]]],
@@ -352,7 +352,7 @@ export default [
       [[8, [0.13, 0.18]], [11, [8, 87]], [16, [1, 2]]],
       yellowSequencerFactory,
       [[
-        [[3, [5, 16]], [4, [0.4, 0.4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
+        [[3, [40, 120]], [4, [0.4, 0.4]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
         yellowWeaponSequenceFactory,
         _,
         [
@@ -367,7 +367,7 @@ export default [
       [2, 4],
     ],
     [
-      [[3, 7], 0, 1, [0.4, 1], [7, 23]],
+      [[3, 7], 0, 1, [0.4, 1], [30, 65]],
       [
         [0, 10, "+", [0.07, 0.22]], // Resolve
         [0, 24, "x", [1, 1.5]], // Bullet Spread
@@ -377,5 +377,3 @@ export default [
     ],
   ],
 ] as ColorOptions[];
-
-// TODO: BulletSpeed? [0, 22, "x", [1.1, 4]],

@@ -157,6 +157,10 @@ form.onsubmit = (event: SubmitEvent) => {
         if (item[4] == 2) {
           winCollection.add(item[3]);
           winCollectionSound();
+          if (winCollection.size == 6) {
+            alert("MISSION COMPLETED");
+            location.reload();
+          }
         } else restoreSound();
         updatePlayerEquipmentSnapshots(player);
       }

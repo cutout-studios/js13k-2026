@@ -28,7 +28,10 @@ import {
 
 const _meterUpdate = (element: HTMLElement) => {
     const meters: HTMLMeterElement[] = [];
-    return (meterAttributes: [max: number, value: number][]) => {
+    return (
+      meterAttributes: [max: number, value: number][],
+      lowFactor = .15,
+    ) => {
       while (length(meters) < length(meterAttributes)) {
         meters.push(
           element.appendChild(createElement("meter")) as HTMLMeterElement,
@@ -37,7 +40,10 @@ const _meterUpdate = (element: HTMLElement) => {
       while (length(meters) > length(meterAttributes)) meters.pop()!.remove();
       doTimes(
         meters,
-        (meter, index) => [meter.max, meter.value] = meterAttributes[index],
+        (meter, index) => {
+          [meter.max, meter.value] = meterAttributes[index];
+          meter.low = meter.max * lowFactor;
+        },
       );
     };
   },

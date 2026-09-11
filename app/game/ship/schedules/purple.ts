@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// TODO: fades in and is stationary, then fires
-
 import { readHeading, readOrigin } from "~/3D";
 import { min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
@@ -54,8 +52,7 @@ export const purpleBulletSequencerFactory = (
   ]]);
 };
 
-// TODO: purple-specific fire pattern (fades in, then fires, per the TODO
-// above)
+// TODO: purple-specific fire pattern: line, then bullets
 export const purpleWeaponSequenceFactory = (
   fire: (ship: Ship) => void,
   snapshot: WeaponSnapshot,

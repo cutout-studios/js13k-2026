@@ -187,6 +187,12 @@ export const updateGame = (
     if (droppedItems[itemIndex][4] == 2) {
       winCollection.add(droppedItems[itemIndex][3]);
       winCollectionSound();
+
+      if (winCollection.size == 6) {
+            alert("MISSION COMPLETED");
+    location.reload();
+
+      }
     } else itemPickupSound(getPanFromCoordinates(playerShipObject[0]));
   });
 
@@ -277,10 +283,6 @@ export const updateGame = (
       ? (playerResourceStatus[2]++, rezLostSound())
       : rezSavedSound();
     playerResourceStatus[3] = 1;
-    if (playerResourceStatus[2] >= playerSnapshot[0]) {
-      alert("MISSION " + (winCollection.size == 6 ? "COMPLETE" : "FAILED"));
-      location.reload();
-    }
   }
 
   // remove temporary invulnerability once hp is fully restored

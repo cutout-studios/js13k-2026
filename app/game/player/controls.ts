@@ -148,8 +148,8 @@ export const checkSpaceBar = bindButton(
   },
 );
 
-export const checkEscapeKey = bindButton(
-  "Escape",
+export const checkFKey = bindButton(
+  "KeyF",
   () => menu.open ? menu.close() : (menu.showModal(), resetMenu()),
 );
 

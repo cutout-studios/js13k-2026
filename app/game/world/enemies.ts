@@ -35,6 +35,11 @@ const _enemyDeck = createDeck(length(GameOptions.slice(1))),
     [[0, -1], [0, 1], [0, 0]],
   ];
 
+const bluePosition = _enemyDeck.indexOf(2);
+
+_enemyDeck.splice(bluePosition, 1);
+_enemyDeck.push(2);
+
 export const rollEnemies = (
   wave: number,
   level: number,
@@ -63,7 +68,7 @@ export const rollEnemies = (
         [
           spread(PLAYER_X_BOUND),
           spread(PLAYER_Y_BOUND),
-          optionsIndex == 1 ? spread(1, -14) : spread(1, -18),
+          optionsIndex == 1 ? spread(1, -10) : spread(1, -18),
         ],
         true,
         ...doTimes(ships, (ship) => ship[0]),
