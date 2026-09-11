@@ -40,7 +40,7 @@ import {
   checkWKey,
 } from "./game/player/controls.ts";
 import { updateWeaponMounts } from "./game/ship/module.ts";
-import { updateGame } from "./game/update.ts";
+import { endGame, updateGame } from "./game/update.ts";
 
 const checkKeyboard = (tickLength: number) =>
   doTimes([
@@ -81,8 +81,5 @@ startClock((tickLength) => {
   updateGame(GameState, tickLength), updateHUD(GameState, tickLength);
   camera(getSceneObjects(GameState), mainCanvas);
 
-  if (GameState[0][0][4][2] >= GameState[0][0][5][0]) {
-    GameState[2] = false;
-    setTimeout(() => (alert("MISSION FAILED"), location.reload()));
-  }
+  if (GameState[0][0][4][2] >= GameState[0][0][5][0]) endGame("FAILED");
 });

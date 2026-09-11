@@ -27,6 +27,7 @@ import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
+import GameState from "./module.ts";
 import { BASE_PROPERTIES } from "./options/base.ts";
 import { defaultBulletSequencerFactory } from "./options/defaults.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
@@ -50,6 +51,11 @@ import { Game } from "./types.ts";
 import { DROP_PITY_STEP } from "./world/constants.ts";
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
+
+export const endGame = (message = "COMPLETED") => {
+  GameState[2] = false;
+  setTimeout(() => (alert("MISSION " + message), location.reload()));
+};
 
 export const updateGame = (
   game: Game,
@@ -223,10 +229,7 @@ export const updateGame = (
       winCollection.add(droppedItems[itemIndex][3]);
       winCollectionSound();
 
-      if (winCollection.size == 6) {
-        game[2] = false;
-        setTimeout(() => (alert("MISSION COMPLETED"), location.reload()));
-      }
+      if (winCollection.size == 6) endGame();
     } else itemPickupSound(getPanFromCoordinates(playerShipObject[0]));
   });
 

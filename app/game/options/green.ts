@@ -29,36 +29,52 @@ export default [
   "GREEN",
   0xA0DD27FF,
   [
-    [
-      [[], createSphere(0.20, 24)],
-      [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG],
-      [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG],
+    [ // shape: [orientation, geometry][]
+      [[], createSphere(0.20, 24)], // hull
+      [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG], // right prong
+      [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG], // left prong
     ],
-    [[11, [4, 20]], [16, [1.2, 2.5]]],
-    defaultShipSequencerFactory(() => 0),
-    [[
-      [[3, [0.07, 0.5]], [4, [2, 3]], [5, [12, 21]], [6, [0.05, 0.1]]],
-      defaultWeaponSequencerFactory,
-      [0.2, -0.08, 0.15],
+    [ // overrides
+      [11, [4, 20]], // HP
+      [16, [1.2, 2.5]], // Strafe Speed
+    ],
+    defaultShipSequencerFactory(() => 0), // sequenceFactory: no pause between passes
+    [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
-        createPyramid([0.02, 0.002, 0.015], 4),
-        defaultBulletSequencerFactory,
-        NO_OP,
+        [
+          [3, [0.07, 0.5]], // Bullet Damage
+          [4, [2, 3]], // Bullet Speed
+          [5, [12, 21]], // Bullet Rate
+          [6, [0.05, 0.1]], // Bullet Spread
+        ],
+        defaultWeaponSequencerFactory,
+        [0.2, -0.08, 0.15], // mount
+        [
+          createPyramid([0.02, 0.002, 0.015], 4),
+          defaultBulletSequencerFactory(),
+          NO_OP,
+        ], // bullet
       ],
-    ], [
-      [[3, [0.07, 0.5]], [4, [2, 3]], [5, [12, 21]], [6, [0.05, 0.1]]],
-      defaultWeaponSequencerFactory,
-      [-0.2, -0.08, 0.15],
       [
-        createPyramid([0.02, 0.002, 0.015], 4),
-        defaultBulletSequencerFactory,
-        NO_OP,
+        [
+          [3, [0.07, 0.5]], // Bullet Damage
+          [4, [2, 3]], // Bullet Speed
+          [5, [12, 21]], // Bullet Rate
+          [6, [0.05, 0.1]], // Bullet Spread
+        ],
+        defaultWeaponSequencerFactory,
+        [-0.2, -0.08, 0.15], // mount
+        [
+          createPyramid([0.02, 0.002, 0.015], 4),
+          defaultBulletSequencerFactory(),
+          NO_OP,
+        ], // bullet
       ],
-    ]],
-    [4, 7],
+    ],
+    [4, 7], // countBand
   ],
   [
-    [[2, 5], 0, 1, [12, 21], [0.2, 2]],
+    [[2, 5], 0, 1, [12, 21], [0.2, 2]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 5, "x", [0.95, 0.2]], // Gas Cost
       [0, 16, "x", [1.05, 2.3]], // Speed

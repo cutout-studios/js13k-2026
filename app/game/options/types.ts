@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { XOGeometry, XOMaterial, XOOrientation } from "~/3D";
+import { XOGeometry, XOMaterial, XOOrientation, XYZ } from "~/3D";
 import { ActionSequencer } from "~/clock";
 import { Band } from "~/common";
 
@@ -40,7 +40,7 @@ type ShipOptions = [
       fire: (ship: Ship) => void,
       snapshot: WeaponSnapshot,
     ) => ActionSequencer<Ship>,
-    mount?: XOOrientation,
+    mount?: XYZ,
     bullet?: [
       geometry: XOGeometry,
       sequenceFactory: (

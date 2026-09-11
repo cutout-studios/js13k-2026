@@ -108,29 +108,31 @@ export const enemyHitSound = createSound(
 export const enemyDestroyedSound = createSound(
   [SINE_BUFFER, [
     [[1, [0.1, 0.13], true], 0],
-    [[0, 0.5, true], 0],
-    [[0, 0.1, true], 0.06],
+    [[0, 0.32, true], 0],
+    [[0, 0.05, true], 0.06],
     [[1, 0.1], 1.5],
     [[0, 0, true], 1.5],
   ]],
   [SAWTOOTH_BUFFER, [
     [[1, [0.2, 0.3], true], 0],
-    [[0, 0.04], 0],
-    [[0, 0.02], 0.14],
+    [[0, 0.025], 0],
+    [[0, 0.01], 0.14],
     [[1, [0.06, 0.02], true], 0.01],
-    [[0, 0.01], 0.56],
+    [[0, 0.005], 0.56],
     [[0, 0], 1.5],
   ]],
   [NOISE_BUFFER, [
-    [[1, 1, true], 0],
-    [[0, 1], 0],
-    [[0, 0], 0.02],
+    [[1, [1.8, 2.3], true], 0],
+    [[0, 0.55], 0],
+    [[0, 0, false], 0.015],
   ]],
   [NOISE_BUFFER, [
-    [[0, [0.15, 0.11], true], 0],
-    [[0, 0.03, true], 0.2],
-    [[0, 0.01, true], 0.6],
-    [[0, 0], 1.15],
+    [[1, [0.4, 0.6], true], 0],
+    [[0, 0.28, true], 0],
+    [[0, 0.08, true], 0.2],
+    [[0, 0.02, true], 0.6],
+    [[1, [0.2, 0.3], true], 0.6],
+    [[0, 0, true], 1.15],
   ]],
 );
 
@@ -190,12 +192,12 @@ export const rezLostSound = createSound([NOISE_BUFFER, [
 export const rezSavedSound = createSound([SINE_BUFFER, [
   [[0, 0.5], 0],
   [[1, 0.8], 0],
-  [[1, 1.5, false], 0.07],
-  [[0, 0.05, true], 0.08],
+  [[1, 1.4, false], 0.05],
+  [[0, 0, false], 0.06],
 
   [[0, 0.6], 0.11],
   [[1, 1.2], 0.11],
-  [[1, 2.1, false], 0.21],
+  [[1, 2.1, false], 0.19],
   [[0, 0, true], 0.25],
 ]]);
 export const restoreSound = rezSavedSound;
@@ -203,27 +205,27 @@ export const restoreSound = rezSavedSound;
 export const stageCompleteSound = createSound([SINE_BUFFER, [
   [[0, 0.45], 0],
   [[1, 1.2], 0],
-  [[0, 0.1], 0.08],
+  [[0, 0, false], 0.06],
 
   [[0, 0.45], 0.09],
   [[1, 0.9], 0.09],
-  [[0, 0.1], 0.17],
+  [[0, 0, false], 0.15],
 
   [[0, 0.55], 0.18],
   [[1, 1.6], 0.18],
-  [[0, 0, true], 0.45],
+  [[0, 0, true], 0.42],
 ]], [SINE_BUFFER, [
   [[0, 0.35], 0],
   [[1, 1.8], 0],
-  [[0, 0.1], 0.08],
+  [[0, 0, false], 0.06],
 
   [[0, 0.35], 0.09],
   [[1, 1.125], 0.09],
-  [[0, 0.1], 0.17],
+  [[0, 0, false], 0.15],
 
   [[0, 0.45], 0.18],
   [[1, 3.2], 0.18],
-  [[0, 0, true], 0.45],
+  [[0, 0, true], 0.42],
 ]]);
 export const winCollectionSound = stageCompleteSound;
 
@@ -233,10 +235,59 @@ export const redWeaponSound = createSound([SQUARE_BUFFER, [
   [[0, 0], 0.14],
   [[1, [0.2, 0.5], true], 0],
 ]]);
-export const greenWeaponSound = redWeaponSound;
-export const purpleWeaponSound = redWeaponSound;
 export const blueWeaponSound = redWeaponSound;
-export const pinkWeaponSound = redWeaponSound;
-export const yellowWeaponSound = redWeaponSound;
+
+export const greenWeaponSound = createSound(
+  [createPulseBuffer(.5), [
+    [[0, 0.35], 0],
+    [[1, [2.2, 3.5]], 0],
+    [[1, [1.0, 1.8], false], 0.035],
+    [[0, 0, false], 0.035],
+  ]],
+  [NOISE_BUFFER, [
+    [[0, 0.25], 0],
+    [[1, [1.5, 2.5]], 0],
+    [[0, 0, false], 0.025],
+  ]],
+);
+export const pinkWeaponSound = greenWeaponSound;
+
+export const purpleWeaponSound = createSound(
+  [SAWTOOTH_BUFFER, [
+    [[0, 0.1], 0],
+    [[1, 0.6], 0],
+    [[0, 0.6, true], 0.15],
+    [[1, 1.8, false], 0.15],
+    [[0, 0.6], 0.5],
+    [[1, 1.8], 0.5],
+    [[1, [0.5, 0.8], true], 0.8],
+    [[0, 0, true], 1.1],
+  ]],
+  [SAWTOOTH_BUFFER, [
+    [[0, 0.4], 0.15],
+    [[1, 2.7], 0.15],
+    [[0, 0.4], 0.5],
+    [[0, 0, true], 0.9],
+  ]],
+);
+
+export const yellowWeaponSound = createSound(
+  [SINE_BUFFER, [
+    [[0, 0.6], 0],
+    [[1, 0.22], 0],
+    [[0, 0, true], 0.38],
+  ]],
+  [TRIANGLE_BUFFER, [
+    [[0, 0.35], 0],
+    [[1, 0.2], 0],
+    [[1, 0.32, false], 0.18],
+    [[0, 0, true], 0.35],
+  ]],
+  [NOISE_BUFFER, [
+    [[0, 0.18], 0],
+    [[1, 0.25], 0],
+    [[0, 0, true], 0.25],
+  ]],
+);
 export const yellowBombReadySound = errorSound;
 export const yellowBombExplodeSound = enemyDestroyedSound;

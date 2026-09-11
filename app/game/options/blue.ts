@@ -30,31 +30,36 @@ export default [
   "BLUE",
   0x29A9D4FF,
   [
-    [
-      [[], createSphere(0.52, 32)],
-      [
-        [[0, -0.30, 0.42], [X_AXIS, 0.57]],
-        createPrism([0.09, 0.09, 0.03], 16),
-      ],
+    [ // shape: [orientation, geometry][]
+      [[], createSphere(0.52, 32)], // hull
+      [[[0, -0.30, 0.42], [X_AXIS, 0.57]], createPrism([0.09, 0.09, 0.03], 16)], // gun barrel
     ],
-    [
-      [[8, [0.2, 0.3]], [11, [40, 250]], [16, [0.5, 0.8]]],
-      defaultShipSequencerFactory(_, _, (t) => EASE_OUT(t) ** .8),
+    [ // overrides
+      [8, [0.2, 0.3]], // Item Drop Rate
+      [11, [40, 250]], // HP
+      [16, [0.5, 0.8]], // Strafe Speed
+    ],
+    defaultShipSequencerFactory(_, _, (t) => EASE_OUT(t) ** .8), // sequenceFactory
+    [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
-        [[3, [7, 27]], [4, [5.5, 5.5]], [5, [.7, 1.2]]],
+        [
+          [3, [7, 27]], // Bullet Damage
+          [4, [5.5, 5.5]], // Bullet Speed
+          [5, [.7, 1.2]], // Bullet Rate
+        ],
         defaultWeaponSequencerFactory,
-        [0, -0.30, 0.42],
+        [0, -0.30, 0.42], // mount
         [
           createPrism([0.018, 0.018, 0.1], 12),
-          defaultBulletSequencerFactory,
+          defaultBulletSequencerFactory(),
           blueWeaponSound,
-        ],
+        ], // bullet
       ],
     ],
-    [1, 3],
+    [1, 3], // countBand
   ],
   [
-    [[8, 20], 1, 1, [0.7, 1.2], [3, 8]],
+    [[8, 20], 1, 1, [0.7, 1.2], [3, 8]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 11, "x", [1.1, 2.5]], // Shield
       [0, 2, "x", [0.98, 0.7]], // Damage Taken

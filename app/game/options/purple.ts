@@ -68,35 +68,44 @@ export default [
   "PURPLE",
   0x8434D4FF,
   [
-    [[[], createPyramid([0.25, 0.25, 0.25])]], // shape
-    [[8, [0.06, 0.1]], [11, [6, 70]], [16, [0, 0]]], // base overrides
-    purpleSequencerFactory,
-    [[
-      [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 60]], [4, [30, 32]], [
-        5,
-        [0.2, 0.3],
-      ]], // wpn overrides
-      defaultWeaponSequencerFactory,
-      _,
+    [[[], createPyramid([0.25, 0.25, 0.25])]], // shape: hull only
+    [ // overrides
+      [8, [0.06, 0.1]], // Item Drop Rate
+      [11, [6, 70]], // HP
+      [16, [0, 0]], // Strafe Speed
+    ],
+    purpleSequencerFactory, // sequenceFactory
+    [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
-        defaultBulletGeometry,
-        defaultBulletSequencerFactory(),
-        purpleWeaponSound,
+        [
+          [1, [0.15, 0.35]], // Bullet Crit Chance
+          [2, [2.5, 5.0]], // Bullet Crit Damage
+          [3, [4, 60]], // Bullet Damage
+          [4, [30, 32]], // Bullet Speed
+          [5, [0.2, 0.3]], // Bullet Rate
+        ],
+        defaultWeaponSequencerFactory,
+        _, // mount: none, single centered gun
+        [
+          defaultBulletGeometry,
+          defaultBulletSequencerFactory(),
+          purpleWeaponSound,
+        ], // bullet
+        [ // sight: laser
+          flattenObjects(
+            createObject(
+              [[0, 0, 30]],
+              createPrism([0.002, 0.002, 30], 6),
+            ),
+          )[1],
+          paint(0x8434D444),
+        ],
       ],
-      [ // laser sight
-        flattenObjects(
-          createObject(
-            [[0, 0, 30]],
-            createPrism([0.002, 0.002, 30], 6),
-          ),
-        )[1],
-        paint(0x8434D444),
-      ],
-    ]],
-    [3, 5],
+    ],
+    [3, 5], // countBand
   ],
   [
-    [[1, 3], 0, 1, [0.2, 0.8], [10, 100]],
+    [[1, 3], 0, 1, [0.2, 0.8], [10, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 8, "+", [0.02, 0.2]], // Item Drop rate
       [0, 19, "+", [0.005, 0.2]], // Bullet Crit Chance

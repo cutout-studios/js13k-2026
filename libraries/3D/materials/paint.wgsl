@@ -21,10 +21,8 @@ fn baseColor(fragment: vec4f, triangleIndex: u32) -> vec4f {
   // cap the rim boost
   let rim = min(pow(1 - facing, 2) * 0.8, 0.3);
   let paint = colorPalette[triangleIndex % arrayLength(&colorPalette)];
-  let clipRolloff = clamp(4.5 / fragment.w, 0, 1);
-  let alpha = paint.a * clipRolloff;
 
-  return vec4f((paint.rgb * facing + rim) * alpha, alpha);
+  return vec4f(paint.rgb * facing + rim, paint.a);
 }
 
 @fragment

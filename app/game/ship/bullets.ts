@@ -64,20 +64,19 @@ export const createBullet = (
         ,
         ,
         ,
-        [
-          [
-            ,
-            ,
-            ,
-            [
-              bulletGeometry,
-              bulletSequencerFactory,
-              bulletSound,
-            ] = [],
-          ],
-        ],
+        weaponConfigs,
       ],
     ] = GameOptions[optionsIndex],
+    [
+      ,
+      ,
+      ,
+      [
+        bulletGeometry,
+        bulletSequencerFactory,
+        bulletSound,
+      ] = [],
+    ] = weaponConfigs[weaponIndex],
     globalOrigin = readOrigin(globalCoordinates),
     effectiveSpread = round(snapshot[0]) > 1
       ? max(snapshot[6], 0.01)

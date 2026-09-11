@@ -39,6 +39,7 @@ import {
   winCollectionSound,
 } from "../game/sounds.ts";
 
+import { endGame } from "../game/update.ts";
 import {
   base,
   canvasCells,
@@ -157,10 +158,7 @@ form.onsubmit = (event: SubmitEvent) => {
         if (item[4] >= 2) {
           winCollection.add(item[3]);
           winCollectionSound();
-          if (winCollection.size == 6) {
-            alert("MISSION COMPLETED");
-            location.reload();
-          }
+          if (winCollection.size == 6) endGame();
         } else restoreSound();
         updatePlayerEquipmentSnapshots(player);
       }

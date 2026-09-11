@@ -26,7 +26,7 @@ import {
 } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
-import { Band, clamp, doTimes, repeat, spread } from "~/common";
+import { Band, clamp, doTimes, spread } from "~/common";
 import { randomPoint } from "~/random";
 
 import { isPointVisible } from "../../elements/mainCanvas.ts";
@@ -92,28 +92,20 @@ export const defaultShipSequencerFactory = (
   entryCurve = EASE_IN,
   exitCurve = EASE_OUT,
 ) =>
-(
-  _ship: Ship,
-  arcPointRange: [Band, Band, Band] = repeat(3, spread(1)) as [
-    Band,
-    Band,
-    Band,
-  ],
-) => {
+(_ship: Ship) => {
   const startingPoint = readOrigin(_ship[0][0]),
     fieldPoint = randomPoint([
       spread(PLAYER_X_BOUND),
       spread(PLAYER_Y_BOUND),
       spread(0.5, -PLAYER_AIM_Z_PLANE),
     ]),
-    referencePoint = randomPoint(arcPointRange),
     mirroredReferencePoint = addXYZ(
       startingPoint,
-      subtractXYZ(fieldPoint, referencePoint),
+      fieldPoint,
     ),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
       _ship[5][16],
-    orbitToAction = createOrbitAction(fieldPoint, referencePoint, exitCurve),
+    orbitToAction = createOrbitAction(fieldPoint, [0, 0, 0], exitCurve),
     orbitFromAction = createOrbitAction(
       startingPoint,
       mirroredReferencePoint,

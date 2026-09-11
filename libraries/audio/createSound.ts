@@ -26,7 +26,7 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
   const groupBus = api.createDynamicsCompressor();
   groupBus.connect(masterBus);
 
-  const play = (pan = 0, volume = 1) =>
+  return ((pan = 0, volume = 1) =>
     doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
       const source = new AudioBufferSourceNode(api, { buffer, loop: true }),
         ampKnob = api.createGain(),
@@ -54,9 +54,8 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
       });
 
       source.stop(time);
-    });
+    })) as unknown as Sound;
 
-  (play as unknown as Sound).definitions = definitions;
-
-  return play as unknown as Sound;
+  // (play as unknown as Sound).definitions = definitions;
+  // return play as unknown as Sound;
 };

@@ -32,12 +32,12 @@ import { Band, doTimes, flatDoTimes, repeat, spread } from "~/common";
 import {
   PLAYER_AIM_Z_PLANE,
   PLAYER_SHIP_Z_PLANE,
-} from "../../app/game/constants.ts";
+} from "../../app/game/options/base.ts";
 import GameOptions from "../../app/game/options/module.ts";
 import { setPlayerShip } from "../../app/game/player/ship.ts";
+import { updateBullets } from "../../app/game/ship/bullets.ts";
 import { createShip, getShipObjects } from "../../app/game/ship/module.ts";
 import { Ship } from "../../app/game/ship/types.ts";
-import { updateBullets } from "../../app/game/ship/bullets.ts";
 
 const canvasElement = document.getElementById("c") as HTMLCanvasElement,
   camera = createCamera();
@@ -96,7 +96,7 @@ const spawnShip = (colorIndex: number) => {
     referenceBand: [Band, Band, Band] = [readRefX(), readRefY(), readRefZ()],
     ship = createShip(colorIndex, 1, referenceBand);
 
-  scatterObjects(spawnRegion, true, ship[0]);
+  scatterObjects(spawnRegion, ship[0]);
   activeShips.push(ship);
 };
 

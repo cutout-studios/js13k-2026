@@ -121,14 +121,12 @@ export const yellowBulletSequencerFactory = (
               ),
             );
 
-            return [
+            const fragment: Bullet = [
               bulletObject,
-              defaultBulletSequencerFactory(
-                [bulletObject, createActionSequencer([[NO_OP]])],
-                8,
-                false,
-              ),
+              createActionSequencer([[NO_OP]]),
             ];
+            fragment[1] = defaultBulletSequencerFactory()(fragment, 8, false);
+            return fragment;
           }) as Bullet[];
 
         const weaponBullets = bullet[2]![2][1][1];
@@ -153,31 +151,39 @@ export default [
   "YELLOW",
   COLOR,
   [
-    [
+    [ // shape: [orientation, geometry][], 4 arms
       [[[0.19, -0.04, 0], [Z_AXIS, -0.3]], SHIP_ARM],
       [[[-0.19, -0.04, 0], [Z_AXIS, 0.3]], SHIP_ARM],
       [[[0.52, 0.02, 0], [Z_AXIS, 0.65]], SHIP_ARM],
       [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], SHIP_ARM],
     ],
-    [[8, [0.13, 0.18]], [11, [8, 87]], [16, [1, 2]]],
-    defaultShipSequencerFactory(),
-    [[
-      [[3, [40, 120]], [4, [1.5, 1.5]], [5, [0.3, 0.6]], [6, [0.10, 0.30]]],
-      defaultWeaponSequencerFactory,
-      _,
-      [
-        createSphere(0.1),
-        yellowBulletSequencerFactory,
-        yellowWeaponSound,
+    [ // overrides
+      [8, [0.13, 0.18]], // Item Drop Rate
+      [11, [8, 87]], // HP
+      [16, [1, 2]], // Strafe Speed
+    ],
+    defaultShipSequencerFactory(), // sequenceFactory
+    [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
+      [ // slot 0: bomb thrower - Bullet Damage is repurposed as fragment count, see bulletsequencerFactory below
+        [
+          [3, [40, 120]], // Bullet Damage -> fragment count
+          [4, [1.5, 1.5]], // Bullet Speed
+          [5, [0.3, 0.6]], // Bullet Rate
+          [6, [0.10, 0.30]], // Bullet Spread
+        ],
+        defaultWeaponSequencerFactory,
+        _, // mount: none, single centered gun
+        [createSphere(0.1), yellowBulletSequencerFactory, yellowWeaponSound], // bullet
       ],
-    ], [
-      [],
-      createActionSequencer([[NO_OP]]),
-    ]],
-    [2, 4],
+      [ // slot 1: fragment receiver - never fires on its own, just holds bomb shrapnel
+        [], // overrides: none, keeps default Bullet Damage of 1 per fragment
+        () => createActionSequencer([[NO_OP]]),
+      ],
+    ],
+    [2, 4], // countBand
   ],
   [
-    [[3, 7], 0, 1, [0.4, 1], [30, 65]],
+    [[3, 7], 0, 1, [0.4, 1], [30, 65]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 10, "+", [0.07, 0.22]], // Resolve
       [0, 24, "x", [1, 1.5]], // Bullet Spread

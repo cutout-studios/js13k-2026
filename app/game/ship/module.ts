@@ -26,7 +26,7 @@ import { length, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
 import { Band, doTimes, flat, repeat } from "~/common";
 
-import { BASE_PROPERTIES } from "../options/module.ts";
+import { BASE_PROPERTIES } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 

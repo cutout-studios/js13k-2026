@@ -220,19 +220,6 @@ export const getCollisionPairs = (
 
 export const scatterObjects = (
   boxDimensions: [Band, Band, Band],
-  cantOverlap: boolean,
   ...objects: XOObject[]
-) => {
-  const placedObjects: XOObject[] = [];
-  while (length(objects)) {
-    const objectToPlace = objects.pop()!;
-
-    setOrigin(objectToPlace[0], randomPoint(boxDimensions));
-
-    placedObjects.push(objectToPlace);
-
-    if (cantOverlap && length(getCollisionPairs(objects, placedObjects)[0])) {
-      objects.push(placedObjects.pop()!);
-    }
-  }
-};
+) =>
+  doTimes(objects, ([coords]) => setOrigin(coords, randomPoint(boxDimensions)));

@@ -39,31 +39,38 @@ export const redWeaponSequenceFactory = (
   ]);
 
 export default [
+  "RED",
   0xEE3030FF,
   [
-    [[
-      [_, [Z_AXIS, -1.61]],
-      createPyramid([0.11, 0.09, 0.4], 3),
-    ]],
-    [[8, [0.1, 0.15]], [11, [8, 108]], [16, [1, 2]], [17, [
-      4,
-      2.5,
-    ]]],
-    defaultShipSequencerFactory(),
-    [[
-      [[0, [2, 2]], [3, [1, 8]], [5, [0.7, 3.5]], [6, [0.02, 0.06]]],
-      redWeaponSequenceFactory,
-      _,
+    [[[_, [Z_AXIS, -1.61]], createPyramid([0.11, 0.09, 0.4], 3)]], // shape: hull only
+    [ // overrides
+      [8, [0.1, 0.15]], // Item Drop Rate
+      [11, [8, 108]], // HP
+      [16, [1, 2]], // Strafe Speed
+      [17, [4, 2.5]], // Aim Time
+    ],
+    defaultShipSequencerFactory(), // sequenceFactory
+    [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
-        createPyramid([0.008, 0.008, 0.1], 4),
-        defaultBulletSequencerFactory(),
-        redWeaponSound,
+        [
+          [0, [2, 2]], // Bullet Count
+          [3, [1, 8]], // Bullet Damage
+          [5, [0.7, 3.5]], // Bullet Rate
+          [6, [0.02, 0.06]], // Bullet Spread
+        ],
+        redWeaponSequenceFactory,
+        _, // mount: none, single centered gun
+        [
+          createPyramid([0.008, 0.008, 0.1], 4),
+          defaultBulletSequencerFactory(),
+          redWeaponSound,
+        ], // bullet
       ],
-    ]],
-    [3, 6],
+    ],
+    [3, 6], // countBand
   ],
   [
-    [[2, 4], 0, 2, [2, 4], [2, 12]],
+    [[2, 4], 0, 2, [2, 4], [2, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 21, "x", [1.25, 3.5]], // Bullet Damage
       [0, 4, "+", [3, 15]], // Gas

@@ -15,15 +15,13 @@
  */
 
 import { createObject, XOOrientation } from "~/3D";
-import { NO_OP } from "~/alias";
-import { ActionSequencer, createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
 
+import { BASE_PROPERTIES } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
-import { BASE_PROPERTIES } from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
+import { createBullet } from "./bullets.ts";
 import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
-import { createBullet } from "../weapons/bullets.ts";
 
 export const createWeapon = (
   optionsIndex: number,
@@ -38,8 +36,7 @@ export const createWeapon = (
     level,
   ) as WeaponSnapshot,
   weaponSequenceFactory = (GameOptions[optionsIndex][2][3][weaponIndex] ??
-    GameOptions[optionsIndex][2][3][0])[1] ??
-    defaultWeaponSequenceFactory,
+    GameOptions[optionsIndex][2][3][0])[1],
   sight = (GameOptions[optionsIndex][2][3][weaponIndex] ??
     GameOptions[optionsIndex][2][3][0])[4],
 ): Weapon => {

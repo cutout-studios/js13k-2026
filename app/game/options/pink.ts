@@ -31,25 +31,36 @@ export default [
   "PINK",
   0xD4349FFF,
   [
-    [[[], createSphere(0.10, 20)]],
-    [[8, [0.02, 0.04]], [11, [1, 12]], [16, [0.5, 0.9]]],
-    defaultShipSequencerFactory,
-    [[
-      [[3, [1, 8]], [4, [1, 2]], [5, [0.7, 1.5]], [6, [0.25, 0.5]]],
-      defaultWeaponSequencerFactory,
-      _,
+    [[[], createSphere(0.10, 20)]], // shape: hull only
+    [ // overrides
+      [8, [0.02, 0.04]], // Item Drop Rate
+      [11, [1, 12]], // HP
+      [16, [0.5, 0.9]], // Strafe Speed
+    ],
+    defaultShipSequencerFactory(), // sequenceFactory
+    [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
-        createSphere(0.03),
-        defaultBulletSequencerFactory(
-          repeat(3, spread(0.2)) as [Band, Band, Band],
-        ),
-        pinkWeaponSound,
+        [
+          [3, [1, 8]], // Bullet Damage
+          [4, [1, 2]], // Bullet Speed
+          [5, [0.7, 1.5]], // Bullet Rate
+          [6, [0.25, 0.5]], // Bullet Spread
+        ],
+        defaultWeaponSequencerFactory,
+        _, // mount: none, single centered gun
+        [
+          createSphere(0.03),
+          defaultBulletSequencerFactory(
+            repeat(3, spread(0.2)) as [Band, Band, Band],
+          ),
+          pinkWeaponSound,
+        ], // bullet
       ],
-    ]],
-    [9, 16],
+    ],
+    [9, 16], // countBand
   ],
   [
-    [[0.5, 2], 0, 9, [0.3, 0.9], [1, 4]],
+    [[0.5, 2], 0, 9, [0.3, 0.9], [1, 4]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 7, "x", [1.1, 2.2]], // Item Mixture Quality
       [0, 18, "+", [1, 3]], // Bullet Count
