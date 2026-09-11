@@ -151,7 +151,7 @@ export default [
   "YELLOW",
   COLOR,
   [
-    [ // shape: [orientation, geometry][], 4 arms
+    [ // shape: [orientation, geometry, material][], 4 arms
       [[[0.19, -0.04, 0], [Z_AXIS, -0.3]], SHIP_ARM],
       [[[-0.19, -0.04, 0], [Z_AXIS, 0.3]], SHIP_ARM],
       [[[0.52, 0.02, 0], [Z_AXIS, 0.65]], SHIP_ARM],

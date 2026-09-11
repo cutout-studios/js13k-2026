@@ -28,7 +28,11 @@ import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
 import GameState from "./module.ts";
-import { BASE_PROPERTIES, ENEMY_FADE_TIME, ENEMY_FADE_RATIO } from "./options/base.ts";
+import {
+  BASE_PROPERTIES,
+  ENEMY_FADE_RATIO,
+  ENEMY_FADE_TIME,
+} from "./options/base.ts";
 import { defaultBulletSequencerFactory } from "./options/defaults.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";

@@ -30,9 +30,12 @@ export default [
   "BLUE",
   0x29A9D4FF,
   [
-    [ // shape: [orientation, geometry][]
+    [ // shape: [orientation, geometry, material][]
       [[], createSphere(0.52, 32)], // hull
-      [[[0, -0.30, 0.42], [X_AXIS, 0.57]], createPrism([0.09, 0.09, 0.03], 16)], // gun barrel
+      [
+        [[0, -0.30, 0.42], [X_AXIS, 0.57]],
+        createPrism([0.09, 0.09, 0.03], 16),
+      ], // gun barrel
     ],
     [ // overrides
       [8, [0.2, 0.3]], // Item Drop Rate

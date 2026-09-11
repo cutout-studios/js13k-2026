@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import {
-  createObject,
-  createPaintMaterialWithPalette as paint,
-  flattenObjects,
-  XOObject,
-} from "~/3D";
+import { createPaintMaterialWithPalette as paint } from "~/3D";
+import { createObject, flattenObjects, XOObject } from "~/3D";
 import { round } from "~/alias";
 import { doTimes, flat, sum } from "~/common";
 
@@ -53,7 +49,8 @@ export const updatePlayerEquipmentSnapshots = (
     ) as [WeaponSnapshot, WeaponSnapshot],
     equippedItemObjects: XOObject[] = doTimes(
       GameOptions[0][2][0],
-      (geometry) => createObject(...geometry, paint(0xFFFFFFFF)),
+      ([orientation, geometry, material]) =>
+        createObject(orientation, geometry, (material ?? paint)(0xFFFFFFFF)),
     );
 
   // +1kg per default item
@@ -80,11 +77,13 @@ export const updatePlayerEquipmentSnapshots = (
   });
 
   doTimes(4, (index: number) => {
-    const colorID = equippedItems[index]?.[3] ?? 0;
+    const colorID = equippedItems[index]?.[3] ?? 0,
+      [orientation, geometry, material] = GameOptions[0][2][0][index];
 
     equippedItemObjects[index] = createObject(
-      ...GameOptions[0][2][0][index],
-      paint(GameOptions[colorID][1]),
+      orientation,
+      geometry,
+      (material ?? paint)(GameOptions[colorID][1]),
     );
 
     if (index > 1) return; // only WING (L)/WING (R) slots carry a weapon

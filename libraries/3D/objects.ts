@@ -15,14 +15,9 @@
  */
 
 import { abs, cos, F32, hypot, length, max, sin /* PI */ } from "~/alias";
-import { Band, clamp, doTimes, flatDoTimes, repeat } from "~/common";
+import { Band, clamp, doTimes, flat, flatDoTimes, repeat } from "~/common";
 import { randomPoint } from "~/random";
-import {
-  COORDINATE_SIDE_LENGTH,
-  RGBA_LENGTH,
-  XYZ_LENGTH,
-  Y_AXIS,
-} from "./constants.ts";
+import { COORDINATE_SIDE_LENGTH, XYZ_LENGTH, Y_AXIS } from "./constants.ts";
 
 import {
   createCoordinates,
@@ -123,10 +118,7 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
         flatDoTimes(
           objects,
           ([, [, verticies = []], [, data = repeat(4, 1)] = []]) =>
-            doTimes(
-              length(verticies) / XYZ_LENGTH * RGBA_LENGTH,
-              (index: number) => data[index % length(data)],
-            ),
+            flat(...repeat(length(verticies) / XYZ_LENGTH, data)),
         ),
       ),
     ),

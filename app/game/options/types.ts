@@ -28,7 +28,11 @@ export type ColorOptions = [
 ];
 
 type ShipOptions = [
-  shape: [orientation: XOOrientation, geometry: XOGeometry][],
+  shape: [
+    orientation: XOOrientation,
+    geometry: XOGeometry,
+    material?: (color: number) => XOMaterial,
+  ][],
   overrides: BaseStatOverride[],
   sequenceFactory: (
     ship: Ship,

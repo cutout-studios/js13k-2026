@@ -51,7 +51,9 @@ export const createShip = (
 
   const ship: Ship = [
     flattenObjects(
-      ...shapes.map((args) => createObject(...args, paint(value))),
+      ...shapes.map(([orientation, geometry, material]) =>
+        createObject(orientation, geometry, (material ?? paint)(value))
+      ),
     ),
     repeat(3, 0) as XYZ,
     doTimes(

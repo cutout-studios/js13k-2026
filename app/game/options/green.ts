@@ -29,7 +29,7 @@ export default [
   "GREEN",
   0xA0DD27FF,
   [
-    [ // shape: [orientation, geometry][]
+    [ // shape: [orientation, geometry, material][]
       [[], createSphere(0.20, 24)], // hull
       [[[0.2, -0.08, 0.15], [[0, 1, -1], 1.25]], GREEN_PRONG], // right prong
       [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG], // left prong
