@@ -3,7 +3,6 @@
 ## For draft submission
 
 - Fix Purple's Weapon
-- Wire up Bullet Speed
 
 ## Likely after some code golfing:
 
