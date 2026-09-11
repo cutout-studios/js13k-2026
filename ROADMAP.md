@@ -15,7 +15,7 @@
 - Highlight dropped items in the field with #ff0 pyramids = rank
 - Further tweak the patrons' profile.
 
-## Director's cut, if any:
+## Director's cut, [if any](./RETRO.md):
 
 - Major refactoring, this codebase is actively driving me insane.
 - Particle effects: ship thrusters, explosion effects
