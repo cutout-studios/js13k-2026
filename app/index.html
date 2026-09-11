@@ -3,6 +3,20 @@
 html {
   background: #000;
 }
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: .15;
+  background: radial-gradient(#8434d4,#0000 65%);
+  animation: neb 90s infinite alternate;
+}
+@keyframes neb {
+  to {
+    filter: hue-rotate(120deg);
+  }
+}
 html,
 body,
 body * {
