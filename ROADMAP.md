@@ -13,6 +13,7 @@
 - Balancing: I think things should just kind be cracked from the get go, so you
   know it works lmao
 - Highlight dropped items in the field with #ff0 pyramids = rank
+- Further tweak the patrons' profile.
 
 ## Director's cut, if any:
 
