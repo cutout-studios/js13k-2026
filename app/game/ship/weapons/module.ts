@@ -42,7 +42,8 @@ export const createWeapon = (
     GameOptions[optionsIndex][2][3][0])[2],
   snapshot = levelRollOverrides(
     BASE_PROPERTIES.slice(18),
-    GameOptions[optionsIndex][2][3][0][0],
+    (GameOptions[optionsIndex][2][3][weaponIndex] ??
+      GameOptions[optionsIndex][2][3][0])[0],
     level,
   ) as WeaponSnapshot,
   weaponSequenceFactory = (GameOptions[optionsIndex][2][3][weaponIndex] ??

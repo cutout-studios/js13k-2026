@@ -29,7 +29,7 @@ import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
 // particles: cut for now - see particles.ts
 // import { createBurst, updateParticles } from "./particles.ts";
-import { BASE_PROPERTIES } from "./options/module.ts";
+import /* GameOptions, */ { BASE_PROPERTIES } from "./options/module.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { updateWeaponMounts } from "./ship/module.ts";
@@ -102,9 +102,16 @@ export const updateGame = (
           ),
           readOrigin(shipCoordinates)[2] / 18,
         );
-        resources[0] +=
+        const damageDealt =
           (random() < critChance ? bulletDamage * critDamage : bulletDamage) *
-          (playerSnapshot[10] * (1 + playerResourceStatus[0]));
+          (playerSnapshot[10] * (1 + playerResourceStatus[2]));
+        resources[0] += damageDealt;
+        // const maxHp = enemyShips[shipIndex][5][11]; // COMBAT LOG
+        // console.log( // COMBAT LOG - comment out this line to disable
+        //   `PLAYER -> ${GameOptions[enemyShips[shipIndex][6]][0]}:`,
+        //   damageDealt.toFixed(2),
+        //   `HP ${(maxHp - resources[0]).toFixed(1)}/${maxHp}`,
+        // );
 
         if (!resources[4]) { // flash a complementary color on hit
           resources[4] = 1;
@@ -123,60 +130,80 @@ export const updateGame = (
   );
 
   if (!playerResourceStatus[3]) { // skip enemy bullets while the player is invulnerable
-    doTimes(enemyShips, ([enemyShipObject, , weapons]) => {
-      doTimes(
-        weapons,
-        ([, bullets, , [, critChance, critDamage, bulletDamage]]) => {
-          const [hitIndicies] = getCollisionPairs(bullets[1], [
-            playerShipObject,
-          ]);
+    doTimes(
+      enemyShips,
+      ([enemyShipObject, , weapons /*, , , , optionsIndex */]) => {
+        doTimes(
+          weapons,
+          (
+            [, bullets, , [, critChance, critDamage, bulletDamage]],
+            // weaponIndex: number,
+          ) => {
+            const [hitIndicies] = getCollisionPairs(bullets[1], [
+              playerShipObject,
+            ]);
+            // const attacker = // COMBAT LOG - comment out this line to disable
+            //   `${GameOptions[optionsIndex][0]}#${weaponIndex} -> PLAYER:`;
 
-          doTimes(hitIndicies, (bulletIndex: number) => {
-            const baseDamage = random() < critChance
-              ? bulletDamage * critDamage
-              : bulletDamage;
+            doTimes(hitIndicies, (bulletIndex: number) => {
+              const baseDamage = random() < critChance
+                ? bulletDamage * critDamage
+                : bulletDamage;
 
-            if (playerResourceStatus[4]) {
-              playerSpinCounterSound(
+              if (playerResourceStatus[4]) {
+                playerSpinCounterSound(
+                  getPanFromCoordinates(playerShipObject[0]),
+                );
+                const bullet = bullets[0][bulletIndex],
+                  targetPosition = readOrigin(enemyShipObject[0]);
+
+                aimObject(bullet[0], targetPosition);
+
+                bullet[1] = defaultBulletSequencerFactory(bullet, 8, false);
+
+                const fauxSnapshot = BASE_PROPERTIES.slice(
+                  18,
+                ) as WeaponSnapshot;
+                fauxSnapshot[3] = baseDamage * playerSnapshot[13];
+
+                playerWeapons.push(
+                  [
+                    createObject(),
+                    [[bullet], [bullet[0]]],
+                    createActionSequencer([[NO_OP]]),
+                    fauxSnapshot,
+                    0,
+                  ] as Weapon,
+                );
+
+                // console.log(attacker, "COUNTERED"); // COMBAT LOG
+
+                return;
+              }
+
+              playerHitSound(
                 getPanFromCoordinates(playerShipObject[0]),
               );
-              const bullet = bullets[0][bulletIndex],
-                targetPosition = readOrigin(enemyShipObject[0]);
 
-              aimObject(bullet[0], targetPosition);
+              const totalDamage = baseDamage * playerSnapshot[2];
 
-              bullet[1] = defaultBulletSequencerFactory(bullet, 8, false);
+              playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
+              playerResourceStatus[1] += totalDamage * playerSnapshot[3];
 
-              const fauxSnapshot = BASE_PROPERTIES.slice(18) as WeaponSnapshot;
-              fauxSnapshot[3] = baseDamage * playerSnapshot[13];
+              // console.log( // COMBAT LOG - comment out this line to disable
+              //   attacker,
+              //   totalDamage.toFixed(2),
+              //   `HP ${
+              //     (playerSnapshot[11] - playerResourceStatus[0]).toFixed(1)
+              //   }/${playerSnapshot[11]}`,
+              // );
+            });
 
-              playerWeapons.push(
-                [
-                  createObject(),
-                  [[bullet], [bullet[0]]],
-                  createActionSequencer([[NO_OP]]),
-                  fauxSnapshot,
-                  0,
-                ] as Weapon,
-              );
-
-              return;
-            }
-
-            playerHitSound(
-              getPanFromCoordinates(playerShipObject[0]),
-            );
-
-            const totalDamage = baseDamage * playerSnapshot[2];
-
-            playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
-            playerResourceStatus[1] += totalDamage * playerSnapshot[3];
-          });
-
-          spliceTable(bullets, hitIndicies);
-        },
-      );
-    });
+            spliceTable(bullets, hitIndicies);
+          },
+        );
+      },
+    );
   }
 
   // pick up dropped items

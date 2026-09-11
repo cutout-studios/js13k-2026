@@ -47,7 +47,7 @@ if (IS_DEV_TOOL) {
   await bundle();
   logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
 
-  await bundle({ minify: false, sourcemap: "inline" });
+  // await bundle({ minify: false, sourcemap: "inline" });
 }
 
 await new Deno.Command("open", {

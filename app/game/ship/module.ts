@@ -86,9 +86,6 @@ export const getShipObjects = (
   [shipObject, , weapons, , damages, , optionsIndex]: Ship,
 ): XOObject[][] =>
   flat(
-    // damages[3] is an enemy-only corpse flag (see update.ts's cleanup) -
-    // for the player it means invulnerable instead, which the blink in
-    // getSceneObjects handles separately, so don't hide the hull here too
     optionsIndex && damages[3]
       ? []
       : flat([[shipObject]], doTimes(weapons, ([object]) => [object])),

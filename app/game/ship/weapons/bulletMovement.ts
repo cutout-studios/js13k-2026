@@ -23,10 +23,6 @@ import { createPullAction } from "../../actions.ts";
 import { BULLET_MAX_RANGE, ENEMY_BULLET_RAMP_TIME } from "../../constants.ts";
 import { Bullet } from "../types.ts";
 
-// used by ships that haven't been given their own {color}BulletSequencerFactory
-// (see ship/schedules/*.ts) - a straight shot with no jitter. kept in its own
-// leaf module (no GameOptions import) since ship/schedules/*.ts files need to
-// import this without creating a cycle back through options/module.ts
 export const defaultBulletSequencerFactory = (
   [[coordinates]]: Bullet,
   speed: number,
