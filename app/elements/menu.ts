@@ -154,7 +154,7 @@ form.onsubmit = (event: SubmitEvent) => {
       if (item) {
         spliceTable([inventory], detail);
         inventory.push(item);
-        if (item[4] == 2) {
+        if (item[4] >= 2) {
           winCollection.add(item[3]);
           winCollectionSound();
           if (winCollection.size == 6) {

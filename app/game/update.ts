@@ -223,7 +223,7 @@ export const updateGame = (
   doTimes(toPickUp, (itemIndex: number) => {
     setItemInFrame(droppedItems[itemIndex]);
     inventory.push(droppedItems[itemIndex]);
-    if (droppedItems[itemIndex][4] == 2) {
+    if (droppedItems[itemIndex][4] >= 2) {
       winCollection.add(droppedItems[itemIndex][3]);
       winCollectionSound();
 
