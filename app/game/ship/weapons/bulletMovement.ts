@@ -15,26 +15,29 @@
  */
 
 import { readHeading, readOrigin } from "~/3D";
-import { min, NO_OP } from "~/alias";
+import { min } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
-import { doTimes } from "~/common";
 
 import { isPointVisible } from "../../../elements/mainCanvas.ts";
-
-import { createAimAction, createPullAction } from "../../actions.ts";
+import { createPullAction } from "../../actions.ts";
 import { BULLET_MAX_RANGE, ENEMY_BULLET_RAMP_TIME } from "../../constants.ts";
-import { getPlayerShip } from "../../player/ship.ts";
+import { Bullet } from "../types.ts";
 
-import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
-
-export const purpleBulletSequencerFactory = (
+// used by ships that haven't been given their own {color}BulletSequencerFactory
+// (see ship/schedules/*.ts) - a straight shot with no jitter. kept in its own
+// leaf module (no GameOptions import) since ship/schedules/*.ts files need to
+// import this without creating a cycle back through options/module.ts
+export const defaultBulletSequencerFactory = (
   [[coordinates]]: Bullet,
   speed: number,
+  isEnemy: boolean,
 ): ActionSequencer<Bullet> => {
   const pullAction = createPullAction(
     readHeading(coordinates),
     speed,
-    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
+    isEnemy
+      ? (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
+      : () => 1,
   );
 
   return createActionSequencer([[
@@ -43,44 +46,9 @@ export const purpleBulletSequencerFactory = (
 
       const newOrigin = readOrigin(coordinates);
 
-      // cull once it's passed the camera, out past the play field, or
-      // drifted outside the visible frustum
       return newOrigin[2] >= 0 ||
         newOrigin[2] < -BULLET_MAX_RANGE ||
         !isPointVisible(newOrigin);
     },
   ]]);
-};
-
-// TODO: purple-specific fire pattern: line, then bullets
-export const purpleWeaponSequenceFactory = (
-  fire: (ship: Ship) => void,
-  snapshot: WeaponSnapshot,
-): ActionSequencer<Ship> =>
-  createActionSequencer([
-    [NO_OP, 1 / snapshot[5]],
-    [fire],
-  ]);
-
-export const purpleSequencerFactory = (
-  _ship: Ship,
-) => {
-  const aimAction = createAimAction(
-      _ship[1],
-      () => readOrigin(getPlayerShip()[0][0]),
-      () => _ship[5][17],
-    ),
-    fireWeapons = (tickLength: number) => {
-      const origin = readOrigin(_ship[0][0]);
-
-      return isPointVisible(origin) &&
-        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
-    };
-
-  return createActionSequencer([
-    [(_ship: Ship, ...args) => {
-      aimAction(_ship[0], ...args);
-      fireWeapons(args[0]);
-    }],
-  ]);
 };

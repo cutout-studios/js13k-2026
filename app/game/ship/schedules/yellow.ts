@@ -23,6 +23,7 @@ import {
   readHeading,
   readOrigin,
   subtractXYZ,
+  XOGeometry,
 } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
@@ -51,11 +52,11 @@ import { getPlayerShip } from "../../player/ship.ts";
 import { errorSound, yellowBombExplodeSound } from "../../sounds.ts";
 
 import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
-import { defaultBulletSequencerFactory } from "../weapons/bullets.ts";
+import { defaultBulletSequencerFactory } from "../weapons/bulletMovement.ts";
 
 export const yellowBulletSequencerFactory = (
   [[coordinates]]: Bullet,
-  speed: number
+  speed: number,
 ): ActionSequencer<Bullet> => {
   const pullAction = createPullAction(
     readHeading(coordinates),
@@ -102,11 +103,17 @@ export const yellowBulletSequencerFactory = (
         readOrigin(bullet[0][0])[2] / 14,
       );
 
-      const bullets = doTimes(bullet[2]![2][0][3][3], () => {
-          const bulletObject = createObject([readOrigin(bullet[0][0])], [
-            0.01,
-            ...createSphere(0.01),
-          ], paint(0xF4AD3266));
+      // shared across every fragment - geometry/material are cached by
+      // object reference, so creating one fresh per fragment (40-120 of
+      // them at once) was building that many GPU pipelines in one frame
+      const fragmentGeometry = [0.01, ...createSphere(0.01)] as XOGeometry,
+        fragmentMaterial = paint(0xF4AD3266),
+        bullets = doTimes(bullet[2]![2][0][3][3], () => {
+          const bulletObject = createObject(
+            [readOrigin(bullet[0][0])],
+            fragmentGeometry,
+            fragmentMaterial,
+          );
 
           aimObject(bulletObject, randomDirection());
 
@@ -133,8 +140,8 @@ export const yellowWeaponSequenceFactory = (
   snapshot: WeaponSnapshot,
 ): ActionSequencer<Ship> =>
   createActionSequencer([
-    [fire],
     [NO_OP, 1 / snapshot[5]],
+    [fire],
   ]);
 
 export const yellowSequencerFactory = (

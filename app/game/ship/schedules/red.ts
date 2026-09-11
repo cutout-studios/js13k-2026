@@ -70,10 +70,10 @@ export const redWeaponSequenceFactory = (
   snapshot: WeaponSnapshot,
 ): ActionSequencer<Ship> =>
   createActionSequencer([
+    [NO_OP, 0.85 / snapshot[5]],
     [fire],
     [NO_OP, 0.15 / snapshot[5]],
     [fire],
-    [NO_OP, 0.85 / snapshot[5]],
   ]);
 
 export const redSequencerFactory = (

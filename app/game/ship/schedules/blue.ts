@@ -71,8 +71,8 @@ export const blueWeaponSequenceFactory = (
   snapshot: WeaponSnapshot,
 ): ActionSequencer<Ship> =>
   createActionSequencer([
-    [fire],
     [NO_OP, 1 / snapshot[5]],
+    [fire],
   ]);
 
 export const blueSequencerFactory = (

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createObject, XOOrientation } from "~/3D";
+import { createObject, localize, XOOrientation } from "~/3D";
 import { NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
@@ -50,13 +50,23 @@ export const createWeapon = (
   weaponSequenceFactory = (GameOptions[optionsIndex][2][3][weaponIndex] ??
     GameOptions[optionsIndex][2][3][0])[1] ??
     defaultWeaponSequenceFactory,
-): Weapon => [
-  createObject([mount] as XOOrientation),
-  [[], []],
-  weaponSequenceFactory(fireWeapon(weaponIndex), snapshot),
-  snapshot,
-  optionsIndex,
-];
+  sight = (GameOptions[optionsIndex][2][3][weaponIndex] ??
+    GameOptions[optionsIndex][2][3][0])[4],
+): Weapon => {
+  const object = createObject([mount] as XOOrientation, sight?.[0], sight?.[1]),
+    localMount = object[0],
+    fire = weaponSequenceFactory(fireWeapon(weaponIndex), snapshot);
+
+  return [
+    object,
+    [[], []],
+    (ship, ...args) => (
+      object[0] = localize(localMount, ship[0][0]), fire(ship, ...args)
+    ),
+    snapshot,
+    optionsIndex,
+  ];
+};
 
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   const [, , weapons, , resources, shipSnapshot] = ship,

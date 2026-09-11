@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import {
+  createPaintMaterialWithPalette as paint,
   createPrism,
   createPyramid,
   createSphere,
@@ -105,7 +106,11 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
 ];
 
 const GREEN_PRONG = _geometry(0.12, createPyramid([0.065, 0.065, 0.095], 12)),
-  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15]));
+  YELLOW_ARM = _geometry(0.32, createPrism([0.2, 0.012, 0.15])),
+  // purple's laser sight: a very thin, very long sliver jutting out of the
+  // mount so incoming fire is telegraphed regardless of range
+  PURPLE_SIGHT = _geometry(0.002, createPrism([0.002, 0.002, 30], 6)),
+  PURPLE_SIGHT_MATERIAL = paint(0x8434D444);
 
 export default [
   [ // player
@@ -159,11 +164,11 @@ export default [
     "PURPLE",
     0x8434D4FF,
     [
-      [[[], _geometry(0.5, createPyramid([0.25, 0.25, 0.125]))]], // shape
+      [[[], _geometry(0.5, createPyramid([0.25, 0.25, 0.25]))]], // shape
       [[8, [0.06, 0.1]], [11, [6, 70]], [16, [0, 0]]], // base overrides
       purpleSequencerFactory,
       [[
-        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 60]], [4, [2, 2]], [
+        [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 60]], [4, [30, 32]], [
           5,
           [0.2, 0.3],
         ]], // wpn overrides
@@ -174,6 +179,7 @@ export default [
           purpleBulletSequencerFactory,
           purpleWeaponSound,
         ],
+        [PURPLE_SIGHT, PURPLE_SIGHT_MATERIAL],
       ]],
       [3, 5],
     ],

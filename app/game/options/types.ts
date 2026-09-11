@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { XOGeometry, XOOrientation } from "~/3D";
+import { XOGeometry, XOMaterial, XOOrientation } from "~/3D";
 import { ActionSequencer } from "~/clock";
 import { Band } from "~/common";
 
@@ -50,6 +50,7 @@ type ShipOptions = [
       ) => ActionSequencer<Bullet>,
       sound?: (pan: number, volume: number) => void,
     ],
+    sight?: [geometry: XOGeometry, material?: XOMaterial],
   ][],
   countBand: Band,
 ];

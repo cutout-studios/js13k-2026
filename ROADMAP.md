@@ -1,9 +1,5 @@
 # TODOs
 
-## For draft submission
-
-- Fix Purple's Weapon
-
 ## Likely after some code golfing:
 
 - Balancing: I think things should just kind be cracked from the get go, so you know it works lmao
@@ -13,7 +9,6 @@
 - Comment out devtools introspection
 
 - Bullets remain after an enemy dies (!)
-- Enemies should shake when hit
 - Highlight dropped items in the field with #ff0 pyramids = rank
 - At least 2 more sounds: "fizz" for green & pink bullets, prolonged laser, for purple
 

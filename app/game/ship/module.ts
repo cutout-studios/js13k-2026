@@ -75,11 +75,12 @@ export const createShip = (
 };
 
 export const getShipObjects = (
-  [shipObject, , weapons]: Ship,
+  [shipObject, , weapons, , damages]: Ship,
 ): XOObject[][] =>
   flat(
-    [[shipObject]],
-    doTimes(weapons, ([object]) => [object]),
+    damages[3]
+      ? []
+      : flat([[shipObject]], doTimes(weapons, ([object]) => [object])),
     doTimes(weapons, ([, [, bullets]]) => bullets),
   );
 

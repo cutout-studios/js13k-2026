@@ -72,7 +72,10 @@ export const updateGame = (
 
   // -- update everything in the game
   doTimes(flat([playerShip], enemyShips), (ship) => {
-    ship[3](ship, tickLength);
+    // dead enemies (ship[6] truthy, damages[3] used as a corpse flag - see
+    // cleanup below) stop acting/firing, but their already-fired bullets
+    // still fly and get to hit the player
+    ship[6] && ship[4][3] || ship[3](ship, tickLength);
     updateBullets(ship, tickLength);
   });
   doTimes(droppedItems, (drop) => drop[1](drop, tickLength));
@@ -88,7 +91,9 @@ export const updateGame = (
 
       doTimes(hitIndicies, (_, index: number) => {
         const shipIndex = shipIndicies[index],
-          shipCoordinates = enemyShips[shipIndex][0][0];
+          body = enemyShips[shipIndex][0],
+          resources = enemyShips[shipIndex][4],
+          shipCoordinates = body[0];
 
         enemyHitSound(
           getPanFromCoordinates(
@@ -97,9 +102,20 @@ export const updateGame = (
           ),
           readOrigin(shipCoordinates)[2] / 18,
         );
-        enemyShips[shipIndex][4][0] +=
+        resources[0] +=
           (random() < critChance ? bulletDamage * critDamage : bulletDamage) *
           (playerSnapshot[10] * (1 + playerResourceStatus[0]));
+
+        if (!resources[4]) { // flash a complementary color on hit
+          resources[4] = 1;
+          const original = body[2]!;
+          body[2] = [
+            original[0],
+            original[1].map((v, i) => i % 4 == 3 ? v : 1 - v),
+            original[2],
+          ];
+          setTimeout(() => (body[2] = original, resources[4] = 0), 80);
+        }
       });
 
       return spliceTable(bullets, hitIndicies);
@@ -204,33 +220,43 @@ export const updateGame = (
       [ships],
       flatDoTimes(
         ships,
-        ([[coordinates], , , , damages, snapshot, optionsIndex], index) => {
+        (
+          [[coordinates], , weapons, , damages, snapshot, optionsIndex],
+          index,
+        ) => {
           if (damages[0] < snapshot[11]) return [];
 
-          enemyDestroyedSound(
-            getPanFromCoordinates(coordinates),
-            readOrigin(coordinates)[2] / 18,
-          );
-          // particles: cut for now - see particles.ts
-          // createBurst(
-          //   readOrigin(coordinates),
-          //   8,
-          //   [1, 2],
-          //   [0.2, 0.4],
-          //   0xFFEE99FF,
-          //   0x99220000,
-          // );
+          if (!damages[3]) { // first tick dead - damages[3] doubles as a corpse flag
+            damages[3] = 1;
+            enemyDestroyedSound(
+              getPanFromCoordinates(coordinates),
+              readOrigin(coordinates)[2] / 18,
+            );
+            // particles: cut for now - see particles.ts
+            // createBurst(
+            //   readOrigin(coordinates),
+            //   8,
+            //   [1, 2],
+            //   [0.2, 0.4],
+            //   0xFFEE99FF,
+            //   0x99220000,
+            // );
 
-          if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
-            world[4] = 0;
-            const item = createItem(optionsIndex, _, progress[0]);
-            setOrigin(item[0][0], readOrigin(coordinates));
-            droppedItems.push(item);
-          } else {
-            world[4]++;
+            if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
+              world[4] = 0;
+              const item = createItem(optionsIndex, _, progress[0]);
+              setOrigin(item[0][0], readOrigin(coordinates));
+              droppedItems.push(item);
+            } else {
+              world[4]++;
+            }
           }
 
-          return [index];
+          // keep the corpse around (inert, per the check above) until its
+          // already-fired bullets are gone, instead of yanking them mid-flight
+          return weapons.reduce((n, [, [b]]) => n + length(b), 0)
+            ? []
+            : [index];
         },
       ),
     );
@@ -272,7 +298,8 @@ export const updateGame = (
   // restore hp
   playerResourceStatus[0] = max(
     0,
-    playerResourceStatus[0] - playerSnapshot[12] * tickLength,
+    playerResourceStatus[0] -
+      playerSnapshot[12] * tickLength * (playerResourceStatus[3] ? 5 : 1),
   );
 
   // if hp is depleted, reduce rez by one, trigger temporary invulnerability
@@ -293,7 +320,11 @@ export const updateGame = (
     playerResourceStatus[1] - playerSnapshot[6] * tickLength,
   );
 
-  if (length(activeEnemyGroups)) return;
+  // corpses (damages[3]) only stick around for their lingering bullets, so
+  // don't let them hold up the next wave
+  if (flat(...activeEnemyGroups).some(([, , , , damages]) => !damages[3])) {
+    return;
+  }
 
   // -- update game progress
   if (progress[1] >= progress[2]) { // advance to the next level
@@ -306,5 +337,7 @@ export const updateGame = (
     progress[1]++;
   }
 
-  world[0] = rollEnemies(progress[1], progress[0]);
+  // keep any lingering corpse groups around alongside the freshly rolled
+  // wave, instead of cutting their bullets off
+  world[0] = flat(activeEnemyGroups, rollEnemies(progress[1], progress[0]));
 };
