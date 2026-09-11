@@ -23,9 +23,10 @@ import {
 import { round } from "~/alias";
 import { doTimes, flat, sum } from "~/common";
 
-import GameOptions, { BASE_PROPERTIES } from "../options/module.ts";
+import { BASE_PROPERTIES } from "../options/base.ts";
+import GameOptions from "../options/module.ts";
 import { ShipSnapshot, WeaponSnapshot } from "../ship/types.ts";
-import { createWeapon } from "../ship/weapons/module.ts";
+import { createWeapon } from "../ship/weapons.ts";
 
 import { Player } from "./types.ts";
 

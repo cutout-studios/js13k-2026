@@ -18,21 +18,18 @@ import {
   addXYZ,
   adjustObject,
   aimObject,
-  createPaintMaterialWithPalette as paint,
   crossXYZ,
   normalizeXYZ,
   readOrigin,
   scaleXYZ,
   setOrigin,
   subtractXYZ,
-  toHSL,
-  toRGB,
   XOObject,
   XYZ,
 } from "~/3D";
-import { cos, hypot, min, PI, round, sin } from "~/alias";
+import { cos, hypot, min, PI, sin } from "~/alias";
 import { Action } from "~/clock";
-import { Band, doTimes, interpolate, repeat } from "~/common";
+import { Band, doTimes, repeat } from "~/common";
 import { rollBand } from "~/random";
 
 export const spinAction: Action<XOObject> = (object: XOObject, tickLength) =>
@@ -79,9 +76,6 @@ export const createOrbitAction = (
   };
 };
 
-export const EASE_OUT = (t: number) => 1 - (1 - t) ** 4;
-export const EASE_IN = (t: number) => 1 - EASE_OUT(1 - t);
-
 export const createAimAction = (
   aim: XYZ,
   getTarget: () => XYZ,
@@ -119,23 +113,4 @@ export const createPullAction = (
       speed * curve(elapsedTime / duration) * tickLength,
     ),
   ]);
-};
-
-export const createColorTransitionAction = (
-  fromColor: number,
-  toColor: number,
-  curve: (t: number) => number = (t) => t,
-): Action<XOObject> => {
-  const from = toHSL(fromColor),
-    to = toHSL(toColor);
-
-  return (object: XOObject, _, elapsedTime: number, duration: number) => {
-    const t = curve(elapsedTime / duration),
-      [h, s, l, a] = doTimes(
-        4,
-        (index: number) => interpolate([from[index], to[index]], t),
-      );
-
-    object[2] = paint(toRGB(h, s, l, round(a)));
-  };
 };

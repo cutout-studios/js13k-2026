@@ -15,7 +15,7 @@
  */
 
 import { Band, spread } from "~/common";
-import { PLAYER_AIM_Z_PLANE } from "../constants.ts";
+import { PLAYER_AIM_Z_PLANE } from "../options/base.ts";
 
 export const DIFFICULTY_HALFLIFE = 8;
 

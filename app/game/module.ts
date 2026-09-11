@@ -20,15 +20,12 @@ import {
   createSphere,
   readOrigin,
   setOrigin,
-  XOGeometry,
   XOObject,
 } from "~/3D";
 import { _, cos, sin, TAU } from "~/alias";
 import { doTimes, flat, flatDoTimes } from "~/common";
 import { rollBand } from "~/random";
 
-// particles: cut for now - see particles.ts
-// import { particles } from "./particles.ts";
 import startingPlayer from "./player/module.ts";
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
@@ -43,8 +40,6 @@ const STAR_Z_PLANE = 300,
   STAR_LOCAL_SPREAD = 90,
   STAR_ROTATION_SPEED = 0.006,
   starGeometry = createSphere(0.1),
-  // a hexagonal tunnel of star "walls" ringed around the camera's own
-  // forward (Z) axis and slowly spinning in the XY plane
   starWalls: XOObject[][] = doTimes(STAR_WALL_COUNT, (wallIndex: number) => {
     const angle = wallIndex * TAU / STAR_WALL_COUNT,
       centerX = STAR_TUNNEL_RADIUS * cos(angle),
@@ -53,7 +48,7 @@ const STAR_Z_PLANE = 300,
     return doTimes(STAR_WALL_CAPACITY, () => {
       const object = createObject(
         _,
-        flat([0.1], starGeometry) as XOGeometry,
+        starGeometry,
         flatPaint(0xFFFFFFFF - rollBand([0x00, 0xFF])),
       );
 
@@ -92,6 +87,5 @@ export const getSceneObjects = (
       (ships) => flatDoTimes(ships, getShipObjects) as XOObject[][],
     ),
     doTimes(droppedItems, ([object]) => [object]),
-    // doTimes(particles, ([object]) => [object]),
   );
 };

@@ -32,8 +32,8 @@ import { clamp, doTimes, flat, spread } from "~/common";
 import { bell, rollBand, rollSpread } from "~/random";
 
 import { createPullAction, spinAction } from "../actions.ts";
-import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../constants.ts";
 import { createDeck, drawCard, insertCard } from "../decks.ts";
+import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
 
 import { ModifierOptions } from "../options/types.ts";

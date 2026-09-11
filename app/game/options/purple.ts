@@ -1,0 +1,108 @@
+/**
+ *    Copyright 2026 Cutout Studios LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import {
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  createPrism,
+  createPyramid,
+  flattenObjects,
+  readOrigin,
+} from "~/3D";
+import { _ } from "~/alias";
+import { createActionSequencer } from "~/clock";
+import { doTimes } from "~/common";
+
+import { isPointVisible } from "../../elements/mainCanvas.ts";
+
+import { createAimAction } from "../actions.ts";
+import { getPlayerShip } from "../player/ship.ts";
+
+import { Ship } from "../ship/types.ts";
+import { purpleWeaponSound } from "../sounds.ts";
+
+import {
+  defaultBulletGeometry,
+  defaultBulletSequencerFactory,
+  defaultWeaponSequencerFactory,
+} from "./defaults.ts";
+import { ColorOptions } from "./types.ts";
+
+export const purpleSequencerFactory = (
+  _ship: Ship,
+) => {
+  const aimAction = createAimAction(
+      _ship[1],
+      () => readOrigin(getPlayerShip()[0][0]),
+      () => _ship[5][17],
+    ),
+    fireWeapons = (tickLength: number) => {
+      const origin = readOrigin(_ship[0][0]);
+
+      return isPointVisible(origin) &&
+        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+    };
+
+  return createActionSequencer([
+    [(_ship: Ship, ...args) => {
+      aimAction(_ship[0], ...args);
+      fireWeapons(args[0]);
+    }],
+  ]);
+};
+
+export default [
+  "PURPLE",
+  0x8434D4FF,
+  [
+    [[[], createPyramid([0.25, 0.25, 0.25])]], // shape
+    [[8, [0.06, 0.1]], [11, [6, 70]], [16, [0, 0]]], // base overrides
+    purpleSequencerFactory,
+    [[
+      [[1, [0.15, 0.35]], [2, [2.5, 5.0]], [3, [4, 60]], [4, [30, 32]], [
+        5,
+        [0.2, 0.3],
+      ]], // wpn overrides
+      defaultWeaponSequencerFactory,
+      _,
+      [
+        defaultBulletGeometry,
+        defaultBulletSequencerFactory(),
+        purpleWeaponSound,
+      ],
+      [ // laser sight
+        flattenObjects(
+          createObject(
+            [[0, 0, 30]],
+            createPrism([0.002, 0.002, 30], 6),
+          ),
+        )[1],
+        paint(0x8434D444),
+      ],
+    ]],
+    [3, 5],
+  ],
+  [
+    [[1, 3], 0, 1, [0.2, 0.8], [10, 100]],
+    [
+      [0, 8, "+", [0.02, 0.2]], // Item Drop rate
+      [0, 19, "+", [0.005, 0.2]], // Bullet Crit Chance
+      [0, 20, "x", [1.1, 5]], // Bullet Crit Damage
+      [2, 17, "+", [-0.02, -1]], // Aim Time
+      [0, 9, "x", [0.95, 0.5]], // KG
+    ],
+  ],
+] as ColorOptions;

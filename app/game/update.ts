@@ -27,17 +27,13 @@ import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
-// particles: cut for now - see particles.ts
-// import { createBurst, updateParticles } from "./particles.ts";
-import /* GameOptions, */ { BASE_PROPERTIES } from "./options/module.ts";
+import { BASE_PROPERTIES } from "./options/base.ts";
+import { defaultBulletSequencerFactory } from "./options/defaults.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
+import { updateBullets } from "./ship/bullets.ts";
 import { updateWeaponMounts } from "./ship/module.ts";
 import { Ship, Weapon, WeaponSnapshot } from "./ship/types.ts";
-import {
-  defaultBulletSequencerFactory,
-  updateBullets,
-} from "./ship/weapons/bullets.ts";
 import {
   enemyDestroyedSound,
   enemyHitSound,
@@ -159,7 +155,7 @@ export const updateGame = (
 
                 aimObject(bullet[0], targetPosition);
 
-                bullet[1] = defaultBulletSequencerFactory(bullet, 8, false);
+                bullet[1] = defaultBulletSequencerFactory()(bullet, 8, false);
 
                 const fauxSnapshot = BASE_PROPERTIES.slice(
                   18,

@@ -37,7 +37,7 @@ import GameOptions from "../../app/game/options/module.ts";
 import { setPlayerShip } from "../../app/game/player/ship.ts";
 import { createShip, getShipObjects } from "../../app/game/ship/module.ts";
 import { Ship } from "../../app/game/ship/types.ts";
-import { updateBullets } from "../../app/game/ship/weapons/bullets.ts";
+import { updateBullets } from "../../app/game/ship/bullets.ts";
 
 const canvasElement = document.getElementById("c") as HTMLCanvasElement,
   camera = createCamera();

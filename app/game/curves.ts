@@ -14,13 +14,5 @@
  * limitations under the License.
  */
 
-export const PLAYER_SHIP_Z_PLANE = 5;
-export const PLAYER_AIM_Z_PLANE = 8;
-export const PLAYER_X_BOUND = 2.8;
-export const PLAYER_Y_BOUND = 2.1;
-
-export const BULLET_ALPHA = 0xBF;
-export const BULLET_MAX_RANGE = 20;
-
-export const ENEMY_BULLET_RAMP_TIME = 0.3;
-export const ENEMY_FIRE_RANGE_MARGIN = 2;
+export const EASE_OUT = (t: number) => 1 - (1 - t) ** 4;
+export const EASE_IN = (t: number) => 1 - EASE_OUT(1 - t);

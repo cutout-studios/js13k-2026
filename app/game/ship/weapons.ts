@@ -19,20 +19,11 @@ import { NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
 
-import GameOptions from "../../options/module.ts";
-import { BASE_PROPERTIES } from "../../options/module.ts";
-import { levelRollOverrides } from "../../world/levels.ts";
-import { Ship, Weapon, WeaponSnapshot } from "../types.ts";
-import { createBullet } from "./bullets.ts";
-
-export const defaultWeaponSequenceFactory = (
-  fire: (ship: Ship) => void,
-  snapshot: WeaponSnapshot,
-): ActionSequencer<Ship> =>
-  createActionSequencer([
-    [fire],
-    [NO_OP, 1 / snapshot[5]],
-  ]);
+import GameOptions from "../options/module.ts";
+import { BASE_PROPERTIES } from "../options/module.ts";
+import { levelRollOverrides } from "../world/levels.ts";
+import { Ship, Weapon, WeaponSnapshot } from "./types.ts";
+import { createBullet } from "../weapons/bullets.ts";
 
 export const createWeapon = (
   optionsIndex: number,

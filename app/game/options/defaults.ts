@@ -17,6 +17,7 @@
 import {
   addXYZ,
   adjustObject,
+  createPrism,
   normalizeXYZ,
   readHeading,
   readOrigin,
@@ -28,15 +29,16 @@ import { ActionSequencer, createActionSequencer } from "~/clock";
 import { Band, clamp, doTimes, repeat, spread } from "~/common";
 import { randomPoint } from "~/random";
 
-import { isPointVisible } from "../../../elements/mainCanvas.ts";
-
+import { isPointVisible } from "../../elements/mainCanvas.ts";
 import {
   createAimAction,
   createOrbitAction,
   createPullAction,
-  EASE_IN,
-  EASE_OUT,
-} from "../../actions.ts";
+} from "../actions.ts";
+import { EASE_IN, EASE_OUT } from "../curves.ts";
+import { getPlayerShip } from "../player/ship.ts";
+import { Bullet } from "../ship/types.ts";
+import { Ship, WeaponSnapshot } from "../ship/types.ts";
 import {
   BULLET_MAX_RANGE,
   ENEMY_BULLET_RAMP_TIME,
@@ -44,38 +46,11 @@ import {
   PLAYER_AIM_Z_PLANE,
   PLAYER_X_BOUND,
   PLAYER_Y_BOUND,
-} from "../../constants.ts";
-import { getPlayerShip } from "../../player/ship.ts";
+} from "./base.ts";
 
-import { Bullet, Ship, WeaponSnapshot } from "../types.ts";
+export const defaultBulletGeometry = createPrism([0.006, 0.006, 0.12], 12);
 
-export const pinkBulletSequencerFactory = (
-  [[coordinates]]: Bullet,
-  speed: number,
-): ActionSequencer<Bullet> => {
-  const pullAction = createPullAction(
-    readHeading(coordinates),
-    speed,
-    (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME),
-    repeat(3, spread(0.2)) as [Band, Band, Band],
-  );
-
-  return createActionSequencer([[
-    (bullet: Bullet, ...args) => {
-      pullAction(bullet[0], ...args);
-
-      const newOrigin = readOrigin(coordinates);
-
-      // cull once it's passed the camera, out past the play field, or
-      // drifted outside the visible frustum
-      return newOrigin[2] >= 0 ||
-        newOrigin[2] < -BULLET_MAX_RANGE ||
-        !isPointVisible(newOrigin);
-    },
-  ]]);
-};
-
-export const pinkWeaponSequenceFactory = (
+export const defaultWeaponSequencerFactory = (
   fire: (ship: Ship) => void,
   snapshot: WeaponSnapshot,
 ): ActionSequencer<Ship> =>
@@ -84,7 +59,40 @@ export const pinkWeaponSequenceFactory = (
     [fire],
   ]);
 
-export const pinkSequencerFactory = (
+export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
+(
+  [[coordinates]]: Bullet,
+  speed: number,
+  isEnemy: boolean,
+): ActionSequencer<Bullet> => {
+  const pullAction = createPullAction(
+    readHeading(coordinates),
+    speed,
+    isEnemy
+      ? (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
+      : () => 1,
+    jitter,
+  );
+
+  return createActionSequencer([[
+    (bullet: Bullet, ...args) => {
+      pullAction(bullet[0], ...args);
+
+      const newOrigin = readOrigin(coordinates);
+
+      return newOrigin[2] >= 0 ||
+        newOrigin[2] < -BULLET_MAX_RANGE ||
+        !isPointVisible(newOrigin);
+    },
+  ]]);
+};
+
+export const defaultShipSequencerFactory = (
+  pause = (shipSpeed: number) => clamp(4 / shipSpeed, [2, 10]),
+  entryCurve = EASE_IN,
+  exitCurve = EASE_OUT,
+) =>
+(
   _ship: Ship,
   arcPointRange: [Band, Band, Band] = repeat(3, spread(1)) as [
     Band,
@@ -105,11 +113,11 @@ export const pinkSequencerFactory = (
     ),
     travelTime = hypot(...subtractXYZ(fieldPoint, startingPoint)) /
       _ship[5][16],
-    orbitToAction = createOrbitAction(fieldPoint, referencePoint, EASE_OUT),
+    orbitToAction = createOrbitAction(fieldPoint, referencePoint, exitCurve),
     orbitFromAction = createOrbitAction(
       startingPoint,
       mirroredReferencePoint,
-      EASE_IN,
+      entryCurve,
     ),
     aimAction = createAimAction(
       _ship[1],
@@ -148,7 +156,7 @@ export const pinkSequencerFactory = (
       ]);
 
       fireWeapons(args[0]);
-    }, clamp(4 / _ship[5][16], [2, 10])],
+    }, pause(_ship[5][16])],
     [(_ship: Ship, ...args) => {
       orbitFromAction(_ship[0], ...args);
       aimAction(_ship[0], ...args);

@@ -31,7 +31,7 @@ import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
 import { Resources, Ship, ShipSnapshot } from "./types.ts";
-import { createWeapon } from "./weapons/module.ts";
+import { createWeapon } from "./weapons.ts";
 
 export const createShip = (
   optionsIndex: number,

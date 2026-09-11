@@ -18,8 +18,8 @@ import { scatterObjects } from "~/3D";
 import { length, max, min, round } from "~/alias";
 import { Band, doTimes, spread } from "~/common";
 
-import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../constants.ts";
 import { createDeck, drawCard } from "../decks.ts";
+import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 import { Ship } from "../ship/types.ts";

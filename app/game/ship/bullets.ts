@@ -33,12 +33,9 @@ import { createActionSequencer } from "~/clock";
 import { doTimes, spliceTable } from "~/common";
 import { rollSpread } from "~/random";
 
-import { BULLET_ALPHA } from "../../constants.ts";
-import GameOptions from "../../options/module.ts";
-import { Bullet, Ship } from "../types.ts";
-import { defaultBulletSequencerFactory } from "./bulletMovement.ts";
-
-export { defaultBulletSequencerFactory };
+import { BULLET_ALPHA } from "../options/base.ts";
+import GameOptions from "../options/module.ts";
+import { Bullet, Ship } from "./types.ts";
 
 export const createBullet = (
   ship: Ship,
@@ -119,7 +116,7 @@ export const createBullet = (
     ship,
     weaponIndex,
   ];
-  bullet[1] = (bulletSequencerFactory ?? defaultBulletSequencerFactory)(
+  bullet[1] = bulletSequencerFactory!(
     bullet,
     snapshot[4],
     !!shipOptionsIndex,

@@ -17,7 +17,7 @@
 import { setOrigin } from "~/3D";
 import { repeat } from "~/common";
 
-import { PLAYER_AIM_Z_PLANE, PLAYER_SHIP_Z_PLANE } from "../constants.ts";
+import { PLAYER_AIM_Z_PLANE, PLAYER_SHIP_Z_PLANE } from "../options/base.ts";
 import { createShip } from "../ship/module.ts";
 
 import { setPlayerShip } from "./ship.ts";
