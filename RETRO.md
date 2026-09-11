@@ -42,6 +42,6 @@
 2. open deno proposal or PR for mangling props (doesn’t exist!)
 3. W3C proposal for console append-only “live group” to make debugging loops in
    the browser easier (doesn’t exist!)
-4. maybe directors cut - would want to keep it very close to size limit still
+4. maybe directors cut - but probably not. CB is too messy and I have bigger games to make next.
 
 [sponsorship link](https://github.com/sponsors/cutout-studios)
