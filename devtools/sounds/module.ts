@@ -22,7 +22,6 @@ import {
   createSound,
   NOISE_BUFFER,
   PACK_BUFFER_NAMES,
-  packSound,
   SAWTOOTH_BUFFER,
   SINE_BUFFER,
   SQUARE_BUFFER,
@@ -827,38 +826,4 @@ document.getElementById("copyCode")!.onclick = () => {
 
   output.value = code;
   navigator.clipboard?.writeText(code).catch(() => {});
-};
-
-// paste the result onto the end of SOUND_DATA in app/game/sounds.ts, and add
-// one more `createSound(...decodeSound())` call after the previous one - the
-// decoder consumes fragments in the order they were appended
-document.getElementById("copyPacked")!.onclick = () => {
-  if (layers.some((layer) => layer.bufferName == UNKNOWN_NAME)) {
-    alert(
-      "One or more layers use an unrecognized buffer - pick a real buffer " +
-        "type for them first (the packed format has no way to represent " +
-        "an unknown one).",
-    );
-    return;
-  }
-
-  const packed = packSound(
-      layers.map((layer) => ({
-        bufferIndex: BUFFER_NAMES.indexOf(layer.bufferName),
-        param: layer.param,
-        events: layer.steps.map((
-          step,
-        ): [number, number, number, boolean, number] => [
-          step.knob,
-          step.value,
-          step.isBand ? step.valueHi : step.value,
-          step.exponential,
-          step.duration,
-        ]),
-      })),
-    ),
-    output = document.getElementById("output") as HTMLTextAreaElement;
-
-  output.value = packed;
-  navigator.clipboard?.writeText(packed).catch(() => {});
 };

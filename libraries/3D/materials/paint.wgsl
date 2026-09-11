@@ -22,7 +22,7 @@ fn baseColor(fragment: vec4f, triangleIndex: u32) -> vec4f {
   let rim = min(pow(1 - facing, 2) * 0.8, 0.3);
   let paint = colorPalette[triangleIndex % arrayLength(&colorPalette)];
 
-  return vec4f(paint.rgb * facing + rim, paint.a);
+  return vec4f((paint.rgb * facing + rim) * paint.a, paint.a);
 }
 
 @fragment

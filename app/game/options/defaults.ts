@@ -82,7 +82,7 @@ export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
 
       return newOrigin[2] >= 0 ||
         newOrigin[2] < -BULLET_MAX_RANGE ||
-        !isPointVisible(newOrigin);
+        (isEnemy && !isPointVisible(newOrigin));
     },
   ]]);
 };

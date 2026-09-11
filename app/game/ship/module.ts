@@ -91,5 +91,3 @@ export const getShipObjects = (
       : flat([[shipObject]], doTimes(weapons, ([object]) => [object])),
     doTimes(weapons, ([, [, bullets]]) => bullets),
   );
-
-// export const createFlinchSequencer = () => {};
