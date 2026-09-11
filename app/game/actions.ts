@@ -32,6 +32,9 @@ import { Action } from "~/clock";
 import { Band, doTimes, repeat } from "~/common";
 import { rollBand } from "~/random";
 
+import { getPlayerShip } from "./player/ship.ts";
+import { Ship } from "./ship/types.ts";
+
 export const spinAction: Action<XOObject> = (object: XOObject, tickLength) =>
   adjustObject(object, [undefined, [
     repeat(3, tickLength) as XYZ,
@@ -41,7 +44,7 @@ export const spinAction: Action<XOObject> = (object: XOObject, tickLength) =>
 export const createOrbitAction = (
   targetPoint: XYZ,
   referencePoint: XYZ,
-  curve: (value: number) => number = (t) => t,
+  curve: (value: number) => number,
 ): Action<XOObject> => {
   let startingPoint: XYZ | undefined;
 
@@ -92,10 +95,17 @@ export const createAimAction = (
   aimObject(object, aim, getRoll());
 };
 
+export const createPlayerAimAction = (_ship: Ship) =>
+  createAimAction(
+    _ship[1],
+    () => readOrigin(getPlayerShip()[0][0]),
+    () => _ship[5][17],
+  );
+
 export const createPullAction = (
   direction: XYZ,
   speed: number,
-  curve: (value: number) => number = () => 1,
+  curve: (value: number) => number,
   jitter: [Band, Band, Band] = [[0, 0], [0, 0], [0, 0]],
 ): Action<XOObject> =>
 (

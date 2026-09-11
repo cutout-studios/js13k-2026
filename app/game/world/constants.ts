@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-import { Band, spread } from "~/common";
-import { PLAYER_AIM_Z_PLANE } from "../options/base.ts";
+import { Band } from "~/common";
 
 export const DIFFICULTY_HALFLIFE = 8;
-
-export const ENEMY_PLACEMENT_SPREAD = 5;
-export const ENEMY_SPAWN_DEPTH_BAND = spread(2, PLAYER_AIM_Z_PLANE);
 
 export const WAVE_CURVE = 7.5;
 export const WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];

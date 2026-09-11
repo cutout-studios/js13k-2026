@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { abs, F32, max, min, round } from "~/alias";
+import { F32, max, min, round } from "~/alias";
 import { doTimes, flatDoTimes } from "~/common";
 
 import type { RGBA, XOMaterial } from "../types.ts";
@@ -51,24 +51,4 @@ export const toRGB = (h: number, s: number, l: number, a = 255): number => {
     };
 
   return (channel(0) << 24) | (channel(8) << 16) | (channel(4) << 8) | a;
-};
-
-export const toHSL = (
-  hex: number,
-): [h: number, s: number, l: number, a: number] => {
-  const [r, g, b] = _unpackRGBA(hex),
-    hi = max(r, g, b),
-    lo = min(r, g, b),
-    l = (hi + lo) / 2,
-    delta = hi - lo,
-    s = delta ? delta / (1 - abs(2 * l - 1)) : 0,
-    h = !delta
-      ? 0
-      : 60 * (hi == r
-        ? ((g - b) / delta + 6) % 6
-        : hi == g
-        ? (b - r) / delta + 2
-        : (r - g) / delta + 4);
-
-  return [h, s * 100, l * 100, hex & 255];
 };

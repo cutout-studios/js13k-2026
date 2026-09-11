@@ -42,7 +42,7 @@ export default [
       [11, [40, 250]], // HP
       [16, [0.5, 0.8]], // Strafe Speed
     ],
-    defaultShipSequencerFactory(_, _, (t) => EASE_OUT(t) ** .8), // sequenceFactory
+    defaultShipSequencerFactory(_, (t) => EASE_OUT(t) ** .8), // sequenceFactory
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [

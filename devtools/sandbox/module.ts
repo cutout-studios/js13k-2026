@@ -27,7 +27,7 @@ import {
 } from "~/3D";
 import { abs } from "~/alias";
 import { startClock } from "~/clock";
-import { Band, doTimes, flatDoTimes, repeat, spread } from "~/common";
+import { Band, doTimes, flatDoTimes, spread } from "~/common";
 
 import {
   PLAYER_AIM_Z_PLANE,
@@ -73,11 +73,6 @@ const [readSpawnX, readSpawnY, readSpawnZ] = bandInputs("spawn", [
   spread(1, -18),
 ]);
 
-const [readRefX, readRefY, readRefZ] = bandInputs(
-  "ref",
-  repeat(3, spread(1)) as [Band, Band, Band],
-);
-
 // wire up the button UI before touching anything ship/scene related, so a
 // bug further down (WebGPU, sequencers, etc.) can never take the buttons
 // down with it
@@ -93,8 +88,7 @@ const spawnShip = (colorIndex: number) => {
       readSpawnY(),
       readSpawnZ(),
     ],
-    referenceBand: [Band, Band, Band] = [readRefX(), readRefY(), readRefZ()],
-    ship = createShip(colorIndex, 1, referenceBand);
+    ship = createShip(colorIndex, 1);
 
   scatterObjects(spawnRegion, ship[0]);
   activeShips.push(ship);

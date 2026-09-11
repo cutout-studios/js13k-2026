@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { createObject, XOOrientation } from "~/3D";
+import { createObject, XOGeometry, XOMaterial, XOOrientation, XYZ } from "~/3D";
+import { ActionSequencer } from "~/clock";
 import { doTimes } from "~/common";
 
 import { BASE_PROPERTIES } from "../options/base.ts";
@@ -27,19 +28,25 @@ export const createWeapon = (
   optionsIndex: number,
   weaponIndex = 0,
   level = 1,
-  mount = (GameOptions[optionsIndex][2][3][weaponIndex] ??
-    GameOptions[optionsIndex][2][3][0])[2],
-  snapshot = levelRollOverrides(
-    BASE_PROPERTIES.slice(18),
-    (GameOptions[optionsIndex][2][3][weaponIndex] ??
-      GameOptions[optionsIndex][2][3][0])[0],
-    level,
-  ) as WeaponSnapshot,
-  weaponSequenceFactory = (GameOptions[optionsIndex][2][3][weaponIndex] ??
-    GameOptions[optionsIndex][2][3][0])[1],
-  sight = (GameOptions[optionsIndex][2][3][weaponIndex] ??
-    GameOptions[optionsIndex][2][3][0])[4],
+  mount?: XYZ,
+  snapshot?: WeaponSnapshot,
+  weaponSequenceFactory?: (
+    fire: (ship: Ship) => void,
+    snapshot: WeaponSnapshot,
+  ) => ActionSequencer<Ship>,
+  sight?: [XOGeometry, XOMaterial?],
 ): Weapon => {
+  const weaponConfig = GameOptions[optionsIndex][2][3][weaponIndex] ??
+    GameOptions[optionsIndex][2][3][0];
+  mount ??= weaponConfig[2];
+  snapshot ??= levelRollOverrides(
+    BASE_PROPERTIES.slice(18),
+    weaponConfig[0],
+    level,
+  ) as WeaponSnapshot;
+  weaponSequenceFactory ??= weaponConfig[1];
+  sight ??= weaponConfig[4];
+
   const object = createObject([mount] as XOOrientation, sight?.[0], sight?.[1]);
 
   return [

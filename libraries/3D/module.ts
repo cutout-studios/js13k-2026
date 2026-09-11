@@ -56,7 +56,6 @@ export {
   createFlatWithPalette as createFlatPaintMaterialWithPalette,
   createPalette as createPaintPalette,
   createWithPalette as createPaintMaterialWithPalette,
-  toHSL,
   toRGB,
 } from "./materials/paint.ts";
 export {

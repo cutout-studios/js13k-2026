@@ -47,6 +47,3 @@ export const createElement = (
 
   return updateStyles(element, ...styles);
 };
-
-export const createTextNode = (text: string): Node =>
-  document.createTextNode(text);

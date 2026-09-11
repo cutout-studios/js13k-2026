@@ -28,8 +28,7 @@ import { doTimes } from "~/common";
 
 import { isPointVisible } from "../../elements/mainCanvas.ts";
 
-import { createAimAction } from "../actions.ts";
-import { getPlayerShip } from "../player/ship.ts";
+import { createPlayerAimAction } from "../actions.ts";
 
 import { Ship } from "../ship/types.ts";
 import { purpleWeaponSound } from "../sounds.ts";
@@ -44,11 +43,7 @@ import { ColorOptions } from "./types.ts";
 export const purpleSequencerFactory = (
   _ship: Ship,
 ) => {
-  const aimAction = createAimAction(
-      _ship[1],
-      () => readOrigin(getPlayerShip()[0][0]),
-      () => _ship[5][17],
-    ),
+  const aimAction = createPlayerAimAction(_ship),
     fireWeapons = (tickLength: number) => {
       const origin = readOrigin(_ship[0][0]);
 

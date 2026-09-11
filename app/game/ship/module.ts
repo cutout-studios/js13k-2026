@@ -24,7 +24,7 @@ import {
 } from "~/3D";
 import { length, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
-import { Band, doTimes, flat, repeat } from "~/common";
+import { doTimes, flat, repeat } from "~/common";
 
 import { BASE_PROPERTIES, ENEMY_FADE_TIME } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
@@ -36,7 +36,6 @@ import { createWeapon } from "./weapons.ts";
 export const createShip = (
   optionsIndex: number,
   level = 1,
-  arcPoint?: [Band, Band, Band],
 ): Ship => {
   const [
     ,
@@ -72,7 +71,7 @@ export const createShip = (
 
   let sequencer: ActionSequencer<Ship> | undefined;
   ship[3] = (payload, tickLength) =>
-    (sequencer ??= shipSequencerFactory(ship, arcPoint))(payload, tickLength);
+    (sequencer ??= shipSequencerFactory(ship))(payload, tickLength);
 
   return ship;
 };

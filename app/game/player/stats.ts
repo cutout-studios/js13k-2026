@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import { createPaintMaterialWithPalette as paint } from "~/3D";
-import { createObject, flattenObjects, XOObject } from "~/3D";
+import {
+  createObject,
+  createPaintMaterialWithPalette as paint,
+  flattenObjects,
+  XOObject,
+} from "~/3D";
 import { round } from "~/alias";
 import { doTimes, flat, sum } from "~/common";
 

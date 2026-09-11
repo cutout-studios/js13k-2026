@@ -28,13 +28,10 @@ export const Z_AXIS: XYZ = [0, 0, 1];
 export const COORDINATES_DATA_GROUP_ID = 0;
 export const COORDINATE_SIDE_LENGTH = 4;
 export const COORDINATE_DATA_LENGTH = COORDINATE_SIDE_LENGTH ** 2;
-export const COORDINATE_DATA_SIZE = COORDINATE_DATA_LENGTH * FLOAT_32_BYTES;
 
 export const VERTEX_DATA_SIZE = XYZ_LENGTH * FLOAT_32_BYTES;
 export const VERTEX_DATA_FORMAT: GPUVertexFormat =
   `float${FLOAT_32_BIN}x${XYZ_LENGTH}`;
-
-export const RGBA_LENGTH = 4;
 
 export const DEPTH_TEXTURE_FORMAT = "depth24plus";
 

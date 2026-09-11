@@ -34,10 +34,7 @@ type ShipOptions = [
     material?: (color: number) => XOMaterial,
   ][],
   overrides: BaseStatOverride[],
-  sequenceFactory: (
-    ship: Ship,
-    arcPoint?: [Band, Band, Band],
-  ) => ActionSequencer<Ship>,
+  sequenceFactory: (ship: Ship) => ActionSequencer<Ship>,
   weapons: [
     overrides: BaseStatOverride[],
     sequenceFactory: (

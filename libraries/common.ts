@@ -19,7 +19,6 @@ import { arrayFrom, max, min, round } from "~/alias";
 export type Band = readonly [min: number, max: number];
 
 export const SECONDS_TO_MS = 1000;
-export const MINUTES_TO_SECONDS = 60;
 
 export const BYTES_TO_BIN = 8;
 export const FLOAT_32_BIN = 32;
@@ -99,7 +98,6 @@ export const interpolate = ([lo, hi]: Band, amount: number) =>
   lo + (hi - lo) * amount;
 
 export const sum = (values: number[]) => values.reduce((a, b) => a + b);
-export const product = (values: number[]) => values.reduce((a, b) => a * b);
 
 export const spread = (
   amount: number = 1,

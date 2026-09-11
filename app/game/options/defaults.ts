@@ -31,8 +31,8 @@ import { randomPoint } from "~/random";
 
 import { isPointVisible } from "../../elements/mainCanvas.ts";
 import {
-  createAimAction,
   createOrbitAction,
+  createPlayerAimAction,
   createPullAction,
 } from "../actions.ts";
 import { EASE_IN, EASE_OUT } from "../curves.ts";
@@ -89,7 +89,6 @@ export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
 
 export const defaultShipSequencerFactory = (
   pause = (shipSpeed: number) => clamp(4 / shipSpeed, [2, 10]),
-  entryCurve = EASE_IN,
   exitCurve = EASE_OUT,
 ) =>
 (_ship: Ship) => {
@@ -109,13 +108,9 @@ export const defaultShipSequencerFactory = (
     orbitFromAction = createOrbitAction(
       startingPoint,
       mirroredReferencePoint,
-      entryCurve,
+      EASE_IN,
     ),
-    aimAction = createAimAction(
-      _ship[1],
-      () => readOrigin(getPlayerShip()[0][0]),
-      () => _ship[5][17],
-    ),
+    aimAction = createPlayerAimAction(_ship),
     readyElapsed = doTimes(_ship[2], () => 0),
     fireWeapons = (tickLength: number) => {
       const origin = readOrigin(_ship[0][0]);

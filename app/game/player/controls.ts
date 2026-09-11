@@ -43,7 +43,7 @@ import {
 const [[playerShip]] = GameState,
   [playerShipObject, playerAim, [leftWeapon, rightWeapon], , , snapshot] =
     playerShip,
-  [wEnvelope, aEnvelope, sEnvelope, dEnvelope] = doTimes(
+  strafeEnvelopes = doTimes(
     4,
     () => createEnvelope(STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME),
   ),
@@ -64,61 +64,41 @@ export const checkMousePointer = bindPointer(
     mouseTarget = mapClientXYToZPlane(x, y),
 );
 
-const resetWeapon = (weapon: Weapon, weaponIndex: number) => (t: number) => {
-  if (!GameState[2]) {
-    GameState[2] = true;
-    title.style.opacity = "0";
-  }
-  if (canAffordWeapon(playerShip, weaponIndex)) {
-    weapon[2] = defaultWeaponSequencerFactory(
-      fireWeapon(weaponIndex),
-      weapon[3],
-    );
-  }
-  weapon[2](playerShip, t);
+const bindWeaponKey = (code: string, weapon: Weapon, weaponIndex: number) => {
+  const hold = (t: number) => weapon[2](playerShip, t),
+    reset = (t: number) => {
+      if (!GameState[2]) {
+        GameState[2] = true;
+        title.style.opacity = "0";
+      }
+      if (canAffordWeapon(playerShip, weaponIndex)) {
+        weapon[2] = defaultWeaponSequencerFactory(
+          fireWeapon(weaponIndex),
+          weapon[3],
+        );
+      }
+      hold(t);
+    };
+
+  return bindButton(code, reset, hold);
 };
 
-export const checkLMouseButton = bindButton(
-  "LClick",
-  resetWeapon(leftWeapon, 0),
-  (t) => leftWeapon[2](playerShip, t),
-);
+export const checkLMouseButton = bindWeaponKey("LClick", leftWeapon, 0);
+export const checkRMouseButton = bindWeaponKey("RClick", rightWeapon, 1);
 
-export const checkRMouseButton = bindButton(
-  "RClick",
-  resetWeapon(rightWeapon, 1),
-  (t) => rightWeapon[2](playerShip, t),
-);
+const strafe = [0, 0, 0, 0],
+  bindStrafeKey = (code: string, index: number) => {
+    const envelope = strafeEnvelopes[index],
+      onDown = (t: number) => strafe[index] = envelope(t, true),
+      onUp = (t: number) => strafe[index] = envelope(t);
 
-const strafe = [0, 0, 0, 0];
-export const checkWKey = bindButton(
-  "KeyW",
-  (t) => strafe[0] = wEnvelope(t, true),
-  (t) => strafe[0] = wEnvelope(t, true),
-  (t) => strafe[0] = wEnvelope(t),
-  (t) => strafe[0] = wEnvelope(t),
-);
-export const checkAKey = bindButton(
-  "KeyA",
-  (t) => strafe[1] = aEnvelope(t, true),
-  (t) => strafe[1] = aEnvelope(t, true),
-  (t) => strafe[1] = aEnvelope(t),
-  (t) => strafe[1] = aEnvelope(t),
-);
-export const checkSKey = bindButton(
-  "KeyS",
-  (t) => strafe[2] = sEnvelope(t, true),
-  (t) => strafe[2] = sEnvelope(t, true),
-  (t) => strafe[2] = sEnvelope(t),
-  (t) => strafe[2] = sEnvelope(t),
-);
-export const checkDKey = bindButton(
-  "KeyD",
-  (t) => strafe[3] = dEnvelope(t, true),
-  (t) => strafe[3] = dEnvelope(t, true),
-  (t) => strafe[3] = dEnvelope(t),
-  (t) => strafe[3] = dEnvelope(t),
-);
+    return bindButton(code, onDown, onDown, onUp, onUp);
+  };
+
+export const checkWKey = bindStrafeKey("KeyW", 0);
+export const checkAKey = bindStrafeKey("KeyA", 1);
+export const checkSKey = bindStrafeKey("KeyS", 2);
+export const checkDKey = bindStrafeKey("KeyD", 3);
 
 export const checkSpaceBar = bindButton(
   "Space",
