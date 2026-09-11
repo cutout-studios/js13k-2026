@@ -27,6 +27,9 @@ export const BULLET_MAX_RANGE = 20;
 export const ENEMY_BULLET_RAMP_TIME = 0.3;
 export const ENEMY_FIRE_RANGE_MARGIN = 2;
 
+export const ENEMY_FADE_TIME = 0.6;
+export const ENEMY_FADE_RATIO = 0.02;
+
 export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   2, // Rez
 
@@ -65,6 +68,7 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   8, // Bullet Speed
   8, // Bullet Rate
 
-  // WPN 6   (24)
+  // WPN 6-7   (24/25)
   0, // Bullet Spread
+  1, // KG
 ];

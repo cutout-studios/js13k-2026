@@ -28,7 +28,7 @@ import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
 import GameState from "./module.ts";
-import { BASE_PROPERTIES } from "./options/base.ts";
+import { BASE_PROPERTIES, ENEMY_FADE_TIME, ENEMY_FADE_RATIO } from "./options/base.ts";
 import { defaultBulletSequencerFactory } from "./options/defaults.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
@@ -96,6 +96,8 @@ export const updateGame = (
           body = enemyShips[shipIndex][0],
           resources = enemyShips[shipIndex][4],
           shipCoordinates = body[0];
+
+        if (resources[3]) return;
 
         enemyHitSound(
           getPanFromCoordinates(
@@ -243,26 +245,26 @@ export const updateGame = (
       flatDoTimes(
         ships,
         (
-          [[coordinates], , weapons, , damages, snapshot, optionsIndex],
+          [body, , weapons, , damages, snapshot, optionsIndex],
           index,
         ) => {
+          const coordinates = body[0];
+
           if (damages[0] < snapshot[11]) return [];
 
           if (!damages[3]) {
-            damages[3] = 1;
+            damages[3] = tickLength;
             enemyDestroyedSound(
               getPanFromCoordinates(coordinates),
               readOrigin(coordinates)[2] / 18,
             );
-            // particles: cut for now - see particles.ts
-            // createBurst(
-            //   readOrigin(coordinates),
-            //   8,
-            //   [1, 2],
-            //   [0.2, 0.4],
-            //   0xFFEE99FF,
-            //   0x99220000,
-            // );
+
+            const original = body[2]!; // permanently flip to the complementary color, fading out from there
+            body[2] = [
+              original[0],
+              original[1].map((v, i) => i % 4 == 3 ? v : 1 - v),
+              original[2],
+            ];
 
             if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
               world[4] = 0;
@@ -272,9 +274,16 @@ export const updateGame = (
             } else {
               world[4]++;
             }
+          } else {
+            damages[3] += tickLength;
+
+            const material = body[2]!,
+              fade = ENEMY_FADE_RATIO ** (tickLength / ENEMY_FADE_TIME);
+            material[1] = material[1].map((v, i) => i % 4 == 3 ? v * fade : v);
           }
 
-          return weapons.reduce((n, [, [b]]) => n + length(b), 0)
+          return weapons.reduce((n, [, [b]]) => n + length(b), 0) ||
+              damages[3] < ENEMY_FADE_TIME
             ? []
             : [index];
         },

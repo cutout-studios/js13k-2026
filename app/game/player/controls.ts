@@ -26,7 +26,10 @@ import { resetMenu } from "../../elements/menu.ts";
 import { createAimAction } from "../actions.ts";
 import GameState from "../module.ts";
 import { PLAYER_X_BOUND, PLAYER_Y_BOUND } from "../options/base.ts";
+import { defaultWeaponSequencerFactory } from "../options/defaults.ts";
 import { createSpinSequence } from "../ship/spin.ts";
+import { Weapon } from "../ship/types.ts";
+import { canAffordWeapon, fireWeapon } from "../ship/weapons.ts";
 import { playerSpinSound } from "../sounds.ts";
 
 import {
@@ -61,20 +64,29 @@ export const checkMousePointer = bindPointer(
     mouseTarget = mapClientXYToZPlane(x, y),
 );
 
-const startGame = () => {
-  GameState[2] = true;
-  title.style.opacity = "0";
+const resetWeapon = (weapon: Weapon, weaponIndex: number) => (t: number) => {
+  if (!GameState[2]) {
+    GameState[2] = true;
+    title.style.opacity = "0";
+  }
+  if (canAffordWeapon(playerShip, weaponIndex)) {
+    weapon[2] = defaultWeaponSequencerFactory(
+      fireWeapon(weaponIndex),
+      weapon[3],
+    );
+  }
+  weapon[2](playerShip, t);
 };
 
 export const checkLMouseButton = bindButton(
   "LClick",
-  startGame,
+  resetWeapon(leftWeapon, 0),
   (t) => leftWeapon[2](playerShip, t),
 );
 
 export const checkRMouseButton = bindButton(
   "RClick",
-  startGame,
+  resetWeapon(rightWeapon, 1),
   (t) => rightWeapon[2](playerShip, t),
 );
 
@@ -116,7 +128,7 @@ export const checkSpaceBar = bindButton(
     if (resources[3] || resources[4] || resources[5]) return; // invulnerable, or still recovering
 
     if (GameState[2]) {
-      const totalGasUsed = resources[1] + snapshot[9];
+      const totalGasUsed = resources[1] + snapshot[9] * snapshot[5];
       if (totalGasUsed >= snapshot[4]) return;
       resources[1] = totalGasUsed;
     }

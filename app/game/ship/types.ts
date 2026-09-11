@@ -31,7 +31,7 @@ export type Resources = [
   hp: number,
   gas: number,
   rez: number,
-  invulnerable: 0 | 1,
+  invulnerable: number, // player: 0 | 1; enemy: seconds elapsed since death (0 = alive)
   countering: 0 | 1,
   recovering: 0 | 1,
   roll: number,
@@ -87,8 +87,10 @@ export type WeaponSnapshot = [
   bulletSpeed: number,
   bulletRate: number,
 
-  // 6
+  // 6-7
   bulletSpread: number,
+
+  kg: number,
 ];
 
 export type Bullet = [

@@ -55,8 +55,8 @@ export const defaultWeaponSequencerFactory = (
   snapshot: WeaponSnapshot,
 ): ActionSequencer<Ship> =>
   createActionSequencer([
-    [NO_OP, 1 / snapshot[5]],
     [fire],
+    [NO_OP, 1 / snapshot[5]],
   ]);
 
 export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
@@ -116,12 +116,24 @@ export const defaultShipSequencerFactory = (
       () => readOrigin(getPlayerShip()[0][0]),
       () => _ship[5][17],
     ),
+    readyElapsed = doTimes(_ship[2], () => 0),
     fireWeapons = (tickLength: number) => {
       const origin = readOrigin(_ship[0][0]);
 
-      return isPointVisible(origin) &&
-        origin[2] > -(PLAYER_AIM_Z_PLANE + ENEMY_FIRE_RANGE_MARGIN) &&
-        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+      if (
+        !isPointVisible(origin) ||
+        origin[2] <= -(PLAYER_AIM_Z_PLANE + ENEMY_FIRE_RANGE_MARGIN)
+      ) {
+        return doTimes(readyElapsed, (_, index) => readyElapsed[index] = 0);
+      }
+
+      doTimes(_ship[2], (weapon, index) => {
+        readyElapsed[index] += tickLength;
+        // summoning sickness
+        if (readyElapsed[index] >= 1 / weapon[3][5]) {
+          weapon[2](_ship, tickLength);
+        }
+      });
     };
 
   return createActionSequencer([

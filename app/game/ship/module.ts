@@ -26,7 +26,7 @@ import { length, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
 import { Band, doTimes, flat, repeat } from "~/common";
 
-import { BASE_PROPERTIES } from "../options/base.ts";
+import { BASE_PROPERTIES, ENEMY_FADE_TIME } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
 import { levelRollOverrides } from "../world/levels.ts";
 
@@ -86,7 +86,7 @@ export const getShipObjects = (
   [shipObject, , weapons, , damages, , optionsIndex]: Ship,
 ): XOObject[][] =>
   flat(
-    optionsIndex && damages[3]
+    optionsIndex && damages[3] > ENEMY_FADE_TIME
       ? []
       : flat([[shipObject]], doTimes(weapons, ([object]) => [object])),
     doTimes(weapons, ([, [, bullets]]) => bullets),

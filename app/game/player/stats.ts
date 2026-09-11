@@ -46,6 +46,7 @@ export const updatePlayerEquipmentSnapshots = (
         _snapshot[0] = item[7]![0];
         _snapshot[5] = item[7]![1];
         _snapshot[3] = item[7]![2];
+        _snapshot[7] = item[6];
 
         return _snapshot;
       },

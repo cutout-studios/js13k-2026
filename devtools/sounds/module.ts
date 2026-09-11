@@ -21,7 +21,6 @@ import {
   createRingBuffer,
   createSound,
   NOISE_BUFFER,
-  PACK_BUFFER_NAMES,
   SAWTOOTH_BUFFER,
   SINE_BUFFER,
   SQUARE_BUFFER,
@@ -74,10 +73,6 @@ const CUSTOM_BUFFERS: Record<
   [PULSE_NAME]: [createPulseBuffer, "duty cycle", .5],
   [RING_NAME]: [createRingBuffer, "ratio", 2],
 };
-
-// PACK_BUFFER_NAMES (shared with libraries/audio/pack.ts) is the source of
-// truth for ordering - packSound() encodes a buffer as an index into it.
-const BUFFER_NAMES: string[] = [...PACK_BUFFER_NAMES];
 
 // createPulseBuffer/createRingBuffer return a fresh AudioBuffer every call
 // (unlike the 5 fixed singletons above), so identity alone can't recognize
@@ -662,7 +657,14 @@ const renderLayer = (layer: LayerModel, layerIndex: number) => {
   header.className = "row";
 
   const bufferSelect = document.createElement("select");
-  doTimes(BUFFER_NAMES, (name: string) => {
+  doTimes([
+    "SINE_BUFFER",
+    "SQUARE_BUFFER",
+    "TRIANGLE_BUFFER",
+    "SAWTOOTH_BUFFER",
+    "NOISE_BUFFER",
+    ...Object.keys(CUSTOM_BUFFERS),
+  ], (name: string) => {
     const option = document.createElement("option");
     option.value = name;
     option.textContent = name;

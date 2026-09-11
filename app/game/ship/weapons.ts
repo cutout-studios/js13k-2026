@@ -52,15 +52,19 @@ export const createWeapon = (
   ];
 };
 
+export const canAffordWeapon = (ship: Ship, weaponIndex: number) => {
+  const [, , weapons, , resources, shipSnapshot] = ship;
+  return !!ship[6] ||
+    resources[1] + weapons[weaponIndex][3][7] * shipSnapshot[5] <
+      shipSnapshot[4];
+};
+
 export const fireWeapon = (weaponIndex: number) => (ship: Ship) => {
   const [, , weapons, , resources, shipSnapshot] = ship,
     [, [bullets, instanceGroup], , snapshot] = weapons[weaponIndex];
 
-  if (!ship[6]) {
-    const totalGasUsed = resources[1] + shipSnapshot[9] * shipSnapshot[5];
-    if (totalGasUsed >= shipSnapshot[4]) return;
-    resources[1] = totalGasUsed;
-  }
+  if (!canAffordWeapon(ship, weaponIndex)) return;
+  if (!ship[6]) resources[1] += snapshot[7] * shipSnapshot[5];
 
   doTimes(snapshot[0], () => {
     const bullet = createBullet(ship, weaponIndex);

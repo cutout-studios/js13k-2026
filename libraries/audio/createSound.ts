@@ -26,36 +26,37 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
   const groupBus = api.createDynamicsCompressor();
   groupBus.connect(masterBus);
 
-  return ((pan = 0, volume = 1) =>
-    doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
-      const source = new AudioBufferSourceNode(api, { buffer, loop: true }),
-        ampKnob = api.createGain(),
-        panKnob = api.createStereoPanner(),
-        knobs = [ampKnob.gain, source.playbackRate, panKnob.pan];
+  const play =
+    ((pan = 0, volume = 1) =>
+      doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
+        const source = new AudioBufferSourceNode(api, { buffer, loop: true }),
+          ampKnob = api.createGain(),
+          panKnob = api.createStereoPanner(),
+          knobs = [ampKnob.gain, source.playbackRate, panKnob.pan];
 
-      let time = api.currentTime;
-      // exponentialRampToValueAtTime throws if the ramp starts or ends at exactly 0...
-      ampKnob.gain.setValueAtTime(0.0001, time);
-      panKnob.pan.setValueAtTime(pan, time);
-      source.connect(ampKnob).connect(panKnob).connect(groupBus);
-      source.start(time);
+        let time = api.currentTime;
+        // exponentialRampToValueAtTime throws if the ramp starts or ends at exactly 0...
+        ampKnob.gain.setValueAtTime(0.0001, time);
+        panKnob.pan.setValueAtTime(pan, time);
+        source.connect(ampKnob).connect(panKnob).connect(groupBus);
+        source.start(time);
 
-      doTimes(schedule, ([[knobID, value, exponential], duration = 0]) => {
-        time += duration;
-        const target = typeof value == "number" ? value : rollBand(value);
-        knobs[knobID][
-          exponential
-            ? "exponentialRampToValueAtTime"
-            : "linearRampToValueAtTime"
-        ](
-          knobID < 2 ? max(target, 0.0001) : target * (knobID ? 1 : volume),
-          time,
-        );
-      });
+        doTimes(schedule, ([[knobID, value, exponential], duration = 0]) => {
+          time += duration;
+          const target = typeof value == "number" ? value : rollBand(value);
+          knobs[knobID][
+            exponential
+              ? "exponentialRampToValueAtTime"
+              : "linearRampToValueAtTime"
+          ](
+            knobID < 2 ? max(target, 0.0001) : target * (knobID ? 1 : volume),
+            time,
+          );
+        });
 
-      source.stop(time);
-    })) as unknown as Sound;
+        source.stop(time);
+      })) as unknown as Sound;
 
-  // (play as unknown as Sound).definitions = definitions;
-  // return play as unknown as Sound;
+  play.definitions = definitions;
+  return play;
 };
