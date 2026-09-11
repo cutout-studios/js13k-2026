@@ -12,10 +12,10 @@
 - Point enemies w/ no change in sequencer to the default one
 - Comment out devtools introspection
 
-- Highlight dropped items in the field with #ff0 pyramids = rank
-- Bullets remain after an enemy dies
-- At least 2 more sounds: "fizz" for green & pink bullets, prolonged laser, for purple
+- Bullets remain after an enemy dies (!)
 - Enemies should shake when hit
+- Highlight dropped items in the field with #ff0 pyramids = rank
+- At least 2 more sounds: "fizz" for green & pink bullets, prolonged laser, for purple
 
 ## Director's cut, if any:
 
