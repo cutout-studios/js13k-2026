@@ -181,7 +181,7 @@ export default [
     [2, 4], // countBand
   ],
   [
-    [[5, 9], 0, 1, [0.5, 1], [40, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[10, 18], 0, 1, [0.5, 1], [40, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 24, "x", [1.5, 2.5]], // Bullet Spread
       [2, 4, "x", [2, 5]], // Gas

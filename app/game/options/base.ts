@@ -37,11 +37,11 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0, // Rez Save
   1, // Damage Taken
   0, // Damage Taken From Gas
-  40, // Gas
+  85, // Gas
   1, // Gas Cost - DEAD
 
   // 6-10
-  5, // Gas Regen
+  15, // Gas Regen
   1, // Item Mixture Quality
   0.1, // Item Drop Rate
   5, // KG

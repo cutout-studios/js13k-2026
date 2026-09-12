@@ -101,7 +101,7 @@ export default [
     [3, 5], // countBand
   ],
   [
-    [[0, 0], 0, 1, [0.15, 0.6], [20, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[0, 0], 0, 1, [0.08, 0.4], [20, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 22, "x", [1.7, 3]], // Bullet Speed
       [0, 19, "+", [0.1, 0.5]], // Bullet Crit Chance

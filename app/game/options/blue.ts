@@ -63,7 +63,7 @@ export default [
     [1, 1], // countBand
   ],
   [
-    [[6, 12], 1, 1, [0.7, 1.2], [6, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[15, 18], 1, 1, [0.7, 1.2], [6, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 11, "x", [2, 4]], // HP
       [0, 12, "x", [2, 4]], // HP Regen

@@ -40,8 +40,7 @@ const PORTRAIT_OFFSET = 81,
   ]) as XYZ[];
 
 export const portrait = (collected: Set<number>) => {
-  const progress = collected.size / 6,
-    collectedColors = [...collected];
+  const progress = collected.size / 6;
 
   return createObject(
     [PORTRAIT_POSITION],
@@ -55,8 +54,8 @@ export const portrait = (collected: Set<number>) => {
         doTimes(
           6,
           (index: number) =>
-            collectedColors[index]
-              ? GameOptions[collectedColors[index]][1]
+            collected.has(index)
+              ? GameOptions[index][1]
               : 0x000000FF,
         ),
       ),

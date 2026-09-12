@@ -61,7 +61,7 @@ export default [
     [9, 25], // countBand
   ],
   [
-    [[0.5, 2], 0, 9, [0.3, 0.9], [1, 5]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[4, 10], 0, 9, [1.5, 7], [1, 5]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 7, "x", [1.5, 2.5]], // Restore Potency
       [0, 8, "+", [0.05, 0.2]], // Drop Rate

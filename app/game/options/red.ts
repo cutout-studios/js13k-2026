@@ -70,7 +70,7 @@ export default [
     [3, 6], // countBand
   ],
   [
-    [[2, 4], 0, 2, [2, 4], [1, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[8, 12], 0, 2, [2, 4], [1, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 21, "x", [1.5, 3.5]], // Bullet Damage
       [0, 20, "x", [3, 5]], // Bullet Crit Damage
