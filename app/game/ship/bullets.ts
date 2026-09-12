@@ -76,11 +76,6 @@ export const createBullet = (
         bulletSequencerFactory,
         bulletSound,
       ] = [],
-      // an equipped item's color may not match the ship's own (e.g. the
-      // player equipping a yellow weapon) - in that case there's no reason
-      // to think the ship's own weapon slot index means anything within
-      // that color's own weapon config array, so fall back to its primary
-      // (index 0) weapon config instead
     ] = weaponConfigs[optionsIndex == shipOptionsIndex ? weaponIndex : 0],
     globalOrigin = readOrigin(globalCoordinates),
     effectiveSpread = round(snapshot[0]) > 1

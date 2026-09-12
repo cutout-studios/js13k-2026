@@ -74,9 +74,6 @@ const bindWeaponKey = (code: string, weapon: Weapon, weaponIndex: number) => {
         GameState[2] = true;
         title.style.opacity = "0";
       } else if (
-        // only fire instantly if the weapon's natural cooldown has already
-        // elapsed - otherwise this is a rapid re-click, and firing instantly
-        // would let it bypass the fire rate (and the gas cost it implies)
         idleTime >= 1 / weapon[3][5] && canAffordWeapon(playerShip, weaponIndex)
       ) {
         weapon[2] = defaultWeaponSequencerFactory(

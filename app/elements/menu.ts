@@ -35,8 +35,7 @@ import { Item } from "../game/player/types.ts";
 import { PARTS, PROPERTY_NAMES } from "../game/ship/constants.ts";
 import {
   equipSound,
-  restoreSound,
-  winCollectionSound,
+  itemPickupSound,
 } from "../game/sounds.ts";
 
 import { endGame } from "../game/update.ts";
@@ -156,9 +155,8 @@ form.onsubmit = (event: SubmitEvent) => {
         inventory.push(item);
         if (item[4] >= 2) {
           winCollection.add(item[3]);
-          winCollectionSound();
           if (winCollection.size == 6) endGame();
-        } else restoreSound();
+        } else itemPickupSound();
         updatePlayerEquipmentSnapshots(player);
       }
       break;

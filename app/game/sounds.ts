@@ -189,46 +189,6 @@ export const rezLostSound = createSound([NOISE_BUFFER, [
   [[0, 0, true], 0.26],
 ]]);
 
-export const rezSavedSound = createSound([SINE_BUFFER, [
-  [[0, 0.5], 0],
-  [[1, 0.8], 0],
-  [[1, 1.4, false], 0.05],
-  [[0, 0, false], 0.06],
-
-  [[0, 0.6], 0.11],
-  [[1, 1.2], 0.11],
-  [[1, 2.1, false], 0.19],
-  [[0, 0, true], 0.25],
-]]);
-export const restoreSound = rezSavedSound;
-
-export const stageCompleteSound = createSound([SINE_BUFFER, [
-  [[0, 0.45], 0],
-  [[1, 1.2], 0],
-  [[0, 0, false], 0.06],
-
-  [[0, 0.45], 0.09],
-  [[1, 0.9], 0.09],
-  [[0, 0, false], 0.15],
-
-  [[0, 0.55], 0.18],
-  [[1, 1.6], 0.18],
-  [[0, 0, true], 0.42],
-]], [SINE_BUFFER, [
-  [[0, 0.35], 0],
-  [[1, 1.8], 0],
-  [[0, 0, false], 0.06],
-
-  [[0, 0.35], 0.09],
-  [[1, 1.125], 0.09],
-  [[0, 0, false], 0.15],
-
-  [[0, 0.45], 0.18],
-  [[1, 3.2], 0.18],
-  [[0, 0, true], 0.42],
-]]);
-export const winCollectionSound = stageCompleteSound;
-
 export const redWeaponSound = createSound([SQUARE_BUFFER, [
   [[1, [4.3, 6]], 0],
   [[0, 0.035], 0.03],

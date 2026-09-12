@@ -47,7 +47,7 @@
 
 [sponsorship link](https://github.com/sponsors/cutout-studios)
 
-## Thing I'd do next:
+## Things I'd do next:
 
 - Major refactoring, this codebase is actively driving me insane.
 - Particle effects: ship thrusters, explosion effects

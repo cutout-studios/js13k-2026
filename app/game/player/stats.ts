@@ -93,10 +93,6 @@ export const updatePlayerEquipmentSnapshots = (
     if (index > 1) return; // only WING (L)/WING (R) slots carry a weapon
 
     const weapon = ship[2][index],
-      // always use the equipped item's color's own PRIMARY weapon config -
-      // the wing slot the player put it in has nothing to do with that
-      // color's own internal weapon layout (e.g. yellow's 2nd slot is an
-      // inert fragment receiver, not a second gun)
       [, itemWeaponSequenceFactory, , , itemWeaponSight] =
         GameOptions[colorID][2][3][0],
       newWeapon = createWeapon(

@@ -47,9 +47,6 @@ import {
   playerHitSound,
   playerSpinCounterSound,
   rezLostSound,
-  rezSavedSound,
-  stageCompleteSound,
-  winCollectionSound,
 } from "./sounds.ts";
 import { Game } from "./types.ts";
 import { DROP_PITY_STEP } from "./world/constants.ts";
@@ -216,8 +213,6 @@ export const updateGame = (
     inventory.push(droppedItems[itemIndex]);
     if (droppedItems[itemIndex][4] >= 2) {
       winCollection.add(droppedItems[itemIndex][3]);
-      winCollectionSound();
-
       if (winCollection.size == 6) endGame();
     } else itemPickupSound(getPanFromCoordinates(playerShipObject[0]));
   });
@@ -323,9 +318,8 @@ export const updateGame = (
   // if hp is depleted, reduce rez by one, trigger temporary invulnerability
   if (playerResourceStatus[0] >= playerSnapshot[11]) {
     playerResourceStatus[0] = playerSnapshot[11];
-    (random() > playerSnapshot[1])
-      ? (playerResourceStatus[2]++, rezLostSound())
-      : rezSavedSound();
+    (random() > playerSnapshot[1]) &&
+      (playerResourceStatus[2]++, rezLostSound());
     playerResourceStatus[3] = 1;
   }
 
@@ -344,7 +338,6 @@ export const updateGame = (
 
   // -- update game progress
   if (progress[1] >= progress[2]) { // advance to the next level
-    stageCompleteSound();
     progress[1] = 1;
     progress[0]++;
     progress[2] = getWavesInLevel(progress[0]);
