@@ -109,6 +109,8 @@ export const updatePlayerEquipmentSnapshots = (
   });
 
   const [, newGeometry, newMaterial] = flattenObjects(...equippedItemObjects);
+  ship[0][1][0] = 0.21;
+
   ship[0][1] = newGeometry;
   ship[0][2] = newMaterial;
 
