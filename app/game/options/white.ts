@@ -37,8 +37,8 @@ import {
 } from "./defaults.ts";
 import { ColorOptions } from "./types.ts";
 
-const NUB_GEOMETRY = createPyramid([0.03, 0.03, 0.04], 8),
-  CONE_GEOMETRY = createPyramid([0.022, 0.022, 0.06], 10),
+const NUB_GEOMETRY = createPyramid([0.06, 0.06, 0.04], 12),
+  CONE_GEOMETRY = createPyramid([0.05, 0.05, 0.06], 12),
   NUB_TRIS = length(NUB_GEOMETRY[1]) / 3,
   CONE_TRIS = length(CONE_GEOMETRY[1]) / 3;
 

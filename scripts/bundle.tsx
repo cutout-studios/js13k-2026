@@ -105,10 +105,6 @@ async function bundle(
 
     jsCode = htmlText + `<script type=module>${jsCode}</script>`;
 
-    // Packer.optimize() runs a randomized (Math.random()-driven) search, so
-    // it produces a different-sized result every run on identical input -
-    // try several times and keep the smallest, rather than accepting
-    // whatever the first attempt happens to land on
     const PACK_ATTEMPTS = 12;
     let bestOutputText: string | undefined;
 

@@ -153,7 +153,8 @@ form.onsubmit = (event: SubmitEvent) => {
         if (item[4] >= 2) {
           winCollection.add(item[3]);
           if (winCollection.size == 6) endGame();
-        } else itemPickupSound();
+        }
+        itemPickupSound();
         updatePlayerEquipmentSnapshots(player);
       }
       break;
@@ -184,6 +185,8 @@ menu.onmouseenter = menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
 };
 
 export const resetMenu = () => {
+  canvasCells[0].style.width = canvasCells[0].style.height = "192px";
+
   if (!renderTargets) renderTargets = doTimes(canvasCells, createRenderTarget);
 
   camera([[portrait(winCollection)]], renderTargets[0]);
