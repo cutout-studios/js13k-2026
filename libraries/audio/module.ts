@@ -15,6 +15,7 @@
  */
 
 export {
+  BUZZ_BUFFER,
   createPulseBuffer,
   createRingBuffer,
   NOISE_BUFFER,

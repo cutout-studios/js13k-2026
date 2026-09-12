@@ -24,8 +24,11 @@ import { Sound, SoundDefinition } from "./types.ts";
 
 export const createSound = (...definitions: SoundDefinition[]): Sound => {
   const groupBus = api.createDynamicsCompressor();
-  groupBus.connect(masterBus);
 
+  groupBus.knee.value = 30;
+  groupBus.ratio.value = 4;
+
+  groupBus.connect(masterBus);
   const play =
     ((pan = 0, volume = 1) =>
       doTimes(definitions, ([buffer, schedule]: SoundDefinition) => {
@@ -49,7 +52,11 @@ export const createSound = (...definitions: SoundDefinition[]): Sound => {
               ? "exponentialRampToValueAtTime"
               : "linearRampToValueAtTime"
           ](
-            knobID < 2 ? max(target, 0.0001) : target * (knobID ? 1 : volume),
+            knobID == 0
+              ? max(target * volume ** 3, 0.0001)
+              : knobID == 1
+              ? max(target, 0.0001)
+              : target,
             time,
           );
         });

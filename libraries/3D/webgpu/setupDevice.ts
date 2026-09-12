@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
+const _notSupported = () => alert("WebGPU NOT SUPPORTED");
+
 const gpu = navigator.gpu;
+
+if (!gpu) _notSupported();
 
 export const format = gpu.getPreferredCanvasFormat();
 
-export const device = await (await gpu.requestAdapter())!.requestDevice();
+const adapter = await gpu.requestAdapter();
+
+if (!adapter) _notSupported();
+
+export const device = await adapter!.requestDevice();
+
+if (!device) _notSupported();
 
 const storage = (visibility: number) =>
   device.createBindGroupLayout({

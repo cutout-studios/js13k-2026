@@ -16,6 +16,7 @@
 
 import { createPyramid, createSphere } from "~/3D";
 import { NO_OP } from "~/alias";
+import { greenWeaponSound } from "../sounds.ts";
 import {
   defaultBulletSequencerFactory,
   defaultShipSequencerFactory,
@@ -52,7 +53,7 @@ export default [
         [
           createPyramid([0.02, 0.002, 0.015], 4),
           defaultBulletSequencerFactory(),
-          NO_OP,
+          greenWeaponSound,
         ], // bullet
       ],
       [

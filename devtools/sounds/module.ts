@@ -17,6 +17,7 @@
 /// <reference lib="dom" />
 
 import {
+  BUZZ_BUFFER,
   createPulseBuffer,
   createRingBuffer,
   createSound,
@@ -56,6 +57,7 @@ const BUFFERS: Record<string, AudioBuffer> = {
   TRIANGLE_BUFFER,
   SAWTOOTH_BUFFER,
   NOISE_BUFFER,
+  BUZZ_BUFFER,
 };
 const BUFFER_NAME_BY_INSTANCE = new Map(
   Object.entries(BUFFERS).map(([name, buffer]) => [buffer, name]),
@@ -590,13 +592,13 @@ const renderStep = (layer: LayerModel, step: StepModel, stepIndex: number) => {
 
   const valueInput = document.createElement("input");
   valueInput.type = "number";
-  valueInput.step = "0.01";
+  valueInput.step = "0.001";
   valueInput.value = step.value.toString();
   valueInput.oninput = () => step.value = +valueInput.value;
 
   const valueHiInput = document.createElement("input");
   valueHiInput.type = "number";
-  valueHiInput.step = "0.01";
+  valueHiInput.step = "0.001";
   valueHiInput.value = step.valueHi.toString();
   valueHiInput.style.display = step.isBand ? "" : "none";
   valueHiInput.oninput = () => step.valueHi = +valueHiInput.value;
@@ -614,7 +616,7 @@ const renderStep = (layer: LayerModel, step: StepModel, stepIndex: number) => {
 
   const durationInput = document.createElement("input");
   durationInput.type = "number";
-  durationInput.step = "0.01";
+  durationInput.step = "0.001";
   durationInput.value = step.duration.toString();
   durationInput.oninput = () => step.duration = +durationInput.value;
 
@@ -663,6 +665,7 @@ const renderLayer = (layer: LayerModel, layerIndex: number) => {
     "TRIANGLE_BUFFER",
     "SAWTOOTH_BUFFER",
     "NOISE_BUFFER",
+    "BUZZ_BUFFER",
     ...Object.keys(CUSTOM_BUFFERS),
   ], (name: string) => {
     const option = document.createElement("option");

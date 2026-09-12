@@ -42,6 +42,13 @@ export const TRIANGLE_BUFFER = _renderCycle((p) => abs(p - 0.5) * 4 - 1);
 export const NOISE_BUFFER = _renderCycle(() => rollSpread(), 400);
 export const SAWTOOTH_BUFFER = _renderCycle((p) => p * 2 - 1);
 
+export const BUZZ_BUFFER = _renderCycle((p) => {
+  if (p < 0.05) return sin((p / 0.05) * PI);
+  if (p > 0.5 && p < 0.55) return -sin(((p - 0.5) / 0.05) * PI);
+  return 0;
+});
+
+
 export const createPulseBuffer = (
   dutyCycle: number,
   cycles = 32,

@@ -105,10 +105,10 @@ async function bundle(
 
     jsCode = htmlText + `<script type=module>${jsCode}</script>`;
 
-    const PACK_ATTEMPTS = 12;
+    // const PACK_ATTEMPTS = 12;
     let bestOutputText: string | undefined;
 
-    for (let attempt = 0; attempt < PACK_ATTEMPTS; attempt++) {
+    // for (let attempt = 0; attempt < PACK_ATTEMPTS; attempt++) {
       const packer = new Packer([
         {
           data: jsCode,
@@ -116,7 +116,8 @@ async function bundle(
           action: "write" as InputAction,
         },
       ], { allowFreeVars: true });
-      await packer.optimize(2);
+      // await packer.optimize(2);
+      await packer.optimize(1);
 
       const { firstLine, secondLine } = packer.makeDecoder(),
         candidate = `<script>${firstLine}\n${secondLine}</script>`;
@@ -124,7 +125,7 @@ async function bundle(
       if (!bestOutputText || candidate.length < bestOutputText.length) {
         bestOutputText = candidate;
       }
-    }
+    // }
 
     appOutputText = bestOutputText!;
   }

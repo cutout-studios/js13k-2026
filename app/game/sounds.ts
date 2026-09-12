@@ -15,7 +15,7 @@
  */
 
 import {
-  createPulseBuffer,
+  BUZZ_BUFFER,
   createSound,
   NOISE_BUFFER,
   SAWTOOTH_BUFFER,
@@ -23,47 +23,48 @@ import {
   SQUARE_BUFFER,
   TRIANGLE_BUFFER,
 } from "~/audio";
+import { SoundDefinition } from "../../libraries/audio/types.ts";
 
 export const defaultWeaponSound = createSound(
   [NOISE_BUFFER, [
     [[1, [0.7, 1]], 0],
-    [[0, [0.7, 0.8]], 0.003],
-    [[0, 0], 0.06],
+    [[0, 0.015], 0.05],
+    [[0, 0], 0.01],
   ]],
   [SINE_BUFFER, [
     [[1, [0.4, 0.6]], 0],
-    [[0, 0.43], 0.004],
-    [[1, [0.13, 0.16]], 0.03],
+    [[0, 0.02], 0.004],
+    [[1, [0.13, 0.16]], 0.05],
     [[0, 0], 0.1],
   ]],
   [SQUARE_BUFFER, [
     [[1, [4.3, 6]], 0],
-    [[0, 0.035], 0.03],
+    [[0, 0.005], 0.03],
     [[0, 0], 0.14],
     [[1, [0.2, 0.5], true], 0],
-  ]],
+  ]]
 );
 
 export const errorSound = createSound(
   [SQUARE_BUFFER, [
     [[1, 3.5, true], 0],
-    [[0, 0.19], 0],
+    [[0, 0.06], 0],
     [[1, 1.5, true], 0.04],
     [[0, 0], 0.04],
     [[1, 1.5, true], 0],
     [[1, 3.5, true], 0],
-    [[0, 0.18], 0],
+    [[0, 0.07], 0],
     [[1, 1.5, true], 0.04],
     [[0, 0], 0.04],
   ]],
   [TRIANGLE_BUFFER, [
     [[1, 0.8, true], 0],
-    [[0, 0.15], 0],
+    [[0, 0.05], 0],
     [[1, 0.5, true], 0.04],
     [[0, 0], 0.04],
     [[1, 0.5, true], 0],
     [[1, 0.8, true], 0],
-    [[0, 0.15], 0],
+    [[0, 0.05], 0],
     [[1, 0.5, true], 0.04],
     [[0, 0], 0.04],
   ]],
@@ -71,20 +72,20 @@ export const errorSound = createSound(
 
 export const equipSound = createSound(
   [NOISE_BUFFER, [
-    [[1, 0.6], 0],
-    [[0, 1.14], 0],
+    [[1, 0.6, true], 0],
+    [[0, 0.18], 0],
     [[0, 0], 0.01],
     [[0, 0], 0.02],
-    [[1, 0.85], 0.03],
-    [[0, 1], 0],
-    [[0, 0.01], 0.01],
+    [[1, 0.85, true], 0.03],
+    [[0, 0.41], 0],
+    [[0, 0.005], 0.01],
   ]],
   [SINE_BUFFER, [
     [[1, 0.35, true], 0],
-    [[0, 0.3], 0],
+    [[0, 0.035], 0],
     [[0, 0], 0.01],
     [[0, 0], 0.02],
-    [[0, 0.3], 0.01],
+    [[0, 0.035], 0.01],
     [[0, 0], 0.01],
     [[1, 0.4, true], 0.01],
   ]],
@@ -94,160 +95,180 @@ export const inventoryFullSound = errorSound;
 
 export const enemyHitSound = createSound(
   [NOISE_BUFFER, [
-    [[1, [0.3, 0.4], true], 0],
-    [[0, [0.65, 0.75]], 0],
+    [[1, [0.3, 2]], 0],
+    [[0, [0.03, 0.12]], 0],
     [[0, 0], 0.03],
-  ]],
-  [SAWTOOTH_BUFFER, [
-    [[1, [0.7, 0.8], true], 0],
-    [[0, 0.25], 0],
-    [[0, 0], 0.03],
-    [[1, [0.2, 0.4], true], 0.01],
   ]],
 );
+
 export const enemyDestroyedSound = createSound(
   [SINE_BUFFER, [
-    [[1, [0.1, 0.13], true], 0],
-    [[0, 0.32, true], 0],
-    [[0, 0.05, true], 0.06],
+    [[1, [0.1, 0.13]], 0],
+    [[0, 0.4], 0],
+    [[0, 0.012], 0.06],
     [[1, 0.1], 1.5],
-    [[0, 0, true], 1.5],
-  ]],
-  [SAWTOOTH_BUFFER, [
-    [[1, [0.2, 0.3], true], 0],
-    [[0, 0.025], 0],
-    [[0, 0.01], 0.14],
-    [[1, [0.06, 0.02], true], 0.01],
-    [[0, 0.005], 0.56],
     [[0, 0], 1.5],
   ]],
-  [NOISE_BUFFER, [
-    [[1, [1.8, 2.3], true], 0],
-    [[0, 0.55], 0],
-    [[0, 0, false], 0.015],
+  [SAWTOOTH_BUFFER, [
+    [[1, [0.2, 0.3]], 0],
+    [[0, 0.012], 0],
+    [[0, 0.01], 0.14],
+    [[1, [0.06, 0.02]], 0.01],
+    [[0, 0, true], 1.5],
   ]],
   [NOISE_BUFFER, [
-    [[1, [0.4, 0.6], true], 0],
-    [[0, 0.28, true], 0],
-    [[0, 0.08, true], 0.2],
-    [[0, 0.02, true], 0.6],
-    [[1, [0.2, 0.3], true], 0.6],
+    [[1, [1.8, 2.3]], 0],
+    [[0, 0.25], 0],
+    [[0, 0], 0.015],
+  ]],
+  [NOISE_BUFFER, [
+    [[1, [0.4, 0.6]], 0],
+    [[0, 0.14], 0],
+    [[0, 0.04], 0.2],
+    [[0, 0.01], 0.6],
+    [[1, [0.2, 0.3]], 0.6],
     [[0, 0, true], 1.15],
   ]],
 );
 
-// WIP
 export const playerSpinSound = createSound([TRIANGLE_BUFFER, [
-  [[0, 0.13], 0],
+  [[0, 0.01], 0],
   [[1, 0.8], 0],
   [[1, 2.1, true], 0.15],
   [[0, 0], 0.2],
 ]], [NOISE_BUFFER, [
   [[1, 0.6, true], 0],
   [[0, 0], 0],
-  [[0, 0.18], 0.08],
-  [[0, 0.5], 0.06],
-  [[0, 0.1], 0.05],
+  [[0, 0.02], 0.08],
+  [[0, 0.06], 0.06],
+  [[0, 0.012], 0.05],
   [[0, 0, true], 0.5],
-]]);
-
-export const playerSpinCounterSound = createSound([SQUARE_BUFFER, [
-  [[0, [0.5, 0.7]], 0],
-  [[1, [3.6, 4.6]], 0],
-  [[1, [1.0, 1.4], true], 0.08],
-  [[0, 0, false], 0.08],
-]], [NOISE_BUFFER, [
-  [[0, [0.3, 0.5]], 0],
-  [[1, [1.6, 2.4]], 0],
-  [[0, 0, false], 0.03],
-]]);
-
-export const playerHitSound = createSound([TRIANGLE_BUFFER, [
-  [[0, 0.65], 0],
-  [[1, 1.1], 0],
-  [[1, 0.5, true], 0.06],
-  [[0, 0, false], 0.08],
-]], [createPulseBuffer(.5), [
-  [[0, 0.3], 0],
-  [[1, 0.85], 0],
-  [[0, 0, false], 0.04],
 ]]);
 
 export const rezLostSound = createSound([NOISE_BUFFER, [
   [[1, 1.25], 0],
-
-  [[0, 0.75], 0],
+  [[0, 0.45], 0],
   [[0, 0.05, true], 0.04],
-
-  [[0, 0.5], 0.07],
+  [[0, 0.25], 0.07],
   [[0, 0.05, true], 0.11],
-
-  [[0, 0.28], 0.14],
+  [[0, 0.14], 0.14],
   [[0, 0.03, true], 0.18],
-
-  [[0, 0.12], 0.21],
-  [[0, 0, true], 0.26],
+  [[0, 0.06], 0.3],
+  [[0, 0, true], 0.45],
 ]]);
 
-export const redWeaponSound = createSound([SQUARE_BUFFER, [
+const pistolLayer = [SAWTOOTH_BUFFER, [
   [[1, [4.3, 6]], 0],
-  [[0, 0.035], 0.03],
+  [[0, 0.03], 0.03],
   [[0, 0], 0.14],
   [[1, [0.2, 0.5], true], 0],
+]] as SoundDefinition;
+
+export const redWeaponSound = createSound(pistolLayer);
+
+export const blueWeaponSound = createSound(pistolLayer, [SINE_BUFFER, [
+  [[1, [0.2, 0.15]], 0],
+  [[0, 0.08], 0],
+  [[0, 0.96], 0.01],
+  [[0, 0.22], 0.01],
+  [[0, 0.16], 0.04],
+]], [SQUARE_BUFFER, [
+  [[1, [0.1, 0.15]], 0],
+  [[0, 0], 0],
+  [[0, 0.2], 0.01],
+  [[0, 0.07], 0.01],
+  [[0, 0], 0.09],
+  [[1, 0.15], 0.05],
 ]]);
-export const blueWeaponSound = redWeaponSound;
 
 export const greenWeaponSound = createSound(
-  [createPulseBuffer(.5), [
-    [[0, 0.35], 0],
-    [[1, [2.2, 3.5]], 0],
-    [[1, [1.0, 1.8], false], 0.035],
-    [[0, 0, false], 0.035],
-  ]],
   [NOISE_BUFFER, [
-    [[0, 0.25], 0],
-    [[1, [1.5, 2.5]], 0],
-    [[0, 0, false], 0.025],
+    [[1, [1.5, 2.5], true], 0],
+    [[0, 0.009], 0],
+    [[0, 0.027], 0.01],
+    [[0, 0.014], 0.01],
+    [[0, 0.007], 0.05],
   ]],
-);
-export const pinkWeaponSound = greenWeaponSound;
-
-export const purpleWeaponSound = createSound(
-  [SAWTOOTH_BUFFER, [
-    [[0, 0.1], 0],
-    [[1, 0.6], 0],
-    [[0, 0.6, true], 0.15],
-    [[1, 1.8, false], 0.15],
-    [[0, 0.6], 0.5],
-    [[1, 1.8], 0.5],
-    [[1, [0.5, 0.8], true], 0.8],
-    [[0, 0, true], 1.1],
+  [BUZZ_BUFFER, [
+    [[1, [3, 4], true], 0],
+    [[0, 0.004], 0],
+    [[0, 0.01], 0.005],
+    [[0, 0.008], 0.01],
+    [[0, 0], 0.15],
+    [[1, [3.5, 4], true], 0.036],
   ]],
-  [SAWTOOTH_BUFFER, [
-    [[0, 0.4], 0.15],
-    [[1, 2.7], 0.15],
-    [[0, 0.4], 0.5],
-    [[0, 0, true], 0.9],
-  ]],
+  [BUZZ_BUFFER, [
+    [[0, 0.015], 0.025],
+    [[1, 0.1, true], 0.025],
+    [[0, 0], 0.06],
+  ]]
 );
 
 export const yellowWeaponSound = createSound(
   [SINE_BUFFER, [
-    [[0, 0.6], 0],
+    [[0, 0.2], 0],
     [[1, 0.22], 0],
     [[0, 0, true], 0.38],
   ]],
   [TRIANGLE_BUFFER, [
-    [[0, 0.35], 0],
+    [[0, 0.1], 0],
     [[1, 0.2], 0],
-    [[1, 0.32, false], 0.18],
+    [[1, 0.32], 0.18],
     [[0, 0, true], 0.35],
   ]],
   [NOISE_BUFFER, [
-    [[0, 0.18], 0],
+    [[0, 0.09], 0],
     [[1, 0.25], 0],
     [[0, 0, true], 0.25],
   ]],
 );
 export const yellowBombReadySound = errorSound;
 export const yellowBombExplodeSound = enemyDestroyedSound;
+
+export const purpleWeaponSound = createSound(
+  [SAWTOOTH_BUFFER, [
+    [[1, 0.6], 0],
+    [[0, 0.02], 0.08],
+    [[1, 1.8], 0.08],
+    [[0, 0.02], 0.5],
+    [[1, 1.8], 0.5],
+    [[0, 0, true], 0.65],
+  ]],
+  [SINE_BUFFER, [
+    [[0, 0.02], 0.05],
+    [[1, 0.05], 0.02],
+  ]],
+  [SQUARE_BUFFER, [
+    [[0, 0.005], 0.08],
+    [[1, 2.7], 0],
+    [[0, 0.005], 0.5],
+    [[0, 0, true], 0.65],
+  ]],
+);
+
+export const pinkWeaponSound = greenWeaponSound;
+
+const playerHitBase: SoundDefinition = [NOISE_BUFFER, [
+  [[0, 0], 0],
+  [[0, 0.15], 0.01],
+  [[0, 0], 0.1],
+  [[1, [2, 3]], 0.05],
+]];
+
+export const playerHitSound = createSound([TRIANGLE_BUFFER, [
+  [[0, 0.075], 0],
+  [[1, 1.1], 0],
+  [[1, 0.5], 0.06],
+  [[0, 0], 0.08],
+]], [SAWTOOTH_BUFFER, [
+  [[0, 0.08], 0],
+  [[1, 0.85], 0],
+  [[0, 0], 0.04],
+]], playerHitBase);
+
+export const playerHitCounterSound = createSound([SQUARE_BUFFER, [
+  [[0, 0], 0],
+  [[0, [0.004, 0.012]], 0.15],
+  [[1, [5, 8]], 0],
+  [[1, [7, 12]], 0.05],
+]], playerHitBase);
