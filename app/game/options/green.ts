@@ -36,7 +36,7 @@ export default [
     ],
     [ // overrides
       [11, [8, 60]], // HP
-      [16, [1.35, 3]], // Strafe Speed
+      [16, [1.6, 3]], // Strafe Speed
     ],
     defaultShipSequencerFactory(() => 0), // sequenceFactory: no pause between passes
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
@@ -74,7 +74,7 @@ export default [
     [3, 7], // countBand
   ],
   [
-    [[1, 4], 0, 1, [12, 21], [0.25, 1]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[1, 3], 0, 1, [10, 21], [0.25, 1]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 16, "x", [1.7, 3]], // Speed
       [0, 23, "x", [1.7, 3]], // Bullet Rate

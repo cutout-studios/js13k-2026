@@ -35,7 +35,7 @@ import { rollSpread } from "~/random";
 
 import { BULLET_ALPHA } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
-import { Bullet, Ship } from "./types.ts";
+import { Bullet, BulletGroup, Ship } from "./types.ts";
 
 export const createBullet = (
   ship: Ship,
@@ -76,7 +76,12 @@ export const createBullet = (
         bulletSequencerFactory,
         bulletSound,
       ] = [],
-    ] = weaponConfigs[weaponIndex],
+      // an equipped item's color may not match the ship's own (e.g. the
+      // player equipping a yellow weapon) - in that case there's no reason
+      // to think the ship's own weapon slot index means anything within
+      // that color's own weapon config array, so fall back to its primary
+      // (index 0) weapon config instead
+    ] = weaponConfigs[optionsIndex == shipOptionsIndex ? weaponIndex : 0],
     globalOrigin = readOrigin(globalCoordinates),
     effectiveSpread = round(snapshot[0]) > 1
       ? max(snapshot[6], 0.01)
@@ -124,17 +129,21 @@ export const createBullet = (
   return bullet;
 };
 
-export const updateBullets = (ship: Ship, tickLength: number) =>
-  ship[2].forEach(([, bullets]) => {
-    const bulletsToCull = [] as number[];
+const updateBulletGroup = (bullets: BulletGroup, tickLength: number) => {
+  const bulletsToCull = [] as number[];
 
-    doTimes(
-      bullets[0],
-      (
-        bullet: Bullet,
-        index: number,
-      ) => bullet[1](bullet, tickLength) && bulletsToCull.push(index),
-    );
+  doTimes(
+    bullets[0],
+    (
+      bullet: Bullet,
+      index: number,
+    ) => bullet[1](bullet, tickLength) && bulletsToCull.push(index),
+  );
 
-    spliceTable(bullets, bulletsToCull);
-  });
+  spliceTable(bullets, bulletsToCull);
+};
+
+export const updateBullets = (ship: Ship, tickLength: number) => {
+  ship[2].forEach(([, bullets]) => updateBulletGroup(bullets, tickLength));
+  updateBulletGroup(ship[7], tickLength);
+};

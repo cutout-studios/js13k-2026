@@ -65,22 +65,30 @@ export const checkMousePointer = bindPointer(
 );
 
 const bindWeaponKey = (code: string, weapon: Weapon, weaponIndex: number) => {
+  let idleTime = Infinity; // time since the button was last released
+
   const hold = (t: number) => weapon[2](playerShip, t),
+    free = (t: number) => idleTime += t,
     reset = (t: number) => {
       if (!GameState[2]) {
         GameState[2] = true;
         title.style.opacity = "0";
-      }
-      if (canAffordWeapon(playerShip, weaponIndex)) {
+      } else if (
+        // only fire instantly if the weapon's natural cooldown has already
+        // elapsed - otherwise this is a rapid re-click, and firing instantly
+        // would let it bypass the fire rate (and the gas cost it implies)
+        idleTime >= 1 / weapon[3][5] && canAffordWeapon(playerShip, weaponIndex)
+      ) {
         weapon[2] = defaultWeaponSequencerFactory(
           fireWeapon(weaponIndex),
           weapon[3],
         );
       }
+      idleTime = 0;
       hold(t);
     };
 
-  return bindButton(code, reset, hold);
+  return bindButton(code, reset, hold, free, free);
 };
 
 export const checkLMouseButton = bindWeaponKey("LClick", leftWeapon, 0);

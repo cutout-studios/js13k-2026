@@ -25,6 +25,9 @@ export type Ship = [
   damages: Resources,
   _snapshot: ShipSnapshot,
   _optionsIndex: number,
+
+  // hack to fix yellow equip issue
+  auxiliaryBullets: BulletGroup,
 ];
 
 export type Resources = [

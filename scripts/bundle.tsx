@@ -104,18 +104,33 @@ async function bundle(
     );
 
     jsCode = htmlText + `<script type=module>${jsCode}</script>`;
-    const packer = new Packer([
-      {
-        data: jsCode,
-        type: "text" as InputType,
-        action: "write" as InputAction,
-      },
-    ], { allowFreeVars: true });
-    await packer.optimize(2);
 
-    const { firstLine, secondLine } = packer.makeDecoder();
+    // Packer.optimize() runs a randomized (Math.random()-driven) search, so
+    // it produces a different-sized result every run on identical input -
+    // try several times and keep the smallest, rather than accepting
+    // whatever the first attempt happens to land on
+    const PACK_ATTEMPTS = 12;
+    let bestOutputText: string | undefined;
 
-    appOutputText = `<script>${firstLine}\n${secondLine}</script>`;
+    for (let attempt = 0; attempt < PACK_ATTEMPTS; attempt++) {
+      const packer = new Packer([
+        {
+          data: jsCode,
+          type: "text" as InputType,
+          action: "write" as InputAction,
+        },
+      ], { allowFreeVars: true });
+      await packer.optimize(2);
+
+      const { firstLine, secondLine } = packer.makeDecoder(),
+        candidate = `<script>${firstLine}\n${secondLine}</script>`;
+
+      if (!bestOutputText || candidate.length < bestOutputText.length) {
+        bestOutputText = candidate;
+      }
+    }
+
+    appOutputText = bestOutputText!;
   }
 
   Deno.writeTextFileSync(
@@ -124,6 +139,18 @@ async function bundle(
   );
 
   if (skipCompression) return;
+
+  // pin the file's mtime - the zip's embedded timestamp otherwise makes the
+  // compressed size (and thus how close we are to JS13K_LIMIT) vary by
+  // ~10-45 bytes between runs of otherwise-identical content
+  const FIXED_MTIME = new Date(0);
+  Deno.utimeSync(BUNDLE_OUTPUT_FILEPATH, FIXED_MTIME, FIXED_MTIME);
+
+  try {
+    Deno.removeSync(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
+  } catch {
+    // no previous zip to remove
+  }
 
   const zip = await new Deno.Command("advzip", {
     args: ["-a", "-4", BUNDLE_OUTPUT_COMPRESSED_FILE, BUNDLE_OUTPUT_FILE],

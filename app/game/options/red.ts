@@ -45,7 +45,7 @@ export default [
     [[[_, [Z_AXIS, -1.61]], createPyramid([0.11, 0.09, 0.4], 3)]], // shape: hull only
     [ // overrides
       [8, [0.1, 0.15]], // Item Drop Rate
-      [11, [16, 300]], // HP
+      [11, [12, 300]], // HP
       [16, [1, 2]], // Strafe Speed
       [17, [2, 1.5]], // Aim Time
     ],

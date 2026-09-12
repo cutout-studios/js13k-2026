@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { abs, cos, F32, hypot, length, max, sin /* PI */ } from "~/alias";
+import { abs, cos, F32, hypot, length, max, min, sin /* PI */ } from "~/alias";
 import { Band, clamp, doTimes, flat, flatDoTimes, repeat } from "~/common";
 import { randomPoint } from "~/random";
 import { COORDINATE_SIDE_LENGTH, XYZ_LENGTH, Y_AXIS } from "./constants.ts";
@@ -122,6 +122,32 @@ export const flattenObjects = (...objects: XOObject[]): XOObject => {
         ),
       ),
     ),
+  ];
+};
+
+// re-centers an object's geometry around its own bounding-box midpoint,
+// moving that offset into its transform instead - for previewing geometry
+// standalone that was authored assuming a fixed parent position (e.g. a
+// ship part positioned relative to the ship's own origin)
+export const centerObject = (
+  [, [radius, vertices, halfLength], material]: XOObject,
+): XOObject => {
+  const lowCorner = vertices.reduce(
+      (a, b) => doTimes(XYZ_LENGTH, (i: number) => min(a[i], b[i])) as XYZ,
+    ),
+    highCorner = vertices.reduce(
+      (a, b) => doTimes(XYZ_LENGTH, (i: number) => max(a[i], b[i])) as XYZ,
+    ),
+    center = scale(add(lowCorner, highCorner), 0.5);
+
+  return [
+    setOrigin(createRotation(), center),
+    [
+      radius,
+      vertices.map((vertex) => subtract(vertex, center)) as XYZ[],
+      halfLength,
+    ],
+    material,
   ];
 };
 

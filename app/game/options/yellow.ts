@@ -106,7 +106,7 @@ export const yellowBulletSequencerFactory = (
         const fragmentGeometry = createSphere(0.01),
           fragmentMaterial = paint(0xF4AD3266),
           bombHeading = readHeading(bullet[0][0]),
-          bullets = doTimes(bullet[2]![2][0][3][3], () => {
+          bullets = doTimes(bullet[2]![2][bullet[3]!][3][3], () => {
             const bulletObject = createObject(
               [readOrigin(bullet[0][0])],
               fragmentGeometry,
@@ -129,10 +129,10 @@ export const yellowBulletSequencerFactory = (
             return fragment;
           }) as Bullet[];
 
-        const weaponBullets = bullet[2]![2][1][1];
+        const fragmentBullets = bullet[2]![7];
 
-        weaponBullets[0].push(...bullets);
-        weaponBullets[1].push(...doTimes(bullets, ([object]) => object));
+        fragmentBullets[0].push(...bullets);
+        fragmentBullets[1].push(...doTimes(bullets, ([object]) => object));
       },
     ]], 1);
 
@@ -164,7 +164,9 @@ export default [
     ],
     defaultShipSequencerFactory(), // sequenceFactory
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
-      [ // slot 0: bomb thrower - Bullet Damage is repurposed as fragment count, see bulletsequencerFactory below
+      [ // bomb thrower - Bullet Damage is repurposed as fragment count, see
+        // yellowBulletSequencerFactory below (fragments get their own
+        // ship-level bullet group, see Ship's auxiliaryBullets)
         [
           [3, [40, 120]], // Bullet Damage -> fragment count
           [4, [1.5, 1.5]], // Bullet Speed
@@ -174,10 +176,6 @@ export default [
         defaultWeaponSequencerFactory,
         _, // mount: none, single centered gun
         [createSphere(0.1), yellowBulletSequencerFactory, yellowWeaponSound], // bullet
-      ],
-      [ // slot 1: fragment receiver - never fires on its own, just holds bomb shrapnel
-        [], // overrides: none, keeps default Bullet Damage of 1 per fragment
-        () => createActionSequencer([[NO_OP]]),
       ],
     ],
     [2, 4], // countBand

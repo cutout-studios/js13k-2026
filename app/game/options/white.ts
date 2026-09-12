@@ -15,10 +15,12 @@
  */
 
 import {
+  centerObject,
   createObject,
   createPaintMaterialWithPalette as paint,
   createPyramid,
   flattenObjects,
+  readOrigin,
   X_AXIS,
   Y_AXIS,
   Z_AXIS,
@@ -53,9 +55,8 @@ export default [
         [[-0.2, 0, -0.22], [[0, 1, 0], -1.9]],
         createPyramid([0.1, 0.02, 0.2], 4),
       ], // left wing
-      [
-        _,
-        flattenObjects(
+      ((body) => [[readOrigin(body[0])], body[1]])(
+        centerObject(flattenObjects(
           createObject(
             [_, [Z_AXIS, -1.57]],
             createPyramid([0.05, 0.15, 0.27], 6),
@@ -64,20 +65,22 @@ export default [
             [[0, 0.08, -0.1], [X_AXIS, -0.6]],
             createPyramid([0.012, 0.012, 0.09], 3),
           ), // horn
-        )[1],
-      ],
-      [
-        _,
-        flattenObjects(
-          createObject([[0, 0, -0.28]], NUB_GEOMETRY), // nozzle
-          createObject([[0, 0, -0.35], [Y_AXIS, PI]], CONE_GEOMETRY), // thruster
-        )[1],
+        )),
+      ),
+      ((engine) => [
+        [readOrigin(engine[0])],
+        engine[1],
         (color: number) =>
           paint(
             ...repeat(NUB_TRIS, color),
             ...repeat(CONE_TRIS, (color & 0xFFFFFF00) | 0x66),
           ),
-      ],
+      ])(
+        centerObject(flattenObjects(
+          createObject([[0, 0, -0.28]], NUB_GEOMETRY), // nozzle
+          createObject([[0, 0, -0.35], [Y_AXIS, PI]], CONE_GEOMETRY), // thruster
+        )),
+      ),
     ],
     [], // overrides: none, player stats come straight from BASE_PROPERTIES
     () => createActionSequencer([[NO_OP]]), // sequenceFactory: idle, player is hand-flown

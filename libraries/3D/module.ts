@@ -36,6 +36,7 @@ export { createRenderTarget } from "./webgpu/createRenderTarget.ts";
 export {
   adjustObject,
   aimObject,
+  centerObject,
   createObject,
   flattenObjects,
   getCollisionPairs,

@@ -67,6 +67,7 @@ export const createShip = (
       level,
     ) as ShipSnapshot,
     optionsIndex,
+    [[], []],
   ];
 
   let sequencer: ActionSequencer<Ship> | undefined;
@@ -84,11 +85,12 @@ export const updateWeaponMounts = (ship: Ship) =>
   );
 
 export const getShipObjects = (
-  [shipObject, , weapons, , damages, , optionsIndex]: Ship,
+  [shipObject, , weapons, , damages, , optionsIndex, auxiliaryBullets]: Ship,
 ): XOObject[][] =>
   flat(
     optionsIndex && damages[3] > ENEMY_FADE_TIME
       ? []
       : flat([[shipObject]], doTimes(weapons, ([object]) => [object])),
     doTimes(weapons, ([, [, bullets]]) => bullets),
+    [auxiliaryBullets[1]],
   );

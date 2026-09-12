@@ -38,7 +38,7 @@ import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
 import { updateBullets } from "./ship/bullets.ts";
 import { updateWeaponMounts } from "./ship/module.ts";
-import { Ship, Weapon, WeaponSnapshot } from "./ship/types.ts";
+import { BulletGroup, Ship, Weapon, WeaponSnapshot } from "./ship/types.ts";
 import {
   enemyDestroyedSound,
   enemyHitSound,
@@ -60,6 +60,9 @@ export const endGame = (message = "COMPLETED") => {
   GameState[2] = false;
   setTimeout(() => (alert("MISSION " + message), location.reload()));
 };
+
+const _wrapBullets = (bullets: BulletGroup) =>
+  [, bullets, , BASE_PROPERTIES.slice(18), 0] as unknown as Weapon;
 
 export const updateGame = (
   game: Game,
@@ -88,7 +91,7 @@ export const updateGame = (
 
   // -- handle collisions
   doTimes(
-    playerWeapons,
+    [...playerWeapons, _wrapBullets(playerShip[7])],
     ([, bullets, , [, critChance, critDamage, bulletDamage]]) => {
       const [hitIndicies, shipIndicies] = getCollisionPairs(
         bullets[1],
@@ -114,13 +117,6 @@ export const updateGame = (
           (random() < critChance ? bulletDamage * critDamage : bulletDamage) *
           (playerSnapshot[10] * (1 + playerResourceStatus[2]));
         resources[0] += damageDealt;
-        // const maxHp = enemyShips[shipIndex][5][11]; // COMBAT LOG
-        // console.log( // COMBAT LOG - comment out this line to disable
-        //   `PLAYER -> ${GameOptions[enemyShips[shipIndex][6]][0]}:`,
-        //   damageDealt.toFixed(2),
-        //   `HP ${(maxHp - resources[0]).toFixed(1)}/${maxHp}`,
-        // );
-
         if (!resources[4]) { // flash a complementary color on hit
           resources[4] = 1;
           const original = body[2]!;
@@ -129,7 +125,10 @@ export const updateGame = (
             original[1].map((v, i) => i % 4 == 3 ? v : 1 - v),
             original[2],
           ];
-          setTimeout(() => (body[2] = original, resources[4] = 0), 80);
+          setTimeout(() => {
+            resources[4] = 0;
+            if (!resources[3]) body[2] = original;
+          }, 240);
         }
       });
 
@@ -140,19 +139,15 @@ export const updateGame = (
   if (!playerResourceStatus[3]) { // skip enemy bullets while the player is invulnerable
     doTimes(
       enemyShips,
-      ([enemyShipObject, , weapons /*, , , , optionsIndex */]) => {
+      ([enemyShipObject, , weapons, , , , , auxiliaryBullets]) => {
         doTimes(
-          weapons,
+          [...weapons, _wrapBullets(auxiliaryBullets)],
           (
             [, bullets, , [, critChance, critDamage, bulletDamage]],
-            // weaponIndex: number,
           ) => {
             const [hitIndicies] = getCollisionPairs(bullets[1], [
               playerShipObject,
             ]);
-            // const attacker = // COMBAT LOG - comment out this line to disable
-            //   `${GameOptions[optionsIndex][0]}#${weaponIndex} -> PLAYER:`;
-
             doTimes(hitIndicies, (bulletIndex: number) => {
               const baseDamage = random() < critChance
                 ? bulletDamage * critDamage
@@ -174,7 +169,7 @@ export const updateGame = (
                 ) as WeaponSnapshot;
                 fauxSnapshot[3] = baseDamage * playerSnapshot[13];
 
-                playerWeapons.push(
+                return playerWeapons.push(
                   [
                     createObject(),
                     [[bullet], [bullet[0]]],
@@ -183,28 +178,16 @@ export const updateGame = (
                     0,
                   ] as Weapon,
                 );
-
-                // console.log(attacker, "COUNTERED"); // COMBAT LOG
-
-                return;
               }
 
               playerHitSound(
                 getPanFromCoordinates(playerShipObject[0]),
               );
 
-              const totalDamage = baseDamage * playerSnapshot[2];
+              const totalDamage = baseDamage - playerSnapshot[2];
 
               playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
               playerResourceStatus[1] += totalDamage * playerSnapshot[3];
-
-              // console.log( // COMBAT LOG - comment out this line to disable
-              //   attacker,
-              //   totalDamage.toFixed(2),
-              //   `HP ${
-              //     (playerSnapshot[11] - playerResourceStatus[0]).toFixed(1)
-              //   }/${playerSnapshot[11]}`,
-              // );
             });
 
             spliceTable(bullets, hitIndicies);
@@ -263,12 +246,14 @@ export const updateGame = (
               readOrigin(coordinates)[2] / 18,
             );
 
-            const original = body[2]!; // permanently flip to the complementary color, fading out from there
-            body[2] = [
-              original[0],
-              original[1].map((v, i) => i % 4 == 3 ? v : 1 - v),
-              original[2],
-            ];
+            if (!damages[4]) {
+              const original = body[2]!;
+              body[2] = [
+                original[0],
+                original[1].map((v, i) => i % 4 == 3 ? v : 1 - v),
+                original[2],
+              ];
+            }
 
             if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
               world[4] = 0;
