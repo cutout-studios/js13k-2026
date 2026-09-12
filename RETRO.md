@@ -46,3 +46,12 @@
    games to make next.
 
 [sponsorship link](https://github.com/sponsors/cutout-studios)
+
+## Thing I'd do next:
+
+- Major refactoring, this codebase is actively driving me insane.
+- Particle effects: ship thrusters, explosion effects
+- Highlight dropped items in the field with #ff0 pyramids = rank
+- Map WASD controls to virtual stick, support controllers
+- Add FX (chromatic abberation) to background stars, colored nebula
+- Music

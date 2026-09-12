@@ -13,8 +13,3 @@ deno setup
 deno run bundle:shaders
 deno run bundle
 ```
-
-## Roadmap
-
-See [./ROADMAP.md](./ROADMAP.md) for fine-grained detail re: DARKWHITE's
-development. Feel free to contribute suggestions.
