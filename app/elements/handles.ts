@@ -74,7 +74,3 @@ export const [
 export const canvasCells = arrayFrom(
   document.querySelectorAll<HTMLCanvasElement>("#o canvas"),
 );
-
-export const winCollectionElements = arrayFrom(
-  document.querySelectorAll<HTMLElement>("#y i"),
-);

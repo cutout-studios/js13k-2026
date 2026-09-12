@@ -32,7 +32,7 @@ const CANVAS_SIZE = 512,
   SNAP_RADIUS = 10,
   NEW_TRIANGLE_SPAN = 6;
 
-// [hue, saturation max, lightness] - mirrors app/elements/portrait.ts's 6
+// [hue, saturation max, lightness] - mirrors app/elements/portrait.ts's 10
 // color bands. cycling by triangle index (instead of the original's fixed
 // per-band triangle counts) means this stays correct no matter how many
 // triangles get added/removed here. edit these live via the Colors panel;
@@ -40,11 +40,15 @@ const CANVAS_SIZE = 512,
 // above) to persist edits across reloads
 const BANDS = [
   [270, 20, 8],
-  [220, 60, 93],
-  [265, 18, 63],
-  [270, 12, 45],
-  [217, 27, 65],
-  [217, 18, 43],
+  [184, 40, 95],
+  [198, 52, 75],
+  [219, 50, 69],
+  [270, 65, 52],
+  [80, 73, 51],
+  [195, 68, 50],
+  [320, 65, 52],
+  [0, 85, 56],
+  [38, 90, 58],
 ];
 
 const colorAt = (triangleIndex: number, progress: number): string => {

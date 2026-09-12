@@ -50,7 +50,6 @@ import {
   menu,
   modifiers,
   restoreButton,
-  winCollectionElements,
 } from "./handles.ts";
 import { portrait } from "./portrait.ts";
 
@@ -192,13 +191,7 @@ menu.onmouseenter = menu.onmousemove = ({ clientX, clientY }: MouseEvent) => {
 export const resetMenu = () => {
   if (!renderTargets) renderTargets = doTimes(canvasCells, createRenderTarget);
 
-  doTimes(
-    winCollectionElements,
-    (element, index) =>
-      winCollection.has(index + 1) &&
-      (element.style.background = "#" + GameOptions[index + 1][1].toString(16)),
-  );
-  camera([[portrait(GameState[1][3].size / 6)]], renderTargets[0]);
+  camera([[portrait(winCollection)]], renderTargets[0]);
 
   doTimes(4, (typeID: number) => {
     const item = equipped[typeID] ?? defaultEquipItems[typeID];

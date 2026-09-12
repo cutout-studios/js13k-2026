@@ -196,20 +196,6 @@ input[type=number]:focus {
   cursor: help;
   clip-path: polygon(0 50%,30% 100%,70% 100%,100% 50%,70% 0,30% 0);
 }
-#y {
-  position: relative;
-  width: fit-content;
-}
-#y i {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border: .1rem solid #fff;
-  border-radius: 100%;
-  pointer-events: none;
-  transform: translate(-50%,-50%);
-  background: #000;
-}
 #t {
   position: absolute;
   inset: auto 0 0 0;
@@ -283,10 +269,9 @@ input[type=number]:focus {
   <form id=o>
     <div id=n>
       <canvas style="background: #222;"></canvas>
-      <div id=y>
-				<div id=x><canvas style="cursor:help; background:#000;"></canvas></div>
-				<i style=left:0;top:50%></i><i style=left:30%;top:100%></i><i style=left:70%;top:100%></i><i style=left:100%;top:50%></i><i style=left:70%;top:0></i><i style=left:30%;top:0></i>
-			</div>
+      <div id=x>
+        <canvas style="cursor:help; background:#000;"></canvas>
+      </div>
     </div>
     <div id=g>
       <div><label>WING (L)</label><canvas></canvas></div>

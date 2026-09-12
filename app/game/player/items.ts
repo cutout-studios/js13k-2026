@@ -20,14 +20,12 @@ import {
   createPaintMaterialWithPalette as paint,
   readOrigin,
   setOrigin,
-  XOGeometry,
   XOObject,
-  XOOrientation,
   Z_AXIS,
 } from "~/3D";
 import { _, abs, length, min } from "~/alias";
 import { createActionSequencer } from "~/clock";
-import { clamp, doTimes, flat, spread } from "~/common";
+import { clamp, doTimes, spread } from "~/common";
 
 import { bell, rollBand, rollSpread } from "~/random";
 
@@ -95,11 +93,10 @@ export const createItem = (
     }
   });
 
+  const [orientation, geometry, material] = ITEM_GEOMETRY[typeID];
+
   return [
-    createObject(
-      ...flat(ITEM_GEOMETRY[typeID]) as [XOOrientation, XOGeometry],
-      paint(value),
-    ),
+    createObject(orientation, geometry, (material ?? paint)(value)),
     createActionSequencer([[
       ([object], tickLength: number, ...args) => (
         pullAction(object, tickLength, ...args),
