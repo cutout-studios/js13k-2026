@@ -49,7 +49,7 @@ type ShipOptions = [
         speed: number,
         isEnemy: boolean,
       ) => ActionSequencer<Bullet>,
-      sound?: (pan: number, volume: number) => void,
+      sound?: (pan: number) => void,
     ],
     sight?: [geometry: XOGeometry, material?: XOMaterial],
   ][],

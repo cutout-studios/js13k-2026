@@ -57,12 +57,11 @@ const checkMouse = (tickLength: number) =>
   );
 
 startClock((tickLength) => {
-  checkKeyboard(tickLength);
   updateBackgroundStars(tickLength);
-  // updateParticles(tickLength);
 
   // game hasn't started yet
   if (!GameState[2]) {
+    checkKeyboard(tickLength);
     checkMouse(tickLength);
     applyInputToPlayerShip(tickLength);
     updateWeaponMounts(GameState[0][0]);
@@ -76,6 +75,7 @@ startClock((tickLength) => {
   if (menu.open) return updateMenu(tickLength);
 
   // game has started
+  checkKeyboard(tickLength);
   checkMouse(tickLength);
   applyInputToPlayerShip(tickLength);
   updateGame(GameState, tickLength), updateHUD(GameState, tickLength);

@@ -64,10 +64,11 @@ export const updateHUD = (
       _snapshot,
     ]],
     [, , [stage, wave, lastWave]],
+    hasStarted,
   ]: Game,
   tickDuration: number,
 ) => {
-  gameDuration += tickDuration;
+  if (hasStarted) gameDuration += tickDuration;
   distanceCounter.innerText = `${round(gameDuration * SECONDS_TO_MS)}`.padStart(
     16,
     "0",

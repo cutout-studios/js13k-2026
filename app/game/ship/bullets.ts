@@ -105,8 +105,7 @@ export const createBullet = (
 
   aimObject(bulletObject, addXYZ(globalOrigin, bulletHeading));
   bulletSound?.(
-    getPanFromCoordinates(bulletObject[0], 5), 1
-    // readOrigin(bulletObject[0])[2] / 18,
+    getPanFromCoordinates(bulletObject[0], 5),
   );
 
   const bullet: Bullet = [

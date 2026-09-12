@@ -20,4 +20,4 @@ import { clamp, spread } from "~/common";
 export const getPanFromCoordinates = (
   coordinates: Float32Array,
   xBound: number = 2.8, // PLAYER X BOUND
-) => clamp(readOrigin(coordinates)[1] / xBound, spread());
+) => clamp(readOrigin(coordinates)[0] / xBound, spread());

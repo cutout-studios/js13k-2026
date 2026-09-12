@@ -44,11 +44,21 @@ export const purpleSequencerFactory = (
   _ship: Ship,
 ) => {
   const aimAction = createPlayerAimAction(_ship),
+    readyElapsed = doTimes(_ship[2], () => 0),
     fireWeapons = (tickLength: number) => {
       const origin = readOrigin(_ship[0][0]);
 
-      return isPointVisible(origin) &&
-        doTimes(_ship[2], (weapon) => weapon[2](_ship, tickLength));
+      if (!isPointVisible(origin)) {
+        return doTimes(readyElapsed, (_, index) => readyElapsed[index] = 0);
+      }
+
+      doTimes(_ship[2], (weapon, index) => {
+        readyElapsed[index] += tickLength;
+        // summoning sickness
+        if (readyElapsed[index] >= 1 / weapon[3][5]) {
+          weapon[2](_ship, tickLength);
+        }
+      });
     };
 
   return createActionSequencer([

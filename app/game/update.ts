@@ -44,8 +44,8 @@ import {
   enemyHitSound,
   inventoryFullSound,
   itemPickupSound,
-  playerHitSound,
   playerHitCounterSound,
+  playerHitSound,
   rezLostSound,
 } from "./sounds.ts";
 import { Game } from "./types.ts";
@@ -61,10 +61,14 @@ export const endGame = (message = "COMPLETED") => {
 const _wrapBullets = (bullets: BulletGroup) =>
   [, bullets, , BASE_PROPERTIES.slice(18), 0] as unknown as Weapon;
 
+let playerHitSoundCooldown = 0;
+
 export const updateGame = (
   game: Game,
   tickLength: number,
 ): void => {
+  playerHitSoundCooldown -= tickLength;
+
   const [player, world] = game,
     [activeEnemyGroups, droppedItems, progress, winCollection] = world,
     [playerShip, , inventory] = player,
@@ -108,7 +112,6 @@ export const updateGame = (
             shipCoordinates,
             visibleHalfExtentAt(readOrigin(shipCoordinates)[2])[0],
           ),
-          // readOrigin(shipCoordinates)[2] / 18,
         );
         const damageDealt =
           (random() < critChance ? bulletDamage * critDamage : bulletDamage) *
@@ -151,9 +154,12 @@ export const updateGame = (
                 : bulletDamage;
 
               if (playerResourceStatus[4]) {
-                playerHitCounterSound(
-                  getPanFromCoordinates(playerShipObject[0]),
-                );
+                if (playerHitSoundCooldown <= 0) {
+                  playerHitCounterSound(
+                    getPanFromCoordinates(playerShipObject[0]),
+                  );
+                  playerHitSoundCooldown = 0.15;
+                }
                 const bullet = bullets[0][bulletIndex],
                   targetPosition = readOrigin(enemyShipObject[0]);
 
@@ -177,9 +183,12 @@ export const updateGame = (
                 );
               }
 
-              playerHitSound(
-                getPanFromCoordinates(playerShipObject[0]),
-              );
+              if (playerHitSoundCooldown <= 0) {
+                playerHitSound(
+                  getPanFromCoordinates(playerShipObject[0]),
+                );
+                playerHitSoundCooldown = 0.15;
+              }
 
               const totalDamage = baseDamage - playerSnapshot[2];
 
@@ -238,7 +247,6 @@ export const updateGame = (
             damages[3] = tickLength;
             enemyDestroyedSound(
               getPanFromCoordinates(coordinates),
-              // readOrigin(coordinates)[2] / 18,
             );
 
             if (!damages[4]) {

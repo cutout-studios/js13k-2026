@@ -28,21 +28,23 @@ import { SoundDefinition } from "../../libraries/audio/types.ts";
 export const defaultWeaponSound = createSound(
   [NOISE_BUFFER, [
     [[1, [0.7, 1]], 0],
-    [[0, 0.015], 0.05],
     [[0, 0], 0.01],
+    [[0, [0.01, 0.02]], 0.003],
+    [[0, 0.007], 0.003],
+    [[0, 0], 0.06],
   ]],
   [SINE_BUFFER, [
-    [[1, [0.4, 0.6]], 0],
-    [[0, 0.02], 0.004],
-    [[1, [0.13, 0.16]], 0.05],
+    [[1, [0.2, 0.6]], 0],
+    [[0, 0.015], 0.006],
+    [[1, [0.1, 0.16], true], 0.03],
     [[0, 0], 0.1],
   ]],
-  [SQUARE_BUFFER, [
+  [BUZZ_BUFFER, [
     [[1, [4.3, 6]], 0],
     [[0, 0.005], 0.03],
     [[0, 0], 0.14],
-    [[1, [0.2, 0.5], true], 0],
-  ]]
+    [[1, [0.2, 0.5]], 0],
+  ]],
 );
 
 export const errorSound = createSound(
@@ -96,8 +98,8 @@ export const inventoryFullSound = errorSound;
 export const enemyHitSound = createSound(
   [NOISE_BUFFER, [
     [[1, [0.3, 2]], 0],
-    [[0, [0.03, 0.12]], 0],
-    [[0, 0], 0.03],
+    [[0, [0.02, 0.1]], 0],
+    [[0, 0], 0.05],
   ]],
 );
 
@@ -159,7 +161,7 @@ export const rezLostSound = createSound([NOISE_BUFFER, [
 
 const pistolLayer = [SAWTOOTH_BUFFER, [
   [[1, [4.3, 6]], 0],
-  [[0, 0.03], 0.03],
+  [[0, 0.015], 0.03],
   [[0, 0], 0.14],
   [[1, [0.2, 0.5], true], 0],
 ]] as SoundDefinition;
@@ -168,10 +170,10 @@ export const redWeaponSound = createSound(pistolLayer);
 
 export const blueWeaponSound = createSound(pistolLayer, [SINE_BUFFER, [
   [[1, [0.2, 0.15]], 0],
-  [[0, 0.08], 0],
-  [[0, 0.96], 0.01],
-  [[0, 0.22], 0.01],
-  [[0, 0.16], 0.04],
+  [[0, 0.04], 0],
+  [[0, 0.4], 0.01],
+  [[0, 0.11], 0.01],
+  [[0, 0.08], 0.04],
 ]], [SQUARE_BUFFER, [
   [[1, [0.1, 0.15]], 0],
   [[0, 0], 0],
@@ -201,7 +203,7 @@ export const greenWeaponSound = createSound(
     [[0, 0.015], 0.025],
     [[1, 0.1, true], 0.025],
     [[0, 0], 0.06],
-  ]]
+  ]],
 );
 
 export const yellowWeaponSound = createSound(
