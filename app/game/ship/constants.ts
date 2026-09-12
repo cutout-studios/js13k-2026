@@ -20,7 +20,7 @@ export const PROPERTY_NAMES = [
   "REZ",
   "REZ RECOVERY",
   "DAMAGE REDUCTION",
-  "DAMAGE → GAS",
+  "DAMAGE TAKEN → GAS",
   "GAS",
   "", // DEAD
   "GAS REGEN",
@@ -40,6 +40,6 @@ export const PROPERTY_NAMES = [
   "CRIT DAMAGE",
   "DAMAGE",
   "BULLET SPEED",
-  "FIRE RATE",
-  "FIRE SPREAD",
+  "BULLET RATE",
+  "BULLET SPREAD",
 ];
