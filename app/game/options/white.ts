@@ -20,9 +20,10 @@ import {
   createPyramid,
   flattenObjects,
   X_AXIS,
+  Y_AXIS,
   Z_AXIS,
 } from "~/3D";
-import { _, length, NO_OP } from "~/alias";
+import { _, length, NO_OP, PI } from "~/alias";
 import { createActionSequencer } from "~/clock";
 import { repeat } from "~/common";
 
@@ -35,7 +36,7 @@ import {
 import { ColorOptions } from "./types.ts";
 
 const NUB_GEOMETRY = createPyramid([0.03, 0.03, 0.04], 8),
-  CONE_GEOMETRY = createPyramid([0.022, 0.022, 0.08], 10),
+  CONE_GEOMETRY = createPyramid([0.022, 0.022, 0.06], 10),
   NUB_TRIS = length(NUB_GEOMETRY[1]) / 3,
   CONE_TRIS = length(CONE_GEOMETRY[1]) / 3;
 
@@ -60,16 +61,16 @@ export default [
             createPyramid([0.05, 0.15, 0.27], 6),
           ),
           createObject(
-            [[0, 0.14, -0.05], [X_AXIS, -1.3]],
-            createPyramid([0.012, 0.012, 0.06], 3),
+            [[0, 0.08, -0.1], [X_AXIS, -0.6]],
+            createPyramid([0.012, 0.012, 0.09], 3),
           ), // horn
         )[1],
       ],
       [
         _,
         flattenObjects(
-          createObject([[0, 0, -0.28], _], NUB_GEOMETRY), // nozzle
-          createObject([[0, 0, -0.4]], CONE_GEOMETRY), // thruster
+          createObject([[0, 0, -0.28]], NUB_GEOMETRY), // nozzle
+          createObject([[0, 0, -0.35], [Y_AXIS, PI]], CONE_GEOMETRY), // thruster
         )[1],
         (color: number) =>
           paint(
