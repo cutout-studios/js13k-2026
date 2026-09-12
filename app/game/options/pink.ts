@@ -33,15 +33,16 @@ export default [
   [
     [[[], createSphere(0.10, 20)]], // shape: hull only
     [ // overrides
-      [8, [0.02, 0.04]], // Item Drop Rate
-      [11, [1, 12]], // HP
+      [8, [0.01, 0.03]], // Item Drop Rate
+      [11, [2, 25]], // HP
       [16, [0.5, 0.9]], // Strafe Speed
+      [17, [1, 0.8]], // Aim Time
     ],
     defaultShipSequencerFactory(), // sequenceFactory
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [3, [1, 8]], // Bullet Damage
+          [3, [1, 5]], // Bullet Damage
           [4, [1, 2]], // Bullet Speed
           [5, [0.7, 1.5]], // Bullet Rate
           [6, [0.25, 0.5]], // Bullet Spread
@@ -57,15 +58,15 @@ export default [
         ], // bullet
       ],
     ],
-    [9, 16], // countBand
+    [9, 25], // countBand
   ],
   [
-    [[0.5, 2], 0, 9, [0.3, 0.9], [1, 4]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[0.5, 2], 0, 9, [0.3, 0.9], [1, 5]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
-      [0, 7, "x", [1.1, 2.2]], // Item Mixture Quality
-      [0, 18, "+", [1, 3]], // Bullet Count
-      [0, 1, "+", [0.05, 0.3]], // Armor Save
-      [2, 12, "x", [1.1, 2]], // Shield Regen
+      [0, 7, "x", [1.5, 2.5]], // Restore Potency
+      [0, 8, "+", [0.05, 0.2]], // Drop Rate
+      [0, 18, "+", [2, 5]], // Bullet Count
+      [2, 1, "+", [0.2, 0.6]], // Rez Recovery
     ],
   ],
 ] as ColorOptions;

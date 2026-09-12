@@ -100,13 +100,12 @@ export default [
     [3, 5], // countBand
   ],
   [
-    [[1, 3], 0, 1, [0.2, 0.8], [10, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[0, 0], 0, 1, [0.15, 0.6], [20, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
-      [0, 8, "+", [0.02, 0.2]], // Item Drop rate
-      [0, 19, "+", [0.005, 0.2]], // Bullet Crit Chance
-      [0, 20, "x", [1.1, 5]], // Bullet Crit Damage
-      [2, 17, "+", [-0.02, -1]], // Aim Time
-      [0, 9, "x", [0.95, 0.5]], // KG
+      [0, 22, "x", [1.7, 3]], // Bullet Speed
+      [0, 19, "+", [0.1, 0.5]], // Bullet Crit Chance
+      [2, 17, "+", [-0.1, -0.65]], // Aim Time
+      [3, 9, "x", [0.7, 0.2]], // -KG
     ],
   ],
 ] as ColorOptions;

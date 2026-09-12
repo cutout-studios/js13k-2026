@@ -125,7 +125,7 @@ export const yellowBulletSequencerFactory = (
               bulletObject,
               createActionSequencer([[NO_OP]]),
             ];
-            fragment[1] = defaultBulletSequencerFactory()(fragment, 8, false);
+            fragment[1] = defaultBulletSequencerFactory()(fragment, 3, false);
             return fragment;
           }) as Bullet[];
 
@@ -159,7 +159,7 @@ export default [
     ],
     [ // overrides
       [8, [0.13, 0.18]], // Item Drop Rate
-      [11, [8, 87]], // HP
+      [11, [30, 240]], // HP
       [16, [1, 2]], // Strafe Speed
     ],
     defaultShipSequencerFactory(), // sequenceFactory
@@ -183,12 +183,12 @@ export default [
     [2, 4], // countBand
   ],
   [
-    [[3, 7], 0, 1, [0.4, 1], [30, 65]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[5, 9], 0, 1, [0.5, 1], [40, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
-      [0, 10, "+", [0.07, 0.22]], // Resolve
-      [0, 24, "x", [1, 1.5]], // Bullet Spread
-      [2, 15, "x", [1.05, 1.25]], // Spin Time
-      [3, 13, "x", [1.5, 5]], // Spin Damage
+      [0, 24, "x", [1.5, 2.5]], // Bullet Spread
+      [2, 4, "x", [2, 5]], // Gas
+      [3, 3, "+", [0.2, 0.7]], // Damage -> Gas
+      [3, 15, "+", [0.1, 0.5]], // Counter Time
     ],
   ],
 ] as ColorOptions;

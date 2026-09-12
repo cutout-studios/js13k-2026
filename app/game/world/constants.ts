@@ -24,4 +24,4 @@ export const WAVES_PER_LEVEL_BAND = [2, 14] as Band;
 
 export const GROUPS_PER_WAVE_BAND = [1, 6] as Band;
 
-export const DROP_PITY_STEP = 0.03;
+export const DROP_PITY_STEP = 0.05;

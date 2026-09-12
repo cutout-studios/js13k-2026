@@ -35,14 +35,14 @@ export default [
       [[[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]], GREEN_PRONG], // left prong
     ],
     [ // overrides
-      [11, [4, 20]], // HP
-      [16, [1.2, 2.5]], // Strafe Speed
+      [11, [8, 60]], // HP
+      [16, [1.35, 3]], // Strafe Speed
     ],
     defaultShipSequencerFactory(() => 0), // sequenceFactory: no pause between passes
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [3, [0.07, 0.5]], // Bullet Damage
+          [3, [0.25, 1]], // Bullet Damage
           [4, [2, 3]], // Bullet Speed
           [5, [12, 21]], // Bullet Rate
           [6, [0.05, 0.1]], // Bullet Spread
@@ -57,7 +57,7 @@ export default [
       ],
       [
         [
-          [3, [0.07, 0.5]], // Bullet Damage
+          [3, [0.25, 1]], // Bullet Damage
           [4, [2, 3]], // Bullet Speed
           [5, [12, 21]], // Bullet Rate
           [6, [0.05, 0.1]], // Bullet Spread
@@ -71,15 +71,15 @@ export default [
         ], // bullet
       ],
     ],
-    [4, 7], // countBand
+    [3, 7], // countBand
   ],
   [
-    [[2, 5], 0, 1, [12, 21], [0.2, 2]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[1, 4], 0, 1, [12, 21], [0.25, 1]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
-      [0, 5, "x", [0.95, 0.2]], // Gas Cost
-      [0, 16, "x", [1.05, 2.3]], // Speed
-      [0, 23, "x", [1.2, 3]], // Bullet Rate
-      [3, 15, "+", [0.03, 0.2]], // Spin Time
+      [0, 16, "x", [1.7, 3]], // Speed
+      [0, 23, "x", [1.7, 3]], // Bullet Rate
+      [0, 6, "x", [2, 4]], // Gas Refill
+      [3, 14, "x", [1.7, 3]], // Spin Speed
     ],
   ],
 ] as ColorOptions;

@@ -39,14 +39,15 @@ export default [
     ],
     [ // overrides
       [8, [0.2, 0.3]], // Item Drop Rate
-      [11, [40, 250]], // HP
+      [11, [80, 750]], // HP
       [16, [0.5, 0.8]], // Strafe Speed
+      [17, [1, 0.8]], // Aim Time
     ],
     defaultShipSequencerFactory(_, (t) => EASE_OUT(t) ** .8), // sequenceFactory
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [3, [7, 27]], // Bullet Damage
+          [3, [10, 30]], // Bullet Damage
           [4, [5.5, 5.5]], // Bullet Speed
           [5, [.7, 1.2]], // Bullet Rate
         ],
@@ -59,15 +60,15 @@ export default [
         ], // bullet
       ],
     ],
-    [1, 3], // countBand
+    [1, 1], // countBand
   ],
   [
-    [[8, 20], 1, 1, [0.7, 1.2], [3, 8]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[6, 12], 1, 1, [0.7, 1.2], [6, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
-      [0, 11, "x", [1.1, 2.5]], // Shield
-      [0, 2, "x", [0.98, 0.7]], // Damage Taken
-      [2, 0, "+", [1, 4]], // Armor
-      [2, 3, "+", [0.02, 0.3]], // Damage Taken From Gas
+      [0, 11, "x", [2, 4]], // HP
+      [0, 12, "x", [2, 4]], // HP Regen
+      [2, 0, "+", [1, 4]], // Rez
+      [2, 2, "+", [-2, -10]], // Damage Reduction
     ],
   ],
 ] as ColorOptions;

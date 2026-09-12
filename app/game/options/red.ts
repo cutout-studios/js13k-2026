@@ -45,16 +45,16 @@ export default [
     [[[_, [Z_AXIS, -1.61]], createPyramid([0.11, 0.09, 0.4], 3)]], // shape: hull only
     [ // overrides
       [8, [0.1, 0.15]], // Item Drop Rate
-      [11, [8, 108]], // HP
+      [11, [16, 300]], // HP
       [16, [1, 2]], // Strafe Speed
-      [17, [4, 2.5]], // Aim Time
+      [17, [2, 1.5]], // Aim Time
     ],
     defaultShipSequencerFactory(), // sequenceFactory
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
           [0, [2, 2]], // Bullet Count
-          [3, [1, 8]], // Bullet Damage
+          [3, [1.5, 8]], // Bullet Damage
           [5, [0.7, 3.5]], // Bullet Rate
           [6, [0.02, 0.06]], // Bullet Spread
         ],
@@ -70,12 +70,12 @@ export default [
     [3, 6], // countBand
   ],
   [
-    [[2, 4], 0, 2, [2, 4], [2, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[2, 4], 0, 2, [2, 4], [1, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
-      [0, 21, "x", [1.25, 3.5]], // Bullet Damage
-      [0, 4, "+", [3, 15]], // Gas
-      [0, 22, "x", [1.1, 4]], // Bullet Speed
-      [3, 6, "x", [1.2, 2.2]], // Gas Refill
+      [0, 21, "x", [1.5, 3.5]], // Bullet Damage
+      [0, 20, "x", [3, 5]], // Bullet Crit Damage
+      [2, 10, "+", [0.25, 1]], // Resolve
+      [3, 13, "x", [2, 5]], // Counter Damage
     ],
   ],
 ] as ColorOptions;

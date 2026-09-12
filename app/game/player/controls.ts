@@ -87,7 +87,7 @@ export const checkLMouseButton = bindWeaponKey("LClick", leftWeapon, 0);
 export const checkRMouseButton = bindWeaponKey("RClick", rightWeapon, 1);
 
 const strafe = [0, 0, 0, 0],
-  bindStrafeKey = (code: string, index: number) => {
+  bindMoveKey = (code: string, index: number) => {
     const envelope = strafeEnvelopes[index],
       onDown = (t: number) => strafe[index] = envelope(t, true),
       onUp = (t: number) => strafe[index] = envelope(t);
@@ -95,10 +95,10 @@ const strafe = [0, 0, 0, 0],
     return bindButton(code, onDown, onDown, onUp, onUp);
   };
 
-export const checkWKey = bindStrafeKey("KeyW", 0);
-export const checkAKey = bindStrafeKey("KeyA", 1);
-export const checkSKey = bindStrafeKey("KeyS", 2);
-export const checkDKey = bindStrafeKey("KeyD", 3);
+export const checkWKey = bindMoveKey("KeyW", 0);
+export const checkAKey = bindMoveKey("KeyA", 1);
+export const checkSKey = bindMoveKey("KeyS", 2);
+export const checkDKey = bindMoveKey("KeyD", 3);
 
 export const checkSpaceBar = bindButton(
   "Space",
@@ -108,7 +108,7 @@ export const checkSpaceBar = bindButton(
     if (resources[3] || resources[4] || resources[5]) return; // invulnerable, or still recovering
 
     if (GameState[2]) {
-      const totalGasUsed = resources[1] + snapshot[9] * snapshot[5];
+      const totalGasUsed = resources[1] + snapshot[9];
       if (totalGasUsed >= snapshot[4]) return;
       resources[1] = totalGasUsed;
     }
