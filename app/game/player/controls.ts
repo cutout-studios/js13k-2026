@@ -32,25 +32,11 @@ import { Weapon } from "../ship/types.ts";
 import { canAffordWeapon, fireWeapon } from "../ship/weapons.ts";
 import { playerSpinSound } from "../sounds.ts";
 
-import {
-  SPIN_BOOST_AMOUNT,
-  SPIN_BOOST_ATTACK_TIME,
-  SPIN_BOOST_RELEASE_TIME,
-  STRAFE_ATTACK_TIME,
-  STRAFE_RELEASE_TIME,
-} from "./constants.ts";
-
 const [[playerShip]] = GameState,
   [playerShipObject, playerAim, [leftWeapon, rightWeapon], , , snapshot] =
     playerShip,
-  strafeEnvelopes = doTimes(
-    4,
-    () => createEnvelope(STRAFE_ATTACK_TIME, STRAFE_RELEASE_TIME),
-  ),
-  spinBoostEnvelope = createEnvelope(
-    SPIN_BOOST_ATTACK_TIME,
-    SPIN_BOOST_RELEASE_TIME,
-  ),
+  strafeEnvelopes = doTimes(4, () => createEnvelope(0.3, 0.35)),
+  spinBoostEnvelope = createEnvelope(0.1, 0.1),
   aimAction = createAimAction(
     playerAim,
     () => mouseTarget,
@@ -135,7 +121,7 @@ export const applyInputToPlayerShip = (tickLength: number) => {
   const strafeX = strafe[3] - strafe[1],
     strafeY = strafe[0] - strafe[2],
     speedBoost = 1 +
-      spinBoostEnvelope(tickLength, !!playerShip[4][4]) * SPIN_BOOST_AMOUNT *
+      spinBoostEnvelope(tickLength, !!playerShip[4][4]) * 1.5 *
         snapshot[14];
 
   adjustObject(playerShipObject, [

@@ -2,28 +2,21 @@ import { TAU } from "~/alias";
 import { ActionSchedule, createActionSequencer } from "~/clock";
 import { Ship } from "./types.ts";
 
-const RECOVERY_TIME = 0.2;
-
-const overshoot = (x: number) =>
-  1 + 2.70158 * (x - 1) ** 3 + 1.70158 * (x - 1) ** 2;
-
 export const createSpinSequence = (
   [, , , originalSequence, , _snapshot]: Ship,
   direction: 1 | -1 = 1,
-) => {
-  const totalTime = _snapshot[15];
-
-  return createActionSequencer([
+) => createActionSequencer([
     // actively countering - reflects hits, can't be re-triggered
     [([, , , , resources], _t, e, d) => {
-      resources[6] = overshoot(e / d) * direction * TAU;
+      resources[6] = (1 + 2.7 * ((e / d) - 1) ** 3 + 1.7 * ((e / d) - 1) ** 2) *
+        direction * TAU;
       resources[4] = 1;
-    }, totalTime],
+    }, _snapshot[15]],
     // recovering - no longer reflecting, but still can't spin again yet
     [([, , , , resources]) => {
       resources[4] = 0;
       resources[5] = 1;
-    }, RECOVERY_TIME],
+    }, 0.2],
     [
       (ship) => {
         ship[3] = originalSequence;
@@ -32,4 +25,3 @@ export const createSpinSequence = (
       },
     ],
   ] as ActionSchedule<Ship>, 1);
-};

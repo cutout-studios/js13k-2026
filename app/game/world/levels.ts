@@ -18,7 +18,7 @@ import { atan, PI, round, sqrt } from "~/alias";
 import { Band, doTimes, flat, interpolate } from "~/common";
 
 import { rollBand } from "~/random";
-import { DIFFICULTY_HALFLIFE, WAVES_PER_LEVEL_BAND } from "./constants.ts";
+import { DIFFICULTY_HALFLIFE } from "./constants.ts";
 
 export const levelCurve = (
   level: number,
@@ -50,4 +50,4 @@ export const levelRollOverrides = (
 };
 
 export const getWavesInLevel = (level: number) =>
-  round(levelRoll(WAVES_PER_LEVEL_BAND, level, DIFFICULTY_HALFLIFE * 4));
+  round(levelRoll([2, 14], level, DIFFICULTY_HALFLIFE * 4));

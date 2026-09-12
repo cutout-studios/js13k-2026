@@ -23,6 +23,7 @@ import {
   readOrigin,
   scaleXYZ,
   subtractXYZ,
+  XYZ,
 } from "~/3D";
 import { hypot, min, NO_OP } from "~/alias";
 import { ActionSequencer, createActionSequencer } from "~/clock";
@@ -39,14 +40,7 @@ import { EASE_IN, EASE_OUT } from "../curves.ts";
 import { getPlayerShip } from "../player/ship.ts";
 import { Bullet } from "../ship/types.ts";
 import { Ship, WeaponSnapshot } from "../ship/types.ts";
-import {
-  BULLET_MAX_RANGE,
-  ENEMY_BULLET_RAMP_TIME,
-  ENEMY_FIRE_RANGE_MARGIN,
-  PLAYER_AIM_Z_PLANE,
-  PLAYER_X_BOUND,
-  PLAYER_Y_BOUND,
-} from "./base.ts";
+import { PLAYER_AIM_Z_PLANE, PLAYER_X_BOUND, PLAYER_Y_BOUND } from "./base.ts";
 
 export const defaultBulletGeometry = createPrism([0.006, 0.006, 0.12], 12);
 
@@ -68,9 +62,7 @@ export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
   const pullAction = createPullAction(
     readHeading(coordinates),
     speed,
-    isEnemy
-      ? (elapsedTime: number) => min(1, elapsedTime / ENEMY_BULLET_RAMP_TIME)
-      : () => 1,
+    isEnemy ? (elapsedTime: number) => min(1, elapsedTime / 0.3) : () => 1,
     jitter,
   );
 
@@ -81,10 +73,37 @@ export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
       const newOrigin = readOrigin(coordinates);
 
       return newOrigin[2] >= 0 ||
-        newOrigin[2] < -BULLET_MAX_RANGE ||
+        newOrigin[2] < -20 ||
         (isEnemy && !isPointVisible(newOrigin));
     },
   ]]);
+};
+
+// gates each of a ship's weapons behind its own fire-rate cooldown before
+// it's allowed to fire at all ("summoning sickness"), and behind an
+// optional extra block condition (e.g. out of range) - shared by any ship
+// sequencer that just needs "aim and fire when able", enemy or player
+export const createFireWeaponsAction = (
+  _ship: Ship,
+  isBlocked: (origin: XYZ) => boolean = () => false,
+) => {
+  const readyElapsed = doTimes(_ship[2], () => 0);
+
+  return (tickLength: number) => {
+    const origin = readOrigin(_ship[0][0]);
+
+    if (!isPointVisible(origin) || isBlocked(origin)) {
+      return doTimes(readyElapsed, (_, index) => readyElapsed[index] = 0);
+    }
+
+    doTimes(_ship[2], (weapon, index) => {
+      readyElapsed[index] += tickLength;
+      // summoning sickness
+      if (readyElapsed[index] >= 1 / weapon[3][5]) {
+        weapon[2](_ship, tickLength);
+      }
+    });
+  };
 };
 
 export const defaultShipSequencerFactory = (
@@ -111,25 +130,10 @@ export const defaultShipSequencerFactory = (
       EASE_IN,
     ),
     aimAction = createPlayerAimAction(_ship),
-    readyElapsed = doTimes(_ship[2], () => 0),
-    fireWeapons = (tickLength: number) => {
-      const origin = readOrigin(_ship[0][0]);
-
-      if (
-        !isPointVisible(origin) ||
-        origin[2] <= -(PLAYER_AIM_Z_PLANE + ENEMY_FIRE_RANGE_MARGIN)
-      ) {
-        return doTimes(readyElapsed, (_, index) => readyElapsed[index] = 0);
-      }
-
-      doTimes(_ship[2], (weapon, index) => {
-        readyElapsed[index] += tickLength;
-        // summoning sickness
-        if (readyElapsed[index] >= 1 / weapon[3][5]) {
-          weapon[2](_ship, tickLength);
-        }
-      });
-    };
+    fireWeapons = createFireWeaponsAction(
+      _ship,
+      (origin) => origin[2] <= -(PLAYER_AIM_Z_PLANE + 2),
+    );
 
   return createActionSequencer([
     [(_ship: Ship, ...args) => {

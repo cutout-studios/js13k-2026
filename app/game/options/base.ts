@@ -21,14 +21,7 @@ export const PLAYER_AIM_Z_PLANE = 8;
 export const PLAYER_X_BOUND = 2.8;
 export const PLAYER_Y_BOUND = 2.1;
 
-export const BULLET_ALPHA = 0xBF;
-export const BULLET_MAX_RANGE = 20;
-
-export const ENEMY_BULLET_RAMP_TIME = 0.3;
-export const ENEMY_FIRE_RANGE_MARGIN = 2;
-
 export const ENEMY_FADE_TIME = 0.6;
-export const ENEMY_FADE_RATIO = 0.02;
 
 export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   2, // Rez
@@ -37,11 +30,11 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0, // Rez Save
   1, // Damage Taken
   0, // Damage Taken From Gas
-  85, // Gas
+  75, // Gas
   1, // Gas Cost - DEAD
 
   // 6-10
-  15, // Gas Regen
+  12, // Gas Regen
   1, // Item Mixture Quality
   0.1, // Item Drop Rate
   5, // KG

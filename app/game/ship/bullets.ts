@@ -33,7 +33,6 @@ import { createActionSequencer } from "~/clock";
 import { doTimes, spliceTable } from "~/common";
 import { rollSpread } from "~/random";
 
-import { BULLET_ALPHA } from "../options/base.ts";
 import GameOptions from "../options/module.ts";
 import { Bullet, BulletGroup, Ship } from "./types.ts";
 
@@ -100,7 +99,7 @@ export const createBullet = (
     bulletObject = createObject(
       [globalOrigin],
       bulletGeometry as XOGeometry,
-      paint((value & 0xFFFFFF00) | BULLET_ALPHA),
+      paint((value & 0xFFFFFF00) | 0xBF),
     );
 
   aimObject(bulletObject, addXYZ(globalOrigin, bulletHeading));

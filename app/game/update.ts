@@ -20,6 +20,7 @@ import {
   getCollisionPairs,
   readOrigin,
   setOrigin,
+  XOMaterial,
 } from "~/3D";
 import { _, length, max, NO_OP, random } from "~/alias";
 import { getPanFromCoordinates } from "~/audio";
@@ -28,11 +29,7 @@ import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
 import GameState from "./module.ts";
-import {
-  BASE_PROPERTIES,
-  ENEMY_FADE_RATIO,
-  ENEMY_FADE_TIME,
-} from "./options/base.ts";
+import { BASE_PROPERTIES, ENEMY_FADE_TIME } from "./options/base.ts";
 import { defaultBulletSequencerFactory } from "./options/defaults.ts";
 import { PLAYER_INVENTORY_SIZE } from "./player/constants.ts";
 import { createItem, setItemInFrame } from "./player/items.ts";
@@ -49,7 +46,6 @@ import {
   rezLostSound,
 } from "./sounds.ts";
 import { Game } from "./types.ts";
-import { DROP_PITY_STEP } from "./world/constants.ts";
 import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
 
@@ -60,6 +56,12 @@ export const endGame = (message = "COMPLETED") => {
 
 const _wrapBullets = (bullets: BulletGroup) =>
   [, bullets, , BASE_PROPERTIES.slice(18), 0] as unknown as Weapon;
+
+const _flipColor = ([shader, palette, entry]: XOMaterial): XOMaterial => [
+  shader,
+  palette.map((v, i) => i % 4 == 3 ? v : 1 - v),
+  entry,
+];
 
 let playerHitSoundCooldown = 0;
 
@@ -120,11 +122,7 @@ export const updateGame = (
         if (!resources[4]) { // flash a complementary color on hit
           resources[4] = 1;
           const original = body[2]!;
-          body[2] = [
-            original[0],
-            original[1].map((v, i) => i % 4 == 3 ? v : 1 - v),
-            original[2],
-          ];
+          body[2] = _flipColor(original);
           setTimeout(() => {
             resources[4] = 0;
             if (!resources[3]) body[2] = original;
@@ -249,16 +247,9 @@ export const updateGame = (
               getPanFromCoordinates(coordinates),
             );
 
-            if (!damages[4]) {
-              const original = body[2]!;
-              body[2] = [
-                original[0],
-                original[1].map((v, i) => i % 4 == 3 ? v : 1 - v),
-                original[2],
-              ];
-            }
+            if (!damages[4]) body[2] = _flipColor(body[2]!);
 
-            if (random() < snapshot[8] + world[4] * DROP_PITY_STEP) {
+            if (random() < snapshot[8] + world[4] * 0.05) {
               world[4] = 0;
               const item = createItem(optionsIndex, _, progress[0]);
               setOrigin(item[0][0], readOrigin(coordinates));
@@ -270,7 +261,7 @@ export const updateGame = (
             damages[3] += tickLength;
 
             const material = body[2]!,
-              fade = ENEMY_FADE_RATIO ** (tickLength / ENEMY_FADE_TIME);
+              fade = 0.02 ** (tickLength / ENEMY_FADE_TIME);
             material[1] = material[1].map((v, i) => i % 4 == 3 ? v * fade : v);
           }
 

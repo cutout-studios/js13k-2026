@@ -28,7 +28,6 @@ const ship = createShip(0);
 setOrigin(ship[0][0], [-1.4, 0.5, -PLAYER_SHIP_Z_PLANE]);
 
 ship[1] = [0, 0, -PLAYER_AIM_Z_PLANE];
-
 ship[0][1][0] = 0.21;
 
 setPlayerShip(ship);

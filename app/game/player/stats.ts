@@ -57,8 +57,7 @@ export const updatePlayerEquipmentSnapshots = (
         createObject(orientation, geometry, (material ?? paint)(0xFFFFFFFF)),
     );
 
-  // +1kg per default item
-  _shipSnapshot[9] = sum(doTimes(equippedItems, (item) => item ? item[6] : 1));
+  _shipSnapshot[9] = sum(doTimes(equippedItems, (item) => item?.[6] ?? 0));
 
   doTimes(equippedItems, (item) => {
     if (!item) return;

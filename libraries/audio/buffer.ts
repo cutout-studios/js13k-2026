@@ -39,12 +39,11 @@ const _renderCycle = (
 export const SINE_BUFFER = _renderCycle((p) => sin(p * PI * 2));
 export const SQUARE_BUFFER = _renderCycle((p) => p < 0.5 ? 1 : -1);
 export const TRIANGLE_BUFFER = _renderCycle((p) => abs(p - 0.5) * 4 - 1);
-export const NOISE_BUFFER =
-  ((i, L) =>
-    _renderCycle(
-      () => rollSpread() * Math.min(1, i / 64, (L - i++) / 64),
-      400,
-    ))(0, round(api.sampleRate / 440) * 400);
+export const NOISE_BUFFER = ((i, L) =>
+  _renderCycle(
+    () => rollSpread() * Math.min(1, i / 64, (L - i++) / 64),
+    400,
+  ))(0, round(api.sampleRate / 440) * 400);
 export const SAWTOOTH_BUFFER = _renderCycle((p) => p * 2 - 1);
 
 export const BUZZ_BUFFER = _renderCycle((p) => {

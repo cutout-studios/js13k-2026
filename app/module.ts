@@ -59,27 +59,27 @@ const checkMouse = (tickLength: number) =>
 startClock((tickLength) => {
   updateBackgroundStars(tickLength);
 
-  // game hasn't started yet
-  if (!GameState[2]) {
-    checkKeyboard(tickLength);
-    checkMouse(tickLength);
-    applyInputToPlayerShip(tickLength);
-    updateWeaponMounts(GameState[0][0]);
-    GameState[0][0][3](GameState[0][0], tickLength);
-    updateHUD(GameState, tickLength);
-    return camera(getSceneObjects(GameState), mainCanvas);
+  // game has started, but is paused
+  if (GameState[2]) {
+    checkFKey(tickLength);
+    if (menu.open) return updateMenu(tickLength);
   }
 
-  // game has started, but is paused
-  checkFKey(tickLength);
-  if (menu.open) return updateMenu(tickLength);
-
-  // game has started
   checkKeyboard(tickLength);
   checkMouse(tickLength);
   applyInputToPlayerShip(tickLength);
-  updateGame(GameState, tickLength), updateHUD(GameState, tickLength);
+
+  if (GameState[2]) {
+    updateGame(GameState, tickLength);
+  } else {
+    updateWeaponMounts(GameState[0][0]);
+    GameState[0][0][3](GameState[0][0], tickLength);
+  }
+
+  updateHUD(GameState, tickLength);
   camera(getSceneObjects(GameState), mainCanvas);
 
-  if (GameState[0][0][4][2] >= GameState[0][0][5][0]) endGame("FAILED");
+  if (
+    GameState[2] && GameState[0][0][4][2] >= GameState[0][0][5][0]
+  ) endGame("FAILED");
 });

@@ -24,8 +24,10 @@ import GameOptions from "../options/module.ts";
 import { createShip } from "../ship/module.ts";
 import { Ship } from "../ship/types.ts";
 
-import { GROUPS_PER_WAVE_BAND, WAVE_CURVE, WAVE_PACING } from "./constants.ts";
 import { levelCurve, levelRoll } from "./levels.ts";
+
+const GROUPS_PER_WAVE_BAND = [1, 6],
+  WAVE_PACING = [0.55, 0.8, 1, 0.7, 0.9, 1];
 
 const _enemyDeck = createDeck(length(GameOptions.slice(1)));
 
@@ -45,7 +47,7 @@ export const rollEnemies = (
         max(
           GROUPS_PER_WAVE_BAND[0],
           WAVE_PACING[wave % length(WAVE_PACING)] *
-            levelCurve(level) * WAVE_CURVE,
+            levelCurve(level) * 7.5,
         ),
       ),
     ),

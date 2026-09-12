@@ -32,7 +32,6 @@ import {
 } from "../game/player/items.ts";
 import { updatePlayerEquipmentSnapshots } from "../game/player/stats.ts";
 import { Item } from "../game/player/types.ts";
-import { PARTS, PROPERTY_NAMES } from "../game/ship/constants.ts";
 import { equipSound, itemPickupSound } from "../game/sounds.ts";
 
 import { endGame } from "../game/update.ts";
@@ -54,7 +53,35 @@ let hoveredCellIndex = -1,
   restorePreviewDeck: number[] = [],
   renderTargets: GPURenderTarget[];
 
-const EQUIP_OFFSET = 2,
+const PARTS = ["WING (L)", "WING (R)", "BODY", "ENGINE"],
+  PROPERTY_NAMES = [
+    "REZ",
+    "REZ RECOVERY",
+    "DAMAGE REDUCTION",
+    "DAMAGE TAKEN → GAS",
+    "GAS",
+    "", // DEAD
+    "GAS REGEN",
+    "RESTORE POTENCY",
+    "DROP RATE",
+    "KG",
+    "RESOLVE",
+    "HP",
+    "HP REGEN",
+    "COUNTER DAMAGE",
+    "COUNTER SPEED",
+    "COUNTER TIME",
+    "SPEED",
+    "AIM TIME",
+    "BULLETS",
+    "CRIT CHANCE",
+    "CRIT DAMAGE",
+    "DAMAGE",
+    "BULLET SPEED",
+    "BULLET RATE",
+    "BULLET SPREAD",
+  ],
+  EQUIP_OFFSET = 2,
   INVENTORY_OFFSET = 6,
   [player, [, , progress, winCollection]] = GameState,
   [playerShip, equipped, inventory] = player,
