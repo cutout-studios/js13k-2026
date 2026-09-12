@@ -67,6 +67,7 @@ export default [
     [ // overrides
       [8, [0.06, 0.1]], // Item Drop Rate
       [11, [6, 70]], // HP
+      [17, [0.3, 0.15]], // Aim Time
       [16, [0, 0]], // Strafe Speed
     ],
     purpleSequencerFactory, // sequenceFactory
