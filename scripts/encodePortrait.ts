@@ -403,7 +403,7 @@ export const VERTICES = [
   -41,
   59,
   -50,
-]
+];
 
 // one color-band index (0-5, see devtools/portrait's BANDS) per triangle -
 // keep this in sync with VERTICES via the portrait devtool's "Sort triangles

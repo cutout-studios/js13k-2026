@@ -33,10 +33,7 @@ import {
 import { updatePlayerEquipmentSnapshots } from "../game/player/stats.ts";
 import { Item } from "../game/player/types.ts";
 import { PARTS, PROPERTY_NAMES } from "../game/ship/constants.ts";
-import {
-  equipSound,
-  itemPickupSound,
-} from "../game/sounds.ts";
+import { equipSound, itemPickupSound } from "../game/sounds.ts";
 
 import { endGame } from "../game/update.ts";
 import {
