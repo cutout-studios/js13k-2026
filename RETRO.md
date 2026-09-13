@@ -54,6 +54,7 @@
 ## Things I'd do next:
 
 - Major refactoring, this codebase is actively driving me insane.
+- properly handling transparency - depth occlusion breaks it, needs multiple passes.
 - Particle effects: ship thrusters, explosion effects
 - Highlight dropped items in the field with #ff0 pyramids = rank
 - Map WASD controls to virtual stick, support controllers
