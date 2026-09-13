@@ -36,7 +36,7 @@ import {
   createPlayerAimAction,
   createPullAction,
 } from "../actions.ts";
-import { EASE_IN, EASE_OUT } from "../curves.ts";
+import { EASE_OUT } from "../curves.ts";
 import { getPlayerShip } from "../player/ship.ts";
 import { Bullet } from "../ship/types.ts";
 import { Ship, Weapon, WeaponSnapshot } from "../ship/types.ts";
@@ -78,7 +78,6 @@ export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
     },
   ]]);
 };
-
 
 export const createFireWeaponsAction = (
   _ship: Ship,
@@ -125,7 +124,7 @@ export const defaultShipSequencerFactory = (
     orbitFromAction = createOrbitAction(
       startingPoint,
       mirroredReferencePoint,
-      EASE_IN,
+      (t: number) => 1 - EASE_OUT(1 - t),
     ),
     aimAction = createPlayerAimAction(_ship),
     fireWeapons = createFireWeaponsAction(

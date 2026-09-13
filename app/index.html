@@ -3,18 +3,41 @@
 html {
   background: #000;
 }
-body:before {
+body:before,
+body:after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
   opacity: .15;
   background: radial-gradient(#8434d4,#0000 65%);
-  animation: neb 90s infinite alternate;
+  background-size: 60% 60%;
+  animation: neb 90s infinite alternate, orbit 50s infinite linear;
+}
+body:after {
+  background: radial-gradient(#30a0ee,#0000 65%);
+  animation-delay: 0s, -25s;
 }
 @keyframes neb {
   to {
-    filter: hue-rotate(120deg);
+    filter: hue-rotate(180deg);
+  }
+}
+@keyframes orbit {
+  0% {
+    background-position: -10% 50%;
+  }
+  25% {
+    background-position: 50% -10%;
+  }
+  50% {
+    background-position: 110% 50%;
+  }
+  75% {
+    background-position: 50% 110%;
+  }
+  100% {
+    background-position: -10% 50%;
   }
 }
 html,

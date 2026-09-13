@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export const DIFFICULTY_HALFLIFE = 14;
+export const DIFFICULTY_HALFLIFE = 15;

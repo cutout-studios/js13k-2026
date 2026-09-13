@@ -258,7 +258,9 @@ export const updateGame = (
 
             if (!damages[4]) body[2] = _flipColor(body[2]!);
 
-            if (optionsIndex != 4 ? random() < snapshot[8] : random() < snapshot[8] + world[4] * 0.05) {
+            if (
+              random() < snapshot[8] + (optionsIndex != 4 ? world[4] * 0.05 : 0)
+            ) {
               world[4] = 0;
               const item = createItem(optionsIndex, _, progress[0]);
               setOrigin(item[0][0], readOrigin(coordinates));

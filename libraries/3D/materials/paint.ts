@@ -40,7 +40,7 @@ export const createWithPalette = (...paints: number[]) =>
   create(createPalette(...paints));
 
 export const createFlatWithPalette = (...paints: number[]) =>
-  create(createPalette(...paints), "paintedFlat");
+  create(createPalette(...paints), "F");
 
 export const toRGB = (h: number, s: number, l: number, a = 255): number => {
   const chroma = (s / 100) * min(l / 100, 1 - l / 100),

@@ -44,7 +44,9 @@ export const NOISE_BUFFER = ((i, L) =>
     () => rollSpread() * Math.min(1, i / 64, (L - i++) / 64),
     400,
   ))(0, round(api.sampleRate / 440) * 400);
-export const SAWTOOTH_BUFFER = _renderCycle((p) => p * 2 - 1);
+export const SAWTOOTH_BUFFER = _renderCycle((p) =>
+  (p * 2 - 1) * Math.min(1, (1 - p) * 20, p * 20)
+);
 
 export const BUZZ_BUFFER = _renderCycle((p) => {
   if (p < 0.05) return sin((p / 0.05) * PI);

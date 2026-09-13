@@ -66,10 +66,12 @@ export const createCamera = (
           process,
           group.reduce(
             (buffer, [coordinates], index) => {
-              buffer.set(
-                localize(coordinates, viewingCoordinates),
-                index * COORDINATE_DATA_LENGTH,
-              );
+              if (index < objectLimit) {
+                buffer.set(
+                  localize(coordinates, viewingCoordinates),
+                  index * COORDINATE_DATA_LENGTH,
+                );
+              }
 
               return buffer;
             },
