@@ -125,7 +125,10 @@ const PARTS = ["WING (L)", "WING (R)", "BODY", "ENGINE"],
       doTimes(
         _baseWeapon,
         (value, index) =>
-          properties.push(["AMT", "RATE", "DMG"][index], value.toFixed(1)),
+          properties.push(
+            ["| BULLETS", "| RATE", "| DAMAGE"][index],
+            value.toFixed(1),
+          ),
       );
     }
     base.innerText = join(properties);

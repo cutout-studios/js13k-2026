@@ -23,6 +23,7 @@ import {
 } from "~/3D";
 import { _ } from "~/alias";
 import { createActionSequencer } from "~/clock";
+import { rollSpread } from "~/random";
 
 import { createPlayerAimAction } from "../actions.ts";
 
@@ -41,7 +42,11 @@ export const purpleSequencerFactory = (
   _ship: Ship,
 ) => {
   const aimAction = createPlayerAimAction(_ship),
-    fireWeapons = createFireWeaponsAction(_ship);
+    fireWeapons = createFireWeaponsAction(
+      _ship,
+      _, // no lockstep firing
+      (weapon) => rollSpread(weapon[3][5] * .33, weapon[3][5]),
+    );
 
   return createActionSequencer([
     [(_ship: Ship, ...args) => {
@@ -57,18 +62,17 @@ export default [
   [
     [[[], createPyramid([0.25, 0.25, 0.25])]], // shape: hull only
     [ // overrides
-      [8, [0.06, 0.1]], // Item Drop Rate
       [11, [6, 70]], // HP
-      [17, [0.3, 0.15]], // Aim Time
+      [17, [0.4, 0.15]], // Aim Time
       [16, [0, 0]], // Strafe Speed
     ],
     purpleSequencerFactory, // sequenceFactory
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [1, [0.15, 0.35]], // Bullet Crit Chance
+          [1, [0.1, 0.2]], // Bullet Crit Chance
           [2, [2.5, 5.0]], // Bullet Crit Damage
-          [3, [4, 60]], // Bullet Damage
+          [3, [4, 30]], // Bullet Damage
           [4, [30, 32]], // Bullet Speed
           [5, [0.2, 0.3]], // Bullet Rate
         ],

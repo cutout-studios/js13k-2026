@@ -43,9 +43,9 @@ export default [
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [3, [0.25, 1]], // Bullet Damage
+          [3, [1, 3]], // Bullet Damage
           [4, [2, 3]], // Bullet Speed
-          [5, [12, 21]], // Bullet Rate
+          [5, [10, 18]], // Bullet Rate
           [6, [0.05, 0.1]], // Bullet Spread
         ],
         defaultWeaponSequencerFactory,
@@ -58,7 +58,7 @@ export default [
       ],
       [
         [
-          [3, [0.25, 1]], // Bullet Damage
+          [3, [0.7, 2]], // Bullet Damage
           [4, [2, 3]], // Bullet Speed
           [5, [12, 21]], // Bullet Rate
           [6, [0.05, 0.1]], // Bullet Spread
@@ -75,7 +75,7 @@ export default [
     [3, 7], // countBand
   ],
   [
-    [[0.5, 2], 0, 1, [10, 21], [0.25, 1]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[4, 8], 0, 1, [10, 21], [0.7, 2]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 16, "x", [1.7, 3]], // Speed
       [0, 23, "x", [1.7, 3]], // Bullet Rate

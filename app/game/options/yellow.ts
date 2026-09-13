@@ -74,7 +74,6 @@ export const yellowBulletSequencerFactory = (
     ], [(bullet: Bullet) => {
       errorSound(
         getPanFromCoordinates(bullet[0][0]),
-        readOrigin(bullet[0][0])[2] / 14,
       );
     }], [
       (bullet: Bullet) => {
@@ -158,7 +157,7 @@ export default [
       [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], SHIP_ARM],
     ],
     [ // overrides
-      [8, [0.13, 0.18]], // Item Drop Rate
+      [8, [0.2, 0.3]], // Item Drop Rate
       [11, [30, 240]], // HP
       [16, [1, 2]], // Strafe Speed
     ],
@@ -168,7 +167,7 @@ export default [
         // yellowBulletSequencerFactory below (fragments get their own
         // ship-level bullet group, see Ship's auxiliaryBullets)
         [
-          [3, [40, 120]], // Bullet Damage -> fragment count
+          [3, [100, 200]], // Bullet Damage -> fragment count
           [4, [1.5, 1.5]], // Bullet Speed
           [5, [0.3, 0.6]], // Bullet Rate
           [6, [0.10, 0.30]], // Bullet Spread
@@ -181,7 +180,7 @@ export default [
     [2, 4], // countBand
   ],
   [
-    [[10, 18], 0, 1, [0.5, 1], [40, 100]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[10, 18], 0, 1, [0.5, 1], [100, 200]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 24, "x", [1.5, 2.5]], // Bullet Spread
       [2, 4, "x", [2, 5]], // Gas

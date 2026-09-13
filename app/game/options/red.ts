@@ -44,8 +44,7 @@ export default [
   [
     [[[_, [Z_AXIS, -1.61]], createPyramid([0.11, 0.09, 0.4], 3)]], // shape: hull only
     [ // overrides
-      [8, [0.1, 0.15]], // Item Drop Rate
-      [11, [12, 300]], // HP
+      [11, [8, 100]], // HP
       [16, [1, 2]], // Strafe Speed
       [17, [2, 1.5]], // Aim Time
     ],
@@ -54,7 +53,7 @@ export default [
       [
         [
           [0, [2, 2]], // Bullet Count
-          [3, [1.5, 8]], // Bullet Damage
+          [3, [1, 4]], // Bullet Damage
           [5, [0.7, 3.5]], // Bullet Rate
           [6, [0.02, 0.06]], // Bullet Spread
         ],
@@ -70,7 +69,7 @@ export default [
     [3, 6], // countBand
   ],
   [
-    [[8, 12], 0, 2, [2, 4], [1, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[6, 10], 0, 2, [2, 4], [1, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 21, "x", [1.5, 3.5]], // Bullet Damage
       [0, 20, "x", [3, 5]], // Bullet Crit Damage

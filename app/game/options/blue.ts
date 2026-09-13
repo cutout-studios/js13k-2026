@@ -38,8 +38,8 @@ export default [
       ], // gun barrel
     ],
     [ // overrides
-      [8, [0.2, 0.3]], // Item Drop Rate
-      [11, [80, 750]], // HP
+      [8, [0.35, 0.5]], // Item Drop Rate
+      [11, [40, 500]], // HP
       [16, [0.5, 0.8]], // Strafe Speed
       [17, [1, 0.8]], // Aim Time
     ],
@@ -47,7 +47,7 @@ export default [
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [3, [10, 30]], // Bullet Damage
+          [3, [5, 18]], // Bullet Damage
           [4, [5.5, 5.5]], // Bullet Speed
           [5, [.7, 1.2]], // Bullet Rate
         ],
@@ -63,7 +63,7 @@ export default [
     [1, 1], // countBand
   ],
   [
-    [[15, 18], 1, 1, [0.7, 1.2], [6, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
+    [[12, 15], 1, 1, [0.7, 1.2], [6, 12]], // item base: kg, baseModifiers, bulletCount, bulletRate, bulletDamage
     [
       [0, 11, "x", [2, 4]], // HP
       [0, 12, "x", [2, 4]], // HP Regen

@@ -33,14 +33,13 @@ import { canAffordWeapon, fireWeapon } from "../ship/weapons.ts";
 import { playerSpinSound } from "../sounds.ts";
 
 const [[playerShip]] = GameState,
-  [playerShipObject, playerAim, [leftWeapon, rightWeapon], , , snapshot] =
-    playerShip,
+  [playerShipObject, playerAim, [leftWeapon, rightWeapon]] = playerShip,
   strafeEnvelopes = doTimes(4, () => createEnvelope(0.3, 0.35)),
   spinBoostEnvelope = createEnvelope(0.1, 0.1),
   aimAction = createAimAction(
     playerAim,
     () => mouseTarget,
-    () => snapshot[17],
+    () => playerShip[5][17],
     () => playerShip[4][6],
   );
 
@@ -99,8 +98,8 @@ export const checkSpaceBar = bindButton(
     if (resources[3] || resources[4] || resources[5]) return; // invulnerable, or still recovering
 
     if (GameState[2]) {
-      const totalGasUsed = resources[1] + snapshot[9];
-      if (totalGasUsed >= snapshot[4]) return;
+      const totalGasUsed = resources[1] + playerShip[5][9];
+      if (totalGasUsed >= playerShip[5][4]) return;
       resources[1] = totalGasUsed;
     }
 
@@ -122,10 +121,13 @@ export const applyInputToPlayerShip = (tickLength: number) => {
     strafeY = strafe[0] - strafe[2],
     speedBoost = 1 +
       spinBoostEnvelope(tickLength, !!playerShip[4][4]) * 1.5 *
-        snapshot[14];
+        playerShip[5][14];
 
   adjustObject(playerShipObject, [
-    scaleXYZ([strafeX, strafeY, 0], snapshot[16] * speedBoost * tickLength),
+    scaleXYZ(
+      [strafeX, strafeY, 0],
+      playerShip[5][16] * speedBoost * tickLength,
+    ),
   ]);
 
   aimAction(playerShipObject, tickLength, 0, 1);

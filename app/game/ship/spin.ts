@@ -5,7 +5,8 @@ import { Ship } from "./types.ts";
 export const createSpinSequence = (
   [, , , originalSequence, , _snapshot]: Ship,
   direction: 1 | -1 = 1,
-) => createActionSequencer([
+) =>
+  createActionSequencer([
     // actively countering - reflects hits, can't be re-triggered
     [([, , , , resources], _t, e, d) => {
       resources[6] = (1 + 2.7 * ((e / d) - 1) ** 3 + 1.7 * ((e / d) - 1) ** 2) *

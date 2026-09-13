@@ -38,7 +38,7 @@ import {
 import { ColorOptions } from "./types.ts";
 
 const NUB_GEOMETRY = createPyramid([0.06, 0.06, 0.04], 12),
-  CONE_GEOMETRY = createPyramid([0.05, 0.05, 0.06], 12),
+  CONE_GEOMETRY = createPyramid([0.05, 0.05, 0.05], 12),
   NUB_TRIS = length(NUB_GEOMETRY[1]) / 3,
   CONE_TRIS = length(CONE_GEOMETRY[1]) / 3;
 
@@ -78,7 +78,7 @@ export default [
       ])(
         centerObject(flattenObjects(
           createObject([[0, 0, -0.28]], NUB_GEOMETRY), // nozzle
-          createObject([[0, 0, -0.35], [Y_AXIS, PI]], CONE_GEOMETRY), // thruster
+          createObject([[0, 0, -0.37], [Y_AXIS, PI]], CONE_GEOMETRY), // thruster
         )),
       ),
     ],

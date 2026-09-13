@@ -113,7 +113,7 @@ export const createItem = (
         (typeID <= 1 ? rank - 1 : rank) + baseModifierCount,
       ),
       () => {
-        const [, propertyID, type, valueBand] = drawCard(modifierDeck);
+        const [, propertyID, type, valueBand] = drawCard(modifierDeck, 1);
 
         return [propertyID, type, levelRoll(valueBand, rank - 1, 1.5)];
       },

@@ -39,7 +39,7 @@ import {
 import { EASE_IN, EASE_OUT } from "../curves.ts";
 import { getPlayerShip } from "../player/ship.ts";
 import { Bullet } from "../ship/types.ts";
-import { Ship, WeaponSnapshot } from "../ship/types.ts";
+import { Ship, Weapon, WeaponSnapshot } from "../ship/types.ts";
 import { PLAYER_AIM_Z_PLANE, PLAYER_X_BOUND, PLAYER_Y_BOUND } from "./base.ts";
 
 export const defaultBulletGeometry = createPrism([0.006, 0.006, 0.12], 12);
@@ -79,15 +79,13 @@ export const defaultBulletSequencerFactory = (jitter?: [Band, Band, Band]) =>
   ]]);
 };
 
-// gates each of a ship's weapons behind its own fire-rate cooldown before
-// it's allowed to fire at all ("summoning sickness"), and behind an
-// optional extra block condition (e.g. out of range) - shared by any ship
-// sequencer that just needs "aim and fire when able", enemy or player
+
 export const createFireWeaponsAction = (
   _ship: Ship,
   isBlocked: (origin: XYZ) => boolean = () => false,
+  initialReady: (weapon: Weapon) => number = () => 0,
 ) => {
-  const readyElapsed = doTimes(_ship[2], () => 0);
+  const readyElapsed = doTimes(_ship[2], initialReady);
 
   return (tickLength: number) => {
     const origin = readOrigin(_ship[0][0]);
