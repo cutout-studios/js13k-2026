@@ -113,7 +113,7 @@ export const defaultShipSequencerFactory = (
       spread(PLAYER_X_BOUND),
       spread(PLAYER_Y_BOUND),
       spread(0.5, -PLAYER_AIM_Z_PLANE),
-    ]),
+    ], 2),
     mirroredReferencePoint = addXYZ(
       startingPoint,
       fieldPoint,

@@ -56,7 +56,7 @@ const bindWeaponKey = (code: string, weapon: Weapon, weaponIndex: number) => {
     free = (t: number) => idleTime += t,
     reset = (t: number) => {
       if (!GameState[2]) {
-        GameState[2] = true;
+        GameState[2] = 1;
         title.style.opacity = "0";
       } else if (
         idleTime >= 1 / weapon[3][5] && canAffordWeapon(playerShip, weaponIndex)

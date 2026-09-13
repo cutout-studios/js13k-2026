@@ -59,6 +59,8 @@ const checkMouse = (tickLength: number) =>
 startClock((tickLength) => {
   updateBackgroundStars(tickLength);
 
+  if (GameState[3]) return; // game over - freeze everything
+
   // game has started, but is paused
   if (GameState[2]) {
     checkFKey(tickLength);

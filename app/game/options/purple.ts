@@ -45,7 +45,7 @@ export const purpleSequencerFactory = (
     fireWeapons = createFireWeaponsAction(
       _ship,
       _, // no lockstep firing
-      (weapon) => rollSpread(weapon[3][5] * .4, weapon[3][5]),
+      (weapon) => rollSpread(weapon[3][5] * .4, weapon[3][5], 1),
     );
 
   return createActionSequencer([

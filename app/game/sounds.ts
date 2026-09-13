@@ -224,7 +224,6 @@ export const yellowWeaponSound = createSound(
     [[0, 0, true], 0.25],
   ]],
 );
-export const yellowBombReadySound = errorSound;
 export const yellowBombExplodeSound = enemyDestroyedSound;
 
 export const purpleWeaponSound = createSound(

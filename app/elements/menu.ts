@@ -53,31 +53,31 @@ let hoveredCellIndex = -1,
   restorePreviewDeck: number[] = [],
   renderTargets: GPURenderTarget[];
 
-const PARTS = ["WING (L)", "WING (R)", "BODY", "ENGINE"],
+const PARTS = ["LWING", "RWING", "BODY", "ENGINE"],
   PROPERTY_NAMES = [
     "REZ",
-    "REZ RECOVERY",
-    "DAMAGE REDUCTION",
-    "DAMAGE TAKEN → GAS",
+    "REZ RECOV",
+    "DMG REDUCE",
+    "DMG TAKEN → GAS",
     "GAS",
     "", // DEAD
     "GAS REGEN",
-    "RESTORE POTENCY",
+    "RESTORE POT",
     "DROP RATE",
     "KG",
     "RESOLVE",
     "HP",
     "HP REGEN",
-    "COUNTER DAMAGE",
-    "COUNTER SPEED",
-    "COUNTER TIME",
-    "SPEED",
+    "SPIN DMG",
+    "SPIN SPD",
+    "SPIN TIME",
+    "SPD",
     "AIM TIME",
     "BULLETS",
-    "CRIT CHANCE",
-    "CRIT DAMAGE",
-    "DAMAGE",
-    "BULLET SPEED",
+    "CRIT AMT",
+    "CRIT DMG",
+    "DMG",
+    "BULLET SPD",
     "BULLET RATE",
     "BULLET SPREAD",
   ],
@@ -126,7 +126,7 @@ const PARTS = ["WING (L)", "WING (R)", "BODY", "ENGINE"],
         _baseWeapon,
         (value, index) =>
           properties.push(
-            ["| BULLETS", "| RATE", "| DAMAGE"][index],
+            ["| BULLETS", "| RATE", "| DMG"][index],
             value.toFixed(1),
           ),
       );
@@ -159,12 +159,12 @@ form.onsubmit = (event: SubmitEvent) => {
 
       spliceTable([inventory], detail);
 
-      let hasEquippedItem = false;
+      let hasEquippedItem = 0;
       doTimes(newlyEquipped, (item, typeID) => {
         if (!item) return;
         if (equipped[typeID]) inventory.push(equipped[typeID]!);
         equipped[typeID] = item;
-        hasEquippedItem = true;
+        hasEquippedItem = 1;
       });
 
       if (hasEquippedItem) equipSound();
@@ -226,7 +226,7 @@ export const resetMenu = () => {
     camera([[item[0]]], renderTargets[typeID + EQUIP_OFFSET]);
     canvasCells[typeID + EQUIP_OFFSET].style.opacity = equipped[typeID]
       ? "1"
-      : "0.5";
+      : ".5";
   });
 
   doTimes(
@@ -243,7 +243,8 @@ export const updateMenu = (tickLength: number) => {
   const selectedIndicies = getFormValues()[0];
 
   equipButton.disabled = !length(selectedIndicies);
-  restoreButton.disabled = length(selectedIndicies) < 2;
+  restoreButton.disabled = length(selectedIndicies) < 2 ||
+    selectedIndicies.some((index) => !inventory[index]);
 
   if (!restoreButton.disabled) restorePreviewSequence(inventory, tickLength);
   else camera([], renderTargets[1]);

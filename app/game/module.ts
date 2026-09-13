@@ -24,28 +24,22 @@ import {
 } from "~/3D";
 import { _, cos, sin, TAU } from "~/alias";
 import { doTimes, flat, flatDoTimes } from "~/common";
-import { rollBand } from "~/random";
+import { rollBand, rollSpread } from "~/random";
 
 import startingPlayer from "./player/module.ts";
 import { getShipObjects } from "./ship/module.ts";
 import { Game } from "./types.ts";
 import startingWorld from "./world/module.ts";
 
-export default [startingPlayer, startingWorld, false] as Game;
+export default [startingPlayer, startingWorld, 0, 0] as Game;
 
-const STAR_Z_PLANE = 300,
-  STAR_WALL_COUNT = 6,
-  STAR_WALL_CAPACITY = 256,
-  STAR_TUNNEL_RADIUS = 80,
-  STAR_LOCAL_SPREAD = 90,
-  STAR_ROTATION_SPEED = 0.006,
-  starGeometry = createSphere(0.1),
-  starWalls: XOObject[][] = doTimes(STAR_WALL_COUNT, (wallIndex: number) => {
-    const angle = wallIndex * TAU / STAR_WALL_COUNT,
-      centerX = STAR_TUNNEL_RADIUS * cos(angle),
-      centerY = STAR_TUNNEL_RADIUS * sin(angle);
+const starGeometry = createSphere(0.1),
+  starWalls: XOObject[][] = doTimes(6, (wallIndex: number) => {
+    const angle = wallIndex * TAU / 6,
+      centerX = 80 * cos(angle),
+      centerY = 80 * sin(angle);
 
-    return doTimes(STAR_WALL_CAPACITY, () => {
+    return doTimes(256, () => {
       const object = createObject(
         _,
         starGeometry,
@@ -53,9 +47,9 @@ const STAR_Z_PLANE = 300,
       );
 
       setOrigin(object[0], [
-        centerX + rollBand([-STAR_LOCAL_SPREAD, STAR_LOCAL_SPREAD], 1),
-        centerY + rollBand([-STAR_LOCAL_SPREAD, STAR_LOCAL_SPREAD], 1),
-        -STAR_Z_PLANE + rollBand([-30, 30], 1),
+        centerX + rollSpread(90, 0, 1),
+        centerY + rollSpread(90, 0, 1),
+        -300 + rollSpread(30, 0, 1),
       ]);
 
       return object;
@@ -63,7 +57,7 @@ const STAR_Z_PLANE = 300,
   });
 
 export const updateBackgroundStars = (tickLength: number) => {
-  const angle = STAR_ROTATION_SPEED * tickLength,
+  const angle = .006 * tickLength,
     c = cos(angle),
     s = sin(angle);
 

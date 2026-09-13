@@ -55,13 +55,14 @@ export const createItem = (
         bell() + levelCurve(level),
       ),
 ): Item => {
-  const [, value, , [[
+  const [, value, , item] = GameOptions[colorID],
+    [[
       baseMass,
       baseModifierCount,
       baseBulletCount,
       baseBulletRate,
       baseBulletDamage,
-    ], modifiers]] = GameOptions[colorID],
+    ], modifiers] = item!,
     modifierDeck = [] as ModifierOptions[],
     pullAction = createPullAction(Z_AXIS, 0.6, () => 1, [
       [0, 0],

@@ -27,6 +27,7 @@ import { getPanFromCoordinates } from "~/audio";
 import { createActionSequencer } from "~/clock";
 import { doTimes, flat, flatDoTimes, spliceTable } from "~/common";
 
+import { menu, title } from "../elements/handles.ts";
 import { visibleHalfExtentAt } from "../elements/mainCanvas.ts";
 import GameState from "./module.ts";
 import { BASE_PROPERTIES, ENEMY_FADE_TIME } from "./options/base.ts";
@@ -50,8 +51,12 @@ import { rollEnemies } from "./world/enemies.ts";
 import { getWavesInLevel } from "./world/levels.ts";
 
 export const endGame = (message = "COMPLETED") => {
-  GameState[2] = false;
-  setTimeout(() => (alert("MISSION " + message), location.reload()));
+  GameState[2] = 0;
+  GameState[3] = 1;
+  menu.close();
+  title.textContent = "MISSION " + message;
+  title.style.opacity = "1";
+  setTimeout(() => location.reload(), 4000);
 };
 
 const _wrapBullets = (bullets: BulletGroup) =>
