@@ -124,7 +124,7 @@ export const yellowBulletSequencerFactory = (
               bulletObject,
               createActionSequencer([[NO_OP]]),
             ];
-            fragment[1] = defaultBulletSequencerFactory()(fragment, 3, false);
+            fragment[1] = defaultBulletSequencerFactory()(fragment, 3, true);
             return fragment;
           }) as Bullet[];
 
@@ -157,7 +157,7 @@ export default [
       [[[-0.52, 0.02, 0], [Z_AXIS, -0.65]], SHIP_ARM],
     ],
     [ // overrides
-      [8, [0.2, 0.3]], // Item Drop Rate
+      [8, [0.25, 0.35]], // Item Drop Rate
       [11, [30, 240]], // HP
       [16, [1, 2]], // Strafe Speed
     ],
@@ -167,7 +167,7 @@ export default [
         // yellowBulletSequencerFactory below (fragments get their own
         // ship-level bullet group, see Ship's auxiliaryBullets)
         [
-          [3, [100, 200]], // Bullet Damage -> fragment count
+          [3, [50, 150]], // Bullet Damage -> fragment count
           [4, [1.5, 1.5]], // Bullet Speed
           [5, [0.3, 0.6]], // Bullet Rate
           [6, [0.10, 0.30]], // Bullet Spread

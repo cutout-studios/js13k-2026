@@ -31,7 +31,7 @@ export default [
   "PINK",
   0xD4349FFF,
   [
-    [[[], createSphere(0.10, 20)]], // shape: hull only
+    [[[], createSphere(0.12, 20)]], // shape: hull only
     [ // overrides
       [8, [0.01, 0.03]], // Item Drop Rate
       [11, [2, 25]], // HP
@@ -42,7 +42,7 @@ export default [
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [3, [1, 5]], // Bullet Damage
+          [3, [0.5, 5]], // Bullet Damage
           [4, [1, 2]], // Bullet Speed
           [5, [0.7, 1.5]], // Bullet Rate
           [6, [0.25, 0.5]], // Bullet Spread

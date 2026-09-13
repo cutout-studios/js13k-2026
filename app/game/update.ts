@@ -188,7 +188,7 @@ export const updateGame = (
                 playerHitSoundCooldown = 0.15;
               }
 
-              const totalDamage = baseDamage - playerSnapshot[2];
+              const totalDamage = baseDamage + playerSnapshot[2];
 
               playerResourceStatus[0] += totalDamage * (1 - playerSnapshot[3]);
               playerResourceStatus[1] += totalDamage * playerSnapshot[3];
@@ -234,7 +234,16 @@ export const updateGame = (
       flatDoTimes(
         ships,
         (
-          [body, , weapons, , damages, snapshot, optionsIndex],
+          [
+            body,
+            ,
+            weapons,
+            ,
+            damages,
+            snapshot,
+            optionsIndex,
+            auxiliaryBullets,
+          ],
           index,
         ) => {
           const coordinates = body[0];
@@ -249,12 +258,12 @@ export const updateGame = (
 
             if (!damages[4]) body[2] = _flipColor(body[2]!);
 
-            if (random() < snapshot[8] + world[4] * 0.05) {
+            if (optionsIndex != 4 ? random() < snapshot[8] : random() < snapshot[8] + world[4] * 0.05) {
               world[4] = 0;
               const item = createItem(optionsIndex, _, progress[0]);
               setOrigin(item[0][0], readOrigin(coordinates));
               droppedItems.push(item);
-            } else {
+            } else if (optionsIndex != 4) {
               world[4]++;
             }
           } else {
@@ -266,6 +275,7 @@ export const updateGame = (
           }
 
           return weapons.reduce((n, [, [b]]) => n + length(b), 0) ||
+              length(auxiliaryBullets[0]) ||
               damages[3] < ENEMY_FADE_TIME
             ? []
             : [index];
@@ -311,7 +321,7 @@ export const updateGame = (
   playerResourceStatus[0] = max(
     0,
     playerResourceStatus[0] -
-      playerSnapshot[12] * tickLength * (playerResourceStatus[3] ? 5 : 1),
+      playerSnapshot[12] * tickLength * (playerResourceStatus[3] ? 2.5 : 1),
   );
 
   // if hp is depleted, reduce rez by one, trigger temporary invulnerability

@@ -53,7 +53,7 @@ export default [
       [
         [
           [0, [2, 2]], // Bullet Count
-          [3, [1, 4]], // Bullet Damage
+          [3, [1, 3.5]], // Bullet Damage
           [5, [0.7, 3.5]], // Bullet Rate
           [6, [0.02, 0.06]], // Bullet Spread
         ],

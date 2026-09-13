@@ -43,7 +43,7 @@ export default [
     [ // weapons: [overrides, sequenceFactory, mount, bullet, sight?][]
       [
         [
-          [3, [1, 3]], // Bullet Damage
+          [3, [0.5, 2.5]], // Bullet Damage
           [4, [2, 3]], // Bullet Speed
           [5, [10, 18]], // Bullet Rate
           [6, [0.05, 0.1]], // Bullet Spread

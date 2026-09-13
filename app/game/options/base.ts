@@ -30,19 +30,19 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
   0, // Rez Save
   1, // Damage Taken
   0, // Damage Taken From Gas
-  100, // Gas
+  200, // Gas
   1, // Gas Cost - DEAD
 
   // 6-10
-  10, // Gas Regen
+  20, // Gas Regen
   1, // Item Mixture Quality
-  0.15, // Item Drop Rate
-  10, // KG
+  0.2, // Item Drop Rate
+  15, // KG
   1, // Resolve
 
   // 11-15
-  30, // HP
-  3, // HP Regen
+  100, // HP
+  10, // HP Regen
   0.5, // Spin Damage
   1, // Spin Speed
   0.7, // Spin Time
@@ -63,5 +63,5 @@ export const BASE_PROPERTIES: [...ShipSnapshot, ...WeaponSnapshot] = [
 
   // WPN 6-7   (24/25)
   0, // Bullet Spread
-  0, // KG
+  2, // KG
 ];
