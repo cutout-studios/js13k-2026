@@ -54,7 +54,7 @@ export const portrait = (collected: Set<number>) => {
         doTimes(
           6,
           (index: number) =>
-            collected.has(index) ? GameOptions[index][1] : 0x000000FF,
+            collected.has(index + 1) ? GameOptions[index + 1][1] : 0x000000FF,
         ),
       ),
     ),

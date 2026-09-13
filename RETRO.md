@@ -45,6 +45,10 @@
 4. maybe directors cut - but probably not. CB is too messy and I have bigger
    games to make next.
 
+## Regrets
+
+- not going event d
+
 [sponsorship link](https://github.com/sponsors/cutout-studios)
 
 ## Things I'd do next:
