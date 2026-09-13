@@ -36,6 +36,10 @@
 > [!WARNING]
 > WebGPU can crash!!
 
+## Regrets
+
+- not going event driven... I thought it'd save space but in retrospect idk, and things woulda been a bit easier
+
 ## post competition action items
 
 1. I still don’t fully understand rotation lmao but maybe i don’t have to
@@ -43,20 +47,16 @@
 3. W3C proposal for console append-only “live group” to make debugging loops in
    the browser easier (doesn’t exist!)
 4. maybe directors cut - but probably not. CB is too messy and I have bigger
-   games to make next.
+   games to make next. maybe if like there's a bug or two I missed, i didn't have time to play the game exhaustively
 
-## Regrets
+## other things I'd do next:
 
-- not going event d
-
-[sponsorship link](https://github.com/sponsors/cutout-studios)
-
-## Things I'd do next:
-
-- Major refactoring, this codebase is actively driving me insane.
+- Major refactoring, this codebase was actively driving me insane.
 - properly handling transparency - depth occlusion breaks it, needs multiple passes.
 - Particle effects: ship thrusters, explosion effects
 - Highlight dropped items in the field with #ff0 pyramids = rank
 - Map WASD controls to virtual stick, support controllers
-- Add FX (chromatic abberation) to background stars, colored nebula
+- Add VFX (chromatic abberation) to background stars
 - Music
+
+[sponsorship link](https://github.com/sponsors/cutout-studios)
