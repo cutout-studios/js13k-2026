@@ -6,9 +6,8 @@
 
 ## disclaimers:
 
-- former senior google dev (which i say only to establish baseline credibility)
-  with a game design degree, but this is my first game build and I learned a
-  TON.
+- dev with ~12y exp. and a game design degree, but this is my first game build
+  and I learned a TON.
 - I believe AI is okay in very narrow circumstances that weren't possible
   before. I used it to learn the ropes of 3D programming specifically in the
   novel area of WebGPU+size-coding. Also last-minute devtools and fighting
@@ -38,7 +37,8 @@
 
 ## Regrets
 
-- not going event driven... I thought it'd save space but in retrospect idk, and things woulda been a bit easier
+- not going event driven... I thought it'd save space but in retrospect idk, and
+  things woulda been a bit easier
 
 ## post competition action items
 
@@ -47,12 +47,14 @@
 3. W3C proposal for console append-only “live group” to make debugging loops in
    the browser easier (doesn’t exist!)
 4. maybe directors cut - but probably not. CB is too messy and I have bigger
-   games to make next. maybe if like there's a bug or two I missed, i didn't have time to play the game exhaustively
+   games to make next. maybe if like there's a bug or two I missed, i didn't
+   have time to play the game exhaustively
 
 ## other things I'd do next:
 
 - Major refactoring, this codebase was actively driving me insane.
-- properly handling transparency - depth occlusion breaks it, needs multiple passes.
+- properly handling transparency - depth occlusion breaks it, needs multiple
+  passes.
 - Particle effects: ship thrusters, explosion effects
 - Highlight dropped items in the field with #ff0 pyramids = rank
 - Map WASD controls to virtual stick, support controllers
