@@ -12,7 +12,7 @@
   before. I used it to learn the ropes of 3D programming specifically in the
   novel area of WebGPU+size-coding. Also last-minute devtools and fighting
   through my own tech debt at the end :/. (see
-  [wip policy](https://github.com/cutout-studios/.github/blob/main/profile/LLM_USE.md))
+  [wip policy](https://github.com/cutout-studios/.github/blob/main/profile/LLM_USE.md)).
 
 ## largest bottlenecks (_not_ directly the size!)
 
@@ -63,4 +63,4 @@
 - Other graphical improvements - transparency layering, glow and motion blur
 - Music
 
-[sponsorship link](https://github.com/sponsors/cutout-studios)
+[discord link](https://discord.gg/DW5pyrjsYm) | [sponsorship link](https://github.com/sponsors/cutout-studios)
