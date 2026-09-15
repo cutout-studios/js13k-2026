@@ -39,6 +39,7 @@
 
 - not going event driven... I thought it'd save space but in retrospect idk, and
   things woulda been a bit easier
+- more devtools more earlier
 
 ## post competition action items
 
@@ -52,13 +53,14 @@
 
 ## other things I'd do next:
 
-- Major refactoring, this codebase was actively driving me insane.
+- Major refactoring, this codebase was actively driving me insane. As my friend put it I had to "fold it together like origami" to get everything to fit.
 - properly handling transparency - depth occlusion breaks it, needs multiple
   passes.
 - Particle effects: ship thrusters, explosion effects
 - Highlight dropped items in the field with #ff0 pyramids = rank
 - Map WASD controls to virtual stick, support controllers
 - Add VFX (chromatic abberation) to background stars
+- Other graphical improvements - transparency layering, glow and motion blur
 - Music
 
 [sponsorship link](https://github.com/sponsors/cutout-studios)
