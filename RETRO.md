@@ -1,8 +1,7 @@
 # Retrospective \[TODO\]
 
 > [!WARNING]
-> The following is currently a collection of raw notes, will turn into prose
-> when I have time.
+> The following is currently a collection of raw notes, turning it to prose in [this PR](https://github.com/cutout-studios/js13k-2026/pull/5).
 
 ## disclaimers:
 
