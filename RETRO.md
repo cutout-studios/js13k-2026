@@ -1,4 +1,4 @@
-# \[WIP\] Retrospective, `MISSION: DARKWHITE`
+# <mark>\[WIP\]</mark> Retrospective, `MISSION: DARKWHITE`
 
 <details>
 <summary>
