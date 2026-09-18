@@ -26,19 +26,24 @@
 
 ## Personal Context
 
-TODO
+I include this mainly as a "if you're like me, this will be maximally useful to
+you" - I'll keep it brief:
 
-<!--
-me, goals, ai use in accordance w/ policy
-
-- dev with ~12y exp. and a game design degree, but this is my first game build
-  and I learned a TON.
-- I believe AI is okay in very narrow circumstances that weren't possible
-  before. I used it to learn the ropes of 3D programming specifically in the
-  novel area of WebGPU+size-coding. Also last-minute devtools and fighting
-  through my own tech debt at the end :/. (see
-  [wip policy](https://github.com/cutout-studios/.github/blob/main/profile/LLM_USE.md))
- -->
+- After obtaining a
+  [particularly inscrutible degree in college](https://www.youtube.com/watch?v=2VYRjHPmZdQ)
+  I got caught up in the "learn to code" movement and chose it as my preferred
+  survival method. ~12 years of experience, now, depending how you count it.
+- Having a game design minor, I'd focused mostly on board games until now. For a
+  few years before COVID I ran a
+  [design workshop](https://metromage.games/2020/03/29/build-a-game-in-under-2-hours-no-really/).
+- All LLM use was in accordance with my
+  [current policy](https://github.com/cutout-studios/.github/blob/main/profile/LLM_USE.md),
+  though I currently don't have a means of collecting logs so it's a bit of a
+  "trust me, bro" situation. My next project is to develop a
+  [local harness](https://github.com/cutout-studios/toolbox/tree/main/experimental/agent)
+  that solves this problem.
+- My goals this year were simple: learn to build a 3D web game as concisely as
+  possible and get to know the community a little bit.
 
 ## Process
 
@@ -46,9 +51,9 @@ TODO
 
 <!--
 > i spent a few days learning 3D b4 the competition
-> initial brainstorming/ideation (pictures)
-> intial burst
-> slog
+> similar to workshop
+  > initial brainstorming/ideation (pictures)
+  > paper prototype - 'it's fun'
 > things mostly came together at the last moment (ai sprint)
 > final hours
 -->
@@ -100,8 +105,8 @@ TODO
 There are two layers to making your code small, and JS13k forces you to be
 intimately familiar with each:
 
-- `minification`
-- `compression`
+- `minification` (...)
+- `compression` (...)
 
 TODO
 
