@@ -96,6 +96,11 @@ TODO
 
 TODO
 
+<!--
+  Also not having a linux/windows box to test on.
+  Lock-on/aim assist as the cross-controller solve  
+-->
+
 ## Synthesis
 
 ### `mk_code_sml`
@@ -112,7 +117,7 @@ TODO
 > Two layers - minification (i.e. intra-code compaction) and compression (inter-code). which are you targeting with what technique?
 > Pipeline is half the battle
 
-minification
+minification (most techniques target this)
 > small =/= fast (stars). usually it does because of network time + JIT, but not at this level
   > rough heuristic - 1 line ~= 5 bytes
 > ideal: concise systems - 3D lathe + concat, quantization and bitpacking
@@ -151,11 +156,13 @@ TODO
 
 - Refactoring first: this codebase was actively driving me insane. Origami.
 
-gameplay - continuous mode i dropped somewhat erroneously in the final moments
+gameplay 
+- continuous mode i dropped somewhat erroneously in the final moments
 
 accessibility
 - Map WASD controls to virtual stick, support controllers
 - Highlight dropped items in the field with #ff0 pyramids = rank
+- lock on? would require re-balancing. the children yearn for certainty
 
 graphics
 - properly handling transparency - depth occlusion breaks it, needs multiple
