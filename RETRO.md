@@ -32,30 +32,30 @@ you" - I'll keep it brief:
 - After obtaining a
   [particularly inscrutible degree in college](https://www.youtube.com/watch?v=2VYRjHPmZdQ)
   I got caught up in the "learn to code" movement and chose it as my preferred
-  survival method. ~12 years of experience, now, depending how you count it.
-- Having a game design minor, I'd focused mostly on board games until now. For a
-  few years before COVID I ran a
+  survival method (aka job). ~12 years of experience, now, depending how you count it.
+- With a game design minor I'd focused mostly on board games until this. For
+  a few years before COVID I co-ran a small
   [design workshop](https://metromage.games/2020/03/29/build-a-game-in-under-2-hours-no-really/).
 - All LLM use was in accordance with my
   [current policy](https://github.com/cutout-studios/.github/blob/main/profile/LLM_USE.md),
   though I currently don't have a means of collecting logs so it's a bit of a
-  "trust me, bro" situation. My next project is to develop a
+  "trust me, bro" situation. My next project is to finalize a
   [local harness](https://github.com/cutout-studios/toolbox/tree/main/experimental/agent)
-  that solves this problem.
-- My goals this year were simple: learn to build a 3D web game as concisely as
-  possible and get to know the community a little bit.
+  to solve that problem going forward.
+- My goals with JS13K this year were simple: learn to build a 3D web game (as
+  concisely as possible) and get to know the community a little bit.
 
 ## Process
 
 TODO
 
 <!--
-> i spent a few days learning 3D b4 the competition
+> i spent time learning 3D b4 the competition
 > similar to workshop
   > initial brainstorming/ideation (pictures)
   > paper prototype - 'it's fun'
-> things mostly came together at the last moment (ai sprint)
-> final hours
+  > things mostly came together in the last days
+> final hours - deciding to stop so as to not get in a car crash lol
 -->
 
 ## Regrets
@@ -75,10 +75,8 @@ TODO
 TODO
 
 <!--
-‘running ahead’ - intentionally coding imperfect logic to see if things fit,
-   then going back to fix it - and debugging game loops in the browser is super
-   annoying
-> [!WARNING]
+> ‘running ahead’ - intentionally coding imperfect logic to see if things fit,
+then going back to fix it - and debugging game loops in the browser is super annoying
 > WebGPU can crash!!
 > not having a headless environment, or tests
 -->
@@ -94,7 +92,7 @@ TODO
 - however going forward i might acutally want to stick to a heavy gameloop (see: JSX), so...
 -->
 
-### Honorary Mention: **Sticking to the mouse.**
+### Honorable Mention: **Sticking to the mouse input.**
 
 TODO
 
@@ -111,14 +109,21 @@ intimately familiar with each:
 TODO
 
 <!--
-> Two layers - minification (e.g. intra-code) and compression (inter-code). which are you targeting?
-> Pipeline
-> ideal: actually concise systems - 3D lathe + concat, quantization and data tables
-   (TBI)
+> Two layers - minification (i.e. intra-code compaction) and compression (inter-code). which are you targeting with what technique?
+> Pipeline is half the battle
+
+minification
+> small =/= fast (stars). usually it does because of network time + JIT, but not at this level
+  > rough heuristic - 1 line ~= 5 bytes
+> ideal: concise systems - 3D lathe + concat, quantization and bitpacking
+> leaning on browser apis whereever possible (css/html for ui and gradient effects, etc)
+  > however, certain things don't work in the iframe environment...
+> actual “code golfing” - tuples+property mangling, bitwise operations, inlining things (…intentional
+   spaghetti code 😭), dirty JS tricks (double equals)
+
+compression
 > Imperfect Abstractions - “forced” DRYness and messy side effects in pursuit
-   of forcing consistency (doTimes)
-> “code golfing” - tuples+property mangling, inlining things (…intentional
-   spaghetti code 😭), dirty JS tricks
+   of forcing consistency (doTimes, ship code)
 -->
 
 ### 3D Rotation Bestiary
@@ -126,10 +131,10 @@ TODO
 TODO
 
 <!--
-- Euler Angles and Gimbal Lock
-- Quaternions
-- Rodriguez Matrix
-- Rotors, Axis-angle
+- Euler Angles and why they Gimbal Lock
+- Quaternions and their impenetrability
+- Rodriguez Matrix and why you need it regardless
+- Rotors, Axis-angle - seems ideal
 -->
 
 ## What's Next?
@@ -140,9 +145,13 @@ TODO
 
 <!--
  maybe directors cut - but probably not. CB is too messy and I have bigger
-   games to make next. maybe if like there's a bug or two I missed, i didn't
-   have time to play the game exhaustively
-- Major refactoring, this codebase was actively driving me insane. Origami.
+   games to make next.
+
+   if it wins/becomes hugely popular? sure. but otherwise i frankly have no further strategic need
+
+- Refactoring first: this codebase was actively driving me insane. Origami.
+
+gameplay - continuous mode i dropped somewhat erroneously in the final moments
 
 accessibility
 - Map WASD controls to virtual stick, support controllers
@@ -166,7 +175,7 @@ TODO
 <!--
 1. W3C proposal for console append-only `%g` “live group” to make debugging loops in the browser easier (doesn’t exist!)
 2. open deno proposal or PR for mangling props (doesn’t exist!)
-3. MIT-license local agent harness
+3. MIT-license local agent harness, as previously mentioned
 -->
 
 ## In Closing
