@@ -82,7 +82,7 @@ It is difficult, though, to justify tests or tools for things you're not even
 sure you can fit. This led to a lot of "running ahead" with imperfect logic to
 get a rough idea of how much code it would be or compress to. <mark><b>I also
 found that one line of sketch code ultimately averaged to ~5 bytes in the
-compressed final product,</b></mark> but YMMV (the final ratio was 1 line:3
+bundle,</b></mark> but YMMV (the final ratio was 1 line:3
 bytes).
 
 I also didn't realize how painful debugging that same "sketch logic" would be.
