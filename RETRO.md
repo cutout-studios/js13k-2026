@@ -1,12 +1,5 @@
 # <mark>\[WIP\]</mark> Retrospective, `MISSION: DARKWHITE`
 
-<details>
-<summary>
-
-### Table of Contents
-
-</summary>
-
 - [Personal Context](#personal-context)
 - [Overall Process](#overall-process)
 - [Regrets](#regrets)
@@ -22,8 +15,6 @@
   - [Director's Cut](#directors-cut)
   - [Community Contributions](#community-contributions)
 - [In Closing](#in-closing)
-
-</details>
 
 ## Personal Context
 
