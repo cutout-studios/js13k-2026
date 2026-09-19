@@ -30,8 +30,8 @@
 <details>
 
 <summary>
-I include this mainly as a "if you're like me, this will be maximally useful to
-you" - it's relatively brief.
+I include this mainly as a <mark><b>"if you're like me, this will be maximally useful to
+you"</b></mark> - it's relatively brief.
 </summary>
 
 - After obtaining a
@@ -79,8 +79,8 @@ deadline, and I probably could have kept scraping against the byte limit for
 another few days.
 
 I still managed to complete ~90% of what I'd initially planned, but don't be
-fooled - JS13k is just as much about energy and time management as it is byte
-management.
+fooled - <mark><b>JS13k is just as much about energy and time management as it
+is byte management.</b></mark>
 
 ### 2. **Not writing more devtools more sooner.**
 
@@ -89,9 +89,10 @@ programming and the golfing.
 
 It is difficult, though, to justify tests or tools for things you're not even
 sure you can fit. This led to a lot of "running ahead" with imperfect logic to
-get a rough idea of how much code it would be or compress to. <mark>I also found
-that one line of sketch code ultimately averaged to ~5 bytes in the compressed
-final product,</mark> but YMMV (the final ratio was 1 line:3 bytes).
+get a rough idea of how much code it would be or compress to. <mark><b>I also
+found that one line of sketch code ultimately averaged to ~5 bytes in the
+compressed final product,</b></mark> but YMMV (the final ratio was 1 line:3
+bytes).
 
 I also didn't realize how painful debugging that same "sketch logic" would be.
 Logging from the game loop crashes Safari, and debugging is too tedious. Do we
@@ -101,8 +102,8 @@ unless I'm missing something, it's so bad I am in fact planning on
 [proposing a `console.log` extension](#community-contributions) of my own.
 
 Overall JS13K kinda forces you to choose small software over your own developer
-experience and I <mark>got stuck a bit too long in the mindset that I couldn't
-have ANYTHING nice</mark>, to my detriment.
+experience and I <mark><b>got stuck a bit too long in the mindset that I
+couldn't have ANYTHING nice</b></mark>, to my detriment.
 
 When I did break that mentality, the lion's share of my total LLM use was in
 service of [spitting out crappy devtools](./devtools/) to make it easier to work
