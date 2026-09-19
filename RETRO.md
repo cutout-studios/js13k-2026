@@ -8,13 +8,14 @@
 </summary>
 
 - [Personal Context](#personal-context)
-- [Process](#process)
+- [Overall Process](#overall-process)
 - [Regrets](#regrets)
   - [Regret #1](#1-taking-on-a-bit-more-than-my-current-body-could-handle)
   - [Regret #2](#2-not-writing-more-devtools-more-sooner)
   - [Regret #3](#3-deciding-against-an-event-driven-architecture)
   - [Honorary Mention](#honorary-mention-sticking-to-the-mouse)
 - [Synthesis](#synthesis)
+  - [JS13k first-timer lessons](#js13k-first-timer-lessons)
   - [`mk_code_sml`](#mk_code_sml)
   - [3D Rotation Bestiary](#3d-rotation-bestiary)
 - [What's Next?](#whats-next)
@@ -26,15 +27,20 @@
 
 ## Personal Context
 
+<details>
+
+<summary>
 I include this mainly as a "if you're like me, this will be maximally useful to
-you" - I'll keep it brief:
+you" - it's relatively brief.
+</summary>
 
 - After obtaining a
   [particularly inscrutible degree in college](https://www.youtube.com/watch?v=2VYRjHPmZdQ)
   I got caught up in the "learn to code" movement and chose it as my preferred
-  survival method (aka job). ~12 years of experience, now, depending how you count it.
-- With a game design minor I'd focused mostly on board games until this. For
-  a few years before COVID I co-ran a small
+  survival method (aka job). ~12 years of experience, now, depending how you
+  count it.
+- With a game design minor I'd focused mostly on board games until this. For a
+  few years before COVID I co-ran a small
   [design workshop](https://metromage.games/2020/03/29/build-a-game-in-under-2-hours-no-really/).
 - All LLM use was in accordance with my
   [current policy](https://github.com/cutout-studios/.github/blob/main/profile/LLM_USE.md),
@@ -42,67 +48,116 @@ you" - I'll keep it brief:
   "trust me, bro" situation. My next project is to finalize a
   [local harness](https://github.com/cutout-studios/toolbox/tree/main/experimental/agent)
   to solve that problem going forward.
-- My goals with JS13K this year were simple: learn to build a 3D web game (as
-  concisely as possible) and get to know the community a little bit.
+- My goals with JS13K this year were simple: learn to build a 3D web game as
+  concisely as possible and get to know the community a little bit.
 
-## Process
+</details>
+
+## Overall Process
 
 TODO
 
 <!--
-> i spent time learning 3D b4 the competition
+> i spent time learning 3D programming b4 the competition
 > similar to workshop
   > initial brainstorming/ideation (pictures)
   > paper prototype - 'it's fun'
   > things mostly came together in the last days
-  > shift from "replayability" to "immediate gratification"
 > final hours - deciding to stop so as to not get in a car crash lol
+  > shift from "replayability" to "immediate gratification"
 -->
 
 ## Regrets
 
 ### 1. **Taking on a bit more than my current body could handle.**
 
-TODO
+I've been a full-time informal caretaker for a couple years now and didn't quite
+realize how much my own health had slipped. My ambitious nature has been
+tempered by age, but my barometer was off. I initially thought "oh surely I'll
+run out of space in the first couple weeks" - I ended up working right up to the
+deadline, and I probably could have kept scraping against the byte limit for
+another few days.
 
-<!--
-> my own energy
-> Degredation of the CB at the end. didn't have time to reorg as i realized how
-   thing shoulda been set up so i was just... in pain the whole final week
--->
+I still managed to complete ~90% of what I'd initially planned, but don't be
+fooled - JS13k is just as much about energy and time management as it is byte
+management.
 
 ### 2. **Not writing more devtools more sooner.**
 
-TODO
+I admittedly over-focused on the things that were relatively new to me - the 3D
+programming and the golfing.
 
-<!--
-> ‘running ahead’ - intentionally coding imperfect logic to see if things fit,
-then going back to fix it - and debugging game loops in the browser is super annoying
-> WebGPU can crash!!
-> not having a headless environment, or tests
--->
+It is difficult, though, to justify tests or tools for things you're not even
+sure you can fit. This led to a lot of "running ahead" with imperfect logic to
+get a rough idea of how much code it would be or compress to. <mark>I also found
+that one line of sketch code ultimately averaged to ~5 bytes in the compressed
+final product,</mark> but YMMV (the final ratio was 1 line:3 bytes).
+
+I also didn't realize how painful debugging that same "sketch logic" would be.
+Logging from the game loop crashes Safari, and debugging is too tedious. Do we
+really need a separate widget to confirm our games work? A previous boss of mine
+[worked with internet standards bodies](https://datatracker.ietf.org/doc/rfc9460/) -
+unless I'm missing something, it's so bad I am in fact planning on
+[proposing a `console.log` extension](#community-contributions) of my own.
+
+Overall JS13K kinda forces you to choose small software over your own developer
+experience and I <mark>got stuck a bit too long in the mindset that I couldn't
+have ANYTHING nice</mark>, to my detriment.
+
+When I did break that mentality, the lion's share of my total LLM use was in
+service of [spitting out crappy devtools](./devtools/) to make it easier to work
+with my custom formats in the final days. They're decent at that, pretty much
+everything else was hit or miss.
 
 ### 3. **Deciding against an event-driven architecture.**
 
-TODO
+This is minor, but I initially ruled out an
+[event-driven architecture](https://en.wikipedia.org/wiki/Event-driven_architecture)
+for fear that it would be too heavy. But, as I slowly eroded the quality of my
+codebase to shave bytes, I began to realize that such a structure would have
+likely been more resistant to tangling and similar in terms of byteweight. I'd
+recommend this to anyone attempting JS13K now.
 
-<!--
-- not going event driven... I thought it'd save space but in retrospect idk, and
-  things woulda been a bit easier (incl. debugging)
+That said, going forward in my own work I will likely continue to
+[lean heavily on a core loop](https://github.com/cutout-studios/toolbox/tree/main/jsx),
+so I at least gave myself a preview of that.
 
-- however going forward i might acutally want to stick to a heavy gameloop (see: JSX), so...
--->
+### Honorable Mention: **Committing to limited platform support.**
 
-### Honorable Mention: **Sticking to the mouse input.**
+I'm flagging this not necessarily as a regret but moreso a conscious choice I
+would not have taken had my goal been to "go for the win" (where maximizing
+accessibility is much more important).
 
-TODO
+Committing to WebGPU and a 2-button mouse meant that fewer people could play the
+game as intended - but I was determined to see the best core I could make.
 
-<!--
-  Also not having a linux/windows box to test on.
-  Lock-on/aim assist as the cross-controller solve  
--->
+This tradeoff has already been reflected in initial reviews, and while yes, it
+is mildly frustrating, I successfully proved to myself what's possible.
 
 ## Synthesis
+
+### JS13k first-timer lessons
+
+TODO
+
+<!--
+your job isn't done once you submit - review other people's games to increase your chances of being reviewed back
+DC isn't your only outlet, you can flag your biggest issues in your project description at any time.
+the js13k iframe doesn't support certain things, like system alerts. i had to cut at the last second.
+yes proceduralize all the things but you can't proceduralize explaining things. an exercise i'd try next time - write out your entire game's full, in-depth explanation (enough that someone else can read and understand it) and see how big that is first (documentation-driven development)
+  does explanation + fw leave enough space to actually write the logic?
+-->
+
+### 3D Rotation Bestiary
+
+TODO
+
+<!--
+- Euler Angles and why they Gimbal Lock
+- Quaternions and their impenetrability
+- Rodriguez Matrix and why you need it regardless
+- Rotors, Axis-angle - seems ideal
+-->
 
 ### `mk_code_sml`
 
@@ -128,19 +183,9 @@ minification (most techniques target this)
    spaghetti code 😭), dirty JS tricks (double equals)
 
 compression
+> brotli vs. rr+deflate
 > Imperfect Abstractions - “forced” DRYness and messy side effects in pursuit
    of forcing consistency (doTimes, ship code)
--->
-
-### 3D Rotation Bestiary
-
-TODO
-
-<!--
-- Euler Angles and why they Gimbal Lock
-- Quaternions and their impenetrability
-- Rodriguez Matrix and why you need it regardless
-- Rotors, Axis-angle - seems ideal
 -->
 
 ## What's Next?
@@ -157,7 +202,7 @@ TODO
 
 - Refactoring first: this codebase was actively driving me insane. Origami.
 
-gameplay 
+gameplay
 - continuous mode i dropped somewhat erroneously in the final moments
 
 accessibility
