@@ -6,7 +6,7 @@
   - [Regret #1](#1-taking-on-a-bit-more-than-my-current-body-could-handle)
   - [Regret #2](#2-not-writing-more-devtools-more-sooner)
   - [Regret #3](#3-deciding-against-an-event-driven-architecture)
-  - [Honorary Mention](#honorary-mention-sticking-to-the-mouse)
+  - [Honorary Mention](#honorable-mention-committing-to-limited-platform-support)
 - [Synthesis](#synthesis)
   - [JS13k first-timer lessons](#js13k-first-timer-lessons)
   - [`mk_code_sml`](#mk_code_sml)
@@ -16,7 +16,7 @@
   - [Community Contributions](#community-contributions)
 - [In Closing](#in-closing)
 
-## Personal Context
+### Personal Context
 
 <details>
 
@@ -98,7 +98,7 @@ couldn't have ANYTHING nice</b></mark>, to my detriment.
 
 When I did break that mentality, the lion's share of my total LLM use was in
 service of [spitting out crappy devtools](./devtools/) to make it easier to work
-with my custom formats in the final days. They're decent at that, pretty much
+with my custom formats in the final days. At time of writing they're decent at that, pretty much
 everything else was hit or miss.
 
 ### 3. **Deciding against an event-driven architecture.**
