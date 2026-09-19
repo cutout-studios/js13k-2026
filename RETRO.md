@@ -55,6 +55,7 @@ TODO
   > initial brainstorming/ideation (pictures)
   > paper prototype - 'it's fun'
   > things mostly came together in the last days
+  > shift from "replayability" to "immediate gratification"
 > final hours - deciding to stop so as to not get in a car crash lol
 -->
 
