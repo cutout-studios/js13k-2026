@@ -26,7 +26,7 @@ you"</b></mark> - it's relatively brief.
 </summary>
 
 - After obtaining a
-  [particularly inscrutible degree in college](https://www.youtube.com/watch?v=2VYRjHPmZdQ)
+  [particularly inscrutable degree in college](https://www.youtube.com/watch?v=2VYRjHPmZdQ)
   I got caught up in the "learn to code" movement and chose it as my preferred
   survival method (aka job). ~12 years of experience, now, depending how you
   count it.
@@ -55,7 +55,7 @@ TODO
   > paper prototype - 'it's fun'
   > things mostly came together in the last days
 > final hours - deciding to stop so as to not get in a car crash lol
-  > shift from "replayability" to "immediate gratification"
+  > **shift from "replayability" to "immediate gratification" (the former is kinda where i lean)**
 -->
 
 ## Regrets
@@ -126,6 +126,8 @@ game as intended - but I was determined to see the best core I could make.
 This tradeoff has already been reflected in initial reviews, and while yes, it
 is mildly frustrating, I successfully proved to myself what's possible.
 
+<!-- TODO: I did just think of a single-click model. Ah, well. -->
+
 ## Synthesis
 
 ### JS13k first-timer lessons
@@ -186,7 +188,7 @@ the features that the JS13K platform is okay with.
    [syncing your description to feedback](https://github.com/js13kGames/mission-darkwhite/pull/3)
    as it comes in so each players' experience is better than the last!
 
-4. Lastly, I'm a bit embarassed to admit, but for some selfish reason I initally
+4. Lastly, I'm a bit embarrassed to admit, but for some selfish reason I initially
    thought that, once I'd finally submitted I was done. My exhaustion was
    partially to blame - but! _During_ the review period you _definitely_ need to
    _pay it forward_. The JS13K platform is specifically designed to push you to
@@ -195,14 +197,70 @@ the features that the JS13K platform is okay with.
 
 ### 3D Rotation Bestiary
 
-TODO
+The most intimidating aspect of 3D programming that held me back for so many
+years was rotations, and after all this, admittedly I still don't feel like I
+fully understand them.
 
-<!--
-- Euler Angles and why they Gimbal Lock
-- Quaternions and their impenetrability
-- Rodriguez Matrix and why you need it regardless
-- Rotors, Axis-angle - seems ideal
--->
+To get the player's ship to both roll and aim in the way that it currently does
+I had to maintain a separate "roll" parameter, and I'm not entirely sure I get
+why, but...
+
+My sense is that it's akin to same deal that limits the most naïve rotation
+approach: **Euler Angles**.
+
+When you represent a rotation as three separate rotations around the X, Y, and Z
+axes - each of these rotations removes a degree of freedom from the system.
+
+This is because when you rotate your model around the X-axis, you inadvertently
+rotate Y -into- Z, dampening that option for yourself. And again each time you
+rotate that coordinate system.
+
+This is why **Quaternions** exist - they effectively add an extra, "fake" fourth
+degree-of-freedom-buffer that ensures you never run out. However, they are
+impossible to visualize. The best I can picture in my mind is like, a shadow on
+the wall in Plato's cave of the cube being rotated. This isn't really accurate
+though.
+
+In fact, that visualization is more akin to the **Rodrigues Matrix**, which, I
+learned, is basically necessary no matter what rotation representation you
+expose to the developer. Rodrigues' rotation formula works by
+[decomposing the rotation down to its 2D elements](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/coordinates.ts#L24-L39) -
+its "shadows". Quaternions are more performant, sure, but they really only shine
+if you have hundreds of IKs to collapse, because they need to be
+"Rodriguezified" before the final draw regardless.
+
+Because of this, I've come to find <mark><b>the "axis-angle" representation the
+more natural interface</mark></b>. In axis-angle, you define the XYZ components
+of the rotation axis (like the earth's!) and then the angle of how much around
+that axis you're rotating.
+
+Come to think of it, each "Euler Angle" is an axis-angle rotation, one around
+each of the X, Y and Z axes. Which means - while a single axis-angle rotation is
+not at risk of lock like the three cumulative "Euler Angles" are, multiple
+axis-angle rotations I believe still can be.
+
+This comes back to the player ship. I had one axis-angle rotation for aiming,
+another for the ship roll - but no more. Mostly safe.
+
+This brings me to the final rotation representation I didn't really get to
+explore: if you can compose multiple Quaternions with out risk of lock, is there
+a similar such representation that conceptually follows from Axis-Angle? The
+answer is yes - they're called **Rotors**.
+
+[Rotors are sort of underrated in game development.](https://marctenbosch.com/quaternions/)
+Like Axis-Angle, with a Rotor you're representing the 2D cross-section you're
+rotating your object within (that the axis in your Axis-Angle is simply normal
+to). The main difference is that a Rotor is stored as three shadows (called a
+"bivector") - the shadows that cross-section would make were a light to shine
+on it from each of the X, Y and Z directions.
+
+Because Rotors are represented this way, they don't collapse. You combine them
+by composing these "shadows", which runs no risk of rotating one axis into
+another. Better yet, they're just as cheap as Quaternions computationally.
+
+So why don't we use Rotors everywhere? Unclear. My guess: GPU APIs are
+inherently cartesian and Quaternions naturally follow from that. I'll
+definitely be making some time to play with Rotors firsthand in the future.
 
 ### `mk_code_sml`
 
@@ -265,6 +323,7 @@ order:
   steering even smoother and allow for controller support.
 - Some sort of lock-on or auto-aim mechanism. This would make way for supporting
   coarser control setups, like trackpads or maybe mobile.
+  <!-- TODO: and/or background items, and/or single-click model -->
 
 #### Graphics
 
@@ -283,7 +342,7 @@ order:
 ### Community Contributions
 
 Given the difficulties I encountered in developing MISSION DARKWHITE, I have
-begun a couple contributions in pusuit of improving the ecosystem as a whole:
+begun a couple contributions in pursuit of improving the ecosystem as a whole:
 
 1. I'm [proposing an improvement](https://github.com/whatwg/console/issues/255)
    to the [WHATWG console](https://whatwg.org/stages#process), `%t`:
