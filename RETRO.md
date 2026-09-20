@@ -149,11 +149,11 @@ I'd now recommend the following exercise to my past self: embrace
 "[documentation driven development](https://gist.github.com/zsup/9434452)" here.
 Write out the entire design of your game in **full detail** to the degree that
 someone else can completely visualize your intent by reading it, and reserve
-space for that text in your bundle until it's time to tutorialize. Leaving the
-buffer to fully explain your game will ensure that you always can, and if you
-need to cut something, you can cut it from your explanation as well.
+space for that text in your bundle until it's time to tutorialize. Leaving in
+the buffer to fully explain your game will ensure that you always can, and if
+you need to cut something, you can cut it from your explanation as well.
 
-2. At time of writing, the JS13K frame allows only the following browser APIs:
+2. At time of writing, the JS13K iframe allows only the following browser APIs:
 
 ```
 accelerometer
@@ -189,13 +189,21 @@ the features that the JS13K platform is okay with.
    as it comes in so each players' experience is better than the last!
 
 4. Lastly, I'm a bit embarrassed to admit, but for some selfish reason I
-   initially thought that, once I'd finally submitted I was done. My exhaustion
+   initially thought that once I'd finally submitted I was done. My exhaustion
    was partially to blame - but! _During_ the review period you _definitely_
    need to _pay it forward_. The JS13K platform is specifically designed to push
    you to leave feedback on the games of those who have left feedback on yours,
    and that was not clear to me until I'd actually received my first feedback.
 
 ### 3D Rotation Bestiary
+
+<!--
+TODO: needs minor rework.
+  - quaternion technically "folds" through 4d hypersphere, around lock
+  - mention quat. interpolation
+  - rotor also has rotation amt, like axis-angle
+  - rodrigues/cave allegory is inaccurate (?)
+-->
 
 The most intimidating aspect of 3D programming that held me back for so many
 years was rotations, and after all this, admittedly I still don't feel like I
@@ -227,7 +235,7 @@ expose to the developer. Rodrigues' rotation formula works by
 [decomposing the rotation down to its 2D elements](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/coordinates.ts#L24-L39) -
 its "shadows". Quaternions are more performant, sure, but they really only shine
 if you have hundreds of IKs to collapse, because they need to be
-"Rodriguezified" before the final draw regardless.
+"Rodriguesified" before the final draw regardless.
 
 Because of this, I've come to find <mark><b>the "axis-angle" representation the
 more natural interface</mark></b>. In axis-angle, you define the XYZ components
@@ -251,14 +259,15 @@ answer is yes - they're called **Rotors**.
 Like Axis-Angle, with a Rotor you're representing the 2D cross-section you're
 rotating your object within (that the axis in your Axis-Angle is simply normal
 to). The main difference is that a Rotor is stored as three shadows (called a
-"bivector") - the shadows that cross-section would make were a light to shine on
-it from each of the X, Y and Z directions.
+"bivector") - the shadows that that cross-section would make were a light to
+shine on it from each of the X, Y and Z directions.
 
 Because Rotors are represented this way, they don't collapse. You combine them
-by composing these "shadows", which runs no risk of rotating one axis into
-another. Better yet, they're just as cheap as Quaternions computationally.
+by composing these "shadows". No risk of rotating one axis into another, and
+better yet, they're just as cheap as Quaternions computationally.
 
-So why don't we use Rotors everywhere? Unclear. I think it just got there first.
+So why don't we use Rotors everywhere? Unclear. I think Quaternions just got
+there first.
 
 ### `mk_code_sml`
 
