@@ -188,12 +188,12 @@ the features that the JS13K platform is okay with.
    [syncing your description to feedback](https://github.com/js13kGames/mission-darkwhite/pull/3)
    as it comes in so each players' experience is better than the last!
 
-4. Lastly, I'm a bit embarrassed to admit, but for some selfish reason I initially
-   thought that, once I'd finally submitted I was done. My exhaustion was
-   partially to blame - but! _During_ the review period you _definitely_ need to
-   _pay it forward_. The JS13K platform is specifically designed to push you to
-   leave feedback on the games of those who have left feedback on yours, and
-   that was not clear to me until I'd actually received my first feedback.
+4. Lastly, I'm a bit embarrassed to admit, but for some selfish reason I
+   initially thought that, once I'd finally submitted I was done. My exhaustion
+   was partially to blame - but! _During_ the review period you _definitely_
+   need to _pay it forward_. The JS13K platform is specifically designed to push
+   you to leave feedback on the games of those who have left feedback on yours,
+   and that was not clear to me until I'd actually received my first feedback.
 
 ### 3D Rotation Bestiary
 
@@ -251,16 +251,14 @@ answer is yes - they're called **Rotors**.
 Like Axis-Angle, with a Rotor you're representing the 2D cross-section you're
 rotating your object within (that the axis in your Axis-Angle is simply normal
 to). The main difference is that a Rotor is stored as three shadows (called a
-"bivector") - the shadows that cross-section would make were a light to shine
-on it from each of the X, Y and Z directions.
+"bivector") - the shadows that cross-section would make were a light to shine on
+it from each of the X, Y and Z directions.
 
 Because Rotors are represented this way, they don't collapse. You combine them
 by composing these "shadows", which runs no risk of rotating one axis into
 another. Better yet, they're just as cheap as Quaternions computationally.
 
-So why don't we use Rotors everywhere? Unclear. My guess: GPU APIs are
-inherently cartesian and Quaternions naturally follow from that. I'll
-definitely be making some time to play with Rotors firsthand in the future.
+So why don't we use Rotors everywhere? Unclear. I think it just got there first.
 
 ### `mk_code_sml`
 
