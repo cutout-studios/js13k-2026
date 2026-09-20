@@ -143,12 +143,12 @@ This makes innovation particularly tricky in this format - per
 Anything novel incurs "explanation debt" - debt you cannot proceduralize away.
 
 I'd now recommend the following exercise to my past self: embrace
-"[documentation driven development](https://gist.github.com/zsup/9434452)".
-Write out the entire design of your game in **full** detail to the degree that
+"[documentation driven development](https://gist.github.com/zsup/9434452)" here.
+Write out the entire design of your game in **full detail** to the degree that
 someone else can completely visualize your intent by reading it, and reserve
-space for that text in your bundle until it's time to tutorialize. Leaving
-enough buffer to fully explain your game will ensure that you always can, and if
-you need to cut something, you can cut it from your explanation as well.
+space for that text in your bundle until it's time to tutorialize. Leaving the
+buffer to fully explain your game will ensure that you always can, and if you
+need to cut something, you can cut it from your explanation as well.
 
 2. At time of writing, the JS13K frame allows only the following browser APIs:
 
@@ -171,9 +171,9 @@ xr-spatial-tracking
 ```
 
 Meaning, I had to scramble to cut enough to replace a couple `alert()` calls I'd
-used to save space at the last minute. I'd hesitated uploading a draft to the
-JS13K platform for fear of accidentally submitting, but now having used the site
-I understand that wouldn't have been possible.
+used to save space at the last minute. I'd hesitated uploading an early draft to
+the JS13K platform for fear of accidentally submitting, but now having used the
+site I understand that wouldn't have been possible.
 
 Do yourself a favor and develop your game _inside_ a frame that
 [`allow`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/allow)s
@@ -186,11 +186,11 @@ the features that the JS13K platform is okay with.
    as it comes in so each players' experience is better than the last!
 
 4. Lastly, I'm a bit embarassed to admit, but for some selfish reason I initally
-   thought once I'd finally submitted I was pretty much done. My exhaustion was
-   probably to blame - but! _During_ the review period you _definitely_ need to
-   _pay it forward_. The JS13K platforms' UI is specifically designed to push
-   you to leave feedback on the games of those who have left feedback on yours,
-   and that was not clear to me until I actually received my first feedback.
+   thought that, once I'd finally submitted I was done. My exhaustion was
+   partially to blame - but! _During_ the review period you _definitely_ need to
+   _pay it forward_. The JS13K platform is specifically designed to push you to
+   leave feedback on the games of those who have left feedback on yours, and
+   that was not clear to me until I'd actually received my first feedback.
 
 ### 3D Rotation Bestiary
 
@@ -236,44 +236,77 @@ compression
 
 ### Director's Cut
 
-TODO
+I've thought a lot about this, and I'll do a Director's Cut only if MISSION
+DARKWHITE somehow becomes noteworthy (so no). The codebase is a (necessary) mess
+and I would have to essentially rewrite it before proceeding.
 
-<!--
- maybe directors cut - but probably not. CB is too messy and I have bigger
-   games to make next.
+Don't get me wrong, I like this game and wouldn't mind developing it further,
+but given present conditions I believe there to be more
+[strategic use of my time](#community-contributions).
 
-   if it wins/becomes hugely popular? sure. but otherwise i frankly have no further strategic need
+For posterity though, here's the priority list of what I'd change in rough
+[impact/effort](https://www.projectmanager.com/blog/impact-effort-matrix/)
+order:
 
-- Refactoring first: this codebase was actively driving me insane. Origami.
+#### Minor Correctness Improvements
 
-gameplay
-- continuous mode i dropped somewhat erroneously in the final moments
+- Restore the "continuous" mode I accidentally cut in the final moments when
+  replacing the `alert()` calls.
+- Restructure the graphics pipeline to properly handle transparency and
+  instancing. This means breaking up instance groups by size, depth, and
+  material data.
 
-accessibility
-- Map WASD controls to virtual stick, support controllers
-- Highlight dropped items in the field with #ff0 pyramids = rank
-- lock on? would require re-balancing. the children yearn for certainty
+#### Accessibility
 
-graphics
-- properly handling transparency - depth occlusion breaks it, needs multiple
-  passes.
-- Particle effects: ship thrusters, explosion effects
-- Add VFX (chromatic abberation) to background stars
+- Highlight dropped items. I'd planned this from the beginning and it was at the
+  top of the list of things that I cut.
+- Map the WASD controls to a virtualized stick. This should make the ship
+  steering even smoother and allow for controller support.
+- Some sort of lock-on or auto-aim mechanism. This would make way for supporting
+  coarser control setups, like trackpads or maybe mobile.
 
-content
-- Music
-- ♾️
--->
+#### Graphics
+
+- Additional particle effects: thrusters on your ship, explosions.
+- A bit of narrative color: I'd envisioned this sector of space to take place in
+  a vast crystalline structure. I'd love to emphasize this by enhancing the
+  background.
+
+#### Content
+
+- I've actually been
+  [writing music for ages](https://soundcloud.com/daniellacosse/piano-deconstruction)
+  and was bummed I couldn't fit anything.
+- ∞
 
 ### Community Contributions
 
-TODO
+Given the difficulties I encountered in developing MISSION DARKWHITE, I have
+begun a couple contributions in pusuit of improving the ecosystem as a whole:
 
-<!--
-1. W3C proposal for console append-only `%g` “live group” to make debugging loops in the browser easier (doesn’t exist!)
-2. open deno proposal or PR for mangling props (doesn’t exist!)
-3. MIT-license local agent harness, as previously mentioned
--->
+1. I'm [proposing an improvement](https://github.com/whatwg/console/issues/255)
+   to the [WHATWG console](https://whatwg.org/stages#process), `%t`:
+
+```js
+console.log("%tFailed to load map asset: %s", "Network Error", assetId);
+// => [[Network Error]] Failed to load map asset: 123
+```
+
+It's an alternative to `console.context()`. That was a
+[2021 WHATWG proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ContextualLoggingWithConsoleContext/explainer.md)
+for dynamic, grouped logging, something that would be critical for tracking
+multiple complex states across a game loop (without having to write a widget of
+some sort). It died mainly because it added too much complexity to existing
+systems, but `%t` preserves `console.log`s append-only nature.
+
+2. MISSION DARKWHITE's [bundling pipeline](./scripts/bundle.tsx) is written in
+   [Deno](https://deno.com).
+   [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) doesn't
+   actually expose
+   [property mangling](https://github.com/evanw/esbuild/issues/218), and I can
+   find no record of it being added, so I intend to author a
+   [small PR here](https://github.com/denoland/deno/blob/main/ext/bundle/bundle.ts)
+   to expose that feature.
 
 ## In Closing
 
