@@ -82,8 +82,7 @@ It is difficult, though, to justify tests or tools for things you're not even
 sure you can fit. This led to a lot of "running ahead" with imperfect logic to
 get a rough idea of how much code it would be or compress to. <mark><b>I also
 found that one line of sketch code ultimately averaged to ~5 bytes in the
-bundle,</b></mark> but YMMV (the final ratio was 1 line:3
-bytes).
+bundle,</b></mark> but YMMV (the final ratio was 1 line:3 bytes).
 
 I also didn't realize how painful debugging that same "sketch logic" would be.
 Logging from the game loop crashes Safari, and debugging is too tedious. Do we
@@ -98,8 +97,8 @@ couldn't have ANYTHING nice</b></mark>, to my detriment.
 
 When I did break that mentality, the lion's share of my total LLM use was in
 service of [spitting out crappy devtools](./devtools/) to make it easier to work
-with my custom formats in the final days. At time of writing they're decent at that, pretty much
-everything else was hit or miss.
+with my custom formats in the final days. At time of writing they're decent at
+that, pretty much everything else was hit or miss.
 
 ### 3. **Deciding against an event-driven architecture.**
 
@@ -130,15 +129,68 @@ is mildly frustrating, I successfully proved to myself what's possible.
 
 ### JS13k first-timer lessons
 
-TODO
+1. I came into JS13K thinking "hell yeah, I can proceduralize whatever I want" -
+   <mark><b>The one thing you <em>can't</em> proceduralize is explaining your
+   game.</b></mark>
 
-<!--
-your job isn't done once you submit - review other people's games to increase your chances of being reviewed back
-DC isn't your only outlet, you can flag your biggest issues in your project description at any time.
-the js13k iframe doesn't support certain things, like system alerts. i had to cut at the last second.
-yes proceduralize all the things but you can't proceduralize explaining things. an exercise i'd try next time - write out your entire game's full, in-depth explanation (enough that someone else can read and understand it) and see how big that is first (documentation-driven development)
-  does explanation + fw leave enough space to actually write the logic?
--->
+This makes innovation particularly tricky in this format - per
+[Jakob's Law](https://lawsofux.com/jakobs-law/):
+
+> Users spend most of their time on other \[games\]. This means that users
+> prefer your \[game\] to work the same way as all the other \[games\] they
+> already know.
+
+Anything novel incurs "explanation debt" - debt you cannot proceduralize away.
+
+I'd now recommend the following exercise to my past self: embrace
+"[documentation driven development](https://gist.github.com/zsup/9434452)".
+Write out the entire design of your game in **full** detail to the degree that
+someone else can completely visualize your intent by reading it, and reserve
+space for that text in your bundle until it's time to tutorialize. Leaving
+enough buffer to fully explain your game will ensure that you always can, and if
+you need to cut something, you can cut it from your explanation as well.
+
+2. At time of writing, the JS13K frame allows only the following browser APIs:
+
+```
+accelerometer
+autoplay
+camera
+display-capture
+fullscreen
+gamepad
+geolocation
+gyroscope
+magnetometer
+microphone
+midi
+picture-in-picture
+usb
+web-share
+xr-spatial-tracking
+```
+
+Meaning, I had to scramble to cut enough to replace a couple `alert()` calls I'd
+used to save space at the last minute. I'd hesitated uploading a draft to the
+JS13K platform for fear of accidentally submitting, but now having used the site
+I understand that wouldn't have been possible.
+
+Do yourself a favor and develop your game _inside_ a frame that
+[`allow`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/allow)s
+the features that the JS13K platform is okay with.
+
+3. <mark><b>You can push updates to your project description at any time
+   throughout the review period.</b></mark> - Director's Cut is not your only
+   recourse for catching issues - consider
+   [syncing your description to feedback](https://github.com/js13kGames/mission-darkwhite/pull/3)
+   as it comes in so each players' experience is better than the last!
+
+4. Lastly, I'm a bit embarassed to admit, but for some selfish reason I initally
+   thought once I'd finally submitted I was pretty much done. My exhaustion was
+   probably to blame - but! _During_ the review period you _definitely_ need to
+   _pay it forward_. The JS13K platforms' UI is specifically designed to push
+   you to leave feedback on the games of those who have left feedback on yours,
+   and that was not clear to me until I actually received my first feedback.
 
 ### 3D Rotation Bestiary
 
@@ -225,6 +277,26 @@ TODO
 
 ## In Closing
 
-TODO
+If you made it to the end, thank you very much for reading and I hope you
+learned something!
 
-<!-- try the game, follow on bluesky, apply to join discord, sponsor us so i can qualify for SNAP -->
+You should certainly at least try
+[`MISSION: DARKWHITE`](https://js13kgames.com/games/mission-darkwhite) if you
+haven't already.
+
+If you'd like to support future endeavors, I encourage you do any of the
+following:
+
+1. [Follow on Bluesky](https://bsky.app/profile/cutoutstudios.com), though I'm
+   unclear what form my social media approach will ultimately take. Just
+   starting out.
+2. [Apply to join our small Discord!](https://discord.gg/DW5pyrjsYm) It's easy,
+   just a bot-prevention measure.
+3. [Sponsoring this GitHub](https://github.com/sponsors/cutout-studios) would
+   genuinely help me
+   [qualify for food stamps](https://www.fna.usda.gov/snap/work-requirements) so
+   I can keep doing this 😭
+
+Thanks again, and until next time! ✌️
+
+- Daniel
