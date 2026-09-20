@@ -1,4 +1,4 @@
-# <mark>\[WIP\]</mark> Retrospective, `MISSION: DARKWHITE`
+# <mark>\[WIP\]</mark> Retrospective
 
 - [Personal Context](#personal-context)
 - [Overall Process](#overall-process)
@@ -106,10 +106,11 @@ This is minor, but I initially ruled out an
 [event-driven architecture](https://en.wikipedia.org/wiki/Event-driven_architecture)
 for fear that it would be too heavy. But, as I slowly eroded the quality of my
 codebase to shave bytes, I began to realize that such a structure would have
-likely been more resistant to tangling and similar in terms of byteweight. I'd
-recommend this to anyone attempting JS13K now.
+likely been more resistant to tangling,
+[easier to debug](https://github.com/whatwg/console/issues/255), and similar in
+terms of byteweight. I'd recommend this to anyone attempting JS13K now.
 
-That said, going forward in my own work I will likely continue to
+That said, in my own work I will likely continue to
 [lean heavily on a core loop](https://github.com/cutout-studios/toolbox/tree/main/jsx),
 so I at least gave myself a preview of that.
 
@@ -237,11 +238,11 @@ compression
 ### Director's Cut
 
 I've thought a lot about this, and I'll do a Director's Cut only if MISSION
-DARKWHITE somehow becomes noteworthy (so no). The codebase is a (necessary) mess
-and I would have to essentially rewrite it before proceeding.
+DARKWHITE somehow becomes noteworthy (so, no). The codebase is a (necessary)
+mess and I would have to mostly rewrite it before proceeding.
 
 Don't get me wrong, I like this game and wouldn't mind developing it further,
-but given present conditions I believe there to be more
+but currently I believe there to be more
 [strategic use of my time](#community-contributions).
 
 For posterity though, here's the priority list of what I'd change in rough
@@ -267,10 +268,10 @@ order:
 
 #### Graphics
 
-- Additional particle effects: thrusters on your ship, explosions.
+- Additional particle effects: ship thrusters, explosions.
 - A bit of narrative color: I'd envisioned this sector of space to take place in
-  a vast crystalline structure. I'd love to emphasize this by enhancing the
-  background.
+  a vast crystalline structure. I'd love to enhance the background to this
+  effect.
 
 #### Content
 
@@ -304,7 +305,7 @@ systems, but `%t` preserves `console.log`s append-only nature.
    [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) doesn't
    actually expose
    [property mangling](https://github.com/evanw/esbuild/issues/218), and I can
-   find no record of it being added, so I intend to author a
+   find no record of it being attempted, so I'm working on a
    [small PR here](https://github.com/denoland/deno/blob/main/ext/bundle/bundle.ts)
    to expose that feature.
 
@@ -321,14 +322,15 @@ If you'd like to support future endeavors, I encourage you do any of the
 following:
 
 1. [Follow on Bluesky](https://bsky.app/profile/cutoutstudios.com), though I'm
-   unclear what form my social media approach will ultimately take. Just
-   starting out.
+   unclear what form this social media approach will ultimately take. Just
+   starting out here.
 2. [Apply to join our small Discord!](https://discord.gg/DW5pyrjsYm) It's easy,
-   just a bot-prevention measure.
-3. [Sponsoring this GitHub](https://github.com/sponsors/cutout-studios) would
+   just a bot-prevention measure. Would love to have you - we have weekly
+   progress check-ins.
+3. [Sponsoring the GitHub](https://github.com/sponsors/cutout-studios) would
    genuinely help me
    [qualify for food stamps](https://www.fna.usda.gov/snap/work-requirements) so
-   I can keep doing this 😭
+   I can keep doing these sorts of things 😭
 
 Thanks again, and until next time! ✌️
 
