@@ -145,6 +145,8 @@ This makes innovation particularly tricky in this format - per
 
 Anything novel incurs "explanation debt" - debt you cannot proceduralize away.
 
+<!-- TODO: "opacity as luxury" -->
+
 I'd now recommend the following exercise to my past self: embrace
 "[documentation driven development](https://gist.github.com/zsup/9434452)" here.
 Write out the entire design of your game in **full detail** to the degree that
@@ -229,13 +231,13 @@ impossible to visualize. The best I can picture in my mind is like, a shadow on
 the wall in Plato's cave of the cube being rotated. This isn't really accurate
 though.
 
-In fact, that visualization is more akin to the **Rodrigues Matrix**, which, I
+~~In fact, that visualization is more akin to the **Rodrigues Matrix**, which, I
 learned, is basically necessary no matter what rotation representation you
 expose to the developer. Rodrigues' rotation formula works by
 [decomposing the rotation down to its 2D elements](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/coordinates.ts#L24-L39) -
 its "shadows". Quaternions are more performant, sure, but they really only shine
 if you have hundreds of IKs to collapse, because they need to be
-"Rodriguesified" before the final draw regardless.
+"Rodriguesified" before the final draw regardless.~~
 
 Because of this, I've come to find <mark><b>the "axis-angle" representation the
 more natural interface</mark></b>. In axis-angle, you define the XYZ components
@@ -324,6 +326,8 @@ order:
 
 #### Accessibility
 
+<!-- TODO: explainability -->
+
 - Highlight dropped items. I'd planned this from the beginning and it was at the
   top of the list of things that I cut.
 - Map the WASD controls to a virtualized stick. This should make the ship
@@ -351,7 +355,7 @@ order:
 Given the difficulties I encountered in developing MISSION DARKWHITE, I have
 begun a couple contributions in pursuit of improving the ecosystem as a whole:
 
-1. I'm [proposing an improvement](https://github.com/whatwg/console/issues/255)
+1. ~~I'm [proposing an improvement](https://github.com/whatwg/console/issues/255)
    to the [WHATWG console](https://whatwg.org/stages#process), `%t`:
 
 ```js
@@ -364,7 +368,9 @@ It's an alternative to `console.context()`. That was a
 for dynamic, grouped logging, something that would be critical for tracking
 multiple complex states across a game loop (without having to write a widget of
 some sort). It died mainly because it added too much complexity to existing
-systems, but `%t` preserves `console.log`s append-only nature.
+systems, but `%t` preserves `console.log`s append-only nature.~~
+
+<!-- Maybe it's more about coming up with a strategy for getting the standards community to take game development on web a bit more seriously as a whole -->
 
 2. MISSION DARKWHITE's [bundling pipeline](./scripts/bundle.tsx) is written in
    [Deno](https://deno.com).
@@ -374,6 +380,8 @@ systems, but `%t` preserves `console.log`s append-only nature.
    find no record of it being attempted, so I'm working on a
    [small PR here](https://github.com/denoland/deno/blob/main/ext/bundle/bundle.ts)
    to expose that feature.
+  
+<!-- TODO: macros? -->
 
 ## In Closing
 
