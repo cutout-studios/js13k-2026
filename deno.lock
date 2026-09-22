@@ -2,8 +2,9 @@
   "version": "5",
   "specifiers": {
     "jsr:@ayk/lint-import-order@*": "0.1.0",
-    "jsr:@cutout/jsx@*": "0.0.4",
+    "jsr:@std/cli@*": "1.0.30",
     "jsr:@std/fmt@*": "1.0.10",
+    "jsr:@std/internal@^1.0.14": "1.0.14",
     "npm:esbuild-minify-templates@*": "0.13.1_esbuild@0.28.1",
     "npm:esbuild@*": "0.28.1",
     "npm:html-minifier-next@*": "8.3.1",
@@ -14,11 +15,17 @@
     "@ayk/lint-import-order@0.1.0": {
       "integrity": "be312f8269525055394118ac89d5a12dbb0bdc4a94d0ced4994b1823cc41c393"
     },
-    "@cutout/jsx@0.0.4": {
-      "integrity": "93251e25028fc491f1e92c288fe593375bb2885c8dcf3e76a99b4eacb5f5c4b1"
+    "@std/cli@1.0.30": {
+      "integrity": "769446536522d0417d7127ebcabcafac1ab0ce6766d0eb3fca1d36326fe98d13",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
     },
     "@std/fmt@1.0.10": {
       "integrity": "90dfba288802ac6de82fb31d0917eb9e4450b9925b954d5e51fc29ac07419db5"
+    },
+    "@std/internal@1.0.14": {
+      "integrity": "291516b3d4c35024d6ffbc0a9df5bf4c64116e05b50012cf846710152d2ffdf7"
     }
   },
   "npm": {
@@ -495,7 +502,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@cutout/jsx@*",
+      "jsr:@std/cli@*",
       "jsr:@std/fmt@*",
       "npm:esbuild-minify-templates@*",
       "npm:esbuild@*",

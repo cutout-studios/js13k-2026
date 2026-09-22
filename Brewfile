@@ -1,3 +1,3 @@
-brew "deno"
-brew "advancecomp"
+brew "brotli"
 brew "cmake"
+brew "deno"

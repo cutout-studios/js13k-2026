@@ -205,8 +205,9 @@ TODO
 
 <!--
 print out your minified code to see what you missed
-actual “code golfing” - tuples+property mangling, bitwise operations, inlining things (…intentional
+actual “code golfing” - tuples+property mangling, functional, bitwise operations, inlining things (…intentional
    spaghetti code 😭), dirty JS tricks (double equals)
+shaders, css, blocks?
 -->
 <!-- roadroller is like, in the middle ground -->
 
@@ -217,23 +218,20 @@ actual “code golfing” - tuples+property mangling, bitwise operations, inlini
    of forcing consistency (doTimes, ship code)
 -->
 
-| Minified? | Road Roller'd? | Compressed? | Size |
-| --------- | -------------- | ----------- | ---- |
-| ❌        | ❌             | ❌          | TODO |
-| ✅        | ❌             | ❌          | TODO |
-| ❌        | ✅             | ❌          | TODO |
-| ❌        | ❌             | ✅          | TODO |
-| ✅        | ❌             | ❌          | TODO |
-| ❌        | ✅             | ❌          | TODO |
-| ❌        | ❌             | ECT         | TODO |
-| ❌        | ❌             | Brotli      | TODO |
-| ✅        | ✅             | ❌          | TODO |
-| ✅        | ❌             | ECT         | TODO |
-| ✅        | ❌             | Brotli      | TODO |
-| ❌        | ✅             | ECT         | TODO |
-| ❌        | ✅             | Brotli      | TODO |
-| ✅        | ✅             | ECT         | TODO |
-| ✅        | ✅             | Brotli      | TODO |
+| Minified? | Road Roller'd? | Compressed? | Size      | Time Scale |
+| --------- | -------------- | ----------- | --------- | ---------- |
+| ❌        | ❌             | ❌          | 103136    | <50ms      |
+| ✅        | ❌             | ❌          | 32826     | <50ms      |
+| ❌        | ✅             | ❌          | 31591     | ~5m        |
+| ❌        | ❌             | ECT         | 23528     | ~150ms     |
+| ❌        | ❌             | Brotli      | 21225     | ~100ms     |
+| ✅        | ✅             | ❌          | 20972     | ~1.5m      |
+| ✅        | ❌             | ECT         | 14655     | <100ms     |
+| ✅        | ❌             | Brotli      | 13599     | <100ms     |
+| ❌        | ✅             | ECT         | 20647     | ~5m        |
+| ❌        | ✅             | Brotli      | 20240     | ~5m        |
+| ✅        | ✅             | ECT         | 13490 (?) | ~1.5m      |
+| ✅        | ✅             | Brotli      | 13128     | ~1.5m      |
 
 #### Architecture
 
@@ -241,7 +239,7 @@ TODO
 
 - **Browser APIs**
 
-<!-- it's free real estate, but see what's allowed. css/html for ui/gradient effects -->
+<!-- it's free real estate, but see what's allowed. css/html for ui/gradient effects. essential for audio -->
 
 - **Proceduralization**
 
