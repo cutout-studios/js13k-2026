@@ -1,16 +1,15 @@
-# <mark>\[WIP\]</mark> Retrospective
+# <mark>\[DRAFT\]</mark> Retrospective
 
 - [Personal Context](#personal-context)
-- [Overall Process](#overall-process)
+- [Synthesis](#synthesis)
+  - [JS13k first-timer lessons](#js13k-first-timer-lessons)
+  - [`mk_code_sml`](#mk_code_sml)
+  - [3D Rotation Bestiary](#3d-rotation-bestiary)
 - [Regrets](#regrets)
   - [Regret #1](#1-taking-on-a-bit-more-than-my-current-body-could-handle)
   - [Regret #2](#2-not-writing-more-devtools-more-sooner)
   - [Regret #3](#3-deciding-against-an-event-driven-architecture)
   - [Honorable Mention](#honorable-mention-committing-to-limited-platform-support)
-- [Synthesis](#synthesis)
-  - [JS13k first-timer lessons](#js13k-first-timer-lessons)
-  - [`mk_code_sml`](#mk_code_sml)
-  - [3D Rotation Bestiary](#3d-rotation-bestiary)
 - [What's Next?](#whats-next)
   - [Director's Cut](#directors-cut)
   - [Community Contributions](#community-contributions)
@@ -44,93 +43,12 @@ you"</b></mark> - it's relatively brief.
 
 </details>
 
-## Overall Process
-
-TODO
-
-<!--
-> i spent time learning 3D programming b4 the competition
-> similar to workshop
-  > initial brainstorming/ideation (pictures)
-  > paper prototype - 'it's fun'
-  > things mostly came together in the last days
-> final hours - deciding to stop so as to not get in a car crash lol
-  > **shift from "replayability" to "immediate gratification" (the former is kinda where i lean)**
--->
-
-## Regrets
-
-### 1. **Taking on a bit more than my current body could handle.**
-
-I've been a full-time informal caretaker for a couple years now and didn't quite
-realize how much my own health had slipped. My ambitious nature has been
-tempered by age, but my barometer was off. I initially thought "oh surely I'll
-run out of space in the first couple weeks" - I ended up working right up to the
-deadline, and I probably could have kept scraping against the byte limit for
-another few days.
-
-I still managed to complete ~90% of what I'd initially planned, but don't be
-fooled - <mark><b>JS13k is just as much about energy and time management as it
-is byte management.</b></mark>
-
-### 2. **Not writing more devtools more sooner.**
-
-I admittedly over-focused on the things that were relatively new to me - the 3D
-programming and the golfing.
-
-It is difficult, though, to justify tests or tools for things you're not even
-sure you can fit. This led to a lot of "running ahead" with imperfect logic to
-get a rough idea of how much code it would be or compress to. <mark><b>I also
-found that one line of sketch code ultimately averaged to ~5 bytes in the
-bundle,</b></mark> but YMMV (the final ratio was 1 line:3 bytes).
-
-I also didn't realize how painful debugging that same "sketch logic" would be.
-Logging from the game loop crashes Safari, and debugging is too tedious. Do we
-really need a separate widget to confirm our games work? A previous boss of mine
-[worked with internet standards bodies](https://datatracker.ietf.org/doc/rfc9460/) -
-unless I'm missing something, it's so bad I am in fact planning on
-[proposing a `console.log` extension](#community-contributions) of my own.
-
-Overall JS13K kinda forces you to choose small software over your own developer
-experience and I <mark><b>got stuck a bit too long in the mindset that I
-couldn't have ANYTHING nice</b></mark>, to my detriment.
-
-When I did break that mentality, the lion's share of my total LLM use was in
-service of [spitting out crappy devtools](./devtools/) to make it easier to work
-with my custom formats in the final days. At time of writing they're decent at
-that, pretty much everything else was hit or miss.
-
-### 3. **Deciding against an event-driven architecture.**
-
-This is minor, but I initially ruled out an
-[event-driven architecture](https://en.wikipedia.org/wiki/Event-driven_architecture)
-for fear that it would be too heavy. But, as I slowly eroded the quality of my
-codebase to shave bytes, I began to realize that such a structure would have
-likely been more resistant to tangling,
-[easier to debug](https://github.com/whatwg/console/issues/255), and similar in
-terms of byteweight. I'd recommend this to anyone attempting JS13K now.
-
-That said, in my own work I will likely continue to
-[lean heavily on a core loop](https://github.com/cutout-studios/toolbox/tree/main/jsx),
-so I at least gave myself a preview of that.
-
-### Honorable Mention: **Committing to limited platform support.**
-
-I'm flagging this not necessarily as a regret but moreso a conscious choice I
-would not have taken had my goal been to "go for the win" (where maximizing
-accessibility is much more important).
-
-Committing to WebGPU and a 2-button mouse meant that fewer people could play the
-game as intended - but I was determined to see the best core I could make.
-
-This tradeoff has already been reflected in initial reviews, and while yes, it
-is mildly frustrating, I successfully proved to myself what's possible.
-
-<!-- TODO: I did just think of a single-click model. Ah, well. -->
-
 ## Synthesis
 
 ### JS13k first-timer lessons
+
+<!-- TODO: "opacity as luxury" -->
+<!-- TODO: **shift from "replayability" to "immediate gratification" (the former is kinda where i lean)** -->
 
 1. I came into JS13K thinking "hell yeah, I can proceduralize whatever I want" -
    <mark><b>The one thing you <em>can't</em> proceduralize is explaining your
@@ -144,8 +62,6 @@ This makes innovation particularly tricky in this format - per
 > already know.
 
 Anything novel incurs "explanation debt" - debt you cannot proceduralize away.
-
-<!-- TODO: "opacity as luxury" -->
 
 I'd now recommend the following exercise to my past self: embrace
 "[documentation driven development](https://gist.github.com/zsup/9434452)" here.
@@ -273,32 +189,137 @@ there first.
 
 ### `mk_code_sml`
 
-There are two layers to making your code small, and JS13k forces you to be
-intimately familiar with each:
+There are multiple aspects to making your code small, and JS13K forces you to be
+intimately familiar with all of them:
 
-- `minification` (...)
-- `compression` (...)
+#### Build Pipeline
+
+<!-- Pipeline is half the battle. set one up early -->
 
 TODO
 
+- **Minification** - this is the process by which we basically strip all
+  human-relevant information from the code. Human-facing function and data get
+  renamed from meaningful (think `my`) to the nearest-available, shortest
+  identifier (so gobbledygook, like `eO`, `ad`, etc.)
+
 <!--
-> Two layers - minification (i.e. intra-code compaction) and compression (inter-code). which are you targeting with what technique?
-> Pipeline is half the battle
-
-minification (most techniques target this)
-> small =/= fast (stars). usually it does because of network time + JIT, but not at this level
-  > rough heuristic - 1 line ~= 5 bytes
-> ideal: concise systems - 3D lathe + concat, quantization and bitpacking
-> leaning on browser apis whereever possible (css/html for ui and gradient effects, etc)
-  > however, certain things don't work in the iframe environment...
-> actual “code golfing” - tuples+property mangling, bitwise operations, inlining things (…intentional
+print out your minified code to see what you missed
+actual “code golfing” - tuples+property mangling, bitwise operations, inlining things (…intentional
    spaghetti code 😭), dirty JS tricks (double equals)
+-->
+<!-- roadroller is like, in the middle ground -->
 
-compression
-> brotli vs. rr+deflate
+- **Compression** - (...)
+
+<!--
 > Imperfect Abstractions - “forced” DRYness and messy side effects in pursuit
    of forcing consistency (doTimes, ship code)
 -->
+
+| Minified? | Road Roller'd? | Compressed? | Size |
+| --------- | -------------- | ----------- | ---- |
+| ❌        | ❌             | ❌          | TODO |
+| ✅        | ❌             | ❌          | TODO |
+| ❌        | ✅             | ❌          | TODO |
+| ❌        | ❌             | ✅          | TODO |
+| ✅        | ❌             | ❌          | TODO |
+| ❌        | ✅             | ❌          | TODO |
+| ❌        | ❌             | ECT         | TODO |
+| ❌        | ❌             | Brotli      | TODO |
+| ✅        | ✅             | ❌          | TODO |
+| ✅        | ❌             | ECT         | TODO |
+| ✅        | ❌             | Brotli      | TODO |
+| ❌        | ✅             | ECT         | TODO |
+| ❌        | ✅             | Brotli      | TODO |
+| ✅        | ✅             | ECT         | TODO |
+| ✅        | ✅             | Brotli      | TODO |
+
+#### Architecture
+
+TODO
+
+- **Browser APIs**
+
+<!-- it's free real estate, but see what's allowed. css/html for ui/gradient effects -->
+
+- **Proceduralization**
+
+<!--
+  3D lathe, audio, randomness/noise
+  does not "guarantee" performance (stars)
+-->
+
+## Regrets
+
+### 1. **Taking on a bit more than my current body could handle.**
+
+I've been a full-time informal caretaker for a couple years now and didn't quite
+realize how much my own health had slipped. My ambitious nature has been
+tempered by age, but my barometer was off. I initially thought "oh surely I'll
+run out of space in the first couple weeks" - I ended up working right up to the
+deadline, and I probably could have kept scraping against the byte limit for
+another few days.
+
+I still managed to complete ~90% of what I'd initially planned (with the
+remaining 10% still being fairly important), but don't be fooled -
+<mark><b>Despite the month-long window, JS13k is just as much about energy and
+time management as it is byte management.</b></mark>
+
+### 2. **Not writing more devtools more sooner.**
+
+I admittedly over-focused on the things that were relatively new to me - the 3D
+programming and the golfing.
+
+It is difficult, though, to justify tests or tools for things you're not even
+sure you can fit. This led to a lot of "running ahead" with imperfect logic to
+get a rough idea of how much code it would be or compress to. <mark><b>I also
+found that one line of sketch code ultimately averaged to ~5 bytes in the
+bundle,</b></mark> but YMMV (the final ratio was 1 line:3 bytes).
+
+I also didn't realize how painful debugging that same "sketch logic" would be.
+Logging from the game loop crashes Safari, and debugging is too tedious. Do we
+really need a separate widget to confirm our games work? A previous boss of mine
+[worked with internet standards bodies](https://datatracker.ietf.org/doc/rfc9460/) -
+unless I'm missing something, it's so bad I am in fact planning on
+[proposing a `console.log` extension](#community-contributions) of my own.
+
+Overall JS13K kinda forces you to choose small software over your own developer
+experience and I <mark><b>got stuck a bit too long in the mindset that I
+couldn't have ANYTHING nice</b></mark>, to my detriment.
+
+When I did break that mentality, the lion's share of my total LLM use was in
+service of [spitting out crappy devtools](./devtools/) to make it easier to work
+with my custom formats in the final days. At time of writing they're decent at
+that, pretty much everything else was hit or miss.
+
+### 3. **Deciding against an event-driven architecture.**
+
+This is minor, but I initially ruled out an
+[event-driven architecture](https://en.wikipedia.org/wiki/Event-driven_architecture)
+for fear that it would be too heavy. But, as I slowly eroded the quality of my
+codebase to shave bytes, I began to realize that such a structure would have
+likely been more resistant to tangling,
+[easier to debug](https://github.com/whatwg/console/issues/255), and similar in
+terms of byteweight. I'd recommend this to anyone attempting JS13K now.
+
+That said, in my own work I will likely continue to
+[lean heavily on a core loop](https://github.com/cutout-studios/toolbox/tree/main/jsx),
+so I at least gave myself a preview of that.
+
+### Honorable Mention: **Committing to limited platform support.**
+
+I'm flagging this not necessarily as a regret but moreso a conscious choice I
+would not have taken had my goal been to "go for the win" (where maximizing
+accessibility is much more important).
+
+Committing to WebGPU and a 2-button mouse meant that fewer people could play the
+game as intended - but I was determined to see the best core I could make.
+
+This tradeoff has already been reflected in initial reviews, and while yes, it
+is mildly frustrating, I successfully proved to myself what's possible.
+
+<!-- TODO: I did just think of a single-click model. Ah, well. -->
 
 ## What's Next?
 
@@ -309,8 +330,7 @@ DARKWHITE somehow becomes noteworthy (so, no). The codebase is a (necessary)
 mess and I would have to mostly rewrite it before proceeding.
 
 Don't get me wrong, I like this game and wouldn't mind developing it further,
-but currently I believe there to be more
-[strategic use of my time](#community-contributions).
+but currently have other priorities.
 
 For posterity though, here's the priority list of what I'd change in rough
 [impact/effort](https://www.projectmanager.com/blog/impact-effort-matrix/)
@@ -355,13 +375,16 @@ order:
 Given the difficulties I encountered in developing MISSION DARKWHITE, I have
 begun a couple contributions in pursuit of improving the ecosystem as a whole:
 
-1. ~~I'm [proposing an improvement](https://github.com/whatwg/console/issues/255)
-   to the [WHATWG console](https://whatwg.org/stages#process), `%t`:
+1. ~~I'm
+   [proposing an improvement](https://github.com/whatwg/console/issues/255) to
+   the [WHATWG console](https://whatwg.org/stages#process), `%t`:
 
 ```js
 console.log("%tFailed to load map asset: %s", "Network Error", assetId);
 // => [[Network Error]] Failed to load map asset: 123
 ```
+
+<!-- TODO: proof that console.log is heavy -->
 
 It's an alternative to `console.context()`. That was a
 [2021 WHATWG proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ContextualLoggingWithConsoleContext/explainer.md)
@@ -370,7 +393,7 @@ multiple complex states across a game loop (without having to write a widget of
 some sort). It died mainly because it added too much complexity to existing
 systems, but `%t` preserves `console.log`s append-only nature.~~
 
-<!-- Maybe it's more about coming up with a strategy for getting the standards community to take game development on web a bit more seriously as a whole -->
+<!-- TODO: Maybe it's more about coming up with a strategy for getting the standards community to take game development on web a bit more seriously as a whole -->
 
 2. MISSION DARKWHITE's [bundling pipeline](./scripts/bundle.tsx) is written in
    [Deno](https://deno.com).
@@ -380,7 +403,7 @@ systems, but `%t` preserves `console.log`s append-only nature.~~
    find no record of it being attempted, so I'm working on a
    [small PR here](https://github.com/denoland/deno/blob/main/ext/bundle/bundle.ts)
    to expose that feature.
-  
+
 <!-- TODO: macros? -->
 
 ## In Closing
