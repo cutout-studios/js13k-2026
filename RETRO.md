@@ -479,7 +479,7 @@ begun a couple contributions in pursuit of improving the ecosystem as a whole:
 
 1. ~~I'm
    [proposing an improvement](https://github.com/whatwg/console/issues/255) to
-   the [WHATWG console](https://whatwg.org/stages#process), `%t`:
+   the [WHATWG console](https://whatwg.org/stages#process), `%t`:~~
 
 ```js
 console.log("%tFailed to load map asset: %s", "Network Error", assetId);
@@ -488,7 +488,7 @@ console.log("%tFailed to load map asset: %s", "Network Error", assetId);
 
 <!-- TODO: proof that console.log is heavy -->
 
-It's an alternative to `console.context()`. That was a
+~~It's an alternative to `console.context()`. That was a
 [2021 WHATWG proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ContextualLoggingWithConsoleContext/explainer.md)
 for dynamic, grouped logging, something that would be critical for tracking
 multiple complex states across a game loop (without having to write a widget of
