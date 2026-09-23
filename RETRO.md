@@ -1,6 +1,6 @@
 # <mark>\[DRAFT\]</mark> Retrospective
 
-> TODOs remaining: 18
+> TODOs remaining: 1
 
 - [Personal Context](#personal-context)
 - [Synthesis](#synthesis)
@@ -40,24 +40,21 @@ you"</b></mark> - it's relatively brief.
   "trust me, bro" situation. My next project is to finalize a
   [local harness](https://github.com/cutout-studios/toolbox/tree/main/experimental/agent)
   to solve that problem going forward.
-- My goals with JS13K this year were simple: learn to build a 3D web game as
-  concisely as possible and get to know the community a little bit.
-  <!-- TODO: and as _fun_ as possible -->
+- My goals with JS13K this year were simple: learn to build a 3D WebGPU game,
+  make it as fun as I possibly can as concisely as possible and get to know the
+  community a little bit.
+
 </details>
 
 ## Synthesis
 
 ### JS13k first-timer lessons
 
-<!-- TODO: I think I had a "well the codebase isn't gonna legible so... surely nothing is" mentality -->
-<!-- TODO: "opacity as luxury" -->
-<!-- TODO: **shift from "replayability" to "immediate gratification" (the former is kinda where i lean)** -->
-
 1. I came into JS13K thinking "hell yeah, I can proceduralize whatever I want" -
    <mark><b>The one thing you <em>can't</em> proceduralize is explaining your
-   game.</b></mark>
+   game,</b></mark> and that's paramount here.
 
-This makes innovation particularly tricky in this format - per
+This makes successful innovation _particularly_ tricky in the JS13K format - per
 [Jakob's Law](https://lawsofux.com/jakobs-law/):
 
 > Users spend most of their time on other \[games\]. This means that users
@@ -66,17 +63,26 @@ This makes innovation particularly tricky in this format - per
 
 Anything novel incurs "explanation debt" - debt you cannot proceduralize away.
 
-I'd now recommend the following exercise to my past self: embrace
+There are many and better ways of managing that debt without slamming down a
+wall of text. For instance, studios like From Software can pay it down with the
+decades of goodwill they've built up.
+
+I'd now recommend the following exercise to a version of my past self that was
+actually trying to "win": embrace
 "[documentation driven development](https://gist.github.com/zsup/9434452)" here.
 Write out the entire design of your game in **full detail** to the degree that
 someone else can completely visualize your intent by reading it, and reserve
 space for that text in your bundle until it's time to tutorialize. Leaving in
-the buffer to fully explain your game will ensure that you always can, and if
-you need to cut something, you can cut it from your explanation as well.
+the buffer needed to clarify your game will ensure that you always can, and if
+you need to cut something, you can cut it from the buffer as well. This time
+around, I would have spent that budget on more depth cues, visual indicators and
+maybe even a "shooting gallery" - things I had to drop at the very last minute.
 
-<!-- TODO: 'explanation' doesn't mean 'wall of text' here -->
-<!-- TODO: something something curse of knowledge 3d spatial intelligence? -->
-<!-- TODO: so giving players landmarks, more depth cues, and places to practice? great! this is "explainability" but in "showing" form. -->
+Ultimately, I'm not even disappointed. "Winning"
+[wasn't not the thing I was optimizing for](#personal-context), in part because
+I knew being a first-timer there were some unmoored assumptions I'd invariably
+make: like, "well, my codebase is turning out to be barely legible, so clearly
+none of the games will be". No, they just had less scope.
 
 2. At time of writing, the JS13K iframe allows only the following browser APIs:
 
@@ -117,10 +123,11 @@ the features that the JS13K platform is okay with.
 
 4. Lastly, I'm a bit embarrassed to admit, but for some selfish reason I
    initially thought that once I'd finally submitted I was done. My exhaustion
-   was partially to blame - but! <mark>_During_ the review period you _definitely_
-   need to _pay it forward_.</mark> The JS13K platform is specifically designed to push
-   you to leave feedback on the games of those who have left feedback on yours,
-   and that was not clear to me until I'd actually received my first feedback.
+   was partially to blame - but! <mark>_During_ the review period you
+   _definitely_ need to _pay it forward_.</mark> The JS13K platform is
+   specifically designed to push you to leave feedback on the games of those who
+   have left feedback on yours, and that was not clear to me until I'd actually
+   received my first feedback.
 
 ### 3D Rotation Bestiary
 
@@ -238,9 +245,9 @@ There are three key components to code compaction:
   JS13K, this utility does a random walk over the text you feed it and
   procedurally comes up with a bitpacking solution for that text. That text is
   then injected into your app shell via your specified method.
-  - I would recommend the "write" method over "eval" <!-- TODO: s/o -->.
-    Roadroller hasn't been updated in years and chokes on modern JavaScript when
-    you use "eval".
+  - I would recommend the "write" method over "eval" (s/o
+    [@scmx](https://github.com/scmx) for the advice!!). Roadroller hasn't been
+    updated in years and chokes on modern JavaScript when you use "eval".
   - As it is random, you'll want to run Roadroller multiple times in your
     pipeline and
     [take the best result](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts#L133-L156).
@@ -310,7 +317,38 @@ is basically required.
 Example: instead of building a new shader to generate the "galaxy" effect, I
 just used an animated CSS gradient. Far more compact than the alternative.
 
-<!-- TODO: WebGPU isn't that scary, actually. -->
+Speaking of Browser APIs, WebGPU isn't actually that bad! The API is actually
+kinda "flat" - very configuration-heavy - which is a good thing ultimately.
+
+All that configuration is doing is allowing you to customize how exactly the
+data you're transferring to the GPU should be passed into your GPU code
+(shaders). `Buffer`s, `BindGroup`s and `BindGroupLayout`s are the means by which
+you structure and load the raw data, and then your `RenderPipeline` configures
+how that loaded data is split up across the shader calls. The actual _rendering_
+is done by the `CommandEncoder` part of the API, which is where everything comes
+together on a per-render pass basis (meaning, you can switch between different
+`RenderPipeline` configurations as needed).
+
+```mermaid
+flowchart LR
+  subgraph data
+    Buffer -->|raw data| BindGroup
+    BindGroupLayout -->|shape| BindGroup
+  end
+  BindGroup --> RenderPipeline
+  RenderPipeline -->|configures shader calls| CommandEncoder
+  CommandEncoder -->|per render pass| GPU((GPU))
+```
+
+Everything else provided is basically just... different options for how to do
+all that. Once I'd developed this basic mental model for working with WebGPU, it
+became a lot less intimidating.
+
+If you want to learn WebGPU, I started with
+[webgpufundamentals.org](https://webgpufundamentals.org), but eventually
+switched to picking apart
+[the examples here](https://webgpu.github.io/webgpu-samples/) line by line,
+which I found to be a lot more helpful.
 
 - **Proceduralization**
 
@@ -423,7 +461,7 @@ so I at least gave myself a preview of that.
 
 ### Honorable Mention: **Committing to limited platform support.**
 
-I'm flagging this not necessarily as a regret but moreso a conscious choice I
+I'm flagging this not necessarily as a regret but more so a conscious choice I
 would not have taken had my goal been to "go for the win" (where maximizing
 accessibility is much more important).
 
@@ -432,8 +470,6 @@ game as intended - but I was determined to see the best core I could make.
 
 This tradeoff has already been reflected in initial reviews, and while yes, it
 is mildly frustrating, I successfully proved to myself what's possible.
-
-<!-- TODO: I did just think of a single-click model. Ah, well. -->
 
 ## What's Next?
 
@@ -460,17 +496,19 @@ order:
 
 #### Accessibility
 
-<!-- TODO: explainability -->
-
-- Highlight dropped items. I'd planned this from the beginning and it was at the
-  top of the list of things that I cut.
+- Add in the visual cues that were top of the list of things I cut:
+  - Visual indicator for when the player took damage. Could have simply reused
+    the enemy code, in hindsight.
+  - Highlighting dropped items. I'd wanted to have items pause and float in the
+    player's plane for a moment, little arrows pointing to them based on the
+    rank of the item (e.g. rank 2 = 2 arrows).
+  - Bullet "glow" and illumination/shadow to make it extremely clear where in
+    the world those bullets were relative to the enemies, with additional
+    landmarks to boot.
 - Map the WASD controls to a virtualized stick. This should make the ship
   steering even smoother and allow for controller support.
 - Some sort of lock-on or auto-aim mechanism. This would make way for supporting
   coarser control setups, like trackpads or maybe mobile.
-  <!-- TODO: and/or background items, and/or single-click model -->
-  <!-- TODO: shadow -->
-  <!-- TODO: "practice mode" -->
 
 #### Graphics
 
@@ -491,40 +529,68 @@ order:
 ### Community Contributions
 
 Given the difficulties I encountered in developing MISSION DARKWHITE, I have
-begun a couple contributions in pursuit of improving the ecosystem as a whole:
+begun thinking about how to improve ecosystem as a whole.
 
-_(I still think this is a good first step, but perhaps need to take it one level
-higher: how do we get the standards community to take game development more
-seriously?)_
+1. Something that irked me - there's no real good way to debug your game loop
+   without writing something custom. Given the roll out of WebGPU, one would
+   hope that the standards community is taking the game development use case
+   more seriously. And maybe they are, but just... slowly.
 
-1. ~~I'm
+   It's small, but I'm
    [proposing an improvement](https://github.com/whatwg/console/issues/255) to
-   the [WHATWG console](https://whatwg.org/stages#process), `%t`:~~
+   the [WHATWG console](https://whatwg.org/stages#process) that should make
+   debugging _slightly_ better, `%t`:
 
 ```js
 console.log("%tFailed to load map asset: %s", "Network Error", assetId);
 // => [[Network Error]] Failed to load map asset: 123
 ```
 
-<!-- TODO: proof that console.log is heavy -->
+Logs are expensive in the browser due to the IPC and UI calls they make, so
+having a hook to short-circuit them by topic would ameliorate - but not
+completely solve - the issue. Run this in your inspector to see for yourself:
 
-~~It's an alternative to `console.context()`. That was a
-[2021 WHATWG proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ContextualLoggingWithConsoleContext/explainer.md)
-for dynamic, grouped logging, something that would be critical for tracking
-multiple complex states across a game loop (without having to write a widget of
-some sort). It died mainly because it added too much complexity to existing
-systems, but `%t` preserves `console.log`s append-only nature.~~
+```ts
+(() => {
+  const stringformattingstuff = (i) =>
+    `Entity #${i}: x=${(Math.random() * 100).toFixed(2)}, y=${
+      (Math.random() * 100).toFixed(2)
+    }`;
+  const thing = {};
 
-2. MISSION DARKWHITE's [bundling pipeline](./scripts/bundle.ts) is written in
-   [Deno](https://deno.com).
+  let now = performance.now();
+  for (let i = 0; i < 1000; i++) {
+    thing.ref = `[Telemetry] ${stringformattingstuff(i)}`;
+  }
+  const formattingTime = performance.now() - now;
+
+  now = performance.now();
+  for (let i = 0; i < 1000; i++) {
+    console.log(`[Telemetry] ${stringformattingstuff(i)}`);
+  }
+  const logTime = performance.now() - now;
+
+  console.clear();
+  console.log({ formattingTime, logTime });
+  // => formattingTime: ~<1ms, logTime: 10-20ms
+  console.log(thing.ref);
+})();
+```
+
+This solution is related in part to the
+[2021 `console.context()` proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ContextualLoggingWithConsoleContext/explainer.md),
+which died mainly because it added too much complexity to existing systems; `%t`
+shouldn't.
+
+Regardless, it's a small gesture. I plan to get in touch with my old boss to see
+if he can't help me strategize further.
+
+2. I found out that
    [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) doesn't
    actually expose
    [property mangling](https://github.com/evanw/esbuild/issues/218), and I can
-   find no record of it being attempted, so I'll be working on a
-   [small PR](https://github.com/denoland/deno/blob/main/ext/bundle/bundle.ts)
-   to expose that feature from esbuild.
-
-<!-- TODO: macros? -->
+   find no record of it being attempted, so I'll be working on a (hopefully)
+   small PR to expose that feature from esbuild.
 
 ## In Closing
 
