@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-import * as esbuild from "esbuild";
-import { minify } from "esbuild-minify-templates";
-import { minify as minifyHtml } from "html-minifier-next";
+import { parseArgs } from "@std/cli";
 
+import * as esbuild from "esbuild";
+import { minify as minifyTemplates } from "esbuild-minify-templates";
+import { minify as minifyHtml } from "html-minifier-next";
 import { InputAction, InputType, Packer } from "roadroller";
 
 const JS13K_LIMIT = 13_312;
 
-const TARGET_DIR = Deno.args[0] || "app";
+const { minify, compress, open, roll, verbose, _: targets } = parseArgs(
+  Deno.args,
+);
+
+const TARGET_DIR = targets[0] || "app";
 const IS_DEV_TOOL = TARGET_DIR != "app";
 
 const SOURCE_DIR = IS_DEV_TOOL ? `devtools/${TARGET_DIR}` : "app";
@@ -30,38 +35,52 @@ const OUTPUT_DIR = `.output/${TARGET_DIR}`;
 
 const JS_ENTRYPOINT = `./${SOURCE_DIR}/module.ts`;
 const HTML_ENTRYPOINT = `./${SOURCE_DIR}/index.html`;
-const BUNDLE_OUTPUT_FILE = "index.html";
+const BUNDLE_OUTPUT_FILE = "index";
 const BUNDLE_OUTPUT_COMPRESSED_FILE = `${BUNDLE_OUTPUT_FILE}.zip`;
-const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}`;
+const BUNDLE_OUTPUT_FILEPATH = `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_FILE}.html`;
 const BUNDLE_OUTPUT_COMPRESSED_FILEPATH =
   `./${OUTPUT_DIR}/${BUNDLE_OUTPUT_COMPRESSED_FILE}`;
 
-const PROPS_TO_MANGLE = [] as string[];
+try {
+  Deno.removeSync(OUTPUT_DIR, { recursive: true });
+} catch {
+  // do nothing
+}
 
 Deno.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-if (IS_DEV_TOOL) {
-  // no size budget to enforce and nothing to compress - just build it fast
-  await bundle({ minify: false, sourcemap: "inline" }, JS_ENTRYPOINT, true);
-} else {
-  await bundle();
-  logSize(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
+console.time("bundle");
+await bundle(
+  IS_DEV_TOOL
+    ? { minify: false, compress: "ect", sourcemap: "inline" }
+    : { minify, compress, roll },
+);
+console.timeEnd("bundle");
+logSize(
+  compress === "ect"
+    ? BUNDLE_OUTPUT_COMPRESSED_FILEPATH
+    : compress === "br"
+    ? BUNDLE_OUTPUT_FILEPATH + ".br"
+    : BUNDLE_OUTPUT_FILEPATH,
+);
 
-  // await bundle({ minify: false, sourcemap: "inline" });
+if (open) {
+  await new Deno.Command("open", {
+    args: [BUNDLE_OUTPUT_FILEPATH],
+  }).output();
 }
 
-await new Deno.Command("open", {
-  args: [BUNDLE_OUTPUT_FILEPATH],
-}).output();
+// --- lib
 
 async function bundle(
-  options: Partial<Deno.bundle.Options> = { minify: true },
-  entrypoint = JS_ENTRYPOINT,
-  skipCompression = false,
+  { minify = false, compress, roll = 0, ...options }:
+    & Partial<Deno.bundle.Options>
+    & { compress?: "ect" | "br"; roll?: 0 | 1 | 2 },
 ) {
   const _result = await Deno.bundle({
     ...options,
-    entrypoints: [entrypoint],
+    minify,
+    entrypoints: [JS_ENTRYPOINT],
     outputDir: OUTPUT_DIR,
     platform: "browser",
     write: false,
@@ -73,37 +92,43 @@ async function bundle(
 
   const { outputFiles: [jsFile] = [] } = _result;
 
-  const htmlText = await minifyHtml(Deno.readTextFileSync(HTML_ENTRYPOINT), {
-    collapseWhitespace: true,
-    removeComments: true,
-    removeAttributeQuotes: true,
-    removeOptionalTags: true,
-    minifyCSS: true,
-    minifyJS: false,
-  });
-
-  let jsCode = jsFile.text(),
+  let htmlText = Deno.readTextFileSync(HTML_ENTRYPOINT),
+    jsCode = jsFile.text(),
     appOutputText = htmlText + `<script type=module>${jsCode}</script>`;
-  if (options.minify) {
-    jsCode = minify(jsCode).toString();
+
+  if (minify) {
+    console.log("Minifying...");
+
+    htmlText = await minifyHtml(htmlText, {
+      collapseWhitespace: true,
+      removeComments: true,
+      removeAttributeQuotes: true,
+      removeOptionalTags: true,
+      minifyCSS: true,
+      minifyJS: false,
+    });
+    jsCode = minifyTemplates(jsCode).toString();
 
     const result = await esbuild.transform(jsCode, {
-      minify: true,
-      mangleProps: new RegExp(
-        `^(${PROPS_TO_MANGLE.join("|")})$`,
-      ),
+      minify,
       legalComments: "none",
     });
 
     jsCode = result.code;
 
-    console.log(
-      `%cMinifed JavaScript:\n%c${jsCode}`,
-      "color: blue;",
-      "color: gray;",
-    );
+    if (verbose) {
+      console.log(
+        `%cMinifed JavaScript:\n%c${jsCode}`,
+        "color: blue;",
+        "color: gray;",
+      );
+    }
 
-    jsCode = htmlText + `<script type=module>${jsCode}</script>`;
+    appOutputText = htmlText + `<script type=module>${jsCode}</script>`;
+  }
+
+  if (roll) {
+    console.log("Roadrolling...");
 
     const PACK_ATTEMPTS = 12;
     let bestOutputText: string | undefined;
@@ -111,12 +136,12 @@ async function bundle(
     for (let attempt = 0; attempt < PACK_ATTEMPTS; attempt++) {
       const packer = new Packer([
         {
-          data: jsCode,
+          data: appOutputText,
           type: "text" as InputType,
           action: "write" as InputAction,
         },
       ], { allowFreeVars: true });
-      await packer.optimize(2);
+      await packer.optimize(roll);
 
       const { firstLine, secondLine } = packer.makeDecoder(),
         candidate = `<script>${firstLine}\n${secondLine}</script>`;
@@ -134,35 +159,21 @@ async function bundle(
     appOutputText,
   );
 
-  if (skipCompression) return;
+  if (!compress) return;
 
-  // pin the file's mtime - the zip's embedded timestamp otherwise makes the
-  // compressed size (and thus how close we are to JS13K_LIMIT) vary by
-  // ~10-45 bytes between runs of otherwise-identical content
-  const FIXED_MTIME = new Date(0);
-  Deno.utimeSync(BUNDLE_OUTPUT_FILEPATH, FIXED_MTIME, FIXED_MTIME);
+  console.log("Compressing...");
 
-  try {
-    Deno.removeSync(BUNDLE_OUTPUT_COMPRESSED_FILEPATH);
-  } catch {
-    // no previous zip to remove
+  // run `deno run setup` to make sure ect is installed
+
+  if (compress === "ect") {
+    await new Deno.Command("./.output/ect/build/ect", {
+      args: ["-zip", "-9", BUNDLE_OUTPUT_FILEPATH],
+    }).output();
+  } else if (compress === "br") {
+    await new Deno.Command("brotli", {
+      args: [BUNDLE_OUTPUT_FILEPATH],
+    }).output();
   }
-
-  const zip = await new Deno.Command("advzip", {
-    args: ["-a", "-4", BUNDLE_OUTPUT_COMPRESSED_FILE, BUNDLE_OUTPUT_FILE],
-    cwd: OUTPUT_DIR,
-  }).output();
-
-  if (!zip.success) {
-    console.error(new TextDecoder().decode(zip.stderr));
-  }
-
-  // ect lives at .output/ect/build/ect (see scripts/setup.sh) - a fixed
-  // location one level up from every target's own OUTPUT_DIR
-  await new Deno.Command("../ect/build/ect", {
-    args: ["-zip", "-9", BUNDLE_OUTPUT_COMPRESSED_FILE],
-    cwd: OUTPUT_DIR,
-  }).output();
 }
 
 function logSize(filePath: string, customMessage?: string) {

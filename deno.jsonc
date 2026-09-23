@@ -1,8 +1,4 @@
 {
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "@cutout/jsx"
-  },
   "lint": {
     "plugins": [
       "jsr:@ayk/lint-import-order"
@@ -10,7 +6,7 @@
   },
 
   "imports": {
-    "@cutout/jsx": "jsr:@cutout/jsx",
+    "@std/cli": "jsr:@std/cli",
     "@std/fmt": "jsr:@std/fmt",
     "~/3D": "./libraries/3D/module.ts",
     "~/alias": "./libraries/alias.ts",
@@ -28,12 +24,14 @@
     "roadroller": "npm:roadroller"
   },
   "tasks": {
-    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=app,libraries ./scripts/bundle.tsx",
-    "bundle:sandbox": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=devtools/sandbox,app,libraries ./scripts/bundle.tsx sandbox",
-    "bundle:portrait": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=devtools/portrait,scripts,libraries ./scripts/bundle.tsx portrait",
-    "bundle:sounds": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=devtools/sounds,app,libraries ./scripts/bundle.tsx sounds",
+    "bundle": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi ./scripts/bundle.ts",
+    "bundle:watch": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=app,libraries ./scripts/bundle.ts ",
+    "bundle:sandbox": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=devtools/sandbox,app,libraries ./scripts/bundle.ts sandbox",
+    "bundle:portrait": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=devtools/portrait,scripts,libraries ./scripts/bundle.ts portrait",
+    "bundle:sounds": "deno run --unstable-bundle --allow-write --allow-read --allow-run --allow-env --allow-ffi --watch=devtools/sounds,app,libraries ./scripts/bundle.ts sounds",
     "bundle:shaders": "deno --allow-read --allow-write wgsl-plus --minify ./libraries/3D/materials/paint.wgsl -o ./libraries/3D/materials/paint.wgsl.ts",
     "clean": "rm -rf .output",
-    "setup": "bash ./scripts/setup.sh"
+    "setup": "bash ./scripts/setup.sh",
+    "reset": "deno run clean && deno run setup"
   }
 }
