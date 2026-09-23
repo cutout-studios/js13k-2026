@@ -1,5 +1,7 @@
 # <mark>\[DRAFT\]</mark> Retrospective
 
+> TODOs remaining: 16
+
 - [Personal Context](#personal-context)
 - [Synthesis](#synthesis)
   - [JS13k first-timer lessons](#js13k-first-timer-lessons)
@@ -47,6 +49,7 @@ you"</b></mark> - it's relatively brief.
 
 ### JS13k first-timer lessons
 
+<!-- TODO: I think I had a "well the codebase isn't gonna legible so... surely nothing is" mentality -->
 <!-- TODO: "opacity as luxury" -->
 <!-- TODO: **shift from "replayability" to "immediate gratification" (the former is kinda where i lean)** -->
 
@@ -70,6 +73,10 @@ someone else can completely visualize your intent by reading it, and reserve
 space for that text in your bundle until it's time to tutorialize. Leaving in
 the buffer to fully explain your game will ensure that you always can, and if
 you need to cut something, you can cut it from your explanation as well.
+
+<!-- TODO: 'explanation' doesn't mean 'wall of text' here -->
+<!-- TODO: something something curse of knowledge 3d spatial intelligence? -->
+<!-- TODO: so giving players landmarks, more depth cues, and places to practice? great! this is "explainability" but in "showing" form. -->
 
 2. At time of writing, the JS13K iframe allows only the following browser APIs:
 
@@ -120,9 +127,7 @@ the features that the JS13K platform is okay with.
 <!--
 TODO: needs minor rework.
   - quaternion technically "folds" through 4d hypersphere, around lock
-    - lock is only exactly at 90
   - mention quat. interpolation
-  - rotor also has rotation amt, like axis-angle
   - rodrigues/cave allegory is inaccurate (?)
 -->
 
@@ -150,9 +155,10 @@ impossible to visualize. The best I can picture in my mind is like, a shadow on
 the wall in Plato's cave of the cube being rotated. This isn't really accurate
 though.
 
-~~In fact, that visualization is more akin to the **Rodrigues Matrix**, which, I
-learned, is basically necessary no matter what rotation representation you
-expose to the developer. Rodrigues' rotation formula works by
+_(problematic paragraph)_ ~~In fact, that visualization is more akin to the
+**Rodrigues Matrix**, which, I learned, is basically necessary no matter what
+rotation representation you expose to the developer. Rodrigues' rotation formula
+works by
 [decomposing the rotation down to its 2D elements](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/coordinates.ts#L24-L39) -
 its "shadows". Quaternions are more performant, sure, but they really only shine
 if you have hundreds of IKs to collapse, because they need to be
@@ -179,13 +185,14 @@ answer is yes - they're called **Rotors**.
 [Rotors are sort of underrated in game development.](https://marctenbosch.com/quaternions/)
 Like Axis-Angle, with a Rotor you're representing the 2D cross-section you're
 rotating your object within (that the axis in your Axis-Angle is simply normal
-to). The main difference is that a Rotor is stored as three shadows (called a
-"bivector") - the shadows that that cross-section would make were a light to
-shine on it from each of the X, Y and Z directions.
+to). The main difference is that a Rotor is stores its "axis" as three shadows
+(called a "bivector") - the shadows that that cross-section would make were a
+light to shine on it from each of the X, Y and Z directions.
 
 Because Rotors are represented this way, they don't collapse. You combine them
 by composing these "shadows". No risk of rotating one axis into another, and
-better yet, they're just as cheap as Quaternions computationally.
+better yet, they're just as cheap as Quaternions computationally and interpolate
+fine.
 
 So why don't we use Rotors everywhere? Unclear. I think Quaternions just got
 there first.
@@ -296,16 +303,21 @@ wins for me fell into three main categories:
 - **Browser APIs**
 
 Use them. It's free real estate.
-[Only the ones that are allowed, though.](#allowlist) Example: instead of
-building a new shader to generate the "galaxy" effect, I just used an animated
-CSS gradient. Far more compact than the alternative.
+[Only the ones that are allowed, though.](#allowlist), though the
+[WebAudio API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
+is basically required.
+
+Example: instead of building a new shader to generate the "galaxy" effect, I
+just used an animated CSS gradient. Far more compact than the alternative.
+
+<!-- TODO: WebGPU isn't that scary, actually. -->
 
 - **Proceduralization**
 
 Proceduralization basically makes the JS13K world go around. If anything, it
 will force you to work these muscles. My biggest wins were procedural - the
-diversity of geometry I had exploded when I realized I could generate it as a
-[lathe](https://en.wikipedia.org/wiki/Lathe) does:
+diversity of geometry I had exploded when I realized I could generate everything
+as a [lathe](https://en.wikipedia.org/wiki/Lathe) does:
 
 ```ts
 const lathe = (loops, divisions) => {
@@ -457,6 +469,8 @@ order:
 - Some sort of lock-on or auto-aim mechanism. This would make way for supporting
   coarser control setups, like trackpads or maybe mobile.
   <!-- TODO: and/or background items, and/or single-click model -->
+  <!-- TODO: shadow -->
+  <!-- TODO: "practice mode" -->
 
 #### Graphics
 
@@ -464,6 +478,8 @@ order:
 - A bit of narrative color: I'd envisioned this sector of space to take place in
   a vast crystalline structure. I'd love to enhance the background to this
   effect.
+- Glow effects. Not only nice to look at, would help distinguish various
+  entities from one another further.
 
 #### Content
 
@@ -476,6 +492,10 @@ order:
 
 Given the difficulties I encountered in developing MISSION DARKWHITE, I have
 begun a couple contributions in pursuit of improving the ecosystem as a whole:
+
+_(I still think this is a good first step, but perhaps need to take it one level
+higher: how do we get the standards community to take game development more
+seriously?)_
 
 1. ~~I'm
    [proposing an improvement](https://github.com/whatwg/console/issues/255) to
@@ -495,16 +515,14 @@ multiple complex states across a game loop (without having to write a widget of
 some sort). It died mainly because it added too much complexity to existing
 systems, but `%t` preserves `console.log`s append-only nature.~~
 
-<!-- TODO: Maybe it's more about coming up with a strategy for getting the standards community to take game development on web a bit more seriously as a whole -->
-
 2. MISSION DARKWHITE's [bundling pipeline](./scripts/bundle.ts) is written in
    [Deno](https://deno.com).
    [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) doesn't
    actually expose
    [property mangling](https://github.com/evanw/esbuild/issues/218), and I can
-   find no record of it being attempted, so I'm working on a
-   [small PR here](https://github.com/denoland/deno/blob/main/ext/bundle/bundle.ts)
-   to expose that feature.
+   find no record of it being attempted, so I'll be working on a
+   [small PR](https://github.com/denoland/deno/blob/main/ext/bundle/bundle.ts)
+   to expose that feature from esbuild.
 
 <!-- TODO: macros? -->
 
