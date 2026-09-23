@@ -136,7 +136,7 @@ async function bundle(
     for (let attempt = 0; attempt < PACK_ATTEMPTS; attempt++) {
       const packer = new Packer([
         {
-          data: jsCode,
+          data: appOutputText,
           type: "text" as InputType,
           action: "write" as InputAction,
         },
@@ -151,7 +151,7 @@ async function bundle(
       }
     }
 
-    appOutputText = htmlText + bestOutputText!;
+    appOutputText = bestOutputText!;
   }
 
   Deno.writeTextFileSync(
