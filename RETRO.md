@@ -190,121 +190,162 @@ there first.
 ### `mk_code_sml`
 
 There are multiple aspects to making your code small, and JS13K forces you to be
-intimately familiar with them all. This was the process I took:
+intimately familiar with them all. There's no sliver bullet. You have to attack
+the size of your game from every direction:
 
 #### Build Pipeline
 
-Your build pipeline is what compacts your written code and is half the battle.
-The first thing I did was [set one up](./scripts/bundle.ts). There are three
-steps:
+Your build pipeline is what compacts your written code down and is really half
+the JS13K battle. The first thing I did was [set one up](./scripts/bundle.ts).
+There are three key components to code compaction:
 
-- **Minification** - this is the process by which we basically strip all
-  human-relevant information from the code. Human-facing function and data get
-  renamed from meaningful (think `myCoolFunction`) to the nearest-available,
-  shortest identifier (so gobbledygook, like `a`, `b`, `c`, and so on)
-  - Because JavaScript is compiled "just in time" (e.g. as it runs),
+- **Minification** - strips all human-relevant information from the code.
+  Human-facing methods and data get renamed from what you called them (think
+  `myCoolFunction`) to the nearest-available, shortest identifier (like `a`,
+  `b`, `c`, and so on)
+  - Because JavaScript is compiled "just in time" (i.e. as it runs),
     minification has this interesting side effect of improving your initial
-    execution time slightly (as there's less input to scan during the JIT
-    process)
+    execution time slightly (as there's less input to scan during that process)
   - Also, because minification is "intent preserving", a separate minifier is
     required for each language in your program. I used:
     - [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) for
       TypeScript.
-    - [`html-minifier-next`](https://github.com/j9t/html-minifier-next) for
-      HTML.
+    - [`html-minifier-next`](https://github.com/j9t/html-minifier-next) for HTML
+      and CSS.
     - [`esbuild-minify-templates`](https://github.com/MaxMilton/esbuild-minify-templates)
       for raw text 🤷
     - [`wgsl-plus`](https://github.com/JSideris/wgsl-plus) for the shader, but
       it isn't complete. I've just learned about
-      [`wsglender`](https://github.com/HugoDaniel/wgslender) which would have
+      [`wsglender`](https://github.com/HugoDaniel/wgslender) which may have
       saved me some work.
   - I recommend printing your minified code to the terminal every build - you'll
-    notice things that could be made more mini. Doing so helped me catch object
-    properties that were preserved, leading to an overhaul that converted
-    everything into tuples, functions and inlined values (I'd had property
-    mangling at one point but dropped it). This alone saved me a minimum of 500
-    bytes (~2-3 small features).
+    notice things that could be made more mini. This tactic helped me catch
+    object properties that were preserved, leading to an overhaul which
+    converted everything into tuples, functions, inlined values and system
+    aliases (I'd had property mangling at one point but dropped it). This alone
+    saved me a minimum of 500 bytes (the equivalent ~2-3 small features).
 - [**Roadroller**](https://github.com/lifthrasiir/roadroller) - Patron saint of
   JS13K, this utility does a random walk over the text you feed it and
   procedurally comes up with a bitpacking solution for that text. That text is
   then injected into your app shell via your specified method.
-  - I would recommend using "write" over "eval" (s/o to ???). Roadroller hasn't
-    been updated in years and chokes on modern JS conventions when you use
+  - I would recommend the "write" method over "eval" (s/o to ???). Roadroller
+    hasn't been updated in years and chokes on modern JavaScript when you use
     "eval".
   - As it is random, you'll want to run Roadroller multiple times in your
     pipeline and
     [take the best result](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts#L133-L156).
-    The CLI can
+    The terminal interface can
     [do this automatically](https://github.com/lifthrasiir/roadroller#output-configuration)
-    if you decide to take that route.
-- **Compression** - If minification is "inter-code", compression is
-  "intra-code". It looks for patterns across the entire input it can fold
-  together at a <mark><b>binary</b></mark> level.
+    if you decide you just wanna run shell commands.
+- **Compression** - similar to Roadroller, looks for patterns across the entire
+  input it can fold together at a <mark><b>binary</b></mark> level.
   - Unlike minification, compression is "destructive" in that a compressed
     payload needs to be "uncompressed" to be run again.
   - Unlike Roadroller, most compression algorithms operate on the raw binary,
-    not the text level. They're also deterministic.
+    not the text level that we can actually read. They're also deterministic.
 
-So, are all of these steps _really_ necessary? Yes!
+So, are all of these steps _actually_ necessary? Yes!
 
-| Minified? | Road Roller'd? | Compressed w/ ECT? | Size   | Timing* | Compression |
-| --------- | -------------- | ------------------ | ------ | ------- | ----------- |
-| ✅        | ✅             | ✅                 | 13294  | <2m     | 87.1%       |
-| ✅        | ❌             | ✅                 | 14655  | <100ms  | 85.8%       |
-| ✅        | ✅             | ❌                 | 17572  | <2m     | 83%         |
-| ❌        | ✅             | ✅                 | 20347  | >5m     | 80.3%       |
-| ❌        | ❌             | ✅                 | 23528  | ~150ms  | 77.2%       |
-| ❌        | ✅             | ❌                 | 26915  | >5m     | 73.9%       |
-| ✅        | ❌             | ❌                 | 32826  | <50ms   | 68.2%       |
-| ❌        | ❌             | ❌                 | 103136 | <50ms   | 0%          |
+| Minified? | Road Roller'd? | Compressed w/ ECT? | Size   | Timing* | Compaction |
+| --------- | -------------- | ------------------ | ------ | ------- | ---------- |
+| ✅        | ✅             | ✅                 | 13294  | <2m     | 87.1%      |
+| ✅        | ❌             | ✅                 | 14655  | <100ms  | 85.8%      |
+| ✅        | ✅             | ❌                 | 17572  | <2m     | 83%        |
+| ❌        | ✅             | ✅                 | 20347  | >5m     | 80.3%      |
+| ❌        | ❌             | ✅                 | 23528  | ~150ms  | 77.2%      |
+| ❌        | ✅             | ❌                 | 26915  | >5m     | 73.9%      |
+| ✅        | ❌             | ❌                 | 32826  | <50ms   | 68.2%      |
+| ❌        | ❌             | ❌                 | 103136 | <50ms   | 0%         |
 
 <figcaption>*All tests run with `deno run bundle` once or twice on M5 Max Apple Silicon.</figcaption>
 
-As you can see, all the steps, in tandem, meaningfully brought the total size of
-the game down.
+As you can see each component meaningfully brings the total size of the game
+down.
 
-Now, for JS13K, only the DEFLATE family of compression algorithms are legal: but
-I was curious to compare the results against Brotli's:
+Now, for JS13K, only the DEFLATE family of compression algorithms are legal, but
+I couldn't help but see how [Brotli](https://en.wikipedia.org/wiki/Brotli) would
+have fared. The following results are all compressed with Brotli:
 
-| Minified? | Road Roller'd? | Size      | Timing* | Compression |
-| --------- | -------------- | --------- | ------- | ----------- |
-| ✅        | ✅             | **13178** | <2m     | **87.2%**   |
-| ✅        | ❌             | 13599     | <100ms  | 86.8%       |
-| ❌        | ✅             | 20231     | >5m     | 80.4%       |
-| ❌        | ❌             | 21225     | ~100ms  | 79.4%       |
+| Minified? | Road Roller'd? | Size      | Timing* | Compaction |
+| --------- | -------------- | --------- | ------- | ---------- |
+| ✅        | ✅             | **13178** | <2m     | **87.2%**  |
+| ✅        | ❌             | 13599     | <100ms  | 86.8%      |
+| ❌        | ✅             | 20231     | >5m     | 80.4%      |
+| ❌        | ❌             | 21225     | ~100ms  | 79.4%      |
 
 Some interesting tradeoffs, here:
 
-- Brotli w/o Roadroller was only 2% bigger than the submitted game, but
-  _meaningfully_ faster (minutes vs. milliseconds)!
-- Roadroller on _top_ of Brotli saves _even more_ bytes! I'm crying softly with
-  the knowledge that Brotli would have bought me another precious 134B to work
-  with. If only!
+- Brotli w/o Roadroller is only 2% bigger than the submitted game, but
+  _meaningfully_ faster to build (milliseconds vs. minutes)!
+- Roadroller on _top_ of Brotli saves _even more_ bytes! Crying knowing I could
+  have had another precious 134B to work with. If only!
 
-This all points to an interesting technical takeaway: while unsafe for
-user-provided content, Roadroller is fine for your "app kernel" if you run it
-once and cache the result. Dunno why people don't do that. I'll be saving that
-one for later!
+This points to an interesting technical takeaway: while unsafe for user-provided
+content, Roadroller is fine for your "app kernel" if you run it once and cache
+the result. Dunno why more don't do this. I'll be saving that one for later!
 
 #### Architecture
 
-Obviously how you structure your project can matter a ton as well. I'd say the
-biggest wins for me fell into three main categories:
+Obviously how you structure your project matters immensely. I'd say the biggest
+wins for me fell into three main categories:
 
 - **Browser APIs**
 
-<!-- it's free real estate, but see what's allowed. examples: css/html for ui/gradient effects. essential for audio -->
+Use them. It's free real estate. [Only the ones that are allowed, though.]()
+Example: instead of building a new shader to generate the "galaxy" effect, I
+just used an animated CSS gradient. Far more compact than the alternative.
 
 - **Proceduralization**
 
-<!--
-  an exception to the "less code = faster" heuristic
-  examples: 3D lathe, randomness/noise
--->
+Proceduralization basically makes the JS13K world go around. If anything, it
+will force you to work these muscles. My biggest wins were procedural - the
+diversity of geometry I had exploded when I realized I could generate it as a
+[lathe](https://en.wikipedia.org/wiki/Lathe) does:
+
+```ts
+const lathe = (loops, divisions) => {
+  const result = [];
+
+  for (const [radius, position] of loops) {
+    for (let index = 0; index < divisions; index++) {
+      result.push(
+        getLatheTriangle(radius, divisions, index, position),
+      );
+    }
+  }
+
+  return result;
+};
+```
+
+<figcaption><a src="./libraries/3D/geometry.ts">(Actual implementation here.)</a></figcaption>
+
+Randomness is the most basic form of proceduralization. The simple methods
+written to
+[pick a value randomly from a range](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/random.ts#L6-L8)
+or to
+[ensure no repeats](https://github.com/cutout-studios/js13k-2026/blob/main/app/game/decks.ts#L26-L34)
+ended up getting used a surprising amount.
 
 - **Dirty Abstractions**
 
-<!-- examples: doTimes, the ship -->
+This was a trick that came to me during the competition - since compressors love
+repetition, what if I were to _force_ abstractions I normally wouldn't? A couple
+examples:
+
+- In place of pretty much every loop I could I wrote
+  [`doTimes`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/common.ts#L30-L38).
+  Felt gross. Saved me hundreds of bytes.
+- Despite the player ship being objectively a different thing than the enemy
+  ships, I forced both the player and the enemies to use the same ship code. It
+  sucked. +100 bytes.
+- This also didn't always work.
+  [`flat`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/common.ts#L39-L63)
+  ended up being net neutral, but migrating to it was so much work I just left
+  it in in the hopes that it might amoritize.
+
+It's weird. As with everything in JS13K, I'd like to say you should only reach
+for this technique if you're desperate. But... you _will_ be desperate.
 
 ## Regrets
 
