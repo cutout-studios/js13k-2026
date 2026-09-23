@@ -1,6 +1,6 @@
 # <mark>\[DRAFT\]</mark> Retrospective
 
-> TODOs remaining: 16
+> TODOs remaining: 18
 
 - [Personal Context](#personal-context)
 - [Synthesis](#synthesis)
@@ -42,7 +42,7 @@ you"</b></mark> - it's relatively brief.
   to solve that problem going forward.
 - My goals with JS13K this year were simple: learn to build a 3D web game as
   concisely as possible and get to know the community a little bit.
-
+  <!-- TODO: and as _fun_ as possible -->
 </details>
 
 ## Synthesis
@@ -117,8 +117,8 @@ the features that the JS13K platform is okay with.
 
 4. Lastly, I'm a bit embarrassed to admit, but for some selfish reason I
    initially thought that once I'd finally submitted I was done. My exhaustion
-   was partially to blame - but! _During_ the review period you _definitely_
-   need to _pay it forward_. The JS13K platform is specifically designed to push
+   was partially to blame - but! <mark>_During_ the review period you _definitely_
+   need to _pay it forward_.</mark> The JS13K platform is specifically designed to push
    you to leave feedback on the games of those who have left feedback on yours,
    and that was not clear to me until I'd actually received my first feedback.
 
