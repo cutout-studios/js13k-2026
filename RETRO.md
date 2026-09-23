@@ -3,8 +3,8 @@
 - [Personal Context](#personal-context)
 - [Synthesis](#synthesis)
   - [JS13k first-timer lessons](#js13k-first-timer-lessons)
-  - [`mk_code_sml`](#mk_code_sml)
   - [3D Rotation Bestiary](#3d-rotation-bestiary)
+  - [`mk_code_sml`](#mk_code_sml)
 - [Regrets](#regrets)
   - [Regret #1](#1-taking-on-a-bit-more-than-my-current-body-could-handle)
   - [Regret #2](#2-not-writing-more-devtools-more-sooner)
@@ -73,6 +73,8 @@ you need to cut something, you can cut it from your explanation as well.
 
 2. At time of writing, the JS13K iframe allows only the following browser APIs:
 
+<a name="allowlist"></a>
+
 ```
 accelerometer
 autoplay
@@ -118,6 +120,7 @@ the features that the JS13K platform is okay with.
 <!--
 TODO: needs minor rework.
   - quaternion technically "folds" through 4d hypersphere, around lock
+    - lock is only exactly at 90
   - mention quat. interpolation
   - rotor also has rotation amt, like axis-angle
   - rodrigues/cave allegory is inaccurate (?)
@@ -190,7 +193,7 @@ there first.
 ### `mk_code_sml`
 
 There are multiple aspects to making your code small, and JS13K forces you to be
-intimately familiar with them all. There's no sliver bullet. You have to attack
+intimately familiar with them all. There's no silver bullet. You have to attack
 the size of your game from every direction:
 
 #### Build Pipeline
@@ -216,7 +219,7 @@ There are three key components to code compaction:
       for raw text 🤷
     - [`wgsl-plus`](https://github.com/JSideris/wgsl-plus) for the shader, but
       it isn't complete. I've just learned about
-      [`wsglender`](https://github.com/HugoDaniel/wgslender) which may have
+      [`wgslender`](https://github.com/HugoDaniel/wgslender) which may have
       saved me some work.
   - I recommend printing your minified code to the terminal every build - you'll
     notice things that could be made more mini. This tactic helped me catch
@@ -228,9 +231,9 @@ There are three key components to code compaction:
   JS13K, this utility does a random walk over the text you feed it and
   procedurally comes up with a bitpacking solution for that text. That text is
   then injected into your app shell via your specified method.
-  - I would recommend the "write" method over "eval" (s/o to ???). Roadroller
-    hasn't been updated in years and chokes on modern JavaScript when you use
-    "eval".
+  - I would recommend the "write" method over "eval" <!-- TODO: s/o -->.
+    Roadroller hasn't been updated in years and chokes on modern JavaScript when
+    you use "eval".
   - As it is random, you'll want to run Roadroller multiple times in your
     pipeline and
     [take the best result](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts#L133-L156).
@@ -281,8 +284,9 @@ Some interesting tradeoffs, here:
   have had another precious 134B to work with. If only!
 
 This points to an interesting technical takeaway: while unsafe for user-provided
-content, Roadroller is fine for your "app kernel" if you run it once and cache
-the result. Dunno why more don't do this. I'll be saving that one for later!
+content, Roadroller is fine for a small "app kernel" if you run it once and
+cache the result. Dunno why I've never seen in it production. I'll be saving
+that one for later!
 
 #### Architecture
 
@@ -291,9 +295,10 @@ wins for me fell into three main categories:
 
 - **Browser APIs**
 
-Use them. It's free real estate. [Only the ones that are allowed, though.]()
-Example: instead of building a new shader to generate the "galaxy" effect, I
-just used an animated CSS gradient. Far more compact than the alternative.
+Use them. It's free real estate.
+[Only the ones that are allowed, though.](#allowlist) Example: instead of
+building a new shader to generate the "galaxy" effect, I just used an animated
+CSS gradient. Far more compact than the alternative.
 
 - **Proceduralization**
 
@@ -318,7 +323,7 @@ const lathe = (loops, divisions) => {
 };
 ```
 
-<figcaption><a src="./libraries/3D/geometry.ts">(Actual implementation here.)</a></figcaption>
+<figcaption><a href="./libraries/3D/geometry.ts">(Actual implementation here.)</a></figcaption>
 
 Randomness is the most basic form of proceduralization. The simple methods
 written to
@@ -492,7 +497,7 @@ systems, but `%t` preserves `console.log`s append-only nature.~~
 
 <!-- TODO: Maybe it's more about coming up with a strategy for getting the standards community to take game development on web a bit more seriously as a whole -->
 
-2. MISSION DARKWHITE's [bundling pipeline](./scripts/bundle.tsx) is written in
+2. MISSION DARKWHITE's [bundling pipeline](./scripts/bundle.ts) is written in
    [Deno](https://deno.com).
    [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) doesn't
    actually expose
