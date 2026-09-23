@@ -1,6 +1,6 @@
 # <mark>\[DRAFT\]</mark> Retrospective
 
-> TODOs remaining: 1
+> Pending: final revision pass(es)
 
 - [Personal Context](#personal-context)
 - [Synthesis](#synthesis)
@@ -131,13 +131,6 @@ the features that the JS13K platform is okay with.
 
 ### 3D Rotation Bestiary
 
-<!--
-TODO: needs minor rework.
-  - quaternion technically "folds" through 4d hypersphere, around lock
-  - mention quat. interpolation
-  - rodrigues/cave allegory is inaccurate (?)
--->
-
 The most intimidating aspect of 3D programming that held me back for so many
 years was rotations, and after all this, admittedly I still don't feel like I
 fully understand them.
@@ -157,19 +150,11 @@ rotate Y -into- Z, dampening that option for yourself. And again each time you
 rotate that coordinate system.
 
 This is why **Quaternions** exist - they effectively add an extra, "fake" fourth
-degree-of-freedom-buffer that ensures you never run out. However, they are
-impossible to visualize. The best I can picture in my mind is like, a shadow on
-the wall in Plato's cave of the cube being rotated. This isn't really accurate
-though.
-
-_(problematic paragraph)_ ~~In fact, that visualization is more akin to the
-**Rodrigues Matrix**, which, I learned, is basically necessary no matter what
-rotation representation you expose to the developer. Rodrigues' rotation formula
-works by
-[decomposing the rotation down to its 2D elements](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/coordinates.ts#L24-L39) -
-its "shadows". Quaternions are more performant, sure, but they really only shine
-if you have hundreds of IKs to collapse, because they need to be
-"Rodriguesified" before the final draw regardless.~~
+degree-of-freedom-buffer that ensures you never run out (it's not fake exactly,
+technically you're using that fourth dimension as a means to "fold around" the
+lock). They are impossible to visualize. The best I can picture in my mind is
+like, a shadow on the wall in Plato's cave of the cube being rotated, which
+isn't even right.
 
 Because of this, I've come to find <mark><b>the "axis-angle" representation the
 more natural interface</mark></b>. In axis-angle, you define the XYZ components
@@ -198,8 +183,8 @@ light to shine on it from each of the X, Y and Z directions.
 
 Because Rotors are represented this way, they don't collapse. You combine them
 by composing these "shadows". No risk of rotating one axis into another, and
-better yet, they're just as cheap as Quaternions computationally and interpolate
-fine.
+better yet, they're just as computationally cheap as Quaternions and also
+interpolate fine.
 
 So why don't we use Rotors everywhere? Unclear. I think Quaternions just got
 there first.
