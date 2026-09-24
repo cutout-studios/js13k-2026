@@ -1,5 +1,6 @@
 # <mark>\[DRAFT\]</mark> Retrospective
 
+> This is a DRAFT. Not very happy with it yet; trying to figure out why
 > Pending: split into multiple sub-documents. final revision pass(es)
 
 - [Personal Context](#personal-context)
