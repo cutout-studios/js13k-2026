@@ -1,6 +1,6 @@
 # <mark>\[DRAFT\]</mark> Retrospective
 
-> Pending: final revision pass(es)
+> Pending: split into multiple sub-documents. final revision pass(es)
 
 - [Personal Context](#personal-context)
 - [Synthesis](#synthesis)
@@ -84,7 +84,7 @@ I knew being a first-timer there were some unmoored assumptions I'd invariably
 make: like, "well, my codebase is turning out to be barely legible, so clearly
 none of the games will be". No, they just had less scope.
 
-2. At time of writing, the JS13K iframe allows only the following browser APIs:
+2. At time of writing, the JS13K iframe allows only the following browser APIs...
 
 <a name="allowlist"></a>
 
@@ -106,14 +106,18 @@ web-share
 xr-spatial-tracking
 ```
 
+...and the
+["sandbox" property](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe#sandbox)
+is also empty.
+
 Meaning, I had to scramble to cut enough to replace a couple `alert()` calls I'd
 used to save space at the last minute. I'd hesitated uploading an early draft to
 the JS13K platform for fear of accidentally submitting, but now having used the
 site I understand that wouldn't have been possible.
 
-Do yourself a favor and develop your game _inside_ a frame that
+Do yourself a favor and develop your game _inside_ a non-sandbox'd frame that
 [`allow`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLIFrameElement/allow)s
-the features that the JS13K platform is okay with.
+the feature that the JS13K platform is okay with.
 
 3. <mark><b>You can push updates to your project description at any time
    throughout the review period.</b></mark> - Director's Cut is not your only
