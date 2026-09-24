@@ -1,7 +1,6 @@
-# <mark>\[DRAFT\]</mark> Retrospective
+# <mark>\[DRAFT\]</mark> DARKWHITE Postmortem
 
-> This is a DRAFT. Not very happy with it yet; trying to figure out why
-> Pending: split into multiple sub-documents. final revision pass(es)
+> This is a DRAFT. Not very happy with it yet; trying to figure out why.
 
 - [Personal Context](#personal-context)
 - [Synthesis](#synthesis)
