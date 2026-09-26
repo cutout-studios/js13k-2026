@@ -134,13 +134,7 @@ Thanks again, and until next time! ✌️
 ---
 
 <p align="center">
-  <a href="./docs/APPENDIX.md">
-   Technical Appendix
-  </a>
-  |
-  <a href="./docs/PLAN.md">
-    What's next?
-  </a>
+  <a href="./docs/APPENDIX.md">Technical Appendix</a> | <a href="./docs/PLAN.md">What's next?</a>
 </p>
 
 ---
