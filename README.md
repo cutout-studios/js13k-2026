@@ -1,9 +1,9 @@
 # js13k 2026 - MISSION: DARKWHITE
 
 > [!WARNING]
-> This is a `Mouse + Keyboard`-only game on `Desktop`. Game controllers not yet
-> supported, mobile would likely be too complex to attempt with this
-> ([necessary](./RETRO.md)) level of debt.
+> 🚨 System Requirements 🚨
+> - WebGPU Support
+> - A **2-button** mouse and keyboard!
 
 ## Running the game
 
