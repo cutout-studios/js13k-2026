@@ -6,7 +6,7 @@ community a little bit.
 
 ## First-time observations
 
-<!-- TODO: assert goal and how goal differed from the competition -->
+<!-- TODO: how goal differed from the competition -->
 <!-- TODO: 'curse of knowledge' observations on how specifically it's difficult -->
 
 1. I came into JS13K thinking "hell yeah, I can proceduralize whatever I want" -
@@ -102,15 +102,13 @@ that, pretty much everything else was hit or miss.
 
 ### 3. **Deciding against an event-driven architecture.**
 
-<!-- TODO: admit technical, and test first -->
-
-This is minor, but I initially ruled out an
+This is minor and a bit technical, but I initially ruled out an
 [event-driven architecture](https://en.wikipedia.org/wiki/Event-driven_architecture)
 for fear that it would be too heavy. But, as I slowly eroded the quality of my
 codebase to shave bytes, I began to realize that such a structure would have
 likely been more resistant to tangling,
-[easier to debug](https://github.com/whatwg/console/issues/255), and similar in
-terms of byteweight. I'd recommend this to anyone attempting JS13K now.
+[easier to debug](https://github.com/whatwg/console/issues/255), and likely
+similar in byteweight. I'd recommend this to anyone attempting JS13K now.
 
 That said, in my own work I will likely continue to
 [lean heavily on a core loop](https://github.com/cutout-studios/toolbox/tree/main/jsx),
@@ -118,7 +116,11 @@ so I at least gave myself a preview of that.
 
 ## In Closing
 
-<!-- TODO: link roadmap, technical appendix -->
+---
+
+[Technical Appendix](./APPENDIX.md) | [What's next?](./PLAN.md)
+
+---
 
 If you made it to the end, thank you very much for reading and I hope you
 learned something!

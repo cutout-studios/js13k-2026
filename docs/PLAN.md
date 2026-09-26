@@ -1,61 +1,6 @@
-<!-- TODO: fudge -->
+# <mark>\[DRAFT\]</mark> DARKWHITE Postmortem: Post-competition plan
 
-## What's Next?
-
-### Director's Cut
-
-I've thought a lot about this, and I'll do a Director's Cut only if MISSION
-DARKWHITE somehow becomes noteworthy (so, no). The codebase is a (necessary)
-mess and I would have to mostly rewrite it before proceeding.
-
-Don't get me wrong, I like this game and wouldn't mind developing it further,
-but currently have other priorities.
-
-For posterity though, here's the priority list of what I'd change in rough
-[impact/effort](https://www.projectmanager.com/blog/impact-effort-matrix/)
-order:
-
-#### Minor Correctness Improvements
-
-- Restore the "continuous" mode I accidentally cut in the final moments when
-  replacing the `alert()` calls.
-- Restructure the graphics pipeline to properly handle transparency and
-  instancing. This means breaking up instance groups by size, depth, and
-  material data.
-
-#### Accessibility
-
-- Add in the visual cues that were top of the list of things I cut:
-  - Visual indicator for when the player took damage. Could have simply reused
-    the enemy code, in hindsight.
-  - Highlighting dropped items. I'd wanted to have items pause and float in the
-    player's plane for a moment, little arrows pointing to them based on the
-    rank of the item (e.g. rank 2 = 2 arrows).
-  - Bullet "glow" and illumination/shadow to make it extremely clear where in
-    the world those bullets were relative to the enemies, with additional
-    landmarks to boot.
-- Map the WASD controls to a virtualized stick. This should make the ship
-  steering even smoother and allow for controller support.
-- Some sort of lock-on or auto-aim mechanism. This would make way for supporting
-  coarser control setups, like trackpads or maybe mobile.
-
-#### Graphics
-
-- Additional particle effects: ship thrusters, explosions.
-- A bit of narrative color: I'd envisioned this sector of space to take place in
-  a vast crystalline structure. I'd love to enhance the background to this
-  effect.
-- Glow effects. Not only nice to look at, would help distinguish various
-  entities from one another further.
-
-#### Content
-
-- I've actually been
-  [writing music for ages](https://soundcloud.com/daniellacosse/piano-deconstruction)
-  and was bummed I couldn't fit anything.
-- ∞
-
-### Community Contributions
+## Community Contributions
 
 Given the difficulties I encountered in developing MISSION DARKWHITE, I have
 begun thinking about how to improve ecosystem as a whole.
@@ -120,3 +65,56 @@ if he can't help me strategize further.
    [property mangling](https://github.com/evanw/esbuild/issues/218), and I can
    find no record of it being attempted, so I'll be working on a (hopefully)
    small PR to expose that feature from esbuild.
+
+## Director's Cut
+
+I've thought a lot about this, and I'll do a Director's Cut only if MISSION
+DARKWHITE somehow becomes noteworthy (so, no). The codebase is a (necessary)
+mess and I would have to mostly rewrite it before proceeding.
+
+Don't get me wrong, I like this game and wouldn't mind developing it further,
+but currently have other priorities.
+
+For posterity though, here's the priority list of what I'd change in rough
+[impact/effort](https://www.projectmanager.com/blog/impact-effort-matrix/)
+order:
+
+### Minor Correctness Improvements
+
+- Restore the "continuous" mode I accidentally cut in the final moments when
+  replacing the `alert()` calls.
+- Restructure the graphics pipeline to properly handle transparency and
+  instancing. This means breaking up instance groups by size, depth, and
+  material data.
+
+### Accessibility
+
+- Add in the visual cues that were top of the list of things I cut:
+  - Visual indicator for when the player took damage. Could have simply reused
+    the enemy code, in hindsight.
+  - Highlighting dropped items. I'd wanted to have items pause and float in the
+    player's plane for a moment, little arrows pointing to them based on the
+    rank of the item (e.g. rank 2 = 2 arrows).
+  - Bullet "glow" and illumination/shadow to make it extremely clear where in
+    the world those bullets were relative to the enemies, with additional
+    landmarks to boot.
+- Map the WASD controls to a virtualized stick. This should make the ship
+  steering even smoother and allow for controller support.
+- Some sort of lock-on or auto-aim mechanism. This would make way for supporting
+  coarser control setups, like trackpads or maybe mobile.
+
+### Graphics
+
+- Additional particle effects: ship thrusters, explosions.
+- A bit of narrative color: I'd envisioned this sector of space to take place in
+  a vast crystalline structure. I'd love to enhance the background to this
+  effect.
+- Glow effects. Not only nice to look at, would help distinguish various
+  entities from one another further.
+
+### Content
+
+- I've actually been
+  [writing music for ages](https://soundcloud.com/daniellacosse/piano-deconstruction)
+  and was bummed I couldn't fit anything.
+- ∞

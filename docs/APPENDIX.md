@@ -1,12 +1,12 @@
-<!-- TODO: label + fudge -->
+# <mark>\[DRAFT\]</mark> DARKWHITE Postmortem: Appendix
 
-### `mk_code_sml`
+## `mk_code_sml`
 
 There are multiple aspects to making your code small, and JS13K forces you to be
 intimately familiar with them all. There's no silver bullet. You have to attack
 the size of your game from every direction:
 
-#### Build Pipeline
+### Build Pipeline
 
 Your build pipeline is what compacts your written code down and is really half
 the JS13K battle. The first thing I did was [set one up](./scripts/bundle.ts).
@@ -98,7 +98,7 @@ content, Roadroller is fine for a small "app kernel" if you run it once and
 cache the result. Dunno why I've never seen in it production. I'll be saving
 that one for later!
 
-#### Architecture
+### Architecture
 
 Obviously how you structure your project matters immensely. I'd say the biggest
 wins for me fell into three main categories:
@@ -198,7 +198,7 @@ examples:
 It's weird. As with everything in JS13K, I'd like to say you should only reach
 for this 
 
-### 3D Rotation Bestiary
+## 3D Rotation Bestiary
 
 The most intimidating aspect of 3D programming that held me back for so many
 years was rotations, and after all this, admittedly I still don't feel like I
