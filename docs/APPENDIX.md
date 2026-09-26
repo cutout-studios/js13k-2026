@@ -70,7 +70,7 @@ So, are all of these steps _actually_ necessary? Yes!
 | ✅        | ❌             | ❌                 | 32826  | <50ms   | 68.2%      |
 | ❌        | ❌             | ❌                 | 103136 | <50ms   | 0%         |
 
-<figcaption>*All tests run with `deno run bundle` once or twice on M5 Max Apple Silicon.</figcaption>
+_*All tests run with `deno run bundle` once or twice on M5 Max Apple Silicon._
 
 As you can see each component meaningfully brings the total size of the game
 down.
@@ -169,7 +169,7 @@ const lathe = (loops, divisions) => {
 };
 ```
 
-<figcaption><a href="./libraries/3D/geometry.ts">(Actual implementation here.)</a></figcaption>
+_<a href="./libraries/3D/geometry.ts">(Actual implementation here.)</a>_
 
 Randomness is the most basic form of proceduralization. The simple methods
 written to
@@ -196,7 +196,7 @@ examples:
   it in in the hopes that it might amoritize.
 
 It's weird. As with everything in JS13K, I'd like to say you should only reach
-for this 
+for this
 
 ## 3D Rotation Bestiary
 
@@ -225,10 +225,10 @@ lock). They are impossible to visualize. The best I can picture in my mind is
 like, a shadow on the wall in Plato's cave of the cube being rotated, which
 isn't even right.
 
-Because of this, I've come to find <mark><b>the "axis-angle" representation the
-more natural interface</mark></b>. In axis-angle, you define the XYZ components
-of the rotation axis (like the earth's!) and then the angle of how much around
-that axis you're rotating.
+Because of this, I've come to find the "axis-angle" representation the more
+natural interface. In axis-angle, you define the XYZ components of the rotation
+axis (like the earth's!) and then the angle of how much around that axis you're
+rotating.
 
 Come to think of it, each "Euler Angle" is an axis-angle rotation, one around
 each of the X, Y and Z axes. Which means - while a single axis-angle rotation is

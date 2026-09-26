@@ -1,4 +1,4 @@
-# <mark>\[DRAFT\]</mark> DARKWHITE Postmortem: Post-competition plan
+# <mark>\[DRAFT\]</mark> DARKWHITE Postmortem: Post-JS13K Plan
 
 ## Community Contributions
 
@@ -118,3 +118,9 @@ order:
   [writing music for ages](https://soundcloud.com/daniellacosse/piano-deconstruction)
   and was bummed I couldn't fit anything.
 - ∞
+
+## Other Projects
+
+TODO
+
+<!-- cutout agent, kernel. future games. -->

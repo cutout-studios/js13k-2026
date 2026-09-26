@@ -1,61 +1,56 @@
 # <mark>\[DRAFT\]</mark> DARKWHITE Postmortem
 
-My goals with JS13K this year were simple: learn to build a 3D WebGPU game, make
-it as fun as I possibly can as concisely as possible and get to know the
-community a little bit.
+My goals with JS13K this year were simple: learn to build a 3D game, learn
+WebGPU, make it as fun as I possibly can as concisely as possible and get to
+know the community a little bit. In this respect, I consider my JS13K a success!
 
 ## First-time observations
 
-<!-- TODO: how goal differed from the competition -->
-<!-- TODO: 'curse of knowledge' observations on how specifically it's difficult -->
+I _did_ enter the event assuming that, because everything was so small, people
+would be a bit more patient when it came to the individual games - this isn't
+the case, and with a record number of entries to review this year, that
+explainability is even _more_ important!
 
-1. I came into JS13K thinking "hell yeah, I can proceduralize whatever I want" -
-   <mark><b>The one thing you <em>can't</em> proceduralize is explaining your
-   game,</b></mark> and that's paramount here.
+I was thinking "hell yeah, I can proceduralize whatever I want" -
+<mark><b>unfortunately, this strategy does not extend to making your game
+accessible.</b></mark>
 
-This makes successful innovation _particularly_ tricky in the JS13K format - per
-[Jakob's Law](https://lawsofux.com/jakobs-law/):
-
-> Users spend most of their time on other \[games\]. This means that users
-> prefer your \[game\] to work the same way as all the other \[games\] they
-> already know.
-
-Anything novel incurs "explanation debt" - debt you cannot proceduralize away.
-
-There are many and better ways of managing that debt without slamming down a
-wall of text. For instance, studios like From Software can pay it down with the
-decades of goodwill they've built up.
-
-I'd now recommend the following exercise to a version of my past self that was
-actually trying to "win": embrace
+I'd now recommend the following exercise in hindsight: embrace
 "[documentation driven development](https://gist.github.com/zsup/9434452)" here.
 Write out the entire design of your game in **full detail** to the degree that
-someone else can completely visualize your intent by reading it, and reserve
-space for that text in your bundle until it's time to tutorialize. Leaving in
-the buffer needed to clarify your game will ensure that you always can, and if
-you need to cut something, you can cut it from the buffer as well. This time
-around, I would have spent that budget on more depth cues, visual indicators and
-maybe even a "shooting gallery" - things I had to drop at the very last minute.
+someone else can completely visualize your intent by reading it and _reserve
+space_ for that text in your bundle until it's time to tutorialize. I would have
+spent that budget on more depth cues, redundant visual indicators and maybe even
+a "shooting gallery" - things I had to drop at the last minute.
 
-Ultimately, I'm not even disappointed. "Winning"
-[wasn't not the thing I was optimizing for](#personal-context), in part because
-I knew being a first-timer there were some unmoored assumptions I'd invariably
-make: like, "well, my codebase is turning out to be barely legible, so clearly
-none of the games will be". No, they just had less scope.
+Speaking of depth cues, a side observation: I'd been led to believe my spatial
+intelligence is oddly, annoyingly high, and expected there to be some difference
+between how I found this game from others (meaning - what came naturally for me
+might be challenging otherwise), but the nature of that difference came as a
+pleasant surprise. People showed me where their perception broke down with
+screenshots, explained in detail what was and wasn't working for them, and yet
+I'd say roughly half of the people who playtested took to it anyway!!
 
-2. <mark><b>You can push updates to your project description at any time
-   throughout the review period.</b></mark> - Director's Cut is not your only
-   recourse for catching issues - consider
-   [syncing your description to feedback](https://github.com/js13kGames/mission-darkwhite/pull/3)
-   as it comes in so each players' experience is better than the last!
+I feel that because I stuck with the choices I made, I now understand the nature
+of this difference a lot better and will improve as a designer as a result.
+Heed: your strength can also be your weakness! But it's also probably not as
+strong as you think!
 
-3. Lastly, I'm a bit embarrassed to admit, but for some selfish reason I
-   initially thought that once I'd finally submitted I was done. My exhaustion
-   was partially to blame - but! <mark>_During_ the review period you
-   _definitely_ need to _pay it forward_.</mark> The JS13K platform is
-   specifically designed to push you to leave feedback on the games of those who
-   have left feedback on yours, and that was not clear to me until I'd actually
-   received my first feedback.
+A couple quick tips on the JS13K format itself that might not occur to a
+veteran:
+
+- **You can push updates to your project description at any time throughout the
+  review period.** - Director's Cut is not your only recourse for catching
+  issues. Consider
+  [syncing your description to feedback](https://github.com/js13kGames/mission-darkwhite/pull/3)
+  as it comes in, I definitely noticed players having a better time after I did
+  so.
+
+- Obvious in retrospect, but post-submission you should start reviewing games if
+  you want yours to be reviewed. This is the unspoken contract I didn't
+  understand until I received my first review. I would have started reviewing
+  immediately, instead of eventually, had I realized. It's the right thing to
+  do!
 
 ## Regrets
 
@@ -80,9 +75,9 @@ programming and the golfing.
 
 It is difficult, though, to justify tests or tools for things you're not even
 sure you can fit. This led to a lot of "running ahead" with imperfect logic to
-get a rough idea of how much code it would be or compress to. <mark><b>I also
-found that one line of sketch code ultimately averaged to ~5 bytes in the
-bundle,</b></mark> but YMMV (the final ratio was 1 line:3 bytes).
+get a rough idea of how much code it would be or compress to. I also found that
+one line of sketch code ultimately averaged to ~5 bytes in the bundle, but YMMV
+(the final ratio was 1 line:3 bytes).
 
 I also didn't realize how painful debugging that same "sketch logic" would be.
 Logging from the game loop crashes Safari, and debugging is too tedious. Do we
@@ -92,8 +87,8 @@ unless I'm missing something, it's so bad I am in fact planning on
 [proposing a `console.log` extension](#community-contributions) of my own.
 
 Overall JS13K kinda forces you to choose small software over your own developer
-experience and I <mark><b>got stuck a bit too long in the mindset that I
-couldn't have ANYTHING nice</b></mark>, to my detriment.
+experience and I got stuck a bit too long in the mindset that I couldn't have
+ANYTHING nice, to my detriment.
 
 When I did break that mentality, the lion's share of my total LLM use was in
 service of [spitting out crappy devtools](./devtools/) to make it easier to work
@@ -116,33 +111,36 @@ so I at least gave myself a preview of that.
 
 ## In Closing
 
----
+Thank you very much for reading! If you haven't already, you should certainly at
+try [`MISSION: DARKWHITE`](https://js13kgames.com/games/mission-darkwhite).
 
-[Technical Appendix](./APPENDIX.md) | [What's next?](./PLAN.md)
-
----
-
-If you made it to the end, thank you very much for reading and I hope you
-learned something!
-
-You should certainly at least try
-[`MISSION: DARKWHITE`](https://js13kgames.com/games/mission-darkwhite) if you
-haven't already.
-
-If you'd like to support future endeavors, I encourage you do any of the
+Also, if you'd like to support future endeavors, I encourage you do any of the
 following:
 
 1. [Follow on Bluesky](https://bsky.app/profile/cutoutstudios.com), though I'm
-   unclear what form this social media approach will ultimately take. Just
-   starting out here.
+   just starting out here.
 2. [Apply to join our small Discord!](https://discord.gg/DW5pyrjsYm) It's easy,
    just a bot-prevention measure. Would love to have you - we have weekly
    progress check-ins.
 3. [Sponsoring the GitHub](https://github.com/sponsors/cutout-studios) would
    genuinely help me
-   [qualify for food stamps](https://www.fna.usda.gov/snap/work-requirements) so
-   I can keep doing these sorts of things 😭
+   [qualify for food stamps and health insurance](https://www.fna.usda.gov/snap/work-requirements)
+   so I can keep doing these sorts of things 😭
 
 Thanks again, and until next time! ✌️
 
-- Daniel
+-- Daniel
+
+---
+
+<p align="center">
+  <a href="./APPENDIX.md">
+   Technical Appendix
+  </a>
+  |
+  <a href="./PLAN.md">
+    What's next?
+  </a>
+</p>
+
+---
