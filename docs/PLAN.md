@@ -22,11 +22,15 @@ console.log("%tFailed to load map asset: %s", "Network Error", assetId);
 
 Logs are expensive in the browser due to the IPC and UI calls they make, so
 having a hook to short-circuit them by topic would ameliorate - but not
-completely solve - the issue. Run this in your inspector to see for yourself:
+completely solve - the issue.
+
+<details>
+
+<summary><b>Proof, run this in your inspector</b></summary>
 
 ```ts
 (() => {
-  const stringformattingstuff = (i) =>
+  const formatting = (i) =>
     `Entity #${i}: x=${(Math.random() * 100).toFixed(2)}, y=${
       (Math.random() * 100).toFixed(2)
     }`;
@@ -34,13 +38,13 @@ completely solve - the issue. Run this in your inspector to see for yourself:
 
   let now = performance.now();
   for (let i = 0; i < 1000; i++) {
-    thing.ref = `[Telemetry] ${stringformattingstuff(i)}`;
+    thing.ref = `[Telemetry] ${formatting(i)}`;
   }
   const formattingTime = performance.now() - now;
 
   now = performance.now();
   for (let i = 0; i < 1000; i++) {
-    console.log(`[Telemetry] ${stringformattingstuff(i)}`);
+    console.log(`[Telemetry] ${formatting(i)}`);
   }
   const logTime = performance.now() - now;
 
@@ -50,6 +54,9 @@ completely solve - the issue. Run this in your inspector to see for yourself:
   console.log(thing.ref);
 })();
 ```
+
+</details>
+<br />
 
 This solution is related in part to the
 [2021 `console.context()` proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ContextualLoggingWithConsoleContext/explainer.md),
@@ -118,9 +125,3 @@ order:
   [writing music for ages](https://soundcloud.com/daniellacosse/piano-deconstruction)
   and was bummed I couldn't fit anything.
 - ∞
-
-## Other Projects
-
-TODO
-
-<!-- cutout agent, kernel. future games. -->

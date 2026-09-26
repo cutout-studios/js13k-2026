@@ -95,7 +95,7 @@ Some interesting tradeoffs, here:
 
 This points to an interesting technical takeaway: while unsafe for user-provided
 content, Roadroller is fine for a small "app kernel" if you run it once and
-cache the result. Dunno why I've never seen in it production. I'll be saving
+cache the result. Dunno why I've never seen it in production. I'll be saving
 that one for later!
 
 ### Architecture
@@ -103,7 +103,7 @@ that one for later!
 Obviously how you structure your project matters immensely. I'd say the biggest
 wins for me fell into three main categories:
 
-- **Browser APIs**
+#### Browser APIs
 
 Use them. It's free real estate.
 [Only the ones that are allowed, though.](#allowlist), though the
@@ -146,7 +146,7 @@ switched to picking apart
 [the examples here](https://webgpu.github.io/webgpu-samples/) line by line,
 which I found to be a lot more helpful.
 
-- **Proceduralization**
+#### Proceduralization
 
 Proceduralization basically makes the JS13K world go around. If anything, it
 will force you to work these muscles. My biggest wins were procedural - the
@@ -178,7 +178,7 @@ or to
 [ensure no repeats](https://github.com/cutout-studios/js13k-2026/blob/main/app/game/decks.ts#L26-L34)
 ended up getting used a surprising amount.
 
-- **Dirty Abstractions**
+#### Dirty Abstractions
 
 This was a trick that came to me during the competition - since compressors love
 repetition, what if I were to _force_ abstractions I normally wouldn't? A couple
@@ -246,7 +246,7 @@ answer is yes - they're called **Rotors**.
 [Rotors are sort of underrated in game development.](https://marctenbosch.com/quaternions/)
 Like Axis-Angle, with a Rotor you're representing the 2D cross-section you're
 rotating your object within (that the axis in your Axis-Angle is simply normal
-to). The main difference is that a Rotor is stores its "axis" as three shadows
+to). The main difference is that a Rotor stores its "axis" as three shadows
 (called a "bivector") - the shadows that that cross-section would make were a
 light to shine on it from each of the X, Y and Z directions.
 

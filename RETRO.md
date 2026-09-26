@@ -1,8 +1,10 @@
 # <mark>\[DRAFT\]</mark> DARKWHITE Postmortem
 
-My goals with JS13K this year were simple: learn to build a 3D game, learn
-WebGPU, make it as fun as I possibly can as concisely as possible and get to
-know the community a little bit. In this respect, I consider my JS13K a success!
+My goals with JS13K this year were simple:
+[learn how to build a game](./docs/APPENDIX.md#3d-rotation-bestiary),
+[learn WebGPU](./docs/APPENDIX.md#architecture), make it as fun as I possibly
+can as concisely as possible and get to know the community a little bit. In this
+respect, I consider my JS13K a success!
 
 ## First-time observations
 
@@ -82,9 +84,8 @@ one line of sketch code ultimately averaged to ~5 bytes in the bundle, but YMMV
 I also didn't realize how painful debugging that same "sketch logic" would be.
 Logging from the game loop crashes Safari, and debugging is too tedious. Do we
 really need a separate widget to confirm our games work? A previous boss of mine
-[worked with internet standards bodies](https://datatracker.ietf.org/doc/rfc9460/) -
-unless I'm missing something, it's so bad I am in fact planning on
-[proposing a `console.log` extension](#community-contributions) of my own.
+[works with internet standards bodies](https://datatracker.ietf.org/doc/rfc9460/)
+and I'm curious to get his thoughts on why things are in their current state.
 
 Overall JS13K kinda forces you to choose small software over your own developer
 experience and I got stuck a bit too long in the mindset that I couldn't have
@@ -111,8 +112,11 @@ so I at least gave myself a preview of that.
 
 ## In Closing
 
-Thank you very much for reading! If you haven't already, you should certainly at
-try [`MISSION: DARKWHITE`](https://js13kgames.com/games/mission-darkwhite).
+Thank you very much for reading! I also wanna thank Steve, Alexandra and Thomas
+for advising and playtesting DARKWHITE throughout its development.
+
+If you haven't already, you should
+[certainly give it a try](https://js13kgames.com/games/mission-darkwhite)!
 
 Also, if you'd like to support future endeavors, I encourage you do any of the
 following:
@@ -127,7 +131,7 @@ following:
    [qualify for food stamps and health insurance](https://www.fna.usda.gov/snap/work-requirements)
    so I can keep doing these sorts of things 😭
 
-Thanks again, and until next time! ✌️
+Until next time! ✌️
 
 -- Daniel
 
@@ -136,5 +140,3 @@ Thanks again, and until next time! ✌️
 <p align="center">
   <a href="./docs/APPENDIX.md">Technical Appendix</a> | <a href="./docs/PLAN.md">What's next?</a>
 </p>
-
----
