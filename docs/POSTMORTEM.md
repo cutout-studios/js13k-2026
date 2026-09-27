@@ -13,9 +13,20 @@ would be a bit more patient when it came to the individual games - this isn't
 the case, and with a record number of entries to review this year, that
 explainability is even _more_ important!
 
-I was thinking "hell yeah, I can proceduralize whatever I want" -
-<mark><b>unfortunately, this strategy does not extend to making your game
-accessible.</b></mark>
+I was thinking "hell yeah, I can proceduralize whatever I want."
+Proceduralization, if the term's new to you, just means writing a rule that
+generates content or behavior on the fly instead of hand-authoring every
+instance of it - one function replaces a hundred hand-placed variants, for free,
+forever.
+
+<mark><b>Unfortunately, that strategy doesn't extend to making your game
+legible.</b></mark> Legibility depends on the player building up a small,
+consistent vocabulary they can read at a glance - this shape means bullet, this
+color means hostile. Proceduralization is a variety generator by nature, and
+variety is legibility's natural enemy: every new procedurally-spawned shape or
+color is one more thing the player has to learn to tell apart, and no rule you
+write teaches them that for free the way it generates content for free.
+Explaining has to be paid for explicitly, instance by instance.
 
 I'd now recommend the following exercise in hindsight: embrace
 "[documentation driven development](https://gist.github.com/zsup/9434452)" here.
@@ -26,17 +37,24 @@ spent that budget on more depth cues, redundant visual indicators and maybe even
 a "shooting gallery" - things I had to drop at the last minute.
 
 Speaking of depth cues, a side observation: I'd been led to believe my spatial
-intelligence is oddly, annoyingly high, and expected there to be some difference
-between how I found this game from others (meaning - what came naturally for me
-might be challenging otherwise), but the nature of that difference came as a
-pleasant surprise. People showed me where their perception broke down with
-screenshots, explained in detail what was and wasn't working for them, and yet
-I'd say roughly half of the people who playtested took to it anyway!!
+intelligence is unusually high, which meant going in with a specific curse of
+knowledge - I don't have a felt sense of what's hard about spatial reasoning,
+because it's never been hard for me. I expected that gap to bite me (what came
+naturally for me might be borderline unplayable for someone else), and braced
+for the worst.
 
-I feel that because I stuck with the choices I made, I now understand the nature
-of this difference a lot better and will improve as a designer as a result.
-Heed: your strength can also be your weakness! But it's also probably not as
-strong as you think!
+The surprise wasn't that the gap exists - people absolutely showed me, with
+screenshots and detailed blow-by-blow accounts, exactly where their perception
+broke down. The surprise was how much smaller that gap turned out to be than I'd
+feared: I'd say roughly half of the people who playtested took to it anyway,
+without me changing a thing.
+
+I stuck with the choices I made, and I think I understand this particular blind
+spot a lot better as a result. Tip for other devs: if some part of your own
+skillset is unusually strong, you probably can't feel where the "normal"
+experience actually falls apart - go find out directly, early, instead of
+guessing. You might be pleasantly surprised by how many people push through it
+anyway, same as me.
 
 A couple quick tips on the JS13K format itself that might not occur to a
 veteran:
