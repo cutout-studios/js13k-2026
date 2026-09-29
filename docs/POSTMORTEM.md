@@ -130,7 +130,7 @@ so I at least gave myself a preview of that.
 
 ## In Closing
 
-Thank you very much for reading! I also wanna thank Steve, Alexandra and Thomas
+Thank you very much for reading! I also wanna thank Steve, Alexandra, Dustin and Thomas
 for advising and playtesting DARKWHITE throughout its development.
 
 If you haven't already, you should
