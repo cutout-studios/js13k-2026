@@ -118,3 +118,9 @@ order:
   [writing music for ages](https://soundcloud.com/daniellacosse/piano-deconstruction)
   and was bummed I couldn't fit anything.
 - ∞
+
+---
+
+<p align="center">
+  <a href="./POSTMORTEM.md">Postmortem</a> | <a href="./APPENDIX.md">[WIP] Technical Appendix</a>
+</p>
