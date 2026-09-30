@@ -76,12 +76,16 @@ My friend Alexandra suggested we associate these colors with the
 ["six virtues" of positive psychology](https://en.wikipedia.org/wiki/Virtue#In_modern_psychology) -
 a plan began to take shape:
 
-<img src=./assets/virtues.jpg width=320 alt="virtue brainstorming">
+<p align=center>
+  <img src=./assets/virtues.jpg width=480 alt="virtue brainstorming">
+</p>
 
 Six enemies, based on each virtue, would each have different feels and item
 drops. Soon, we ran a quick paper test with a couple new people:
 
-<img src=./assets/playtest.webp width=320 alt="paper playtesting example">
+<p align=center>
+  <img src=./assets/playtest.webp width=480 alt="paper playtesting example">
+</p>
 
 The reception was good! Players said it was fun. I ran off to build...
 
