@@ -6,7 +6,7 @@ My goals with JS13K this year were simple:
 staying concise, and get to know the community a little bit. By that measure, it
 was a success!
 
-## First-time observations
+## First-time Observations
 
 I _did_ enter the event assuming that, because everything was so small, people
 would be more patient with individual games - not the case. With a record number
