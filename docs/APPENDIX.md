@@ -1,4 +1,6 @@
-# <mark>\[DRAFT\]</mark> DARKWHITE Postmortem: Appendix
+# <mark>\[WIP\]</mark> Technical Appendix
+
+> WIP: I plan to rearrange this into more of a walkthrough
 
 ## `mk_code_sml`
 

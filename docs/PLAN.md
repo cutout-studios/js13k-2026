@@ -1,18 +1,18 @@
-# <mark>\[DRAFT\]</mark> DARKWHITE Postmortem: Post-JS13K Plan
+# Post-JS13K Plan
 
 ## Community Contributions
 
-Given the difficulties I encountered in developing MISSION DARKWHITE, I have
-begun thinking about how to improve ecosystem as a whole.
+The difficulties I hit developing MISSION DARKWHITE got me thinking about
+improving the ecosystem as a whole.
 
-1. Something that irked me - there's no real good way to debug your game loop
-   without writing something custom. Given the roll out of WebGPU, one would
-   hope that the standards community is taking the game development use case
-   more seriously. And maybe they are, but just... slowly.
+1. Something that irked me - there's no good way to debug your game loop without
+   writing something custom. Given the rollout of WebGPU, one would hope the
+   standards community is taking the game development use case more seriously.
+   And maybe they are, but slowly.
 
-   It's small, but I'm
-   [proposing an improvement](https://github.com/whatwg/console/issues/255) to
-   the [WHATWG console](https://whatwg.org/stages#process) that should make
+   It's small, but I've
+   [proposed an improvement](https://github.com/whatwg/console/issues/255) to
+   the [WHATWG](https://whatwg.org/stages#process) console that should make
    debugging _slightly_ better, `%t`:
 
 ```js
@@ -21,12 +21,11 @@ console.log("%tFailed to load map asset: %s", "Network Error", assetId);
 ```
 
 Logs are expensive in the browser due to the IPC and UI calls they make, so
-having a hook to short-circuit them by topic would ameliorate - but not
-completely solve - the issue.
+having a hook to short-circuit them by topic would assist this use case.
 
 <details>
 
-<summary><b>Proof, run this in your inspector</b></summary>
+<summary><b>[As proof, run this in your inspector]</b></summary>
 
 ```ts
 (() => {
@@ -58,31 +57,28 @@ completely solve - the issue.
 </details>
 <br />
 
-This solution is related in part to the
+This idea is related to the
 [2021 `console.context()` proposal](https://github.com/MicrosoftEdge/MSEdgeExplainers/blob/main/ContextualLoggingWithConsoleContext/explainer.md),
-which died mainly because it added too much complexity to existing systems; `%t`
+which died because it added too much complexity to existing systems; `%t`
 shouldn't.
-
-Regardless, it's a small gesture. I plan to get in touch with my old boss to see
-if he can't help me strategize further.
 
 2. I found out that
    [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) doesn't
-   actually expose
-   [property mangling](https://github.com/evanw/esbuild/issues/218), and I can
-   find no record of it being attempted, so I'll be working on a (hopefully)
-   small PR to expose that feature from esbuild.
+   expose [property mangling](https://github.com/evanw/esbuild/issues/218), and
+   I can find no record of it being attempted, so I'll be working on a
+   (hopefully) small PR to expose that feature from esbuild (link here to
+   follow).
 
 ## Director's Cut
 
-I've thought a lot about this, and I'll do a Director's Cut only if MISSION
-DARKWHITE somehow becomes noteworthy (so, no). The codebase is a (necessary)
-mess and I would have to mostly rewrite it before proceeding.
+I've thought about this, and I'll do a Director's Cut only if MISSION DARKWHITE
+somehow becomes noteworthy (so, no). The codebase is a (necessary) mess and I
+would have to mostly rewrite it before proceeding.
 
 Don't get me wrong, I like this game and wouldn't mind developing it further,
 but currently have other priorities.
 
-For posterity though, here's the priority list of what I'd change in rough
+For posterity, a priority list of what I'd change in rough
 [impact/effort](https://www.projectmanager.com/blog/impact-effort-matrix/)
 order:
 
@@ -90,38 +86,35 @@ order:
 
 - Restore the "continuous" mode I accidentally cut in the final moments when
   replacing the `alert()` calls.
-- Restructure the graphics pipeline to properly handle transparency and
-  instancing. This means breaking up instance groups by size, depth, and
-  material data.
+- Restructure the graphics pipeline to handle transparency and instancing. This
+  means breaking up instance groups by size, depth, and material data.
 
 ### Accessibility
 
-- Add in the visual cues that were top of the list of things I cut:
-  - Visual indicator for when the player took damage. Could have simply reused
-    the enemy code, in hindsight.
+- Add the visual cues that were top of list before I ran out of space:
+  - Indicator for when the player took damage. Could have reused the enemy code,
+    in hindsight.
   - Highlighting dropped items. I'd wanted to have items pause and float in the
     player's plane for a moment, little arrows pointing to them based on the
     rank of the item (e.g. rank 2 = 2 arrows).
-  - Bullet "glow" and illumination/shadow to make it extremely clear where in
-    the world those bullets were relative to the enemies, with additional
-    landmarks to boot.
-- Map the WASD controls to a virtualized stick. This should make the ship
+  - Bullet "glow" and illumination/shadow to make distinct in the world where
+    bullets were relative to enemies
+  - Landmarks of some form to further orient the player.
+- Map the WASD controls to a virtualized stick. This would make the ship
   steering even smoother and allow for controller support.
-- Some sort of lock-on or auto-aim mechanism. This would make way for supporting
-  coarser control setups, like trackpads or maybe mobile.
+- Some lock-on or auto-aim mechanism. This allow for coarser control setups,
+  like trackpads or even mobile.
 
 ### Graphics
 
 - Additional particle effects: ship thrusters, explosions.
-- A bit of narrative color: I'd envisioned this sector of space to take place in
-  a vast crystalline structure. I'd love to enhance the background to this
-  effect.
-- Glow effects. Not only nice to look at, would help distinguish various
-  entities from one another further.
+- Narrative color: I'd envisioned this sector of space to take place in a vast
+  crystalline structure. I'd love to enhance the background to this effect.
+  Maybe a short story intro as well.
 
 ### Content
 
-- I've actually been
+- I've been
   [writing music for ages](https://soundcloud.com/daniellacosse/piano-deconstruction)
   and was bummed I couldn't fit anything.
 - ∞
