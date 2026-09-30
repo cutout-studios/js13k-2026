@@ -25,8 +25,8 @@ consistent vocabulary they can read at a glance - this shape means bullet, this
 color means hostile. Proceduralization is a variety generator by nature, and
 variety is legibility's natural enemy: every new procedurally-spawned shape or
 color is one more thing the player has to learn to tell apart, and no rule you
-write teaches them that for free the way it generates content for free.
-Explaining has to be paid for explicitly, instance by instance.
+write pays down that cost the way it generates content for free. Explaining has
+to be paid for explicitly, instance by instance.
 
 I'd now recommend the following exercise in hindsight: embrace
 "[documentation driven development](https://gist.github.com/zsup/9434452)" here.
@@ -49,12 +49,10 @@ broke down. The surprise was how much smaller that gap turned out to be than I'd
 feared: I'd say roughly half of the people who playtested took to it anyway,
 without me changing a thing.
 
-I stuck with the choices I made, and I think I understand this particular blind
-spot a lot better as a result. Tip for other devs: if some part of your own
-skillset is unusually strong, you probably can't feel where the "normal"
-experience actually falls apart - go find out directly, early, instead of
-guessing. You might be pleasantly surprised by how many people push through it
-anyway, same as me.
+Because I stuck with the choices I made I now understand this particular blind
+spot a lot better. So: if some part of your skillset is unusually strong and you
+can't feel where "normal" is - go find out directly! You might be pleasantly
+surprised by how many people push through it anyway, same as me.
 
 A couple quick tips on the JS13K format itself that might not occur to a
 veteran:
@@ -72,6 +70,30 @@ veteran:
   immediately, instead of eventually, had I realized. It's the right thing to
   do!
 
+## Design Walkthrough
+
+I really wanted to try giving a rail shooter RPG elements. I figured it would be
+fairly easy to do the rail shooter in 3D compactly, and I would invest the those
+bytesavings into the RPG parts.
+
+The theme dropped and my friends and I started brainstorming. It was funny - the
+branding I'd just conceived was actually rainbow-oriented with six colors, so I
+figured why not, let's use those.
+
+My friend Alexandra suggested we associate these colors with the
+["six virtues" of positive psychology](https://en.wikipedia.org/wiki/Virtue#In_modern_psychology) -
+a plan began to take shape:
+
+![virtues](./assets/virtues.jpg)
+
+Six enemies, based on each of these virtues, would each have different feels and
+drop different types of items. It wasn't long before we ran a quick paper test
+with a couple new people:
+
+![playtest](./assets/playtest.webp)
+
+The reception was good! Players said it was fun. I ran off to build...
+
 ## Regrets
 
 ### 1. **Taking on a bit more than my current body could handle.**
@@ -83,7 +105,7 @@ run out of space in the first couple weeks" - I ended up working right up to the
 deadline, and I probably could have kept scraping against the byte limit for
 another few days.
 
-I still managed to complete ~90% of what I'd initially planned (with the
+I still managed to complete ~90% of what was initially planned (with the
 remaining 10% still being fairly important), but don't be fooled -
 <mark><b>Despite the month-long window, JS13k is just as much about energy and
 time management as it is byte management.</b></mark>
@@ -130,8 +152,10 @@ so I at least gave myself a preview of that.
 
 ## In Closing
 
-Thank you very much for reading! I also wanna thank Steve, Alexandra, Dustin and Thomas
-for advising and playtesting DARKWHITE throughout its development.
+Thank you very much for reading! I also wanna thank Steve, Alexandra, Dustin and
+Thomas for advising and playtesting DARKWHITE throughout its development. I'd've
+added them as team members but they either don't have GitHub accounts or didn't
+push code.
 
 If you haven't already, you should
 [certainly give it a try](https://js13kgames.com/games/mission-darkwhite)!
