@@ -207,15 +207,14 @@ of Quaternions. So if we can actually visualize them, why don't we use Rotors
 everywhere? Unclear. I think Quaternions just got there first (not unlike the
 QWERTY keyboard layout).
 
-### \[WIP\] `WebAudio`
-
-<!-- TODO: I chose this method over the alternative for its consistency and flexibility -->
+### `WebAudio`
 
 The other major API this game leans on is
-[WebAudio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) -
-there's no room in the budget for sample files, so every sound is synthesized
-procedurally from a handful of basic waveforms, rendered once into an
-`AudioBuffer` and reused everywhere:
+[WebAudio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
+
+Some kind of audio generation is necessary for JS13K. There's no room in the
+budget for sample files, so every sound must be synthesized procedurally from a
+handful of basic waveforms.
 
 ```ts
 const renderCycle = (shape: (phase: number) => number, cycles = 32) => {
@@ -228,24 +227,56 @@ const renderCycle = (shape: (phase: number) => number, cycles = 32) => {
 };
 
 const SINE_BUFFER = renderCycle((phase) => sin(phase * PI * 2));
-const SQUARE_BUFFER = renderCycle((phase) => phase < 0.5 ? 1 : -1);
+const SAWTOOTH_BUFFER = renderCycle((p) =>
+  (p * 2 - 1) * Math.min(1, (1 - p) * 20, p * 20)
+);
 ```
 
 _<a href="https://github.com/cutout-studios/js13k-2026/blob/main/libraries/audio/buffer.ts">(Actual
 implementation here.)</a>_
 
-A `Sound` is just a schedule of knob movements - gain, pitch, pan - layered on
-top of one or more of those buffers, played through a per-sound
-[`DynamicsCompressorNode`](https://developer.mozilla.org/en-US/docs/Web/API/DynamicsCompressorNode)
-into one shared master lowpass filter, which does double duty as a mix bus and a
-cheap "everything's coming from the same small speaker" cohesion trick.
+I chose this method over using
+[oscillator knobs](https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode)
+because it allowed me to generate more complex fundamentals (like a the sawtooth
+wave above) while maintaining the implementation consistency the compression
+algorithm loves.
 
-_<a href="https://github.com/cutout-studios/js13k-2026/blob/main/libraries/audio/createSound.ts">(Actual
-implementation here.)</a>_
+With those building blocks in place, I assembled the final sounds by gluing
+multiple audio [loops](#timing) together via compressor / lowpass filters. All
+told, my final sound definitions were basically just data:
 
-Positional audio is just as procedural: pan is derived directly from an object's
-X coordinate on screen, rather than anything resembling a real spatial audio
-graph.
+```ts
+const defaultWeaponSound = createSound(
+  // Noise layer: the muzzle flare.
+  [NOISE_BUFFER, [
+    [
+      [
+        (1) // knob turned (playback rate)
+          [0.7, 1], // knob value (random btwn 0.7 - 1)
+      ],
+      0, // breakpoint timing (0s)
+    ],
+    [[0, 0], 0.01], // knob 0 is gain
+    [[0, [0.01, 0.02]], 0.003],
+    [[0, 0.01], 0.003],
+    [[0, 0], 0.06], // layer goes silent by 0.06s
+  ]],
+  // Low-end to make the sound punchy
+  [SINE_BUFFER, [
+    [[1, [0.2, 0.6]], 0],
+    [[0, 0.02], 0.006],
+    [[1, [0.1, 0.16], true], 0.03],
+    [[0, 0], 0.1], // layer goes silent later - 0.1s
+  ]],
+  // A subtler "laser pistol" sound within.
+  [BUZZ_BUFFER, [
+    [[1, [4.3, 6]], 0],
+    [[0, 0.01], 0.03],
+    [[0, 0], 0.14],
+    [[1, [0.2, 0.5]], 0], // pitch sweep
+  ]],
+);
+```
 
 ## Utilities & Proceduralization
 
