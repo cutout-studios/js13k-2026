@@ -13,44 +13,51 @@ first thing I did was
 [set one up](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts).
 Three components do the compacting:
 
-- **Minification** - strips human-relevant information from the code: methods
-  and data get renamed from what you called them (`myCoolFunction`) to the
-  nearest-available, shortest identifier (`a`, `b`, `c`, and so on).
-  - Because JavaScript compiles "just in time," minification has a nice side
-    effect: less input to scan means slightly faster initial execution, too.
-  - Minification is "intent preserving," so each language in your program needs
-    its own minifier. I used
-    [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) for
-    TypeScript,
-    [`html-minifier-next`](https://github.com/j9t/html-minifier-next) for HTML
-    and CSS,
-    [`esbuild-minify-templates`](https://github.com/MaxMilton/esbuild-minify-templates)
-    for raw text 🤷, and [`wgsl-plus`](https://github.com/JSideris/wgsl-plus)
-    for the shader - it isn't complete, and
-    [`wgslender`](https://github.com/HugoDaniel/wgslender) might have saved me
-    some work.
-  - Print your minified code every build - you'll spot things that could be
-    smaller. Catching preserved object properties this way led to converting
-    everything into tuples, functions, inlined values, and system aliases (I'd
-    had property mangling at one point but dropped it) - a minimum 500-byte win,
-    the equivalent of 2-3 small features.
-- [**Roadroller**](https://github.com/lifthrasiir/roadroller) - patron saint of
-  JS13K. It does a random walk over the text you feed it and procedurally finds
-  a bitpacking solution, injected into your app shell via your chosen method.
-  - Prefer the "write" method over "eval" (s/o [@scmx](https://github.com/scmx)
-    for the advice!!) - Roadroller hasn't been updated in years and chokes on
-    modern JavaScript under "eval".
-  - It's random, so run it multiple times and
-    [keep the best result](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts#L133-L156).
-    The CLI can
-    [do this automatically](https://github.com/lifthrasiir/roadroller#output-configuration)
-    if you're just running shell commands.
-- **Compression** - like Roadroller, finds patterns across the entire input, but
-  folds them together at a <mark><b>binary</b></mark> level instead of a text
-  one. It's "destructive" (a compressed payload needs to be "uncompressed" to
-  run again) and deterministic.
+### Minification
 
-Each step earns its keep:
+Minification strips human-relevant information from the code: methods and data
+get renamed from what you called them (`myCoolFunction`) to the
+nearest-available, shortest identifier (`a`, `b`, `c`, and so on). Because
+JavaScript compiles "just in time," minification can have side effect of
+increasing your initial execution time slightly.
+
+Minification is "intent preserving," so the process needs to understand the
+language you're compacting. I used
+[`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) for
+TypeScript, [`html-minifier-next`](https://github.com/j9t/html-minifier-next)
+for HTML and CSS,
+[`esbuild-minify-templates`](https://github.com/MaxMilton/esbuild-minify-templates)
+for raw text, and [`wgsl-plus`](https://github.com/JSideris/wgsl-plus) for the
+shader - it isn't complete, and
+[`wgslender`](https://github.com/HugoDaniel/wgslender) might have saved me some
+work.
+
+**Tip:** Read your minified code - you'll spot things that could be even
+smaller. I caught code that was then compacted into tuples, functions, inlined
+values, and system aliases - a roughly 500-byte savings, equivalent to a couple
+small features.
+
+### [Roadroller](https://github.com/lifthrasiir/roadroller)
+
+Patron saint of JS13K, Roadroller does a random walk over the text you feed it
+and procedurally finds a bitpacking solution. It injects that result into an app
+shell via your chosen method. **Tips:**
+
+- Prefer the "write" method over "eval" (s/o [@scmx](https://github.com/scmx)
+  for the advice!!) - Roadroller hasn't been updated in years and chokes on
+  modern JavaScript under "eval".
+- It's random, so run it multiple times and
+  [keep the best result](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts#L133-L156).
+  The CLI can
+  [do this automatically](https://github.com/lifthrasiir/roadroller#output-configuration).
+
+### Compression
+
+Like Roadroller, finds patterns across the entire input, but folds them together
+at a <mark><b>binary</b></mark> level instead of a text one. Unlike the above
+methods, the result needs to be uncompressed before it can be run again.
+
+### Putting it Together
 
 | Minified? | Road Roller'd? | Compressed w/ ECT? | Size   | Timing* | Compaction |
 | --------- | -------------- | ------------------ | ------ | ------- | ---------- |
@@ -66,8 +73,7 @@ Each step earns its keep:
 _*All tests run with `deno run bundle` once or twice on M5 Max Apple Silicon._
 
 JS13K only allows the DEFLATE family of compression algorithms, but I couldn't
-help but see how [Brotli](https://en.wikipedia.org/wiki/Brotli) would have
-fared - the following are all compressed with Brotli instead:
+help but try [Brotli](https://en.wikipedia.org/wiki/Brotli):
 
 | Minified? | Road Roller'd? | Size      | Timing* | Compaction |
 | --------- | -------------- | --------- | ------- | ---------- |
@@ -76,30 +82,27 @@ fared - the following are all compressed with Brotli instead:
 | ❌        | ✅             | 20231     | >5m     | 80.4%      |
 | ❌        | ❌             | 21225     | ~100ms  | 79.4%      |
 
-A couple of interesting tradeoffs:
+Some tradeoffs:
 
 - Brotli without Roadroller is only 2% bigger than the submitted game, but
   _meaningfully_ faster to build (milliseconds vs. minutes)!
-- Roadroller on _top_ of Brotli saves _even more_ bytes! Crying knowing I could
-  have had another precious 134B to work with. If only!
+- Roadroller on _top_ of Brotli saves _even more_ bytes! Crying that I coulda
+  had another precious 134B to work with. If only!
 
-Which points to a technical takeaway: Roadroller's "write" method decodes via
-`document.write`, which makes it a non-starter for anything handling
-user-provided content. But if you run it once at build time and ship the cached
-result - like every JS13K entry already does - the unpacking cost is paid once,
-by you, not per-request. I've genuinely never seen this used in production
-outside JS13K, even though it seems like it'd be a real (if narrow) win anywhere
-your app kernel is small enough that the unpacking overhead is negligible.
-Suspicious. I'll be saving that one for later!
+**Roadroller in production?** Roadroller's "write" method decodes via
+`document.write`: a non-starter for user-provided content. But if run against
+your core logic I don't see why you can't ship the cached the result. Seems like
+a potential win if the unpacking overhead is small!
 
 ## Browser APIs
 
-Use them. It's free real estate -
-[only the ones that are allowed, though](#allowlist). Instead of building a new
-shader for the "galaxy" effect, I just used an animated CSS gradient - far more
-compact than the alternative.
+An big part of keeping your entry small is leaning on Browser APIs wherever
+possible. There were two in my entry: `WebAudio` (very common) and `WebGPU`
+(brand new this year!).
 
-### WebGPU
+### \[WIP\] `WebGPU`
+
+> WIP: Inline code examples
 
 WebGPU isn't actually that bad! The API is "flat" - very configuration-heavy,
 which is a good thing, ultimately. All that configuration does is let you
@@ -123,8 +126,6 @@ flowchart LR
 
 Everything else WebGPU provides is basically just different options for how to
 do that. Once I had this mental model, the API became a lot less intimidating.
-
-> WIP: Inline code examples
 
 Here's what that looks like in practice. Every object in the game shares one
 [pipeline layout](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/webgpu/setupDevice.ts)
@@ -167,52 +168,48 @@ switched to picking apart
 [the examples here](https://webgpu.github.io/webgpu-samples/) line by line - a
 lot more helpful.
 
-#### 3D Rotation Bestiary
+#### Aside: 3D Rotation
 
-The most intimidating part of 3D programming, and what held me back for years,
-was rotations - and after all this, I still don't fully understand them.
+The most intimidating part of 3D programming for me was always rotations. This
+project helped me understand them further, but not completely.
 
-To get the player's ship to both roll and aim the way it currently does, I had
-to maintain a separate "roll" parameter, and I'm not entirely sure why, but...
+The most naïve rotation approach is **Euler Angles**. You represent a rotation
+as three individual rotations around the X, Y, and Z axes. The problem is that
+each rotation risks losing a degree of freedom and incurring **Gimbal Lock**.
+Rotating your model around the X-axis drags your Y axes into your Z, slowly
+coupling them.
 
-My sense is it's the same deal that limits the most naïve rotation approach:
-**Euler Angles**. Represent a rotation as three separate rotations around the X,
-Y, and Z axes, and you can lose a degree of freedom entirely - but only at a
-specific alignment, not gradually with every rotation. Rotating your model
-around the X-axis also drags your Y and Z axes around together; if that rotation
-lands at exactly 90°, Y and Z end up pointing the same direction, and rotating
-around either one does the same thing. Right at that instant, you've permanently
-lost a degree of freedom.
+This is why **Quaternions** exist - best I can describe it, this approach to
+rotation adds a sort of "fake" fourth dimensional, degree-of-freedom buffer
+that's used to "fold around" the lock. They're impossible to visualize: the best
+I can picture is the shadow of a rotating cube on the wall of Plato's cave,
+which isn't even right.
 
-This is why **Quaternions** exist - they add an extra, "fake" fourth
-degree-of-freedom buffer that ensures you never run out (it's not fake exactly -
-technically you're using that fourth dimension to "fold around" the lock).
-They're impossible to visualize; the best I can picture is a shadow on the wall
-in Plato's cave of the cube being rotated, which isn't even right.
+And so, I found the "axis-angle" representation to be the more natural
+interface. In it, you simply specify the axis of rotation and the amount the
+object should be rotated around that axis. Each "Euler Angle" is essentially
+three axis-angle rotations.
 
-Because of this, I've come to find the "axis-angle" representation the more
-natural interface: define the XYZ components of the rotation axis (like the
-earth's!), then the angle you're rotating around it. Each "Euler Angle" is
-actually an axis-angle rotation, one around each of the X, Y and Z axes - which
-means a single axis-angle rotation isn't at risk of lock like the three
-cumulative Euler Angles are, though multiple axis-angle rotations, I believe,
-still can be. This comes back to the player ship: one axis-angle rotation for
-aiming, another for roll - but no more. Mostly safe.
+Which begs the question - are multiple Axis-angle rotations still at risk for
+lock? Yes! To get the player's ship to both roll and aim the way it currently
+does, I have a separate "roll" rotation... but with two rotations applied
+roughly orthogonal to each other, it's mostly safe. Mostly.
 
-Which brings me to the rotation representation I didn't get to explore: if you
-can compose multiple Quaternions without risk of lock, is there a similar
-representation that follows from Axis-Angle? Yes - **Rotors**.
-[Rotors are sort of underrated in game development.](https://marctenbosch.com/quaternions/)
-Like Axis-Angle, a Rotor represents the 2D cross-section you're rotating within
-(the axis in Axis-Angle is simply normal to it) - but it stores that "axis" as
-three shadows (a "bivector"), the shadows that cross-section would make if a
-light shone on it from each of the X, Y, and Z directions. Because they're
-represented this way, Rotors don't collapse - you combine them by composing
-those shadows. No risk of rotating one axis into another, and they're just as
-computationally cheap as Quaternions, and interpolate just as fine. So why don't
-we use Rotors everywhere? Unclear. I think Quaternions just got there first.
+There was one rotation method I didn't get to explore: **Rotors**. They're like
+the Quaternion analogue to axis-angle and
+[are sort of underrated in game development.](https://marctenbosch.com/quaternions/)
+Like Axis-Angle, a Rotor contains the orientation you're rotating within - but
+it stores that "axis" as three shadows (a "bivector"). These are the shadows
+your plane of rotation would make if you shone a light on it from each of the
+XYZ directions. This representation can't lock - you simply combine their
+shadows. No risk of rotating one axis into another, with all the same advantages
+of Quaternions. So if we can actually visualize them, why don't we use Rotors
+everywhere? Unclear. I think Quaternions just got there first (not unlike the
+QWERTY keyboard layout).
 
-### Audio
+### \[WIP\] `WebAudio`
+
+<!-- TODO: I chose this method over the alternative for its consistency and flexibility -->
 
 The other major API this game leans on is
 [WebAudio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API) -
@@ -250,15 +247,120 @@ Positional audio is just as procedural: pan is derived directly from an object's
 X coordinate on screen, rather than anything resembling a real spatial audio
 graph.
 
-## Utilities
+## Utilities & Proceduralization
 
-Beyond the two big APIs, a handful of small shared utilities ended up doing an
-outsized amount of the compaction work.
+Beyond the Browser APIs, we needed a few utilities to bring everything together:
 
-Proceduralization basically makes the JS13K world go around. My biggest wins
-were procedural - the diversity of geometry I had exploded when I realized I
-could generate everything as a [lathe](https://en.wikipedia.org/wiki/Lathe)
-does:
+### Timing
+
+Games require a huge emphasis on timing that regular applications do not have.
+At [the heart of DARKWHITE](../app/module.ts) is a ticking clock:
+
+```ts
+startClock((tickLength) => {
+  // ...
+
+  updateHUD(gameState, tickLength);
+  updateGame(gameState, tickLength);
+
+  // ...
+});
+```
+
+The time values provided by this central clock feed into every animation and
+action sequence throughout the game. For instance, the firing patterns of
+different weapons:
+
+```ts
+const burstFireLoop = createActionLoop([
+  [doNothing, 0.85], // seconds
+  [fireAction],
+  [doNothing, 0.15],
+  [fireAction],
+]);
+
+// later, to advance the loop:
+burstFireLoop(tickLength);
+```
+
+### Randomness
+
+Randomness is a basic form of procedualization and is essential for your games'
+variety.
+
+Naively calling `Math.random()` can be a problem if you want the results to
+cluster around a certain value. Averaging multiple calls converges on a bell
+curve:
+
+```ts
+const bell = () => (random() + random() + random()) / 3;
+```
+
+Loot-dropping mechanics have you picking from a range of values quite often, and
+so the following got used a surprising amount:
+
+```ts
+const range = (lo, hi) => lo + (hi - lo) * bell();
+```
+
+Another problem with unadulterated randomness is that the same value can be
+picked multiple times in sequence, making something that is truly random feel
+non-random. This was solved with a simple `deck` primitive:
+
+```ts
+export const draw = (deck, n = 2) => {
+  const value = deck.pop();
+
+  // inserts the card randomly into the back n cards
+  deck.splice(round(range(0, n)), 0, value);
+
+  return value;
+};
+```
+
+I've since learned this is referred to the "bag of marbles" approach
+in-industry.
+
+### "Dirty Abstractions"
+
+During the competition, I realized: if compressors love repetition, what if I
+forced abstractions I normally wouldn't reach for?
+
+This lead to `doTimes`:
+
+```ts
+const doTimes = <T, K>(
+  enumerator: number | Array<K>,
+  action: (element: K, index: number) => T,
+): T[] =>
+  (typeof enumerator == "number"
+    ? arrayFrom(Array(max(0, round(enumerator))).keys())
+    : enumerator)
+    .map(action as (element: K | number, index: number) => T);
+```
+
+I used this in place of pretty much every loop I could. Felt gross. Save me
+hundreds of bytes.
+
+_(This also didn't always work.
+[`flat`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/common.ts#L39-L63)
+ended up being net neutral, but migrating to it was so much work I just left it
+in, hoping it might amortize.)_
+
+Despite the player ship being objectively a different thing than the enemy
+ships, I forced both the player and the enemies to
+[use the same ship code](../app/game/ship/module.ts). It sucks. +100 bytes.
+
+I'd like to say you should only reach for this technique if you're desperate.
+But... it's 13kB. You _will_ be desperate.
+
+### Higher-order Proceduralization
+
+Let's end with a pallette cleanser. My biggest win was unsurprisingly
+procedural.
+
+The diversity of geometry I could include exploded once I realized I could
+generate everything as a [lathe](https://en.wikipedia.org/wiki/Lathe) does:
 
 ```ts
 const lathe = (loops, divisions) => {
@@ -279,40 +381,38 @@ const lathe = (loops, divisions) => {
 _<a href="https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/geometry.ts">(Actual
 implementation here.)</a>_
 
-Randomness is the most basic form of proceduralization. Weighted randomness -
-averaging a few `random()` calls together to bias rolls toward the center of a
-range instead of flat-uniform - and a simple "no immediate repeats" deck both
-ended up
-[getting used](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/random.ts#L6-L8)
-a
-[surprising amount](https://github.com/cutout-studios/js13k-2026/blob/main/app/game/decks.ts#L26-L34).
+I was even able to write a simple
+[CSG](https://en.wikipedia.org/wiki/Constructive_solid_geometry) on top of this:
 
-Timing needed the same treatment. A tiny
-[`startClock`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/clock/startClock.ts)
-wraps `requestAnimationFrame` with delta-time clamping, and
-[`createActionSequencer`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/clock/createActionSequencer.ts)
-turns a list of `[action, duration]` pairs into a loop-able, declarative
-behavior timeline - one small utility standing in for every enemy attack pattern
-and weapon-firing rhythm in the game, instead of one-off timers scattered
-everywhere.
+```ts
+// green ship
+flattenObjects(
+  // hull
+  createObject([], createSphere(0.20, 24)),
+  // right prong
+  createObject(
+    [
+      // xyz position
+      [0.2, -0.08, 0.15],
 
-This was also where "Dirty Abstractions" came in - a trick that came to me
-during the competition: since compressors love repetition, what if I forced
-abstractions I normally wouldn't reach for? A couple examples:
+      // axis-angle rotation
+      [[0, 1, -1], 1.25],
+    ],
+    createPyramid([0.065, 0.065, 0.095], 12),
+  ),
+  // left prong
+  createObject(
+    [[-0.2, -0.08, 0.15], [[0, 1, -1], -1.25]],
+    createPyramid([0.065, 0.065, 0.095], 12),
+  ),
+);
+```
 
-- In place of pretty much every loop I could, I wrote
-  [`doTimes`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/common.ts#L30-L38).
-  Felt gross. Saved me hundreds of bytes.
-- Despite the player ship being objectively a different thing than the enemy
-  ships, I forced both the player and the enemies to use the same ship code. It
-  sucked. +100 bytes.
-- This also didn't always work.
-  [`flat`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/common.ts#L39-L63)
-  ended up being net neutral, but migrating to it was so much work I just left
-  it in, hoping it might amortize.
-
-It's weird. As with everything in JS13K, I'd like to say you should only reach
-for this technique if you're desperate. But... you _will_ be desperate.
+Paired with the
+[rotating pallette face-painting approach](../libraries/3D/materials/paint.ts),
+the part that typically dwarfs your entry (the visual content) ended up being a
+fraction of the final result. Of course, this art style has been described as
+"angry shapes", which is very fair.
 
 ---
 
