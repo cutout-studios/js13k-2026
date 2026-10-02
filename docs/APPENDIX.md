@@ -2,6 +2,8 @@
 
 > WIP: finish WebGPU section
 
+<!-- NOTE: this walkthrough is not exhaustive, i learned so much, i can't condense it all  -->
+
 JS13K forces you to get intimately familiar with every way to make code small -
 there's no silver bullet, you have to attack size from every direction. Here's a
 walkthrough of how DARKWHITE got to 13KB.
@@ -107,10 +109,12 @@ for JS13K _because_ it has finally been turned on by default in both Chrome and
 Firefox. The API _sounds_ intimidating but after some time with it, I didn't
 find it too bad.
 
-The API is very, how do you say, "flat": configuration-heavy. Declarative. Generally speaking, all the configuration does is let you
-customize how your data ends up in your shader code. 
+The API is very, how do you say, "flat": configuration-heavy. Declarative.
+Generally speaking, all the configuration does is let you customize how your
+data ends up in your shader code.
 
-Specifically, `Layout`s allow you to organize the sent data across one or more `BindGroups`; your `RenderPipeline` configures how that data gets sent to which
+Specifically, `Layout`s allow you to organize the sent data across one or more
+`BindGroups`; your `RenderPipeline` configures how that data gets sent to which
 shader calls; the `CommandEncoder` executes the actual process.
 
 ```mermaid
@@ -133,8 +137,9 @@ flowchart LR
   GPU --> CommandEncoder
 ```
 
-Everything WebGPU provides is basically just different options for how to
-do all that. Once I had settled on this mental model, the API became a lot less intimidating.
+Everything WebGPU provides is basically just different options for how to do all
+that. Once I had settled on this mental model, the API became a lot less
+intimidating.
 
 ### Managing Render Data: `Vertex` vs. `PipelineLayout`
 
@@ -153,9 +158,11 @@ vertex - so geometry is
 into a GPU buffer and never touched again: no indices, no per-vertex color or
 normal data. -->
 
-### Shader Code: `RenderPipeline`
+### WGSL Shader Code: `RenderPipeline`
 
 TODO
+
+<!-- one of the parts i need to dive deeper on. it's a whole world I barely touched. book of shaders -->
 
 <!-- That leaves instancing to do the real work. Objects that share the same geometry
 and material get batched into a group, and every frame the
@@ -181,7 +188,37 @@ colors. -->
 
 ### The Actual Rendering Process: `CommandEncoder`
 
-TODO
+With everything configured and loaded into the GPU's working memory (VRAM),
+executing the actual rendering was fairly straightforward. I simply had to
+define my rendering job, iterate over everything I wanted to draw, and queue
+that job in the GPU for completion:
+
+```ts
+// start a rendering job for the frame
+const job = gpu.createCommandEncoder();
+const step = job.beginRenderPass(canvasSettings);
+
+// each object group shares shape and color data
+for (const objectGroup of objectGroups) {
+  // point to data in VRAM
+  step.setVertexBuffer(slotID, objectGroup.vertexDataLocation);
+
+  step.setPipeline(objectGroup.pipeline);
+  setPipelineData(step, objectGroup);
+
+  // execute shader code - drawing all objects in one go
+  step.draw(objectGroup.vertexData.length, objectGroup.length);
+}
+
+step.end();
+gpu.queue.submit([job.finish()]);
+```
+
+_<a href="https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/webgpu/createRenderTarget.ts">(Actual
+implementation here.)</a>_
+
+Do this every `requestAnimationFrame` and bam, you have a highly-performant 3D
+rendering engine!
 
 #### Aside: 3D Rotation
 
@@ -457,8 +494,8 @@ flattenObjects(
 Paired with the
 [rotating pallette face-painting approach](../libraries/3D/materials/paint.ts),
 the part that typically dwarfs your entry (the visual content) ended up being a
-fraction of the final result. Of course, this art style has been described as
-"angry shapes", which is very fair.
+fraction of the final result here. Of course, the art style has been described
+as "angry shapes", which is very fair.
 
 ---
 
