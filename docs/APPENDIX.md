@@ -1,8 +1,4 @@
-# <mark>\[WIP\]</mark> Technical Appendix
-
-> WIP: finish WebGPU section
-
-<!-- NOTE: this walkthrough is not exhaustive, i learned so much, i can't condense it all  -->
+# DARKWHITE Technical Appendix
 
 JS13K forces you to get intimately familiar with every way to make code small -
 there's no silver bullet, you have to attack size from every direction. Here's a
@@ -10,10 +6,10 @@ walkthrough of how DARKWHITE got to 13KB.
 
 ## Build Pipeline
 
-Your build pipeline compacts what you've written and is half the battle; the
-first thing I did was
+Your build pipeline compacts everything you've written and is half the battle.
+First thing I did was
 [set one up](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts).
-Three components do the compacting:
+There were three stages to the compacting:
 
 ### Minification
 
@@ -23,21 +19,21 @@ nearest-available, shortest identifier (`a`, `b`, `c`, and so on). Because
 JavaScript compiles "just in time," minification can have side effect of
 increasing your initial execution time slightly.
 
-Minification is "intent preserving," so the process needs to understand the
+Minification is also "intent preserving," so the process needs to understand the
 language you're compacting. I used
 [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) for
 TypeScript, [`html-minifier-next`](https://github.com/j9t/html-minifier-next)
 for HTML and CSS,
 [`esbuild-minify-templates`](https://github.com/MaxMilton/esbuild-minify-templates)
 for raw text, and [`wgsl-plus`](https://github.com/JSideris/wgsl-plus) for the
-shader - it isn't complete, and
+shader - but it isn't complete, and
 [`wgslender`](https://github.com/HugoDaniel/wgslender) might have saved me some
 work.
 
 **Tip:** Read your minified code - you'll spot things that could be even
-smaller. I caught code that was then compacted into tuples, functions, inlined
-values, and system aliases - a roughly 500-byte savings, equivalent to a couple
-small features.
+smaller. I caught exploded code that I then converted to tuples, functions,
+inlined values, and system aliases - a roughly 500-byte savings, equivalent to a
+couple small features.
 
 ### [Roadroller](https://github.com/lifthrasiir/roadroller)
 
@@ -55,27 +51,31 @@ shell via your chosen method. **Tips:**
 
 ### Compression
 
-Like Roadroller, finds patterns across the entire input, but folds them together
-at a <mark><b>binary</b></mark> level instead of a text one. Unlike the above
-methods, the result needs to be uncompressed before it can be run again.
+Like Roadroller, Compression algorithms find patterns across the entire input,
+but unlike Roadroller, they fold them together at a <mark><b>binary</b></mark>
+level. The result also needs to be _uncompressed_ before it can be run again, so
+the savings are purely felt over the wire.
 
 ### Putting it Together
 
-| Minified? | Road Roller'd? | Compressed w/ ECT? | Size   | Timing* | Compaction |
-| --------- | -------------- | ------------------ | ------ | ------- | ---------- |
-| ✅        | ✅             | ✅                 | 13294  | <2m     | 87.1%      |
-| ✅        | ❌             | ✅                 | 14655  | <100ms  | 85.8%      |
-| ✅        | ✅             | ❌                 | 17572  | <2m     | 83%        |
-| ❌        | ✅             | ✅                 | 20347  | >5m     | 80.3%      |
-| ❌        | ❌             | ✅                 | 23528  | ~150ms  | 77.2%      |
-| ❌        | ✅             | ❌                 | 26915  | >5m     | 73.9%      |
-| ✅        | ❌             | ❌                 | 32826  | <50ms   | 68.2%      |
-| ❌        | ❌             | ❌                 | 103136 | <50ms   | 0%         |
+As you can see, each of the three stages is necessary:
 
-_*All tests run with `deno run bundle` once or twice on M5 Max Apple Silicon._
+| Minified? | Road Roller'd? | Compressed w/ ECT? | Size      | Timing* | Compaction |
+| --------- | -------------- | ------------------ | --------- | ------- | ---------- |
+| ✅        | ✅             | ✅                 | **13294** | <2m     | 87.1%      |
+| ✅        | ❌             | ✅                 | 14655     | <100ms  | 85.8%      |
+| ✅        | ✅             | ❌                 | 17572     | <2m     | 83%        |
+| ❌        | ✅             | ✅                 | 20347     | >5m     | 80.3%      |
+| ❌        | ❌             | ✅                 | 23528     | ~150ms  | 77.2%      |
+| ❌        | ✅             | ❌                 | 26915     | >5m     | 73.9%      |
+| ✅        | ❌             | ❌                 | 32826     | <50ms   | 68.2%      |
+| ❌        | ❌             | ❌                 | 103136    | <50ms   | 0%         |
+
+_*All tests run with `deno run bundle` once or twice on M5 Max Apple Silicon,
+these are not scientific results._
 
 JS13K only allows the DEFLATE family of compression algorithms, but I couldn't
-help but try [Brotli](https://en.wikipedia.org/wiki/Brotli):
+help but see how [Brotli](https://en.wikipedia.org/wiki/Brotli) compared:
 
 | Minified? | Road Roller'd? | Size      | Timing* | Compaction |
 | --------- | -------------- | --------- | ------- | ---------- |
@@ -98,29 +98,33 @@ a potential win if the unpacking overhead is small!
 
 ## Browser APIs
 
-An big part of keeping your entry small is leaning on Browser APIs wherever
-possible. There were two in my entry: `WebAudio` (very common) and `WebGPU`
-(brand new this year!).
+I believe the crux of of keeping your entry small is leaning on Browser APIs
+wherever possible. There were two in my entry: `WebAudio` (very common) and
+`WebGPU` (brand new this year!).
 
 ### `WebGPU`
 
-WebGPU has been around for a while but this year was the first year it was valid
-for JS13K _because_ it has finally been turned on by default in both Chrome and
-Firefox. The API _sounds_ intimidating but after some time with it, I didn't
-find it too bad.
+WebGPU has been around for a while but 2026 was the first year it could be used
+in JS13K: it's finally on by default in Chrome and Firefox! WebGPU _seems_
+intimidating at first, but after some time with it I didn't find it too bad.
 
 The API is very, how do you say, "flat": configuration-heavy. Declarative.
-Generally speaking, all the configuration does is let you customize how your
-data ends up in your shader code.
+Generally speaking, all that this configuration does is let you customize how
+your data ends up in your shader code.
 
-Specifically, `Layout`s allow you to organize the sent data across one or more
-`BindGroups`; your `RenderPipeline` configures how that data gets sent to which
-shader calls; the `CommandEncoder` executes the actual process.
+Specifically, `Layout`s allow you to organize the data sent; your `Pipeline`
+configures how that data appears in your shader calls; and the `CommandEncoder`
+executes the actual rendering process.
 
 ```mermaid
 flowchart LR
-  subgraph data
-    subgraph layout
+  subgraph WGSL Code
+    Vertex["Vertex()"] --> Fragment
+    Vertex --> Shader
+    Fragment["Fragment()"] --> Shader
+  end
+  subgraph Raw Data
+    subgraph Layout
       BG3[...] --> BGL1
       BG2[BindGroup #1] --> BGL1
       BG1[BindGroup #0] --> BGL1
@@ -128,63 +132,151 @@ flowchart LR
       BGL2[BindGroupLayout #1] --> PipelineLayout
       BGL1[BindGroupLayout #0] --> PipelineLayout
     end
-    Vertex
+    Vertices
   end
-  Vertex --> CommandEncoder
+  Shader --> RenderPipeline
+  Vertices --> CommandEncoder
   PipelineLayout --> RenderPipeline
   RenderPipeline --> CommandEncoder
   CommandEncoder --> GPU((GPU))
-  GPU --> CommandEncoder
 ```
 
 Everything WebGPU provides is basically just different options for how to do all
-that. Once I had settled on this mental model, the API became a lot less
-intimidating.
+that. Once I found on mental model, the API became a lot less scary.
 
 ### Managing Render Data: `Vertex` vs. `PipelineLayout`
 
-TODO
+Loading your application-specific data into the GPU requires transforming it
+into a Typed Array and then writing that array to an honest-to-god on-the-GPU
+data buffer:
 
-<!-- Here's what that looks like in practice. Every object in the game shares one
-[pipeline layout](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/webgpu/setupDevice.ts)
-with exactly two bind group layouts - one storage buffer for per-instance
-coordinates, one for per-material color data - so there's really only a handful
-of actual `GPURenderPipeline`s in the whole game,
-[cached per material](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/webgpu/getRenderPipeline.ts)
-the first time it's used and reused for the rest of the run. Every object also
-shares the exact same vertex format - just an XYZ position, nothing else per
-vertex - so geometry is
-[uploaded once](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/webgpu/loadObject.ts)
-into a GPU buffer and never touched again: no indices, no per-vertex color or
-normal data. -->
+```ts
+const rawVertexData = new Float32Array(flat(vertices));
+const vertexMemoryLocation = gpu.createBuffer({
+  usage: GPUBufferUsage.VERTEX, // i.e. the "type" of data buffer
+  size: rawVertexData.byteLength,
+});
+
+gpu.queue.writeBuffer(vertexMemoryLocation, offset, rawVertexData);
+```
+
+> [!IMPORTANT]
+> There is no garbage collection in WebGPU! You need to free your GPU's working
+> memory manually:
+>
+> ```ts
+> for (const object of staleObjects) {
+>   object.dataLocation.destroy();
+> }
+> ```
+
+The type of data buffer matters. For vertex data you use a `"vertex"` buffer.
+This maps the coordinates of each vertex directly into the vertex shader.
+
+For the rest of your data in the top-level `PipelineLayout`, buffer types are
+case-by-case and application-specific. For DARKWHITE, I created a data group for
+spatial data and appearance data:
+
+```ts
+const localCoordinateBinding = {
+  binding: 0, // binds to @binding(0)
+};
+
+const spaceGroupLayout = device.createBindGroupLayout({
+  entries: [localCoordinateBinding],
+});
+
+const pipelineLayout = device.createPipelineLayout({
+  bindGroupLayouts: [
+    spaceGroupLayout, // binds to @group(0)
+    appearanceGroupLayout, // binds to @group(1)
+  ],
+});
+```
+
+I could have smashed everything into a single, global data group, but it felt
+more natural to separate everything by concern, like folders in a file system.
+
+Later, I simply wrote utilities to load data to the proper location in the
+layout:
+
+```ts
+const loadLocalCoordinates = (localCoordinates: Float32Array[]) => {
+  device.queue.writeBuffer(localCoordinatesLocation, 0, flat(localCoordinates));
+};
+```
 
 ### WGSL Shader Code: `RenderPipeline`
 
-TODO
+With your data wrangled, it's time to write your shaders. Shaders are a whole
+world I had zero experience with before, so I kept my work here very simple.
+Here are the fundamentals I learned.
 
-<!-- one of the parts i need to dive deeper on. it's a whole world I barely touched. book of shaders -->
+In a shader, you need to "import" the data you've loaded & bound, then handle
+each `@vertex` (xyz point) and finally each `@fragment` (pixel on the screen).
+Starting with the data:
 
-<!-- That leaves instancing to do the real work. Objects that share the same geometry
-and material get batched into a group, and every frame the
-[camera](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/camera.ts)
-walks that group,
-[multiplies](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/coordinates.ts#L42-L59)
-each object's coordinate frame into camera space by hand (a 4x4 matrix multiply,
-bit-twiddled to stay tiny), and packs the results into one reusable, fixed-size
-storage buffer. That buffer gets uploaded once, and the whole group renders in a
-single instanced draw call - the vertex shader just indexes into it with
-`@builtin(instance_index)` to pick each instance's transform. Hundreds of
-bullets sharing a geometry and material cost exactly one draw call, not
-hundreds.
+```wgsl
+// data location - in this instance, 
+// it's the spatial data group (id 0), slot 0 (where I put all the coordinate data)
+@group(0) @binding(0)
 
-Materials themselves stay tiny to make this worth it: a shader string, a small
-palette of colors packed from plain `0xRRGGBBAA` hex integers, and an optional
-entry point. There's really
-[one shader](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/materials/paint.wgsl)
-in the entire game - swapping the fragment entry point (`L` for lit, `F` for
-flat) reuses the same compiled shader module, and the fragment shader picks a
-color out of the palette per-instance, so one draw call can still show multiple
-colors. -->
+// var<storage, read> - the type of buffer
+var<storage, read> local_coordinates: array<mat4x4f>;
+
+@group(1) @binding(0)
+var<storage, read> color_palette: array<vec4f>;
+```
+
+Your data is accessed in your `@vertex` and `@fragment` functions by various
+annotations. First, the `@vertex` shader is responsible for returning the
+relevant global positions to the `@fragment` shader, which colors them. I like
+to think of it as the "HTML" of WGSL, with `@fragment` the CSS.
+
+In this `@vertex` shader, I'm using the `@location(0)` annotation to load the
+actual vertex position, and a `@builtin` to load the ID of the 3D object the
+current vertex belongs to. `@builtin`s are how you access standard metadata
+within the WGSL system.
+
+```wgsl
+@vertex
+fn main(
+  // @location(0) is loaded by stride for you
+  @location(0) vertex: vec3f,
+
+  // builtins
+  @builtin(instance_index) object_id: u32
+) -> @builtin(position) vec4f {
+
+  // place vertex in global coordinate system
+  return local_coordinates[object_id] * vec4f(vertex, 1.0);
+}
+```
+
+Next, the `@fragment` shader is a bit sneaky - it actually gets called for each
+_pixel_ on the screen, not each vertex. This `position` is actually calculated
+(interpolated) based on the geometry returned by `@vertex` around that pixel.
+
+You'll also notice I'm using a `@builtin` to access the ID of the face of the
+geometry the current pixel is pointing to. This allows us to pull that face's
+"base" color from the palette we defined.
+
+```wgsl
+@fragment
+fn paint(
+  // builtins
+  @builtin(position) position: vec4f,
+  @builtin(primitive_index) face_id: u32
+) -> @location(0) vec4f {
+  // pull face color from ring palette
+  let face_color = color_palette[face_id % arrayLength(&color_palette)];
+
+  return vec4f(shade_color(position) * face_color.rgb, face_color.a);
+}
+```
+
+There's so much to this space. [Book of Shaders](https://thebookofshaders.com/)
+doesn't come in WGSL, so I'll need to find other resources to dive deeper.
 
 ### The Actual Rendering Process: `CommandEncoder`
 
