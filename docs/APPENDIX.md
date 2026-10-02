@@ -1,6 +1,6 @@
 # <mark>\[WIP\]</mark> Technical Appendix
 
-> WIP: need to do a pass for language and concision
+> WIP: finish WebGPU section
 
 JS13K forces you to get intimately familiar with every way to make code small -
 there's no silver bullet, you have to attack size from every direction. Here's a
@@ -100,34 +100,47 @@ An big part of keeping your entry small is leaning on Browser APIs wherever
 possible. There were two in my entry: `WebAudio` (very common) and `WebGPU`
 (brand new this year!).
 
-### \[WIP\] `WebGPU`
+### `WebGPU`
 
-> WIP: Inline code examples
+WebGPU has been around for a while but this year was the first year it was valid
+for JS13K _because_ it has finally been turned on by default in both Chrome and
+Firefox. The API _sounds_ intimidating but after some time with it, I didn't
+find it too bad.
 
-WebGPU isn't actually that bad! The API is "flat" - very configuration-heavy,
-which is a good thing, ultimately. All that configuration does is let you
-customize exactly how the data you're transferring to the GPU gets passed into
-your shaders. `Buffer`s, `BindGroup`s and `BindGroupLayout`s structure and load
-the raw data; your `RenderPipeline` configures how that data gets split across
-shader calls; the `CommandEncoder` does the actual _rendering_, on a
-per-render-pass basis (so you can switch between `RenderPipeline` configurations
-as needed):
+The API is very, how do you say, "flat": configuration-heavy. Declarative. Generally speaking, all the configuration does is let you
+customize how your data ends up in your shader code. 
+
+Specifically, `Layout`s allow you to organize the sent data across one or more `BindGroups`; your `RenderPipeline` configures how that data gets sent to which
+shader calls; the `CommandEncoder` executes the actual process.
 
 ```mermaid
 flowchart LR
   subgraph data
-    Buffer -->|raw data| BindGroup
-    BindGroupLayout -->|shape| BindGroup
+    subgraph layout
+      BG3[...] --> BGL1
+      BG2[BindGroup #1] --> BGL1
+      BG1[BindGroup #0] --> BGL1
+      BGL3[...] --> PipelineLayout
+      BGL2[BindGroupLayout #1] --> PipelineLayout
+      BGL1[BindGroupLayout #0] --> PipelineLayout
+    end
+    Vertex
   end
-  BindGroup --> RenderPipeline
-  RenderPipeline -->|configures shader calls| CommandEncoder
-  CommandEncoder -->|per render pass| GPU((GPU))
+  Vertex --> CommandEncoder
+  PipelineLayout --> RenderPipeline
+  RenderPipeline --> CommandEncoder
+  CommandEncoder --> GPU((GPU))
+  GPU --> CommandEncoder
 ```
 
-Everything else WebGPU provides is basically just different options for how to
-do that. Once I had this mental model, the API became a lot less intimidating.
+Everything WebGPU provides is basically just different options for how to
+do all that. Once I had settled on this mental model, the API became a lot less intimidating.
 
-Here's what that looks like in practice. Every object in the game shares one
+### Managing Render Data: `Vertex` vs. `PipelineLayout`
+
+TODO
+
+<!-- Here's what that looks like in practice. Every object in the game shares one
 [pipeline layout](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/webgpu/setupDevice.ts)
 with exactly two bind group layouts - one storage buffer for per-instance
 coordinates, one for per-material color data - so there's really only a handful
@@ -138,9 +151,13 @@ shares the exact same vertex format - just an XYZ position, nothing else per
 vertex - so geometry is
 [uploaded once](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/webgpu/loadObject.ts)
 into a GPU buffer and never touched again: no indices, no per-vertex color or
-normal data.
+normal data. -->
 
-That leaves instancing to do the real work. Objects that share the same geometry
+### Shader Code: `RenderPipeline`
+
+TODO
+
+<!-- That leaves instancing to do the real work. Objects that share the same geometry
 and material get batched into a group, and every frame the
 [camera](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/3D/camera.ts)
 walks that group,
@@ -160,13 +177,11 @@ entry point. There's really
 in the entire game - swapping the fragment entry point (`L` for lit, `F` for
 flat) reuses the same compiled shader module, and the fragment shader picks a
 color out of the palette per-instance, so one draw call can still show multiple
-colors.
+colors. -->
 
-If you want to learn WebGPU, I started with
-[webgpufundamentals.org](https://webgpufundamentals.org), but eventually
-switched to picking apart
-[the examples here](https://webgpu.github.io/webgpu-samples/) line by line - a
-lot more helpful.
+### The Actual Rendering Process: `CommandEncoder`
+
+TODO
 
 #### Aside: 3D Rotation
 
@@ -256,7 +271,7 @@ const defaultWeaponSound = createSound(
       ],
       0, // breakpoint timing (0s)
     ],
-    [[0, 0], 0.01], // knob 0 is gain
+    [[0, 0], 0.01], // knob 0 is volume
     [[0, [0.01, 0.02]], 0.003],
     [[0, 0.01], 0.003],
     [[0, 0], 0.06], // layer goes silent by 0.06s
