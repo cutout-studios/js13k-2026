@@ -15,10 +15,10 @@ walkthrough of how DARKWHITE got to 13KB.
 > [!NOTE]
 > Disclaimers:
 >
-> - I learned SO MUCH with this project that I simply cannot cram everything
+> - I learned SO MUCH from this project that I simply cannot cram everything
 >   into a reasonably-sized document. Feel free to read the source!
-> - All code snippets have been somewhat simplified for better readability, they
->   won't work as written.
+> - All code snippets have been simplified for readability, they won't work as
+>   written.
 
 ## Build Pipeline
 
