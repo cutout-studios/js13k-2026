@@ -1,8 +1,24 @@
-# DARKWHITE Technical Appendix
+# DARKWHITE: Technical Appendix
+
+<p align="center">
+  <a href="./POSTMORTEM.md">Postmortem</a> |
+  <b>Technical Appendix</b> |
+  <a href="./PLAN.md">Post-JS13K Plan</a>
+</p>
+
+---
 
 JS13K forces you to get intimately familiar with every way to make code small -
 there's no silver bullet, you have to attack size from every direction. Here's a
 walkthrough of how DARKWHITE got to 13KB.
+
+> [!NOTE]
+> Disclaimers:
+>
+> - I learned SO MUCH with this project that I simply cannot cram everything
+>   into a reasonably-sized document. Feel free to read the source!
+> - All code snippets have been somewhat simplified for better readability, they
+>   won't work as written.
 
 ## Build Pipeline
 
@@ -592,5 +608,7 @@ as "angry shapes", which is very fair.
 ---
 
 <p align="center">
-  <a href="./POSTMORTEM.md">Postmortem</a> | <a href="./PLAN.md">What's next?</a>
+  <a href="./POSTMORTEM.md">Postmortem</a> |
+  <b>Technical Appendix</b> |
+  <a href="./PLAN.md">Post-JS13K Plan</a>
 </p>

@@ -1,5 +1,13 @@
 # DARKWHITE Postmortem
 
+<p align="center">
+  <b>Postmortem</a> (you are here) |
+  <a href="./APPENDIX.md">Technical Appendix</b> |
+  <a href="./PLAN.md">Post-JS13K Plan</a>
+</p>
+
+---
+
 My goals with JS13K this year were simple:
 [learn how to build a game](./APPENDIX.md#3d-rotation-bestiary),
 [learn WebGPU](./APPENDIX.md#architecture), make it as fun as I can while
@@ -170,5 +178,7 @@ Until next time! ✌️
 ---
 
 <p align="center">
-  <a href="./APPENDIX.md">[WIP] Technical Appendix</a> | <a href="./PLAN.md">What's next?</a>
+  <b>Postmortem</a> (you are here) |
+  <a href="./APPENDIX.md">Technical Appendix</b> |
+  <a href="./PLAN.md">Post-JS13K Plan</a>
 </p>

@@ -1,4 +1,12 @@
-# Post-JS13K Plan
+# DARKWHITE: Post-JS13K Plan
+
+<p align="center">
+  <a href="./POSTMORTEM.md">Postmortem</a> |
+  <a href="./APPENDIX.md">Technical Appendix</b> |
+  <b>Post-JS13K Plan</b>
+</p>
+
+---
 
 ## Community Contributions
 
@@ -122,5 +130,7 @@ order:
 ---
 
 <p align="center">
-  <a href="./POSTMORTEM.md">Postmortem</a> | <a href="./APPENDIX.md">[WIP] Technical Appendix</a>
+  <a href="./POSTMORTEM.md">Postmortem</a> |
+  <a href="./APPENDIX.md">Technical Appendix</b> |
+  <b>Post-JS13K Plan</b>
 </p>
