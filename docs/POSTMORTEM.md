@@ -43,7 +43,7 @@ that text in your bundle until it's time to tutorialize. I would have spent that
 budget on more depth cues, redundant visual indicators, and maybe even a
 "shooting gallery" - things I had to drop at the last minute.
 
-_Side note, on depth cues_: I'd been led to believe my spatial reasoning is
+_Side note, on depth cues_: I'd been led to believe my natural spatial reasoning is
 quite high, which meant a specific curse of knowledge - I don't have a felt
 sense of what's hard about it. I expected that gap to bite me.
 
