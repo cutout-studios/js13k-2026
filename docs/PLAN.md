@@ -92,6 +92,7 @@ order:
 
 ### Minor Correctness Improvements
 
+- Fix full-screen glitching, full inventory and audio overload bugs.
 - Restore the "continuous" mode I accidentally cut in the final moments when
   replacing the `alert()` calls.
 - Restructure the graphics pipeline to handle transparency and instancing. This
