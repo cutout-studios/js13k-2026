@@ -8,9 +8,9 @@
 
 ---
 
-JS13K forces you to get intimately familiar with every way to make code small -
-there's no silver bullet, you have to attack size from every angle. Here's a
-walkthrough of how DARKWHITE got to 13KB.
+JS13K forces you to get intimately familiar with every possible way to make code
+small - there's no silver bullet, you have to attack size from every angle.
+Here's a walkthrough of how DARKWHITE got to 13KB.
 
 > [!NOTE]
 > Disclaimers:
@@ -47,9 +47,9 @@ shader - but it isn't complete, and the later-discovered
 work.
 
 > **Tip:** Definitely read through your minified code - you'll spot things that
-> could be even smaller. I caught exploded code that I then converted to tuples,
-> functions, inlined values, and system aliases - a roughly 500-byte savings,
-> equivalent to a couple small features.
+> could be made even smaller. I caught exploded code that I then converted to
+> tuples, functions, inlined values, and system aliases - a roughly 500-byte
+> savings, equivalent to a couple small features.
 
 ### [Roadroller](https://github.com/lifthrasiir/roadroller)
 
@@ -68,13 +68,13 @@ shell via your chosen method. **Tips:**
 ### Compression
 
 Like Roadroller, Compression algorithms find patterns across the entire input,
-but unlike Roadroller, they fold them together at a <mark><b>binary</b></mark>
-level. Therefore the result needs to also be _uncompressed_ before it can be run
-again, so the savings are only felt during file transfer.
+but unlike Roadroller, they fold them together at a _binary_ level. Therefore
+the result needs to be _uncompressed_ before it can run again, so the savings
+are only felt during file transfer.
 
 ### Putting it Together
 
-I thought maybe it was all a bit much, but turns out each of the three stages is
+I thought it was maybe a bit much, but turns out each of these three stages is
 necessary:
 
 | Minified? | Road Roller'd? | Compressed w/ ECT? | Size                      | Timing* | Compaction                |
@@ -104,35 +104,35 @@ compared:
 
 Some tradeoffs:
 
-- Brotli without Roadroller is only 2% bigger than the submitted game, but was
+- Brotli without Roadroller is 2% bigger than the submitted game, but was
   _meaningfully_ faster to build (milliseconds vs. minutes)!
 - Roadroller on _top_ of Brotli saves _even more_ bytes! Crying that I coulda
   had another precious 134B to work with. If only!
 
 **Roadroller in production?** Roadroller's "write" method decodes via
 `document.write`: a non-starter for user-provided content. But if run against
-your core logic I don't see why you can't ship the cached result. Seems like a
-potential win if the unpacking overhead is small enough!
+your core logic I don't see why you couldn't ship the cached result. Seems like
+a potential win if the unpacking overhead is small enough!
 
 ## Browser APIs
 
 I believe the core of of keeping your entry small is leaning on Browser APIs
-wherever possible. There were two in my entry: `WebAudio` (very common) and
-`WebGPU` (brand new this year!).
+wherever possible. There were two prominent in my entry: `WebAudio` _(very
+common)_ and `WebGPU` _(brand new this year!)_.
 
 ### `WebGPU`
 
-WebGPU has been around for a while but 2026 was the first year it could be used
+WebGPU has been around for a minute but 2026 was the first year it could be used
 in JS13K: it's finally on by default in Chrome and Firefox! WebGPU _seems_
 intimidating at first, but after some time with it I didn't find it too bad.
 
-The API is very, how do you say, "flat": configuration-heavy. Declarative.
+The API is very... how do you say... "flat": configuration-heavy. Declarative.
 Generally speaking, all that this configuration does is let you customize how
 your data ends up in your shader code.
 
-Specifically, `Layout`s allow you to organize the data sent; your `Pipeline`
-configures how that data appears in your shader calls; and the `CommandEncoder`
-executes the actual rendering process.
+Specifically, `Layout`s organize the data sent; your `Pipeline` configures how
+that data appears in your shader calls; and the `CommandEncoder` executes the
+actual rendering process.
 
 ```mermaid
 flowchart LR
@@ -166,7 +166,7 @@ that. Once I found this mental model, the API became a lot less scary.
 
 Loading your application-specific data into the GPU requires transforming it
 into Typed Arrays and then writing those arrays into an honest-to-god on-the-GPU
-memory block (a 'buffer'):
+memory block (a "buffer"):
 
 ```ts
 const vertexData = new Float32Array(flat(vertices));
@@ -188,13 +188,13 @@ gpu.queue.writeBuffer(vertexGPULocation, offset, vertexData);
 > }
 > ```
 
-Different types of buffers do different things: for vertex data you use a
-`"vertex"` buffer. The "vertex" buffer has a pre-determined structure, mapping
-the coordinates of each vertex directly into the vertex shader.
+Different types of buffers do different things: for your core vertex data you
+use a `"vertex"` buffer. This buffer has a pre-determined structure, mapping out
+the XYZ coordinates of each vertex directly in the vertex shader code.
 
-For the rest of your data in your `PipelineLayout`, buffer types are
-case-by-case and application-specific. For DARKWHITE, I created two data groups,
-one for spatial data and one for appearance data:
+For the data in your `PipelineLayout`, buffer types are case-by-case and
+application-specific. For DARKWHITE, I created two groups, one for spatial data
+and one for appearance data:
 
 ```ts
 const localCoordinateBinding = {
@@ -216,8 +216,8 @@ const pipelineLayout = device.createPipelineLayout({
 I could have smashed everything into a single, global data group, but it felt
 more natural to separate things by concern, like folders in a file system.
 
-Later utilities were written to overwrite the currently needed data into the
-proper GPU locations of the layout:
+Later utilities were written to write the currently needed data over the
+assigned GPU locations in the layout:
 
 ```ts
 const loadLocalCoordinates = (localCoordinates: Float32Array[]) => {
@@ -227,18 +227,16 @@ const loadLocalCoordinates = (localCoordinates: Float32Array[]) => {
 
 ### WGSL Shader Code: `RenderPipeline`
 
-With your data wrangled, it's time to write the shaders that will process that
+With data wrangled, it was time to write the shaders I needed to process said
 data. Shaders are a whole world I had zero experience with before, so I kept my
 work here very simple. Here are the fundamentals I learned.
 
 In the shader code you first need to "import" the data you've transferred &
-bound to handle each `@vertex` (xyz point) and then each `@fragment` (pixel on
-the screen). Starting with the data:
+bound to be able to use it:
 
 ```wgsl
-// here we're referencing the data group (id 0) 
-// (so, the spatial data group)
-// at binding 0 (where I put all the coordinate data)
+// we're referencing the data group 0 (defined as the spatial group in my layout)
+// at binding 0 (where I put all the local coordinate data)
 @group(0) @binding(0)
 // var<storage, read> - needs to match the buffer type you specified in the JS
 var<storage, read> local_coordinates: array<mat4x4f>;
@@ -247,16 +245,17 @@ var<storage, read> local_coordinates: array<mat4x4f>;
 var<storage, read> color_palette: array<vec4f>;
 ```
 
-Your data is also accessed in your `@vertex` and `@fragment` functions by
-various annotations. First, the `@vertex` shader is responsible for returning
-the global positions of each polygon's vertices to the `@fragment` shader, which
-colors them. I like to think of it as the "HTML" of your shader, with
-`@fragment` the CSS.
+Your data is accessed in your `@vertex` and `@fragment` functions by various
+annotations. First, the `@vertex` shader is responsible for returning the global
+positions of each polygon's vertices to the `@fragment` shader, which colors
+them. I like to think of it as the "HTML" of your shader, with `@fragment` as
+the CSS.
 
 In this `@vertex` shader, I'm using the `@location(0)` annotation to load the
-actual vertex position as a (x, y, z) tuple, and a `@builtin` to load the ID of
-the 3D object this current vertex belongs to. _(`@builtin`s are how you access
-standard metadata within the WGSL system.)_
+vertex position, and a `@builtin` to load the ID of the 3D object this current
+vertex belongs to. _(`@builtin`s are how you access standard metadata within the
+WGSL system.)_. `local_coordinates` is already available to us because we
+imported it above.
 
 ```wgsl
 @vertex
