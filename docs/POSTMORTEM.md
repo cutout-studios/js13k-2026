@@ -9,9 +9,9 @@
 ---
 
 My goals with JS13K this year were simple: learn how to build a game,
-[learn WebGPU](./WALKTHROUGH.md#webgpu), make it as fun as I could while remaining
-concise, and get to know the community a little bit. By that measure, it was a
-success!
+[learn WebGPU](./WALKTHROUGH.md#webgpu), make it as fun as I could while
+remaining concise, and get to know the community a little bit. By that measure,
+it was a success!
 
 ## First-time Observations
 
@@ -43,8 +43,8 @@ that text in your bundle until it's time to tutorialize. I would have spent that
 budget on more depth cues, redundant visual indicators, and maybe even a
 "shooting gallery" - things I had to drop at the last minute.
 
-_Side note, on depth cues_: I'd been led to believe my natural spatial reasoning is
-quite high, which meant a specific curse of knowledge - I don't have a felt
+_Side note, on depth cues_: I'd been led to believe my natural spatial reasoning
+is quite high, which meant a specific curse of knowledge - I don't have a felt
 sense of what's hard about it. I expected that gap to bite me.
 
 The surprise wasn't that the gap exists - people showed me, with screenshots and
@@ -106,8 +106,8 @@ I've been a full-time informal caretaker for a couple years now and didn't
 realize how much my own health had slipped. My ambitious nature has tempered
 with age, but my barometer was miscalibrated. Initially I thought "surely I'll
 run out of space in the first couple weeks" - but ended up working right to the
-deadline. I probably could have kept scraping against the byte limit for another
-few days, even.
+deadline. I probably could have kept debugging and scraping against the byte
+limit for another few days, even.
 
 I still managed to complete ~90% of what was initially planned (with the
 remaining 10% still important), but don't be fooled -

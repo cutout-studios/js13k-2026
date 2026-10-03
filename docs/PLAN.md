@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="./POSTMORTEM.md">Postmortem</a> |
-  <a href="./APPENDIX.md">Technical Appendix</a> |
+  <a href="./WALKTHROUGH.md">Technical Walkthrough</a> |
   <b>Post-JS13K Plan</b>
 </p>
 
@@ -131,6 +131,6 @@ order:
 
 <p align="center">
   <a href="./POSTMORTEM.md">Postmortem</a> |
-  <a href="./APPENDIX.md">Technical Appendix</a> |
+  <a href="./WALKTHROUGH.md">Technical Walkthrough</a> |
   <b>Post-JS13K Plan</b>
 </p>
