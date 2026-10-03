@@ -141,14 +141,18 @@ flowchart LR
     Vertex --> Shader
     Fragment["Fragment()"] --> Shader
   end
-  subgraph Raw Data
-    subgraph Layout
-      BG3[...] --> BGL1
-      BG2[BindGroup #1] --> BGL1
-      BG1[BindGroup #0] --> BGL1
-      BGL3[...] --> PipelineLayout
-      BGL2[BindGroupLayout #1] --> PipelineLayout
-      BGL1[BindGroupLayout #0] --> PipelineLayout
+  subgraph RawData ["Raw Data"]
+    subgraph Layouts
+      subgraph BGLs [" "]
+        subgraph BGs [" "]
+          BG1[BindGroup #0] --> BGL1
+          BG2[BindGroup #1] --> BGL1
+          BG3[...] --> BGL1
+        end
+        BGL1[BindGroupLayout #0] --> PipelineLayout
+        BGL2[BindGroupLayout #1] --> PipelineLayout
+        BGL3[...] --> PipelineLayout
+      end
     end
     Vertices
   end
@@ -157,6 +161,10 @@ flowchart LR
   PipelineLayout --> RenderPipeline
   RenderPipeline --> CommandEncoder
   CommandEncoder --> GPU((GPU))
+
+style BGLs stroke-width:0px
+style BGs stroke-width:0px
+style RawData fill:#fff0
 ```
 
 Everything WebGPU provides is basically just different options for how to do all
