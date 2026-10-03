@@ -2,7 +2,7 @@
 
 <p align="center">
   <b>Postmortem</b> |
-  <a href="./APPENDIX.md">Technical Appendix</b> |
+  <a href="./APPENDIX.md">Technical Appendix</a> |
   <a href="./PLAN.md">Post-JS13K Plan</a>
 </p>
 
@@ -181,6 +181,6 @@ Until next time! ✌️
 
 <p align="center">
   <b>Postmortem</b> |
-  <a href="./APPENDIX.md">Technical Appendix</b> |
+  <a href="./APPENDIX.md">Technical Appendix</a> |
   <a href="./PLAN.md">Post-JS13K Plan</a>
 </p>
