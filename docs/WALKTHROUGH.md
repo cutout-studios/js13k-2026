@@ -1,15 +1,15 @@
-# DARKWHITE: Technical Appendix
+# DARKWHITE: Technical Walkthrough
 
 <p align="center">
   <a href="./POSTMORTEM.md">Postmortem</a> |
-  <b>Technical Appendix</b> |
+  <b>Technical Walkthrough</b> |
   <a href="./PLAN.md">Post-JS13K Plan</a>
 </p>
 
 ---
 
 JS13K forces you to get intimately familiar with every way to make code small -
-there's no silver bullet, you have to attack size from every direction. Here's a
+there's no silver bullet, you have to attack size from every angle. Here's a
 walkthrough of how DARKWHITE got to 13KB.
 
 > [!NOTE]
@@ -17,13 +17,13 @@ walkthrough of how DARKWHITE got to 13KB.
 >
 > - I learned SO MUCH from this project that I simply cannot cram everything
 >   into a reasonably-sized document. Feel free to read the source!
-> - All code snippets have been simplified for readability, they won't work as
+> - All code snippets have been simplified for readability, they won't run as
 >   written.
 
 ## Build Pipeline
 
 Your build pipeline compacts everything you've written and is half the battle.
-First thing I did was
+The very first thing I did was
 [set one up](https://github.com/cutout-studios/js13k-2026/blob/main/scripts/bundle.ts).
 There were three stages to the compacting:
 
@@ -42,14 +42,14 @@ TypeScript, [`html-minifier-next`](https://github.com/j9t/html-minifier-next)
 for HTML and CSS,
 [`esbuild-minify-templates`](https://github.com/MaxMilton/esbuild-minify-templates)
 for raw text, and [`wgsl-plus`](https://github.com/JSideris/wgsl-plus) for the
-shader - but it isn't complete, and
+shader - but it isn't complete, and the later-discovered
 [`wgslender`](https://github.com/HugoDaniel/wgslender) might have saved me some
 work.
 
-**Tip:** Read your minified code - you'll spot things that could be even
-smaller. I caught exploded code that I then converted to tuples, functions,
-inlined values, and system aliases - a roughly 500-byte savings, equivalent to a
-couple small features.
+> **Tip:** Definitely read through your minified code - you'll spot things that
+> could be even smaller. I caught exploded code that I then converted to tuples,
+> functions, inlined values, and system aliases - a roughly 500-byte savings,
+> equivalent to a couple small features.
 
 ### [Roadroller](https://github.com/lifthrasiir/roadroller)
 
@@ -69,52 +69,54 @@ shell via your chosen method. **Tips:**
 
 Like Roadroller, Compression algorithms find patterns across the entire input,
 but unlike Roadroller, they fold them together at a <mark><b>binary</b></mark>
-level. The result also needs to be _uncompressed_ before it can be run again, so
-the savings are purely felt over the wire.
+level. Therefore the result needs to also be _uncompressed_ before it can be run
+again, so the savings are only felt during file transfer.
 
 ### Putting it Together
 
-As you can see, each of the three stages is necessary:
+I thought maybe it was all a bit much, but turns out each of the three stages is
+necessary:
 
-| Minified? | Road Roller'd? | Compressed w/ ECT? | Size      | Timing* | Compaction |
-| --------- | -------------- | ------------------ | --------- | ------- | ---------- |
-| ✅        | ✅             | ✅                 | **13294** | <2m     | 87.1%      |
-| ✅        | ❌             | ✅                 | 14655     | <100ms  | 85.8%      |
-| ✅        | ✅             | ❌                 | 17572     | <2m     | 83%        |
-| ❌        | ✅             | ✅                 | 20347     | >5m     | 80.3%      |
-| ❌        | ❌             | ✅                 | 23528     | ~150ms  | 77.2%      |
-| ❌        | ✅             | ❌                 | 26915     | >5m     | 73.9%      |
-| ✅        | ❌             | ❌                 | 32826     | <50ms   | 68.2%      |
-| ❌        | ❌             | ❌                 | 103136    | <50ms   | 0%         |
+| Minified? | Road Roller'd? | Compressed w/ ECT? | Size                      | Timing* | Compaction                |
+| --------- | -------------- | ------------------ | ------------------------- | ------- | ------------------------- |
+| ✅        | ✅             | ✅                 | <mark><b>13294</mark></b> | <2m     | <mark><b>87.1%</mark></b> |
+| ✅        | ❌             | ✅                 | 14655                     | <100ms  | 85.8%                     |
+| ✅        | ✅             | ❌                 | 17572                     | <2m     | 83%                       |
+| ❌        | ✅             | ✅                 | 20347                     | >5m     | 80.3%                     |
+| ❌        | ❌             | ✅                 | 23528                     | ~150ms  | 77.2%                     |
+| ❌        | ✅             | ❌                 | 26915                     | >5m     | 73.9%                     |
+| ✅        | ❌             | ❌                 | 32826                     | <50ms   | 68.2%                     |
+| ❌        | ❌             | ❌                 | 103136                    | <50ms   | 0%                        |
 
-_*All tests run with `deno run bundle` once or twice on M5 Max Apple Silicon,
-these are not scientific results._
+_*All tests were run with `deno run bundle` once or twice on M5 Max Apple
+Silicon, these are not scientific results._
 
-JS13K only allows the DEFLATE family of compression algorithms, but I couldn't
-help but see how [Brotli](https://en.wikipedia.org/wiki/Brotli) compared:
+JS13K requires you use the DEFLATE family of compression algorithms, but I
+couldn't help but see how [Brotli](https://en.wikipedia.org/wiki/Brotli)
+compared:
 
-| Minified? | Road Roller'd? | Size      | Timing* | Compaction |
-| --------- | -------------- | --------- | ------- | ---------- |
-| ✅        | ✅             | **13178** | <2m     | **87.2%**  |
-| ✅        | ❌             | 13599     | <100ms  | 86.8%      |
-| ❌        | ✅             | 20231     | >5m     | 80.4%      |
-| ❌        | ❌             | 21225     | ~100ms  | 79.4%      |
+| Minified? | Road Roller'd? | Size                      | Timing* | Compaction                |
+| --------- | -------------- | ------------------------- | ------- | ------------------------- |
+| ✅        | ✅             | <mark><b>13178</b></mark> | <2m     | <mark><b>87.2%</b></mark> |
+| ✅        | ❌             | 13599                     | <100ms  | 86.8%                     |
+| ❌        | ✅             | 20231                     | >5m     | 80.4%                     |
+| ❌        | ❌             | 21225                     | ~100ms  | 79.4%                     |
 
 Some tradeoffs:
 
-- Brotli without Roadroller is only 2% bigger than the submitted game, but
+- Brotli without Roadroller is only 2% bigger than the submitted game, but was
   _meaningfully_ faster to build (milliseconds vs. minutes)!
 - Roadroller on _top_ of Brotli saves _even more_ bytes! Crying that I coulda
   had another precious 134B to work with. If only!
 
 **Roadroller in production?** Roadroller's "write" method decodes via
 `document.write`: a non-starter for user-provided content. But if run against
-your core logic I don't see why you can't ship the cached the result. Seems like
-a potential win if the unpacking overhead is small!
+your core logic I don't see why you can't ship the cached result. Seems like a
+potential win if the unpacking overhead is small enough!
 
 ## Browser APIs
 
-I believe the crux of of keeping your entry small is leaning on Browser APIs
+I believe the core of of keeping your entry small is leaning on Browser APIs
 wherever possible. There were two in my entry: `WebAudio` (very common) and
 `WebGPU` (brand new this year!).
 
@@ -158,22 +160,22 @@ flowchart LR
 ```
 
 Everything WebGPU provides is basically just different options for how to do all
-that. Once I found on mental model, the API became a lot less scary.
+that. Once I found this mental model, the API became a lot less scary.
 
-### Managing Render Data: `Vertex` vs. `PipelineLayout`
+### Managing GPU Data: `Vertex` vs. `PipelineLayout`
 
 Loading your application-specific data into the GPU requires transforming it
-into a Typed Array and then writing that array to an honest-to-god on-the-GPU
-data buffer:
+into Typed Arrays and then writing those arrays into an honest-to-god on-the-GPU
+memory block (a 'buffer'):
 
 ```ts
-const rawVertexData = new Float32Array(flat(vertices));
-const vertexMemoryLocation = gpu.createBuffer({
+const vertexData = new Float32Array(flat(vertices));
+const vertexGPULocation = gpu.createBuffer({
   usage: GPUBufferUsage.VERTEX, // i.e. the "type" of data buffer
   size: rawVertexData.byteLength,
 });
 
-gpu.queue.writeBuffer(vertexMemoryLocation, offset, rawVertexData);
+gpu.queue.writeBuffer(vertexGPULocation, offset, vertexData);
 ```
 
 > [!IMPORTANT]
@@ -186,12 +188,13 @@ gpu.queue.writeBuffer(vertexMemoryLocation, offset, rawVertexData);
 > }
 > ```
 
-The type of data buffer matters. For vertex data you use a `"vertex"` buffer.
-This maps the coordinates of each vertex directly into the vertex shader.
+Different types of buffers do different things: for vertex data you use a
+`"vertex"` buffer. The "vertex" buffer has a pre-determined structure, mapping
+the coordinates of each vertex directly into the vertex shader.
 
-For the rest of your data in the top-level `PipelineLayout`, buffer types are
-case-by-case and application-specific. For DARKWHITE, I created a data group for
-spatial data and appearance data:
+For the rest of your data in your `PipelineLayout`, buffer types are
+case-by-case and application-specific. For DARKWHITE, I created two data groups,
+one for spatial data and one for appearance data:
 
 ```ts
 const localCoordinateBinding = {
@@ -211,10 +214,10 @@ const pipelineLayout = device.createPipelineLayout({
 ```
 
 I could have smashed everything into a single, global data group, but it felt
-more natural to separate everything by concern, like folders in a file system.
+more natural to separate things by concern, like folders in a file system.
 
-Later, I simply wrote utilities to load data to the proper location in the
-layout:
+Later utilities were written to overwrite the currently needed data into the
+proper GPU locations of the layout:
 
 ```ts
 const loadLocalCoordinates = (localCoordinates: Float32Array[]) => {
@@ -224,58 +227,57 @@ const loadLocalCoordinates = (localCoordinates: Float32Array[]) => {
 
 ### WGSL Shader Code: `RenderPipeline`
 
-With your data wrangled, it's time to write your shaders. Shaders are a whole
-world I had zero experience with before, so I kept my work here very simple.
-Here are the fundamentals I learned.
+With your data wrangled, it's time to write the shaders that will process that
+data. Shaders are a whole world I had zero experience with before, so I kept my
+work here very simple. Here are the fundamentals I learned.
 
-In a shader, you need to "import" the data you've loaded & bound, then handle
-each `@vertex` (xyz point) and finally each `@fragment` (pixel on the screen).
-Starting with the data:
+In the shader code you first need to "import" the data you've transferred &
+bound to handle each `@vertex` (xyz point) and then each `@fragment` (pixel on
+the screen). Starting with the data:
 
 ```wgsl
-// data location - in this instance, 
-// it's the spatial data group (id 0), slot 0 (where I put all the coordinate data)
+// here we're referencing the data group (id 0) 
+// (so, the spatial data group)
+// at binding 0 (where I put all the coordinate data)
 @group(0) @binding(0)
-
-// var<storage, read> - the type of buffer
+// var<storage, read> - needs to match the buffer type you specified in the JS
 var<storage, read> local_coordinates: array<mat4x4f>;
 
 @group(1) @binding(0)
 var<storage, read> color_palette: array<vec4f>;
 ```
 
-Your data is accessed in your `@vertex` and `@fragment` functions by various
-annotations. First, the `@vertex` shader is responsible for returning the
-relevant global positions to the `@fragment` shader, which colors them. I like
-to think of it as the "HTML" of WGSL, with `@fragment` the CSS.
+Your data is also accessed in your `@vertex` and `@fragment` functions by
+various annotations. First, the `@vertex` shader is responsible for returning
+the global positions of each polygon's vertices to the `@fragment` shader, which
+colors them. I like to think of it as the "HTML" of your shader, with
+`@fragment` the CSS.
 
 In this `@vertex` shader, I'm using the `@location(0)` annotation to load the
-actual vertex position, and a `@builtin` to load the ID of the 3D object the
-current vertex belongs to. `@builtin`s are how you access standard metadata
-within the WGSL system.
+actual vertex position as a (x, y, z) tuple, and a `@builtin` to load the ID of
+the 3D object this current vertex belongs to. _(`@builtin`s are how you access
+standard metadata within the WGSL system.)_
 
 ```wgsl
 @vertex
 fn main(
-  // @location(0) is loaded by stride for you
   @location(0) vertex: vec3f,
 
-  // builtins
   @builtin(instance_index) object_id: u32
 ) -> @builtin(position) vec4f {
 
-  // place vertex in global coordinate system
+  // transform vertex to global coordinate system
   return local_coordinates[object_id] * vec4f(vertex, 1.0);
 }
 ```
 
 Next, the `@fragment` shader is a bit sneaky - it actually gets called for each
-_pixel_ on the screen, not each vertex. This `position` is actually calculated
-(interpolated) based on the geometry returned by `@vertex` around that pixel.
+_pixel_ on the screen, not each vertex. This `position` is the nearest location
+visible from that pixel within the geometry that your `@vertex` calls define.
 
-You'll also notice I'm using a `@builtin` to access the ID of the face of the
-geometry the current pixel is pointing to. This allows us to pull that face's
-"base" color from the palette we defined.
+You'll also notice I'm using a `@builtin` here to access the ID of the face of
+the geometry the current pixel is pointing to. This allows us to pull that
+face's "base" color from the palette we defined.
 
 ```wgsl
 @fragment
@@ -292,23 +294,22 @@ fn paint(
 ```
 
 There's so much to this space. [Book of Shaders](https://thebookofshaders.com/)
-doesn't come in WGSL, so I'll need to find other resources to dive deeper.
+doesn't come in WGSL, so I'll have to find other resources to dive even deeper.
 
 ### The Actual Rendering Process: `CommandEncoder`
 
-With everything configured and loaded into the GPU's working memory (VRAM),
-executing the actual rendering was fairly straightforward. I simply had to
-define my rendering job, iterate over everything I wanted to draw, and queue
-that job in the GPU for completion:
+With everything configured and loaded into the GPU, doing the actual rendering
+was fairly straightforward. I simply had to define my rendering job, iterate
+over everything I wanted to draw, and queue that job in the GPU for completion:
 
 ```ts
 // start a rendering job for the frame
 const job = gpu.createCommandEncoder();
 const step = job.beginRenderPass(canvasSettings);
 
-// each object group shares shape and color data
+// each object group shares spatial and appearance data
 for (const objectGroup of objectGroups) {
-  // point to data in VRAM
+  // point to data already loaded in the GPU
   step.setVertexBuffer(slotID, objectGroup.vertexDataLocation);
 
   step.setPipeline(objectGroup.pipeline);
@@ -333,48 +334,49 @@ rendering engine!
 The most intimidating part of 3D programming for me was always rotations. This
 project helped me understand them further, but not completely.
 
-The most naïve rotation approach is **Euler Angles**. You represent a rotation
-as three individual rotations around the X, Y, and Z axes. The problem is that
-each rotation risks losing a degree of freedom and incurring **Gimbal Lock**.
-Rotating your model around the X-axis drags your Y axes into your Z, slowly
+The most naïve rotation approach is **Euler Angles**. You represent one rotation
+as three sub-rotations around the X, Y, and Z axes. The problem is that each
+rotation risks losing a degree of freedom and incurring **Gimbal Lock**.
+Rotating your model around the X-axis drags your Y axis into your Z, slowly
 coupling them.
 
 This is why **Quaternions** exist - best I can describe it, this approach to
 rotation adds a sort of "fake" fourth dimensional, degree-of-freedom buffer
-that's used to "fold around" the lock. They're impossible to visualize: the best
-I can picture is the shadow of a rotating cube on the wall of Plato's cave,
-which isn't even right.
+that's used to "fold around" the lock. They're impossible to visualize: I
+picture a shadow of a rotating cube on the wall of Plato's cave, which isn't
+even right.
 
-And so, I found the "axis-angle" representation to be the more natural
-interface. In it, you simply specify the axis of rotation and the amount the
-object should be rotated around that axis. Each "Euler Angle" is essentially
-three axis-angle rotations.
+And so, I found Axis-Angle to be the more natural interface. In Axis-Angle you
+simply specify the axis you want to rotate around and the amount of rotation.
+"Euler Angles" are essentially three Axis-Angle rotations in sequence.
 
-Which begs the question - are multiple Axis-angle rotations still at risk for
+Which begs the question - are multiple Axis-Angle rotations still at risk for
 lock? Yes! To get the player's ship to both roll and aim the way it currently
-does, I have a separate "roll" rotation... but with two rotations applied
+does, I have a separate "roll" rotation... but with only two rotations applied
 roughly orthogonal to each other, it's mostly safe. Mostly.
 
 There was one rotation method I didn't get to explore: **Rotors**. They're like
-the Quaternion analogue to axis-angle and
+the Quaternion analogue to Axis-Angle and
 [are sort of underrated in game development.](https://marctenbosch.com/quaternions/)
-Like Axis-Angle, a Rotor contains the orientation you're rotating within - but
-it stores that "axis" as three shadows (a "bivector"). These are the shadows
-your plane of rotation would make if you shone a light on it from each of the
-XYZ directions. This representation can't lock - you simply combine their
-shadows. No risk of rotating one axis into another, with all the same advantages
-of Quaternions. So if we can actually visualize them, why don't we use Rotors
-everywhere? Unclear. I think Quaternions just got there first (not unlike the
-QWERTY keyboard layout).
+Like Axis-Angle, the Rotor contains the orientation you're rotating within - but
+it stores that "axis" as a plane, and that plane as three shadows (a
+"bivector"). These are the shadows your plane of rotation would make if you
+shone a light on it from each of the XYZ directions.
+
+Rotors can't lock - you simply combine their shadows. No risk of rotating one
+axis into another, with all the same advantages of Quaternions. So if we can
+_actually_ visualize them, why don't we use Rotors everywhere? Unclear. I think
+Quaternions just got there first (not unlike the QWERTY keyboard layout).
 
 ### `WebAudio`
 
 The other major API this game leans on is
 [WebAudio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
 
-Some kind of audio generation is necessary for JS13K. There's no room in the
-budget for sample files, so every sound must be synthesized procedurally from a
-handful of basic waveforms.
+Some form of audio generation is necessary for JS13K. There's no room in the
+budget for sample files, so every sound must be proceduralized.
+
+I chose to generate a series of fundamental waves like so:
 
 ```ts
 const renderCycle = (shape: (phase: number) => number, cycles = 32) => {
@@ -390,20 +392,22 @@ const SINE_BUFFER = renderCycle((phase) => sin(phase * PI * 2));
 const SAWTOOTH_BUFFER = renderCycle((p) =>
   (p * 2 - 1) * Math.min(1, (1 - p) * 20, p * 20)
 );
+
+// and so on...
 ```
 
 _<a href="https://github.com/cutout-studios/js13k-2026/blob/main/libraries/audio/buffer.ts">(Actual
 implementation here.)</a>_
 
-I chose this method over using
+I chose this method over using `WebAudio`'s
 [oscillator knobs](https://developer.mozilla.org/en-US/docs/Web/API/OscillatorNode)
-because it allowed me to generate more complex fundamentals (like a the sawtooth
+because it allowed me to generate more complex fundamentals (like the sawtooth
 wave above) while maintaining the implementation consistency the compression
 algorithm loves.
 
-With those building blocks in place, I assembled the final sounds by gluing
-multiple audio [loops](#timing) together via compressor / lowpass filters. All
-told, my final sound definitions were basically just data:
+I then assembled the final sounds by gluing multiple audio [loops](#timing)
+together via compressor and lowpass filters. All told, my final sound
+definitions were basically just data:
 
 ```ts
 const defaultWeaponSound = createSound(
@@ -411,8 +415,8 @@ const defaultWeaponSound = createSound(
   [NOISE_BUFFER, [
     [
       [
-        (1) // knob turned (playback rate)
-          [0.7, 1], // knob value (random btwn 0.7 - 1)
+        1, // knob turned (playback rate)
+        [0.7, 1], // knob value (randomly chosen between 0.7 - 1)
       ],
       0, // breakpoint timing (0s)
     ],
@@ -440,11 +444,11 @@ const defaultWeaponSound = createSound(
 
 ## Utilities & Proceduralization
 
-Beyond the Browser APIs, we needed a few utilities to bring everything together:
+Beyond the Browser APIs, I needed a few utilities to bring everything together:
 
 ### Timing
 
-Games require a huge emphasis on timing that regular applications do not have.
+Games have a huge emphasis on timing that standard web applications do not have.
 At [the heart of DARKWHITE](../app/module.ts) is a ticking clock:
 
 ```ts
@@ -479,7 +483,7 @@ burstFireLoop(tickLength);
 Randomness is a basic form of procedualization and is essential for your games'
 variety.
 
-Naively calling `Math.random()` can be a problem if you want the results to
+Naïvely calling `Math.random()` can be a problem if you want the results to
 cluster around a certain value. Averaging multiple calls converges on a bell
 curve:
 
@@ -488,7 +492,7 @@ const bell = () => (random() + random() + random()) / 3;
 ```
 
 Loot-dropping mechanics have you picking from a range of values quite often, and
-so the following got used a surprising amount:
+so the following function that does just that got used a surprising amount:
 
 ```ts
 const range = (lo, hi) => lo + (hi - lo) * bell();
@@ -502,7 +506,7 @@ non-random. This was solved with a simple `deck` primitive:
 export const draw = (deck, n = 2) => {
   const value = deck.pop();
 
-  // inserts the card randomly into the back n cards
+  // puts the card back in within the last n spots
   deck.splice(round(range(0, n)), 0, value);
 
   return value;
@@ -514,8 +518,8 @@ in-industry.
 
 ### "Dirty Abstractions"
 
-During the competition, I realized: if compressors love repetition, what if I
-forced abstractions I normally wouldn't reach for?
+During the competition I had a thought: if compressors love repetition, what if
+I forced abstractions I normally wouldn't reach for?
 
 This lead to `doTimes`:
 
@@ -600,15 +604,15 @@ flattenObjects(
 ```
 
 Paired with the
-[rotating pallette face-painting approach](../libraries/3D/materials/paint.ts),
-the part that typically dwarfs your entry (the visual content) ended up being a
-fraction of the final result here. Of course, the art style has been described
-as "angry shapes", which is very fair.
+[face-painting approach we glossed over in the WebGPU section](#wgsl-shader-code-renderpipeline)
+, the stuff that typically dwarfs your JS13K entry (the visual content) ended up
+a fraction of the final result here. Of course, this art style has been
+described as "angry shapes", which is very fair.
 
 ---
 
 <p align="center">
   <a href="./POSTMORTEM.md">Postmortem</a> |
-  <b>Technical Appendix</b> |
+  <b>Technical Walkthrough</b> |
   <a href="./PLAN.md">Post-JS13K Plan</a>
 </p>
