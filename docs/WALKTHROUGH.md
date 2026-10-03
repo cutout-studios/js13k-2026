@@ -188,13 +188,14 @@ gpu.queue.writeBuffer(vertexGPULocation, offset, vertexData);
 > }
 > ```
 
-Different types of buffers do different things: for your core vertex data you
-use a `"vertex"` buffer. This buffer has a pre-determined structure, mapping out
-the XYZ coordinates of each vertex directly in the vertex shader code.
+Different types of buffers do different things (!): for your core vertex data
+you use a `"vertex"` buffer. This buffer has a pre-determined structure, mapping
+out the XYZ coordinates of each vertex directly into the vertex shader code.
 
 For the data in your `PipelineLayout`, buffer types are case-by-case and
 application-specific. For DARKWHITE, I created two groups, one for spatial data
-and one for appearance data:
+_(the local coordinates of each object)_ and one for appearance data _(the
+colors of the faces of each object)_:
 
 ```ts
 const localCoordinateBinding = {
@@ -216,23 +217,27 @@ const pipelineLayout = device.createPipelineLayout({
 I could have smashed everything into a single, global data group, but it felt
 more natural to separate things by concern, like folders in a file system.
 
-Later utilities were written to write the currently needed data over the
+Later utilities were authored to write the currently needed data over the
 assigned GPU locations in the layout:
 
 ```ts
-const loadLocalCoordinates = (localCoordinates: Float32Array[]) => {
-  device.queue.writeBuffer(localCoordinatesLocation, 0, flat(localCoordinates));
+const loadLocalCoordinates = (newLocalCoordinates: Float32Array[]) => {
+  device.queue.writeBuffer(
+    localCoordinatesLocation,
+    0,
+    flat(newLocalCoordinates),
+  );
 };
 ```
 
 ### WGSL Shader Code: `RenderPipeline`
 
-With data wrangled, it was time to write the shaders I needed to process said
+With the data wrangled it was time to write the shaders needed to process said
 data. Shaders are a whole world I had zero experience with before, so I kept my
 work here very simple. Here are the fundamentals I learned.
 
 In the shader code you first need to "import" the data you've transferred &
-bound to be able to use it:
+bound via layouts to be able to actually use it:
 
 ```wgsl
 // we're referencing the data group 0 (defined as the spatial group in my layout)
@@ -245,11 +250,11 @@ var<storage, read> local_coordinates: array<mat4x4f>;
 var<storage, read> color_palette: array<vec4f>;
 ```
 
-Your data is accessed in your `@vertex` and `@fragment` functions by various
-annotations. First, the `@vertex` shader is responsible for returning the global
+Your `@vertex` and `@fragment` functions access further data via various
+annotations. The `@vertex` shader is responsible for returning the global
 positions of each polygon's vertices to the `@fragment` shader, which colors
-them. I like to think of it as the "HTML" of your shader, with `@fragment` as
-the CSS.
+them. I like to think of `@vertex` as the "HTML" of your shader, with
+`@fragment` as the CSS.
 
 In this `@vertex` shader, I'm using the `@location(0)` annotation to load the
 vertex position, and a `@builtin` to load the ID of the 3D object this current
@@ -270,13 +275,14 @@ fn main(
 }
 ```
 
-Next, the `@fragment` shader is a bit sneaky - it actually gets called for each
-_pixel_ on the screen, not each vertex. This `position` is the nearest location
-visible from that pixel within the geometry that your `@vertex` calls define.
+`@fragment` calls are a bit sneakier - they're actually called for each _pixel_
+on the screen, not each vertex. However, the `position` builtin is the nearest
+location visible _from_ that pixel _within_ the geometry that your `@vertex`
+calls define! It is _not_ the pixel's position!
 
-You'll also notice I'm using a `@builtin` here to access the ID of the face of
-the geometry the current pixel is pointing to. This allows us to pull that
-face's "base" color from the palette we defined.
+You'll notice I'm also using a `@builtin` to access the ID of the face of the
+geometry the current pixel is looking at. This allows us to pull that face's
+"base" color from the palette we loaded.
 
 ```wgsl
 @fragment
@@ -333,11 +339,11 @@ rendering engine!
 The most intimidating part of 3D programming for me was always rotations. This
 project helped me understand them further, but not completely.
 
-The most naïve rotation approach is **Euler Angles**. You represent one rotation
-as three sub-rotations around the X, Y, and Z axes. The problem is that each
-rotation risks losing a degree of freedom and incurring **Gimbal Lock**.
-Rotating your model around the X-axis drags your Y axis into your Z, slowly
-coupling them.
+The most naïve approach to 3D rotation is **Euler Angles**. You represent one
+rotation as three sub-rotations around the X, Y, and Z directions. The problem
+with this is that each rotation risks losing a degree of freedom and incurring
+**Gimbal Lock**. Rotating your model around the X-axis drags your Y axis into
+your Z, slowly coupling them.
 
 This is why **Quaternions** exist - best I can describe it, this approach to
 rotation adds a sort of "fake" fourth dimensional, degree-of-freedom buffer
@@ -345,9 +351,9 @@ that's used to "fold around" the lock. They're impossible to visualize: I
 picture a shadow of a rotating cube on the wall of Plato's cave, which isn't
 even right.
 
-And so, I found Axis-Angle to be the more natural interface. In Axis-Angle you
+And so, I found Axis-Angle to be the most natural interface. In Axis-Angle you
 simply specify the axis you want to rotate around and the amount of rotation.
-"Euler Angles" are essentially three Axis-Angle rotations in sequence.
+"Euler Angles" are essentially three Axis-Angle rotations in XYZ sequence.
 
 Which begs the question - are multiple Axis-Angle rotations still at risk for
 lock? Yes! To get the player's ship to both roll and aim the way it currently
@@ -355,8 +361,8 @@ does, I have a separate "roll" rotation... but with only two rotations applied
 roughly orthogonal to each other, it's mostly safe. Mostly.
 
 There was one rotation method I didn't get to explore: **Rotors**. They're like
-the Quaternion analogue to Axis-Angle and
-[are sort of underrated in game development.](https://marctenbosch.com/quaternions/)
+the Quaternion analogue to Axis-Angle and are
+[sort of underrated in game development.](https://marctenbosch.com/quaternions/)
 Like Axis-Angle, the Rotor contains the orientation you're rotating within - but
 it stores that "axis" as a plane, and that plane as three shadows (a
 "bivector"). These are the shadows your plane of rotation would make if you
@@ -369,11 +375,11 @@ Quaternions just got there first (not unlike the QWERTY keyboard layout).
 
 ### `WebAudio`
 
-The other major API this game leans on is
+The other major API DARKWHITE leans on is
 [WebAudio](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API).
 
-Some form of audio generation is necessary for JS13K. There's no room in the
-budget for sample files, so every sound must be proceduralized.
+Some form of audio generation is almost necessary for JS13K. There's no room in
+the budget for sample files, so every sound must be proceduralized.
 
 I chose to generate a series of fundamental waves like so:
 
@@ -387,12 +393,9 @@ const renderCycle = (shape: (phase: number) => number, cycles = 32) => {
   return buffer;
 };
 
-const SINE_BUFFER = renderCycle((phase) => sin(phase * PI * 2));
 const SAWTOOTH_BUFFER = renderCycle((p) =>
   (p * 2 - 1) * Math.min(1, (1 - p) * 20, p * 20)
 );
-
-// and so on...
 ```
 
 _<a href="https://github.com/cutout-studios/js13k-2026/blob/main/libraries/audio/buffer.ts">(Actual
@@ -404,9 +407,9 @@ because it allowed me to generate more complex fundamentals (like the sawtooth
 wave above) while maintaining the implementation consistency the compression
 algorithm loves.
 
-I then assembled the final sounds by gluing multiple audio [loops](#timing)
-together via compressor and lowpass filters. All told, my final sound
-definitions were basically just data:
+I then assembled the final sounds by gluing multiple audio
+[loop layers](#timing) together via compressor and lowpass filters. All told, my
+final sound definitions were basically just data:
 
 ```ts
 const defaultWeaponSound = createSound(
@@ -479,8 +482,8 @@ burstFireLoop(tickLength);
 
 ### Randomness
 
-Randomness is a basic form of procedualization and is essential for your games'
-variety.
+Randomness is a basic form of procedualization and is the easiest way to add
+variety to your game.
 
 Naïvely calling `Math.random()` can be a problem if you want the results to
 cluster around a certain value. Averaging multiple calls converges on a bell
@@ -498,7 +501,7 @@ const range = (lo, hi) => lo + (hi - lo) * bell();
 ```
 
 Another problem with unadulterated randomness is that the same value can be
-picked multiple times in sequence, making something that is truly random feel
+picked multiple times in sequence, making something that is truly random _feel_
 non-random. This was solved with a simple `deck` primitive:
 
 ```ts
@@ -533,10 +536,10 @@ const doTimes = <T, K>(
     .map(action as (element: K | number, index: number) => T);
 ```
 
-I used this in place of pretty much every loop I could. Felt gross. Save me
+I used this in place of pretty much every loop I could. Felt gross. Saved me
 hundreds of bytes.
 
-_(This also didn't always work.
+_(This didn't always work.
 [`flat`](https://github.com/cutout-studios/js13k-2026/blob/main/libraries/common.ts#L39-L63)
 ended up being net neutral, but migrating to it was so much work I just left it
 in, hoping it might amortize.)_
