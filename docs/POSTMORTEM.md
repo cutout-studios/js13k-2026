@@ -9,7 +9,7 @@
 ---
 
 My goals with JS13K this year were simple: learn how to build a game,
-[learn WebGPU](./APPENDIX.md#webgpu), make it as fun as I could while remaining
+[learn WebGPU](./WALKTHROUGH.md#webgpu), make it as fun as I could while remaining
 concise, and get to know the community a little bit. By that measure, it was a
 success!
 
