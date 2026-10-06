@@ -74,9 +74,7 @@ shouldn't.
    [`Deno.bundle`](https://docs.deno.com/runtime/reference/cli/bundle/) doesn't
    expose [property mangling](https://github.com/evanw/esbuild/issues/218), and
    I can find no record of it being attempted, so I'll be working on a
-   (hopefully) small PR to expose that feature from esbuild (link here to
-   follow).
-
+   ([hopefully](https://github.com/denoland/deno/issues/36978)) small PR to expose that feature from esbuild.
 ## Director's Cut
 
 I've thought about this, and I'll do a Director's Cut only if MISSION DARKWHITE
